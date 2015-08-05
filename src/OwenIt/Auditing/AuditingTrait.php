@@ -31,11 +31,6 @@ trait AuditingTrait
      */
     private $doKeep = array();
 
-    /**
-     * Keeps the list of values that have been updated
-     *
-     * @var array
-     */
     protected $dirtyData = array();
 
     public static function boot()
