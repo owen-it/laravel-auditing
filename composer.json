@@ -1,0 +1,23 @@
+{
+    "name": "owen-it/laravel-auditing",
+    "description": "Keep a change history for your models using laravel version 5.1.",
+    "authors": [
+        {
+            "name": "Antério",
+            "email": "anteriovieira@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "~5.0|~5.1"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "OwenIt\\Auditing": "src/"
+        }
+    }
+}
