@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace OwenIt\Auditing;
 
@@ -9,12 +9,12 @@ trait AuditingTrait
     /**
      * @var array
      */
-    private $originalData = array();
+    private $originalData = [];
 
     /**
      * @var array
      */
-    private $updatedData = array();
+    private $updatedData = [];
 
     /**
      * @var boolean
@@ -24,14 +24,14 @@ trait AuditingTrait
     /**
      * @var array
      */
-    private $dontKeep = array();
+    private $dontKeep = [];
 
     /**
      * @var array
      */
-    private $doKeep = array();
+    private $doKeep = [];
 
-    protected $dirtyData = array();
+    protected $dirtyData = [];
 
     public static function boot()
     {
@@ -44,10 +44,14 @@ trait AuditingTrait
 
     public static function bootAuditingTrait()
     {
+        // Adiciona um ouvite para quando for chamado
+        // a função de salvar
         static::saving(function ($model) {
             $model->preSave();
         });
 
+        // Adiciona um ouvinte para ser executado
+        // após os dados serem salvos
         static::saved(function ($model) {
             $model->postSave();
         });
@@ -57,7 +61,9 @@ trait AuditingTrait
     {
         if (!isset($this->logEnabled) || $this->logEnabled) {
 
+            // Pega dados originais anteriores
             $this->originalData = $this->original;
+            // Pega dados atuais
             $this->updatedData = $this->attributes;
 
             foreach ($this->updatedData as $key => $val) {
@@ -79,13 +85,16 @@ trait AuditingTrait
             unset($this->attributes['dontKeepLogOf']);
             unset($this->attributes['keepLogOf']);
 
+            // Pega dados alterados
             $this->dirtyData = $this->getDirty();
+            // Informa que o registro não existe no banco
             $this->updating = $this->exists;
         }
     }
 
     public function postSave()
     {
+
         if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
             $LimitReached = true;
         } else {
@@ -97,28 +106,27 @@ trait AuditingTrait
             $LogCleanup = false;
         }
 
-        if (((!isset($this->logEnabled) || $this->logEnabled) && $this->updating) && (!$LimitReached || $LogCleanup)) {
-
+        if (((!isset($this->logEnabled) || $this->logEnabled) && $this->updating) && (!$LimitReached || $LogCleanup))
+        {
             $changes_to_record = $this->changedAuditingFields();
-
             $fieldsChanged = [];
-
-            foreach ($changes_to_record as $key => $change) 
+            foreach ($changes_to_record as $key => $change)
             {
-            	$fieldsChanged['old_value'] = array_get($this->originalData, $key);
-            	$fieldsChanged['new_value'] = $this->updatedData[$key];
+                $fieldsChanged['old_value'][$key] = array_get($this->originalData, $key);
+                $fieldsChanged['new_value'][$key] = array_get($this->updatedData, $key);
             }
 
-            $log[
-                'old_value' => array_get($this->originalData, $key),
-                'new_value' => $this->updatedData[$key],
-                'user_id' => $this->getUserId(),
+            $logAuditing = [
+                'old_value'  => json_encode($fieldsChanged['old_value']),
+                'new_value'  => json_encode($fieldsChanged['new_value']),
+                'user_id'    => $this->getUserId(),
                 'created_at' => new \DateTime(),
                 'updated_at' => new \DateTime(),
             ];
 
             if (count($fieldsChanged['old_value']) > 0) {
-                Log::create($log);
+                $log = new Log();
+                \DB::table($log->getTable())->insert($logAuditing);
             }
         }
     }
@@ -142,9 +150,11 @@ trait AuditingTrait
 
     private function changedAuditingFields()
     {
+
         $changes_to_record = array();
         foreach ($this->dirtyData as $key => $value) {
             if ($this->isAuditing($key) && !is_array($value)) {
+                // Verifica se o valor atual é difetente do valor original
                 if (!isset($this->originalData[$key]) || $this->originalData[$key] != $this->updatedData[$key]) {
                     $changes_to_record[$key] = $value;
                 }
@@ -159,14 +169,17 @@ trait AuditingTrait
 
     private function isAuditing($key)
     {
-
+        // Verifica se o campo esta na coleção de autaveis
         if (isset($this->doKeep) && in_array($key, $this->doKeep)) {
             return true;
         }
+
+        // Verifica se o campo esta na coleção de não auditaveis
         if (isset($this->dontKeep) && in_array($key, $this->dontKeep)) {
             return false;
         }
 
+        // Verifica se a lista de auditaveis esta limpa
         return empty($this->doKeep);
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace OwenIt\Revisionable;
+namespace OwenIt\Auditing;
 
 use Illuminate\Database\Eloquent\Model;
 
