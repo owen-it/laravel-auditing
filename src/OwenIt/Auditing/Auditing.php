@@ -2,9 +2,10 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Log;
 
-trait AuditingTrait
+class Auditing extends Model
 {
     /**
      * @var array
@@ -40,8 +41,10 @@ trait AuditingTrait
     /**
      * Init auditing
      */
-    public static function bootAuditingTrait()
+    public static function boot()
     {
+        parent::boot();
+
         // Adiciona um ouvite para quando for chamado
         // a função de salvar
         static::saving(function ($model) {
