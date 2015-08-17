@@ -14,10 +14,10 @@
     },
     "autoload": {
         "classmap": [
-            "src/migrations"
+            "migrations"
         ],
-        "psr-0": {
-            "OwenIt\\Auditing": "src/"
+        "psr-4": {
+            "OwenIt\\Auditing\\": "src"
         }
     }
 }
