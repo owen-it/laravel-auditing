@@ -14,7 +14,7 @@
     },
     "autoload": {
         "classmap": [
-            "migrations"
+            "src/migrations"
         ],
         "psr-4": {
             "OwenIt\\Auditing\\": "src"
