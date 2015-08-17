@@ -32,4 +32,14 @@ class AuditingServiceProvider extends ServiceProvider
         $this->publishes([$source => database_path('migrations')], 'migrations');
     }
 
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+
+    }
+
 }
