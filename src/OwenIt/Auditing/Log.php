@@ -6,7 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
 {
+    /**
+     * @var string
+     */
     public $table = 'logs';
+
+    /**
+     * Cast values
+     * @var array
+     */
+    protected $casts = ['old_value' => 'json', 'new_value' => 'json'];
 
     /**
      * Auditing.
@@ -31,5 +40,23 @@ class Log extends Model
             return $class::find($this->owner_id);
         }
         return false;
+    }
+
+    /**
+     * Get old value
+     * @return mixed
+     */
+    public function getOldAttribute()
+    {
+        return $this->old_value;
+    }
+
+    /**
+     * Get new value
+     * @return mixed
+     */
+    public function getNewAttribute()
+    {
+        return $this->new_value;
     }
 }
