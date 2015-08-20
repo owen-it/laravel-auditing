@@ -12,6 +12,7 @@
 É sempre importante ter o histórico de alterações dos registros no sistema. O Auditing faz exatamente isso de forma simples e prática, bantando você extende-lo na model que gostaria de registrar o log de alterações. 
 
 > Auditing é baseado no package  [revisionable](https://packagist.org/packages/VentureCraft/revisionable)
+
 ## Instalação
 
 Auditing é instalado via [composer](http://getcomposer.org/doc/00-intro.md), os detalhes estão em [packagist, aqui.](https://packagist.org/packages/owen-it/laravel-auditing)
