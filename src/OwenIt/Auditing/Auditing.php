@@ -59,15 +59,17 @@ class Auditing extends Model
     }
 
     /**
+     * Get list of logs
      * @return mixed
      */
-    public function log()
+    public function logs()
     {
         return $this->morphMany(Log::class, 'owner');
     }
 
     /**
-     * Generates a list of the last $limit revisions made to any objects of the class it is being called from.
+     * Generates a list of the last $limit revisions made to any objects
+     * of the class it is being called from.
      *
      * @param int $limit
      * @param string $order
