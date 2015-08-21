@@ -60,7 +60,7 @@ php artisan migrate
 
 ### Implementação baseada em Trait
 
-Para manter o log das alterações do seu model, simplesmente adicione a trait `OwnerIt\Auditing\AuditingTrait` no seu model, exemplo:
+Para registrar o log de alterações, simplesmente adicione a trait `OwnerIt\Auditing\AuditingTrait` no model que deseja auditar, exemplo:
 
 ```php
 namespace MyApp\Models;
