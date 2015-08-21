@@ -19,7 +19,7 @@ Auditing é instalado via [composer](http://getcomposer.org/doc/00-intro.md), os
 
 Execute o seguinte comando para obter a versão mais recente do pacote:
 
-```php
+```
 composer require owen-it/laravel-auditing
 ```
 
