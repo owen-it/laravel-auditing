@@ -49,14 +49,10 @@ class Auditing extends Model
     {
         parent::boot();
 
-        // Adiciona um ouvite para quando for chamado
-        // a função de salvar
         static::saving(function ($model) {
-            $model->preSave();
+            $model->prepare();
         });
 
-        // Adiciona um ouvinte para ser executado
-        // após os dados serem salvos
         static::saved(function ($model) {
             $model->postSave();
         });
@@ -86,9 +82,9 @@ class Auditing extends Model
     }
 
     /**
-     * Listener pre save
+     * Prepare model
      */
-    public function preSave()
+    public function prepare()
     {
         if (!isset($this->auditEnabled) || $this->auditEnabled) {
 

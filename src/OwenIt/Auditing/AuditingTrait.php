@@ -42,14 +42,10 @@ trait AuditingTrait
      */
     public static function bootAuditingTrait()
     {
-        // Adiciona um ouvite para quando for chamado
-        // a função de salvar
         static::saving(function ($model) {
-            $model->preSave();
+            $model->prepare();
         });
 
-        // Adiciona um ouvinte para ser executado
-        // após os dados serem salvos
         static::saved(function ($model) {
             $model->postSave();
         });
@@ -79,9 +75,9 @@ trait AuditingTrait
     }
 
     /**
-     * Listener pre save
+     * Prepare model
      */
-    public function preSave()
+    public function prepare()
     {
         if (!isset($this->auditEnabled) || $this->auditEnabled) {
 
