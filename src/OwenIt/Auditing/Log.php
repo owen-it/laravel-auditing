@@ -48,7 +48,7 @@ class Log extends Model
     public function restore()
     {
         if (class_exists($class = $this->owner_type)) {
-            $model = $this->$class->findOrFail($id);
+            $model = $this->$class->findOrFail($this->owner_id);
             $model->fill($this->old_value);
             return $model->save();
         }
