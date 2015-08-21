@@ -23,7 +23,7 @@ Execute o seguinte comando para obter a versão mais recente do pacote:
 composer require owen-it/laravel-auditing
 ```
 
-Registre o provider em "config/app.php":
+Em seu arquivo `config/app.php` adicione `OwenIt\Auditing\AuditingServiceProvider::class` no final da lista de `providers`:
 
 ```php
 'providers' => [
@@ -34,7 +34,7 @@ Registre o provider em "config/app.php":
 
 > Não deixe de registrar o provider, pois ele é requisito para as proximas etapas.
 
-Publique os arquivos referentes a migrations:
+Publique migrations usando o comando a seguir:
 
 ```
 php artisan vendor:publish
