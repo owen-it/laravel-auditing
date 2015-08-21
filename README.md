@@ -120,48 +120,52 @@ class Pessoa extends Eloquent {
 <a name="consulta"></a>
 ## Consultando o Log
 
-Para consutar o log, basta referenciar o método `logs()` na classe instanciada. Veja os exemplos abaixo: 
-
 ```php
-$pessoa = \MyApp\Pessoa;
-$pessoa->logs; //Busca todos os logs da model pessoa
+namespace App\Http\Controllers;
+
+use App\Pessoa;
+
+class MyAppController extends BaseController {
+
+    public function index()
+    {
+        $pessoa = Pessoa::find(1);
+        ...
+    }
+
+    ...
+}
 ```
 
+Localizando todos os logs
 ```php
-$pessoa = \MyApp\Pessoa;
-$pessoa->logs->first(); //Pega o primeiro log da model pessoa
+$pessoa->logs; 
 ```
-
+Localiza o primeiro registro de log criado
 ```php
-$pessoa = \MyApp\Pessoa;
-$pessoa->logs->last(); //Pega o último log da model pessoa
+$pessoa->logs->first(); 
 ```
-
+Localiza o último registro de log criado
 ```php
-$pessoa = \MyApp\Pessoa;
-$pessoa->logs->find(2); //Pega um registro de log especifico da model pessoa
+$pessoa->logs->last(); 
 ```
-
+Selecionando registro de log
 ```php
-$pessoa = \MyApp\Pessoa;
+$pessoa->logs->find(2); 
+```
+Exibindo valores registrados
+```php
 $log = $pessoa->logs->first();
-$log->new_value; ou $log->new; //Pega os valores alterados do log
+$newValue = $log->new_value; ou $log->new;
+$oldValue = $log->old_value; ou $log->old;
 ```
-
+Localizando dono do log
 ```php
 use OwenIt\Auditing\Log;
 
 $log = Log::find(1);
-$log->owner; //Buscar o registro dono do log
+$owner = $log->owner;
 ```
-
-```php
-use OwenIt\Auditing\Log;
-
-$log = Log::find(1);
-$log->historyOf; ou $log->historyOf(); //Buscar registro responsavel pela história de logs
-```
-
 
 <a name="contributing"></a>
 ## Contribuindo
