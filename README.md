@@ -9,7 +9,7 @@
     <img src="http://img.shields.io/packagist/dt/owen-it/laravel-auditing.svg?style=flat" style="vertical-align: text-top">
 </a>
 
-É sempre importante ter o histórico de alterações dos registros no sistema. O Auditing faz exatamente isso de forma simples e prática, bastando você extende-lo na model que gostaria de registrar o log de alterações. 
+É sempre importante ter o histórico de alterações dos registros no sistema. O Auditing faz exatamente isso de forma simples e prática, bantando você extende-lo na model que gostaria de registrar o log de alterações. 
 
 > Auditing é baseado no package  [revisionable](https://packagist.org/packages/VentureCraft/revisionable)
 
@@ -53,6 +53,8 @@ php artisan migrate
 ## Docs
 
 * [Implementação](#intro)
+* [Configuração](#config)
+* [Consultando o Log](#consulta)
 * [Contribuindo](#contributing)
 * [Tendo problemas?](#faq)
 
@@ -89,10 +91,16 @@ namespace MyApp\Models;
 
 class Pessoa extends Auditing { }
 ```
+> Observe que também trabalha com models namespaced.
 
-Observe que também trabalha com models namespaced.
+<a name="config"></a>
+### Configurações
 
-Você também pode desativar o log após um numero "X" de registros, basta definir `$historyLimit` para a quantidade de registro no log que você deseja manter antes de parar de registrar o log.
+As configurações do comportamento do Auditing são realizadas com a declaração de atributos diretamente na na model. Veja os exemplos abaixo: 
+
+* Você também pode desativar o log após um numero "X" com `$historyLimit = 500`
+* Você pode desativar/ativar o log com `$auditEnabled = false`
+* Você pode desativar o log de campos específicos com `$dontKeep = ['campo1', 'campo2']`
 
 ```php
 namespace MyApp\Models;
@@ -100,10 +108,71 @@ namespace MyApp\Models;
 class Pessoa extends Eloquent {
     use OwenIt\Auditing\AuditingTrait;
 
-    protected $revisionEnabled = true;
-    protected $historyLimit = 500; //Para o registro de log após 500 registros.
+    protected $auditEnabled  = false;      //Desativa o registro de log nesta model.
+    protected $historyLimit = 500;         //Desativa o registro de log após 500 registros.
+    protected $dontKeep = ['cpf', 'nome']; //Informe os campos que deseja NÃO registrar no log.
 }
 ```
+
+<a name="consulta"></a>
+## Consultando o Log
+
+Para consutar o log, basta referenciar o método `logs()` na classe instanciada. Veja os exemplos abaixo: 
+
+```php
+
+$pessoa = \MyApp\Pessoa;
+$pessoa->logs; //Busca todos os logs da model pessoa
+
+```
+
+```php
+
+$pessoa = \MyApp\Pessoa;
+$pessoa->logs->first(); //Pega o primeiro log da model pessoa
+
+```
+
+```php
+
+$pessoa = \MyApp\Pessoa;
+$pessoa->logs->last(); //Pega o último log da model pessoa
+
+```
+
+```php
+
+$pessoa = \MyApp\Pessoa;
+$pessoa->logs->find(2); //Pega um registro de log especifico da model pessoa
+
+```
+
+```php
+
+$pessoa = \MyApp\Pessoa;
+$log = $pessoa->logs->first();
+$log->new_value; ou $log->new; //Pega os valores alterados do log
+
+```
+
+```php
+
+use OwenIt\Auditing\Log;
+
+$log = Log::find(1);
+$log->owner; //Buscar o registro dono do log
+
+```
+
+```php
+
+use OwenIt\Auditing\Log;
+
+$log = Log::find(1);
+$log->historyOf; ou $log->historyOf(); //Buscar registro responsavel pela história de logs
+
+```
+
 
 <a name="contributing"></a>
 ## Contribuindo
