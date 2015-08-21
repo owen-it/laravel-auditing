@@ -120,57 +120,43 @@ class Pessoa extends Eloquent {
 Para consutar o log, basta referenciar o método `logs()` na classe instanciada. Veja os exemplos abaixo: 
 
 ```php
-
 $pessoa = \MyApp\Pessoa;
 $pessoa->logs; //Busca todos os logs da model pessoa
-
 ```
 
 ```php
-
 $pessoa = \MyApp\Pessoa;
 $pessoa->logs->first(); //Pega o primeiro log da model pessoa
-
 ```
 
 ```php
-
 $pessoa = \MyApp\Pessoa;
 $pessoa->logs->last(); //Pega o último log da model pessoa
-
 ```
 
 ```php
-
 $pessoa = \MyApp\Pessoa;
 $pessoa->logs->find(2); //Pega um registro de log especifico da model pessoa
-
 ```
 
 ```php
-
 $pessoa = \MyApp\Pessoa;
 $log = $pessoa->logs->first();
 $log->new_value; ou $log->new; //Pega os valores alterados do log
-
 ```
 
 ```php
-
 use OwenIt\Auditing\Log;
 
 $log = Log::find(1);
 $log->owner; //Buscar o registro dono do log
-
 ```
 
 ```php
-
 use OwenIt\Auditing\Log;
 
 $log = Log::find(1);
 $log->historyOf; ou $log->historyOf(); //Buscar registro responsavel pela história de logs
-
 ```
 
 
