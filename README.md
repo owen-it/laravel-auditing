@@ -32,7 +32,10 @@ php composer update
 Registre o provider em "config/app.php":
 
 ```php
-'OwenIt\Auditing\AuditingServiceProvider'
+'providers' => [
+    ...
+    OwenIt\Auditing\AuditingServiceProvider::class,
+],
 ```
 
 > Não deixe de registrar o provider, pois ele é requisito para as proximas etapas.
