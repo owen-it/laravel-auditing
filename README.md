@@ -66,18 +66,17 @@ php artisan migrate
 
 ### Implementação baseada em Trait
 
-Para qualquer model que você quiser manter um log de alterações, basta incluir o namespace auditing e usar o `AuditingTrait` na sua model, ex:
+Para manter o log das alterações do seu model, simplesmente adicione a trait `OwnerIt\Auditing\AuditingTrait`, exemplo:
 
 ```php
 namespace MyApp\Models;
 
-class Pessoa extends Eloquent {
-    use \OwenIt\Auditing\AuditingTrait;
+use OwenIt\Auditing\AuditingTrait;
 
-    public static function boot()
-    {
-        parent::boot();
-    }
+class Pessoa extends Eloquent 
+{
+    use AuditingTrait;
+    ...
 }
 ```
 
@@ -85,30 +84,34 @@ class Pessoa extends Eloquent {
 
 ### Implementação baseada em Legacy class
 
-Para qualquer model que você quiser manter um log de alterações, basta incluir o namespace auditing e estender auditing em vez de eloquente, ex:
+Para manter o log das alterações do seu model usando Legacy class, você pode estender a class `OwnerIt\Auditing\Auditing`, exemplo:
 
 ```php
-use \OwenIt\Auditing\AuditingTrait;
-
 namespace MyApp\Models;
 
-class Pessoa extends Auditing { }
+use OwenIt\Auditing\Auditing;
+
+class Pessoa extends Auditing 
+{
+    ...    
+}
 ```
 > Observe que também trabalha com models namespaced.
 
 <a name="config"></a>
 ### Configurações
 
-As configurações do comportamento do Auditing são realizadas com a declaração de atributos diretamente na na model. Veja os exemplos abaixo: 
+As configurações do comportamento do Auditing são realizadas com a declaração de atributos na model. Veja os exemplos abaixo: 
 
-* Você também pode desativar o log após um numero "X" com `$historyLimit = 500`
-* Você pode desativar/ativar o log com `$auditEnabled = false`
-* Você pode desativar o log de campos específicos com `$dontKeep = ['campo1', 'campo2']`
+* Desativar o log após um numero "X": `$historyLimit = 500`
+* Desativar/ativar o log(Auditoria): `$auditEnabled = false`
+* Desativar o log para campos específicos: `$dontKeep = ['campo1', 'campo2']`
 
 ```php
 namespace MyApp\Models;
 
-class Pessoa extends Eloquent {
+class Pessoa extends Eloquent 
+{
     use OwenIt\Auditing\AuditingTrait;
 
     protected $auditEnabled  = false;      //Desativa o registro de log nesta model.
@@ -125,7 +128,8 @@ namespace App\Http\Controllers;
 
 use App\Pessoa;
 
-class MyAppController extends BaseController {
+class MyAppController extends BaseController 
+{
 
     public function index()
     {
@@ -136,7 +140,6 @@ class MyAppController extends BaseController {
     ...
 }
 ```
-
 Localizando todos os logs
 ```php
 $pessoa->logs; 
