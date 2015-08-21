@@ -25,18 +25,22 @@ class Auditing extends Model
     /**
      * @var array
      */
-    private $dontKeep = [];
+    protected $dontKeep = [];
 
     /**
      * @var array
      */
-    private $doKeep = [];
+    protected $doKeep = [];
 
     /**
      * @var array
      */
     protected $dirtyData = [];
 
+    /**
+     * @var bool
+     */
+    public $auditEnabled = true;
 
     /**
      * Init auditing
@@ -86,7 +90,7 @@ class Auditing extends Model
      */
     public function preSave()
     {
-        if (!isset($this->logEnabled) || $this->logEnabled) {
+        if (!isset($this->auditEnabled) || $this->auditEnabled) {
 
             // Pega dados originais anteriores
             $this->originalData = $this->original;
@@ -136,7 +140,7 @@ class Auditing extends Model
             $LogCleanup = false;
         }
 
-        if (((!isset($this->logEnabled) || $this->logEnabled) && $this->updating) && (!$LimitReached || $LogCleanup))
+        if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) && (!$LimitReached || $LogCleanup))
         {
             $changes_to_record = $this->changedAuditingFields();
             if(count($changes_to_record))
@@ -241,25 +245,4 @@ class Auditing extends Model
         return $this->getKey();
     }
 
-    /**
-     * Disabled log field
-     *
-     * @param $field
-     */
-    public function disableLogField($field)
-    {
-        if (!isset($this->dontKeepRevisionOf)) {
-            $this->dontKeepRevisionOf = array();
-        }
-        if (is_array($field)) {
-            foreach ($field as $one_field) {
-                $this->disableRevisionField($one_field);
-            }
-        } else {
-            $donts = $this->dontKeepRevisionOf;
-            $donts[] = $field;
-            $this->dontKeepRevisionOf = $donts;
-            unset($donts);
-        }
-    }
 }
