@@ -34,7 +34,7 @@ Em seu arquivo `config/app.php` adicione `OwenIt\Auditing\AuditingServiceProvide
 
 > Não deixe de registrar o provider, pois ele é requisito para as proximas etapas.
 
-Publique migrations usando o comando a seguir:
+Publique as configurações usando o comando a seguir:
 
 ```
 php artisan vendor:publish
@@ -60,7 +60,7 @@ php artisan migrate
 
 ### Implementação baseada em Trait
 
-Para manter o log das alterações do seu model, simplesmente adicione a trait `OwnerIt\Auditing\AuditingTrait`, exemplo:
+Para manter o log das alterações do seu model, simplesmente adicione a trait `OwnerIt\Auditing\AuditingTrait` no seu model, exemplo:
 
 ```php
 namespace MyApp\Models;
