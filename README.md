@@ -17,16 +17,10 @@
 
 Auditing é instalado via [composer](http://getcomposer.org/doc/00-intro.md), os detalhes estão em [packagist, aqui.](https://packagist.org/packages/owen-it/laravel-auditing)
 
-Add o seguinte `require` no arquivo composer.json do seu projeto:
+Execute o seguinte comando para obter a versão mais recente do pacote:
 
 ```php
-"owen-it/laravel-auditing": "1.*",
-```
-
-Execute o composer update para realizar o download do package:
-
-```
-php composer update
+composer require owen-it/laravel-auditing
 ```
 
 Registre o provider em "config/app.php":
