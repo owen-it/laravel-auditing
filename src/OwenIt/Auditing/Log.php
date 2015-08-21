@@ -18,9 +18,8 @@ class Log extends Model
     protected $casts = ['old_value' => 'json', 'new_value' => 'json'];
 
     /**
-     * Auditing.
      *
-     * Grab the revision history for the model that is calling
+     * Get all models auditing
      *
      * @return array revision history
      */
@@ -34,7 +33,7 @@ class Log extends Model
      *
      * @return Object|false
      */
-    public function historyOf()
+    public function owner()
     {
         if (class_exists($class = $this->owner_type)) {
             return $class::find($this->owner_id);
@@ -58,5 +57,15 @@ class Log extends Model
     public function getNewAttribute()
     {
         return $this->new_value;
+    }
+
+    /**
+     * Get Owner of log
+     *
+     * @return false|Object
+     */
+    public function getOwnerAttribute()
+    {
+        return $this->owner();
     }
 }
