@@ -42,203 +42,238 @@ class Auditing extends Model
      */
     public $auditEnabled = true;
 
-    /**
-     * Init auditing
-     */
-    public static function boot()
-    {
-        parent::boot();
+	/**
+	 * Init auditing
+	 */
+	public static function boot()
+	{
+		parent::boot();
 
-        static::saving(function ($model) {
-            $model->prepare();
-        });
+		static::saving(function ($model)
+		{
+			$model->prepareAudit();
+		});
 
-        static::saved(function ($model) {
-            $model->postSave();
-        });
-    }
+		static::saved(function ($model)
+		{
+			$model->auditUpdate();
+		});
 
-    /**
-     * Get list of logs
-     * @return mixed
-     */
-    public function logs()
-    {
-        return $this->morphMany(Log::class, 'owner');
-    }
+		static::deleted(function($model)
+		{
+			$model->prepareAudit();
+			$model->auditDeletion();
+		});
 
-    /**
-     * Generates a list of the last $limit revisions made to any objects
-     * of the class it is being called from.
-     *
-     * @param int $limit
-     * @param string $order
-     * @return mixed
-     */
-    public static function classLogHistory($limit = 100, $order = 'desc')
-    {
-        return Log::where('owner_type', get_called_class())
-            ->orderBy('updated_at', $order)->limit($limit)->get();
-    }
+	}
 
-    /**
-     * Prepare model
-     */
-    public function prepare()
-    {
-        if (!isset($this->auditEnabled) || $this->auditEnabled) {
+	/**
+	 * Get list of logs
+	 * @return mixed
+	 */
+	public function logs()
+	{
+		return $this->morphMany(Log::class, 'owner');
+	}
 
-            // Pega dados originais anteriores
-            $this->originalData = $this->original;
-            // Pega dados atuais
-            $this->updatedData = $this->attributes;
+	/**
+	 * Generates a list of the last $limit revisions made to any objects
+	 * of the class it is being called from.
+	 *
+	 * @param int $limit
+	 * @param string $order
+	 * @return mixed
+	 */
+	public static function classLogHistory($limit = 100, $order = 'desc')
+	{
+		return Log::where('owner_type', get_called_class())
+			->orderBy('updated_at', $order)->limit($limit)->get();
+	}
 
-            foreach ($this->updatedData as $key => $val) {
-                if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
-                    unset($this->originalData[$key]);
-                    unset($this->updatedData[$key]);
-                    array_push($this->dontKeep, $key);
-                }
-            }
+	/**
+	 * Prepare audit model
+	 */
+	public function prepareAudit()
+	{
+		if (!isset($this->auditEnabled) || $this->auditEnabled) {
 
-            $this->dontKeep = isset($this->dontKeepLogOf) ?
-                $this->dontKeepLogOf + $this->dontKeep
-                : $this->dontKeep;
+			$this->originalData = $this->original;
+			$this->updatedData = $this->attributes;
 
-            $this->doKeep = isset($this->keepLogOf) ?
-                $this->keepLogOf + $this->doKeep
-                : $this->doKeep;
+			foreach ($this->updatedData as $key => $val) {
+				if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
+					unset($this->originalData[$key]);
+					unset($this->updatedData[$key]);
+					array_push($this->dontKeep, $key);
+				}
+			}
 
-            unset($this->attributes['dontKeepLogOf']);
-            unset($this->attributes['keepLogOf']);
+			$this->dontKeep = isset($this->dontKeepLogOf) ?
+				$this->dontKeepLogOf + $this->dontKeep
+				: $this->dontKeep;
 
-            // Pega dados alterados
-            $this->dirtyData = $this->getDirty();
-            // Informa que o registro não existe no banco
-            $this->updating = $this->exists;
-        }
-    }
+			$this->doKeep = isset($this->keepLogOf) ?
+				$this->keepLogOf + $this->doKeep
+				: $this->doKeep;
 
-    /**
-     * Listener pos save
-     */
-    public function postSave()
-    {
+			unset($this->attributes['dontKeepLogOf']);
+			unset($this->attributes['keepLogOf']);
 
-        if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
-            $LimitReached = true;
-        } else {
-            $LimitReached = false;
-        }
-        if (isset($this->logCleanup)){
-            $LogCleanup = $this->LogCleanup;
-        }else{
-            $LogCleanup = false;
-        }
+			// Pega dados alterados
+			$this->dirtyData = $this->getDirty();
+			// Informa que o registro não existe no banco
+			$this->updating = $this->exists;
+		}
+	}
 
-        if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) && (!$LimitReached || $LogCleanup))
-        {
-            $changes_to_record = $this->changedAuditingFields();
-            if(count($changes_to_record))
-            {
-                $fC = [];
-                foreach ($changes_to_record as $key => $change)
-                {
-                    $fC['old_value'][$key] = array_get($this->originalData, $key);
-                    $fC['new_value'][$key] = array_get($this->updatedData, $key);
-                }
+	/**
+	 * Listener pos save
+	 */
+	public function auditUpdate()
+	{
+		if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
+			$LimitReached = true;
+		} else {
+			$LimitReached = false;
+		}
+		if (isset($this->logCleanup)){
+			$LogCleanup = $this->LogCleanup;
+		}else{
+			$LogCleanup = false;
+		}
 
-                $logAuditing = [
-                    'old_value'  => json_encode($fC['old_value']),
-                    'new_value'  => json_encode($fC['new_value']),
-                    'owner_type' => get_class($this),
-                    'owner_id' => $this->getKey(),
-                    'user_id'    => $this->getUserId(),
-                    'created_at' => new \DateTime(),
-                    'updated_at' => new \DateTime(),
-                ];
+		if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) && (!$LimitReached || $LogCleanup))
+		{
+			$changes_to_record = $this->changedAuditingFields();
+			if(count($changes_to_record))
+			{
+				$log = [];
+				foreach ($changes_to_record as $key => $change)
+				{
+					$log['old_value'][$key] = array_get($this->originalData, $key);
+					$log['new_value'][$key] = array_get($this->updatedData, $key);
+				}
 
-                $log = new Log();
-                \DB::table($log->getTable())->insert($logAuditing);
-            }
-        }
-    }
+				$this->audit($log);
+			}
+		}
+	}
 
-    /**
-     * Get user id
-     *
-     * @return null
-     */
-    private function getUserId()
-    {
-        try {
-            if (class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
-                || class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')
-            ) {
-                return ($class::check()) ? $class::getUser()->id : null;
-            } elseif (\Auth::check()) {
-                return \Auth::user()->getAuthIdentifier();
-            }
-        } catch (\Exception $e) {
-            return null;
-        }
+	/**
+	 * Auditing deletion
+	 *
+	 */
+	public function auditDeletion()
+	{
+		if ((!isset($this->auditEnabled) || $this->auditEnabled)
+			&& $this->isAuditing('deleted_at'))
+		{
+			return $this->audit([
+				'old_value'  => $this->updatedData,
+				'new_value'  => null,
+				'owner_type' => get_class($this),
+				'owner_id'   => $this->getKey(),
+				'user_id'    => $this->getUserId(),
+				'created_at' => new \DateTime(),
+				'updated_at' => new \DateTime(),
+			]);
+		}
+	}
 
-        return null;
-    }
+	/**
+	 * Audit model
+	 */
+	public function audit(array $log)
+	{
+		$logAuditing = [
+			'old_value'  => json_encode($log['old_value']),
+			'new_value'  => json_encode($log['new_value']),
+			'owner_type' => get_class($this),
+			'owner_id'   => $this->getKey(),
+			'user_id'    => $this->getUserId(),
+			'created_at' => new \DateTime(),
+			'updated_at' => new \DateTime(),
+		];
 
-    /**
-     * Fields Changed
-     * @return array
-     */
-    private function changedAuditingFields()
-    {
+		$log = new Log();
+		return \DB::table($log->getTable())->insert($logAuditing);
+	}
 
-        $changes_to_record = array();
-        foreach ($this->dirtyData as $key => $value) {
-            if ($this->isAuditing($key) && !is_array($value)) {
-                // Verifica se o valor atual é difetente do valor original
-                if (!isset($this->originalData[$key]) || $this->originalData[$key] != $this->updatedData[$key]) {
-                    $changes_to_record[$key] = $value;
-                }
-            } else {
-                unset($this->updatedData[$key]);
-                unset($this->originalData[$key]);
-            }
-        }
+	/**
+	 * Get user id
+	 *
+	 * @return null
+	 */
+	private function getUserId()
+	{
+		try {
+			if (class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
+				|| class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')
+			) {
+				return ($class::check()) ? $class::getUser()->id : null;
+			} elseif (\Auth::check()) {
+				return \Auth::user()->getAuthIdentifier();
+			}
+		} catch (\Exception $e) {
+			return null;
+		}
 
-        return $changes_to_record;
-    }
+		return null;
+	}
 
-    /**
-     * Is Auditing?
-     *
-     * @param $key
-     * @return bool
-     */
-    private function isAuditing($key)
-    {
-        // Verifica se o campo esta na coleção de autaveis
-        if (isset($this->doKeep) && in_array($key, $this->doKeep)) {
-            return true;
-        }
+	/**
+	 * Fields Changed
+	 * @return array
+	 */
+	private function changedAuditingFields()
+	{
 
-        // Verifica se o campo esta na coleção de não auditaveis
-        if (isset($this->dontKeep) && in_array($key, $this->dontKeep)) {
-            return false;
-        }
+		$changes_to_record = array();
+		foreach ($this->dirtyData as $key => $value) {
+			if ($this->isAuditing($key) && !is_array($value)) {
+				// Verifica se o valor atual é difetente do valor original
+				if (!isset($this->originalData[$key]) || $this->originalData[$key] != $this->updatedData[$key]) {
+					$changes_to_record[$key] = $value;
+				}
+			} else {
+				unset($this->updatedData[$key]);
+				unset($this->originalData[$key]);
+			}
+		}
 
-        // Verifica se a lista de auditaveis esta limpa
-        return empty($this->doKeep);
-    }
+		return $changes_to_record;
+	}
 
-    /**
-     * Idenfiable name
-     *
-     * @return mixed
-     */
-    public function identifiableName()
-    {
-        return $this->getKey();
-    }
+	/**
+	 * Is Auditing?
+	 *
+	 * @param $key
+	 * @return bool
+	 */
+	private function isAuditing($key)
+	{
+		// Verifica se o campo esta na coleção de autaveis
+		if (isset($this->doKeep) && in_array($key, $this->doKeep)) {
+			return true;
+		}
+
+		// Verifica se o campo esta na coleção de não auditaveis
+		if (isset($this->dontKeep) && in_array($key, $this->dontKeep)) {
+			return false;
+		}
+
+		// Verifica se a lista de auditaveis esta limpa
+		return empty($this->doKeep);
+	}
+
+	/**
+	 * Idenfiable name
+	 *
+	 * @return mixed
+	 */
+	public function identifiableName()
+	{
+		return $this->getKey();
+	}
 
 }
