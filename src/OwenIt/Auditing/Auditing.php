@@ -7,40 +7,45 @@ use OwenIt\Auditing\Log;
 
 class Auditing extends Model
 {
-    /**
-     * @var array
-     */
-    private $originalData = [];
+	/**
+	 * @var array
+	 */
+	private $originalData = [];
 
-    /**
-     * @var array
-     */
-    private $updatedData = [];
+	/**
+	 * @var array
+	 */
+	private $updatedData = [];
 
-    /**
-     * @var boolean
-     */
-    private $updating = false;
+	/**
+	 * @var boolean
+	 */
+	private $updating = false;
 
-    /**
-     * @var array
-     */
-    protected $dontKeep = [];
+	/**
+	 * @var array
+	 */
+	protected $dontKeep = [];
 
-    /**
-     * @var array
-     */
-    protected $doKeep = [];
+	/**
+	 * @var array
+	 */
+	protected $doKeep = [];
 
-    /**
-     * @var array
-     */
-    protected $dirtyData = [];
+	/**
+	 * @var array
+	 */
+	protected $dirtyData = [];
 
-    /**
-     * @var bool
-     */
-    public $auditEnabled = true;
+	/**
+	 * @var bool
+	 */
+	protected $auditEnabled = true;
+
+	/**
+	 * @var array
+	 */
+	protected $auditableTypes = ['created', 'saved', 'deleted'];
 
 	/**
 	 * Init auditing
@@ -54,22 +59,25 @@ class Auditing extends Model
 			$model->prepareAudit();
 		});
 
-		static::saved(function ($model)
-		{
-			$model->auditUpdate();
-		});
-
 		static::created(function($model)
 		{
-			$model->auditCreation();
+			if($model->isTypeAuditable('created'))
+				$model->auditCreation();
+		});
+
+		static::saved(function ($model)
+		{
+			if($model->isTypeAuditable('saved'))
+				$model->auditUpdate();
 		});
 
 		static::deleted(function($model)
 		{
-			$model->prepareAudit();
-			$model->auditDeletion();
+			if($model->isTypeAuditable('deleted')){
+				$model->prepareAudit();
+				$model->auditDeletion();
+			}
 		});
-
 	}
 
 	/**
@@ -144,6 +152,7 @@ class Auditing extends Model
 				'owner_type' => get_class($this),
 				'owner_id'   => $this->getKey(),
 				'user_id'    => $this->getUserId(),
+				'type'       => 'created',
 				'created_at' => new \DateTime(),
 				'updated_at' => new \DateTime(),
 			]);
@@ -171,7 +180,7 @@ class Auditing extends Model
 			$changes_to_record = $this->changedAuditingFields();
 			if(count($changes_to_record))
 			{
-				$log = [];
+				$log = ['type' => 'updated'];
 				foreach ($changes_to_record as $key => $change)
 				{
 					$log['old_value'][$key] = array_get($this->originalData, $key);
@@ -185,7 +194,6 @@ class Auditing extends Model
 
 	/**
 	 * Auditing deletion
-	 *
 	 */
 	public function auditDeletion()
 	{
@@ -198,6 +206,7 @@ class Auditing extends Model
 				'owner_type' => get_class($this),
 				'owner_id'   => $this->getKey(),
 				'user_id'    => $this->getUserId(),
+				'type'       => 'deleted',
 				'created_at' => new \DateTime(),
 				'updated_at' => new \DateTime(),
 			]);
@@ -215,6 +224,7 @@ class Auditing extends Model
 			'owner_type' => get_class($this),
 			'owner_id'   => $this->getKey(),
 			'user_id'    => $this->getUserId(),
+			'type'       => $log['type'],
 			'created_at' => new \DateTime(),
 			'updated_at' => new \DateTime(),
 		];
@@ -298,6 +308,26 @@ class Auditing extends Model
 	public function identifiableName()
 	{
 		return $this->getKey();
+	}
+
+
+	/**
+	 * Verify is type auditable
+	 *
+	 * @param $key
+	 * @return bool
+	 */
+	public function isTypeAuditable($key)
+	{
+		if (static::$unguarded) {
+			return true;
+		}
+
+		if (in_array($key, $this->auditableTypes)) {
+			return true;
+		}
+
+		return;
 	}
 
 }

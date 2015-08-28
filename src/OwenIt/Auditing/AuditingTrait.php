@@ -47,22 +47,27 @@ trait AuditingTrait
 			$model->prepareAudit();
 		});
 
-		static::saved(function ($model)
-		{
-			$model->auditUpdate();
-		});
-
 		static::created(function($model)
 		{
-			$model->auditCreation();
+			if($model->isTypeAuditable('created'))
+				$model->auditCreation();
+		});
+
+		static::saved(function ($model)
+		{
+			if($model->isTypeAuditable('saved'))
+				$model->auditUpdate();
 		});
 
 		static::deleted(function($model)
 		{
-			$model->prepareAudit();
-			$model->auditDeletion();
+			if($model->isTypeAuditable('deleted')){
+				$model->prepareAudit();
+				$model->auditDeletion();
+			}
 		});
     }
+
 
 	/**
 	 * Get list of logs
@@ -136,6 +141,7 @@ trait AuditingTrait
 				'owner_type' => get_class($this),
 				'owner_id'   => $this->getKey(),
 				'user_id'    => $this->getUserId(),
+				'type'       => 'created',
 				'created_at' => new \DateTime(),
 				'updated_at' => new \DateTime(),
 			]);
@@ -163,7 +169,7 @@ trait AuditingTrait
 			$changes_to_record = $this->changedAuditingFields();
 			if(count($changes_to_record))
 			{
-				$log = [];
+				$log = ['type' => 'updated'];
 				foreach ($changes_to_record as $key => $change)
 				{
 					$log['old_value'][$key] = array_get($this->originalData, $key);
@@ -177,7 +183,6 @@ trait AuditingTrait
 
 	/**
 	 * Auditing deletion
-	 *
 	 */
 	public function auditDeletion()
 	{
@@ -190,6 +195,7 @@ trait AuditingTrait
 				'owner_type' => get_class($this),
 				'owner_id'   => $this->getKey(),
 				'user_id'    => $this->getUserId(),
+				'type'       => 'deleted',
 				'created_at' => new \DateTime(),
 				'updated_at' => new \DateTime(),
 			]);
@@ -207,6 +213,7 @@ trait AuditingTrait
 			'owner_type' => get_class($this),
 			'owner_id'   => $this->getKey(),
 			'user_id'    => $this->getUserId(),
+			'type'       => $log['type'],
 			'created_at' => new \DateTime(),
 			'updated_at' => new \DateTime(),
 		];
@@ -292,5 +299,27 @@ trait AuditingTrait
 		return $this->getKey();
 	}
 
+
+	/**
+	 * Verify is type auditable
+	 *
+	 * @param $key
+	 * @return bool
+	 */
+	public function isTypeAuditable($key)
+	{
+		if (static::$unguarded) {
+			return true;
+		}
+
+		if(!isset($this->auditableTypes))
+			return true;
+
+		if (in_array($key, $this->auditableTypes)) {
+			return true;
+		}
+
+		return;
+	}
 
 }
