@@ -52,6 +52,11 @@ trait AuditingTrait
 			$model->auditUpdate();
 		});
 
+		static::created(function($model)
+		{
+			$model->auditCreation();
+		});
+
 		static::deleted(function($model)
 		{
 			$model->prepareAudit();
@@ -115,6 +120,25 @@ trait AuditingTrait
 			$this->dirtyData = $this->getDirty();
 			// Informa que o registro não existe no banco
 			$this->updating = $this->exists;
+		}
+	}
+
+	/**
+	 * Audit creation
+	 */
+	public function auditCreation()
+	{
+		if ((!isset($this->auditEnabled) || $this->auditEnabled))
+		{
+			return $this->audit([
+				'old_value'  => null,
+				'new_value'  => $this->updatedData,
+				'owner_type' => get_class($this),
+				'owner_id'   => $this->getKey(),
+				'user_id'    => $this->getUserId(),
+				'created_at' => new \DateTime(),
+				'updated_at' => new \DateTime(),
+			]);
 		}
 	}
 
