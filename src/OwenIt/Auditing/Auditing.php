@@ -104,6 +104,16 @@ class Auditing extends Model
 	}
 
 	/**
+	 * @param int $limit
+	 * @param string $order
+	 * @return mixed
+	 */
+	public function logHistory($limit = 100, $order = 'desc')
+	{
+		return static::classLogHistory($limit, $order);
+	}
+
+	/**
 	 * Prepare audit model
 	 */
 	public function prepareAudit()
@@ -132,9 +142,9 @@ class Auditing extends Model
 			unset($this->attributes['dontKeepLogOf']);
 			unset($this->attributes['keepLogOf']);
 
-			// Pega dados alterados
+			// Get changed data
 			$this->dirtyData = $this->getDirty();
-			// Informa que o registro não existe no banco
+			// Tells whether the record exists in the database
 			$this->updating = $this->exists;
 		}
 	}
@@ -160,7 +170,7 @@ class Auditing extends Model
 	}
 
 	/**
-	 * Listener pos save
+	 * Adudit update
 	 */
 	public function auditUpdate()
 	{
@@ -193,7 +203,7 @@ class Auditing extends Model
 	}
 
 	/**
-	 * Auditing deletion
+	 * Audit deletion
 	 */
 	public function auditDeletion()
 	{
@@ -229,8 +239,7 @@ class Auditing extends Model
 			'updated_at' => new \DateTime(),
 		];
 
-		$log = new Log();
-		return \DB::table($log->getTable())->insert($logAuditing);
+		return Log::insert($logAuditing);
 	}
 
 	/**
@@ -265,7 +274,7 @@ class Auditing extends Model
 		$changes_to_record = array();
 		foreach ($this->dirtyData as $key => $value) {
 			if ($this->isAuditing($key) && !is_array($value)) {
-				// Verifica se o valor atual é difetente do valor original
+				// Check whether the current value is difetente the original value
 				if (!isset($this->originalData[$key]) || $this->originalData[$key] != $this->updatedData[$key]) {
 					$changes_to_record[$key] = $value;
 				}
@@ -286,17 +295,17 @@ class Auditing extends Model
 	 */
 	private function isAuditing($key)
 	{
-		// Verifica se o campo esta na coleção de autaveis
+		// Checks if the field is in the collection of auditable
 		if (isset($this->doKeep) && in_array($key, $this->doKeep)) {
 			return true;
 		}
 
-		// Verifica se o campo esta na coleção de não auditaveis
+		// Checks if the field is in the collection of non-auditable
 		if (isset($this->dontKeep) && in_array($key, $this->dontKeep)) {
 			return false;
 		}
 
-		// Verifica se a lista de auditaveis esta limpa
+		// Checks whether the auditable list is clean
 		return empty($this->doKeep);
 	}
 
@@ -310,7 +319,6 @@ class Auditing extends Model
 		return $this->getKey();
 	}
 
-
 	/**
 	 * Verify is type auditable
 	 *
@@ -319,10 +327,6 @@ class Auditing extends Model
 	 */
 	public function isTypeAuditable($key)
 	{
-		if (static::$unguarded) {
-			return true;
-		}
-
 		if (in_array($key, $this->auditableTypes)) {
 			return true;
 		}
