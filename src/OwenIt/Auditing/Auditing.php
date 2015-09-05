@@ -250,7 +250,7 @@ class Auditing extends Model
 	protected function getUserId()
 	{
 		try {
-			} if (\Auth::check()) {
+			if (\Auth::check()) {
 				return \Auth::user()->getAuthIdentifier();
 			}
 		} catch (\Exception $e) {
