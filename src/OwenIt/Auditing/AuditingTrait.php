@@ -245,14 +245,10 @@ trait AuditingTrait
 	 *
 	 * @return null
 	 */
-	private function getUserId()
+	protected function getUserId()
 	{
 		try {
-			if (class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
-				|| class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')
-			) {
-				return ($class::check()) ? $class::getUser()->id : null;
-			} elseif (\Auth::check()) {
+			if (\Auth::check()) {
 				return \Auth::user()->getAuthIdentifier();
 			}
 		} catch (\Exception $e) {
