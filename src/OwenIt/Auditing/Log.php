@@ -32,7 +32,7 @@ class Log extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function author()
+    public function user()
     {
         return $this->belongsTo(\Config::get('auth.model'));
     }
