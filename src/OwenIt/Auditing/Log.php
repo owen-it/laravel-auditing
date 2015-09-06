@@ -26,6 +26,16 @@ class Log extends Model
     {
         return $this->morphTo();
     }
+    
+    /**
+     * Author responsible for the change
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function author()
+    {
+        return $this->belongsTo(\Config::get('auth.model'));
+    }
 
     /**
      * Returns the object we have the history of
