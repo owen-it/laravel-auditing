@@ -157,12 +157,12 @@ $log = $pessoa->logs->first();
 $newValue = $log->new_value; ou $log->new;
 $oldValue = $log->old_value; ou $log->old;
 ```
-Localizando dono do log
+Obtendo logs com usuário responsável pela alteração e o model auditado
 ```php
 use OwenIt\Auditing\Log;
 
-$log = Log::find(1);
-$owner = $log->owner;
+$logs = Log::with(['owner', 'user'])->get();
+
 ```
 
 <a name="contributing"></a>
