@@ -108,9 +108,10 @@ class Pessoa extends Eloquent
 {
     use OwenIt\Auditing\AuditingTrait;
 
-    protected $auditEnabled  = false;      //Desativa o registro de log nesta model.
-    protected $historyLimit = 500;         //Desativa o registro de log após 500 registros.
-    protected $dontKeep = ['cpf', 'nome']; //Informe os campos que deseja NÃO registrar no log.
+    protected $auditEnabled  = false;      // Desativa o registro de log nesta model.
+    protected $historyLimit = 500;         // Desativa o registro de log após 500 registros.
+    protected $dontKeep = ['cpf', 'nome']; // Informe os campos que NÃO deseja registrar no log.
+    protected $auditableTypes = ['created', 'saved', 'deleted']; // Informe quais ações deseja auditar
 }
 ```
 
