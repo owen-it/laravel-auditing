@@ -49,12 +49,12 @@ trait AuditingTrait
     /**
      * @var string
      */
-    public $customMessage = '{type} in {created_at}';
+    public static $customMessage = '{type} in {created_at}';
 
     /**
      * @var array
      */
-    public $customFields = [];
+    public static $customFields = [];
 
     /**
      * Init auditing

@@ -115,10 +115,14 @@ class Log extends Model
             $patterns[]     = "{{$field}}";
             $replacements[] = "{$value}";
         }
+
+        $message = class_exists($class = $this->owner_type) ?
+            $class::$customMessage : 'Model not found';
+
         return str_replace(
             $patterns,
             $replacements,
-            $this->owner->customMessage ?: 'This record has been {type} '
+            $message
         );
     }
 
@@ -129,16 +133,19 @@ class Log extends Model
      */
     public function getCustomFieldsAttribute()
     {
-        $fields = [];
-        foreach($this->owner->customFields ?: [] as $field => $message)
+        $newcustomFields = [];
+        $customFields    = class_exists($class = $this->owner_type) ?
+            $class::$customFields : [];
+
+        foreach($customFields as $field => $message)
         {
-            $fields[$field] = str_replace(
+            $newcustomFields[$field] = str_replace(
                 ['{new}', '{old}'],
                 [$this->new_value[$field], $this->old_value[$field]],
                 $message
             );
         }
-        return $fields;
+        return $newcustomFields;
     }
 
 }
