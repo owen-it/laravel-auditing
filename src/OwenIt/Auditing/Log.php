@@ -115,7 +115,11 @@ class Log extends Model
             $patterns[]     = "{{$field}}";
             $replacements[] = "{$value}";
         }
-        return str_replace($patterns, $replacements, $this->owner->customMessage);
+        return str_replace(
+            $patterns,
+            $replacements,
+            $this->owner->customMessage ?: 'This record has been {type} '
+        );
     }
 
     /**
@@ -126,7 +130,7 @@ class Log extends Model
     public function getCustomFieldsAttribute()
     {
         $fields = [];
-        foreach($this->owner->customFields as $field => $message)
+        foreach($this->owner->customFields ?: [] as $field => $message)
         {
             $fields[$field] = str_replace(
                 ['{new}', '{old}'],
