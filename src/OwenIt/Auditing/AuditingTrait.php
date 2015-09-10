@@ -41,6 +41,16 @@ trait AuditingTrait
 	 */
 	protected $auditEnabled = true;
 
+    /**
+     * @var string
+     */
+    public $customMessage = '{type} in {created_at}';
+
+    /**
+     * @var array
+     */
+    public $customFields = [];
+
 	/**
 	 * @var array
 	 */

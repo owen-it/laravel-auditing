@@ -47,6 +47,16 @@ class Auditing extends Model
 	 */
 	protected $auditableTypes = ['created', 'saved', 'deleted'];
 
+    /**
+     * @var string
+     */
+    public $customMessage = '{type} in {created_at}';
+
+    /**
+     * @var array
+     */
+    public $customFields = [];
+
 	/**
 	 * Init auditing
 	 */

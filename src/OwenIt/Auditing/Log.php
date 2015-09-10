@@ -18,6 +18,13 @@ class Log extends Model
     protected $casts = ['old_value' => 'json', 'new_value' => 'json'];
 
     /**
+     * Added attribute
+     *
+     * @var array
+     */
+    protected $appends = ['custom_message', 'custom_fiels'];
+
+    /**
      * Get model auditing
      *
      * @return array revision history
@@ -92,4 +99,42 @@ class Log extends Model
     {
         return $this->historyOf();
     }
+
+    /**
+     * Custom output fields
+     *
+     * @return array
+     */
+    public function getCustomFieldsAttribute()
+    {
+        $fields = [];
+        foreach($this->customFields as $field => $message)
+        {
+            $fields[$field] = str_replace(
+                ['{new}', '{old}'],
+                [$this->new_value[$field], $this->old_value[$field]],
+                $message
+            );
+        }
+        return $fields;
+    }
+
+    /**
+     * Custom output message
+     *
+     * @return mixed
+     */
+    public function getCustomMessageAttribute()
+    {
+        $attributes = $this->attributes;
+        $patterns = [];
+        $replacements = [];
+        foreach($attributes as $field => $value)
+        {
+            $patterns[]     = "{{$field}}";
+            $replacements[] = "{$value}";
+        }
+        return str_replace($patterns, $replacements, $this->customMessage);
+    }
+
 }
