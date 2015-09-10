@@ -41,6 +41,11 @@ trait AuditingTrait
 	 */
 	protected $auditEnabled = true;
 
+	/**
+	 * @var array
+	 */
+	protected $auditableTypes = ['created', 'saved', 'deleted'];
+
     /**
      * @var string
      */
@@ -50,11 +55,6 @@ trait AuditingTrait
      * @var array
      */
     public $customFields = [];
-
-	/**
-	 * @var array
-	 */
-	protected $auditableTypes = ['created', 'saved', 'deleted'];
 
     /**
      * Init auditing

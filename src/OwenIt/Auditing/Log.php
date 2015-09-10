@@ -22,7 +22,7 @@ class Log extends Model
      *
      * @var array
      */
-    protected $appends = ['custom_message', 'custom_fiels'];
+    protected $appends = ['custom_message', 'custom_fields'];
 
     /**
      * Get model auditing
@@ -101,25 +101,6 @@ class Log extends Model
     }
 
     /**
-     * Custom output fields
-     *
-     * @return array
-     */
-    public function getCustomFieldsAttribute()
-    {
-        $fields = [];
-        foreach($this->customFields as $field => $message)
-        {
-            $fields[$field] = str_replace(
-                ['{new}', '{old}'],
-                [$this->new_value[$field], $this->old_value[$field]],
-                $message
-            );
-        }
-        return $fields;
-    }
-
-    /**
      * Custom output message
      *
      * @return mixed
@@ -134,7 +115,26 @@ class Log extends Model
             $patterns[]     = "{{$field}}";
             $replacements[] = "{$value}";
         }
-        return str_replace($patterns, $replacements, $this->customMessage);
+        return str_replace($patterns, $replacements, $this->owner->customMessage);
+    }
+
+    /**
+     * Custom output fields
+     *
+     * @return array
+     */
+    public function getCustomFieldsAttribute()
+    {
+        $fields = [];
+        foreach($this->owner->customFields as $field => $message)
+        {
+            $fields[$field] = str_replace(
+                ['{new}', '{old}'],
+                [$this->new_value[$field], $this->old_value[$field]],
+                $message
+            );
+        }
+        return $fields;
     }
 
 }
