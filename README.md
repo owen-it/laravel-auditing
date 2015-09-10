@@ -165,7 +165,7 @@ $logs = Log::with(['owner', 'user'])->get();
 
 ```
 > Lembre-se de definir corretamente o model do usuário no arquivo ``` config/auth.php ```
->```
+>```php
 > ...
 > 'model' => App\User::class,
 > ... 
