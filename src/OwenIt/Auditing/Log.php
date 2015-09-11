@@ -22,7 +22,7 @@ class Log extends Model
      *
      * @var array
      */
-    protected $appends = ['custom_message', 'custom_fields'];
+    protected $appends = ['custom_message', 'custom_fields', 'elapsed_time'];
 
     /**
      * Get model auditing
@@ -146,6 +146,16 @@ class Log extends Model
             );
         }
         return $newcustomFields;
+    }
+    
+    /**
+     * Get elapsed time
+     * 
+     * @return mixed
+     */
+    public function getElapsedTimeAttribute()
+    {
+        return $this->created_at->diffForHumans();
     }
 
 }
