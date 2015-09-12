@@ -3,6 +3,8 @@
     "description": "Keep a change history for your models using laravel version 5.1.",
     "keywords": ["log", "auditing", "laravel", "register", "observe"],
     "homepage": "https://github.com/owen-it/laravel-auditing",
+    "license": "MIT",
+    "type": "package",
     "authors": [
         {
             "name": "Antério",
