@@ -1,6 +1,6 @@
 
 
-<img src="http://owen.com.br/imagens_para_web/auditing.png" style="width: 100%" alt="Laravel Auditing" />
+<img src="http://owen.com.br/imagens_para_web/logo-dreams.png" style="width: 100%" alt="api-dreams" />
 
 [![Latest Stable Version](https://poser.pugx.org/owen-it/laravel-auditing/version)](https://packagist.org/packages/owen-it/laravel-auditing)
 [![Total Downloads](https://poser.pugx.org/owen-it/laravel-auditing/downloads)](https://packagist.org/packages/owen-it/laravel-auditing)
