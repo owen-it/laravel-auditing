@@ -2,12 +2,10 @@
 
 <img src="http://owen.com.br/imagens_para_web/auditing.png" style="width: 100%" alt="Revisionable" />
 
-<a href="https://packagist.org/packages/owen-it/laravel-auditing">
-    <img src="http://img.shields.io/github/tag/owen-it/laravel-auditing.svg?style=flat" style="vertical-align: text-top">
-</a>
-<a href="https://packagist.org/packages/owen-it/laravel-auditing">
-    <img src="http://img.shields.io/packagist/dt/owen-it/laravel-auditing.svg?style=flat" style="vertical-align: text-top">
-</a>
+[![Latest Stable Version](https://poser.pugx.org/owen-it/laravel-auditing/version)](https://packagist.org/packages/owen-it/laravel-auditing)
+[![Total Downloads](https://poser.pugx.org/owen-it/laravel-auditing/downloads)](https://packagist.org/packages/owen-it/laravel-auditing)
+[![Latest Unstable Version](https://poser.pugx.org/owen-it/laravel-auditing/v/unstable)](//packagist.org/packages/owen-it/laravel-auditing)
+[![License](https://poser.pugx.org/owen-it/laravel-auditing/license.svg)](https://packagist.org/packages/owen-it/laravel-auditing)
 
 É sempre importante ter o histórico de alterações dos registros no sistema. O Auditing faz exatamente isso de forma simples e prática, bastando você extende-lo na model que gostaria de registrar o log de alterações. 
 
@@ -184,4 +182,8 @@ Todos os pedidos de pull devem ser feitas para o branch develop, para que possam
 Se você está tendo problemas com o uso deste pacote, existe probabilidade de alguém já ter enfrentado o mesmo problema. Você pode procurar respostas comuns para os seus problemas em:
 
 * [Github Issues](https://github.com/owen-it/laravel-auditing/issues?page=1&state=closed)
+
+### License
+
+The laravel-auditing package is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
 
