@@ -46,12 +46,20 @@ php artisan migrate
 
 
 ## Docs
-
+* [Dreams (Exemplo)](#dreams)
 * [Implementação](#intro)
 * [Configuração](#config)
 * [Consultando o Log](#consulta)
 * [Contribuindo](#contributing)
 * [Tendo problemas?](#faq)
+
+
+<a name="dreams"></a>
+## Dreams (Exemplo)
+Dreams é uma api  desenvolvida para servir como exemplo ou direcionamento para desenvolvedores que utilizam laravel-auditing. Você pode acessar a aplicação [aqui](https://dreams-.herokuapp.com). O back-end (api) foi desenvolvido em laravel 5.1 e o front-end (app) em AngularJs, os detalhe estãos logo abaixo:
+* [Link para aplicação](https://dreams-.herokuapp.com) 
+* [Código fonte api-dreams](https://github.com/owen-it/api-dreams)
+* [Código fonte app-dreams](https://github.com/owen-it/app-dreams)
 
 <a name="intro"></a>
 ## Implementação
