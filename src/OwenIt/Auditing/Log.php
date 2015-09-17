@@ -129,10 +129,37 @@ class Log extends Model
         preg_match_all('/\{[\w.]+\}/', $message, $segments);
         foreach(current($segments) as $segment){
             $key = str_replace(['{', '}'], '', $segment);
-            $message = str_replace($segment, object_get($this, $key, $key), $message);
+            $message = str_replace($segment, $this->valueSegment($this, $key, $key), $message);
         }
  
         return $message;
+    }
+    
+    /**
+     * Get Value of segment
+     *
+     * @param $object
+     * @param $key
+     * @param $default
+     * @return mixed
+     */
+    public function valueSegment($object, $key, $default)
+    {
+        if (is_null($key) || trim($key) == '') {
+            return $object;
+        }
+
+        foreach (explode('.', $key) as $segment) 
+        {
+            $object = is_object($object) ? $object : (object) $object;
+            if (! isset($object->{$segment}) ) {
+                return $default;
+            }
+
+            $object = $object->{$segment};
+        }
+
+        return $object;
     }
 
 }
