@@ -86,6 +86,16 @@ class Log extends Model
     {
         return $this->historyOf();
     }
+        
+    /**
+     * Get elapsed time
+     * 
+     * @return mixed
+     */
+    public function getElapsedTimeAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
 
     /**
      * Custom output message
@@ -116,16 +126,6 @@ class Log extends Model
         } else {
             return false;
         }
-    }
-    
-    /**
-     * Get elapsed time
-     * 
-     * @return mixed
-     */
-    public function getElapsedTimeAttribute()
-    {
-        return $this->created_at->diffForHumans();
     }
     
     /**
