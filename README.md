@@ -80,7 +80,7 @@ class Pessoa extends Eloquent
 }
 ```
 
-> Traits exigem PHP >= 5.4
+> Nota: Traits exigem PHP >= 5.4
 
 ### Implementação baseada em Legacy class
 
@@ -96,7 +96,7 @@ class Pessoa extends Auditing
     ...    
 }
 ```
-> Observe que também trabalha com models namespaced.
+> Nota: Observe que também trabalha com models namespaced.
 
 <a name="config"></a>
 ### Configurações
@@ -147,12 +147,6 @@ class MyAppController extends BaseController
 }
 ```
 
-Exibindo valores registrados
-```php
-$log = $pessoa->logs->first();
-$newValue = $log->new_value; ou $log->new;
-$oldValue = $log->old_value; ou $log->old;
-```
 Obtendo logs com usuário responsável pela alteração e o model auditado
 ```php
 use OwenIt\Auditing\Log;
@@ -160,12 +154,79 @@ use OwenIt\Auditing\Log;
 $logs = Log::with(['owner', 'user'])->get();
 
 ```
-> Lembre-se de definir corretamente o model do usuário no arquivo ``` config/auth.php ```
+> Nota: Lembre-se de definir corretamente o model do usuário no arquivo ``` config/auth.php ```
 >```php
 > ...
 > 'model' => App\User::class,
 > ... 
 >```
+
+## Apresentando log
+
+É possível definir mensagens personalizadas para apresentação dos logs. Essas mensagens podem ser definidas tanto para o modelo como para campos especificos. A parte dinâmica da mensagem pode ser feita através de campos segmentados por ponto encapsulados por chaves ```{objeto.campo}```. 
+
+Defina as mensagens para o modelo:
+```php
+namespace App;
+
+use OwenIt\Auditing\Auditing;
+
+class Pessoa extends Auditing 
+{
+    ...
+
+	public static $logCustomMessage = '{user.nome} atualizou os dados de {old.nome}';
+	public static $logCustomFields = [
+	    'nome' => 'Antes {old.nome} | Depois {new.nome}',
+	    'cpf'  => 'Antes {old.cpf}  | Depois {new.cpf}' 
+	];
+	
+	...
+}
+```
+Obtendo registros de logs:
+```php
+    
+    // App\Http\MyAppController.php 
+    ...
+    
+    $pessoa = Pessoa::find(1); // Obtem pessoa
+    return View::make('auditing', array('logs' => $pessoa->logs));
+    
+    ...
+    
+```
+Apresentando registros de log:
+```php
+    // resources/views/my-app/auditing.html
+    ...
+    <ol>
+        @forelse($log as $logs)
+            <li>
+                {{ $log->customMessage }}
+                <ul>
+                    @forelse($custom as $log->customFields)
+                        <li>$custom</li>
+                    @endforelse
+                </ul>
+            </li>
+        @empty
+            <p>No logs</p>
+        @endforelse
+    </ol>
+    ...
+    
+```
+Resposta:
+<ol>
+  <li>Jhon Doe atualizou os dados de Rafael      
+    <ul>
+      <li>Antes Rafael | Depois Rafael França</li>
+      <li>Antes 00000000000 | Depois 11122233396 </li>
+    </ul>
+  </li>                
+  <li>...</li>
+</ol>
 
 <a name="contributing"></a>
 ## Contribuindo
