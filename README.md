@@ -194,7 +194,7 @@ Obtendo registros de logs:
     public function auditing()
     {
     	$pessoa = Pessoa::find(1); // Obtem pessoa
-    	return View::make('auditing', array('logs' => $pessoa->logs));
+    	return View::make('auditing', ['logs' => $pessoa->logs]); // Obtendo logs
     }
     ...
     
