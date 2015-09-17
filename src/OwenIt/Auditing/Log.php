@@ -144,5 +144,22 @@ class Log extends Model
     {
         return $this->created_at->diffForHumans();
     }
+    
+    /**
+     * Resolve custom message
+     *
+     * @param $message
+     * @return mixed
+     */
+    public function resolveCustomMessage($message)
+    {
+        preg_match_all('/\{[\w.]+\}/', $message, $segments);
+        foreach(current($segments) as $segment){
+            $key = str_replace(['{', '}'], '', $segment);
+            $message = str_replace($segment, object_get($this, $key, $key), $message);
+        }
+ 
+        return $message;
+    }
 
 }
