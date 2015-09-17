@@ -45,19 +45,6 @@ class Log extends Model
     }
 
     /**
-     * Returns the object we have the history of
-     *
-     * @return Object|false
-     */
-    public function historyOf()
-    {
-        if (class_exists($class = $this->owner_type)) {
-            return $class::find($this->owner_id);
-        }
-        return false;
-    }
-
-    /**
      * Returns data of model
      *
      * @return Object|false
