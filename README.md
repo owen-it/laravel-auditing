@@ -87,7 +87,7 @@ class Pessoa extends Eloquent
 Para manter o log das alterações do seu model usando Legacy class, você pode estender a class `OwnerIt\Auditing\Auditing`, exemplo:
 
 ```php
-namespace MyApp\Models;
+namespace App;
 
 use OwenIt\Auditing\Auditing;
 
@@ -108,9 +108,11 @@ As configurações do comportamento do Auditing são realizadas com a declaraç�
 * Desativar o log para campos específicos: `$dontKeep = ['campo1', 'campo2']`
 
 ```php
-namespace MyApp\Models;
+namespace App;
 
-class Pessoa extends Eloquent 
+use Illuminate\Database\Eloquent\Model;
+
+class Pessoa extends Model 
 {
     use OwenIt\Auditing\AuditingTrait;
 
