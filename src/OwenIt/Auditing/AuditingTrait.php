@@ -6,61 +6,61 @@ use OwenIt\Auditing\Log;
 
 trait AuditingTrait
 {
-    /**
-     * @var array
-     */
-    private $originalData = [];
-
-    /**
-     * @var array
-     */
-    private $updatedData = [];
-
-    /**
-     * @var boolean
-     */
-    private $updating = false;
-
-    /**
-     * @var array
-     */
-    protected $dontKeep = [];
-
-    /**
-     * @var array
-     */
-    protected $doKeep = [];
-
-    /**
-     * @var array
-     */
-    protected $dirtyData = [];
-
 	/**
-	 * @var bool
-	 */
+	* @var array
+	*/
+	private $originalData = [];
+	
+	/**
+	* @var array
+	*/
+	private $updatedData = [];
+	
+	/**
+	* @var boolean
+	*/
+	private $updating = false;
+	
+	/**
+	* @var array
+	*/
+	protected $dontKeep = [];
+	
+	/**
+	* @var array
+	*/
+	protected $doKeep = [];
+	
+	/**
+	* @var array
+	*/
+	protected $dirtyData = [];
+	
+	/**
+	* @var bool
+	*/
 	protected $auditEnabled = true;
+	
+	/**
+	* @var array
+	*/
+	protected $auditableTypes = ['created', 'saved', 'deleted'];
+	
+	/**
+	* @var string
+	*/
+	public static $logCustomMessage = '{type} in {created_at}';
+	
+	/**
+	* @var array
+	*/
+	public static $logCustomFields = [];
 
 	/**
-	 * @var array
-	 */
-	protected $auditableTypes = ['created', 'saved', 'deleted'];
-
-    /**
-     * @var string
-     */
-    public static $customMessage = '{type} in {created_at}';
-
-    /**
-     * @var array
-     */
-    public static $customFields = [];
-
-    /**
-     * Init auditing
-     */
-    public static function bootAuditingTrait()
-    {
+	* Init auditing
+	*/
+	public static function bootAuditingTrait()
+	{
 		static::saving(function ($model)
 		{
 			$model->prepareAudit();
@@ -85,7 +85,7 @@ trait AuditingTrait
 				$model->auditDeletion();
 			}
 		});
-    }
+    	}
 
 
 	/**
