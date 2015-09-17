@@ -94,25 +94,12 @@ class Log extends Model
      */
     public function getCustomMessageAttribute()
     {
-        $attributes = $this->attributes;
-        $patterns = [];
-        $replacements = [];
-        foreach($attributes as $field => $value)
-        {
-            $patterns[]     = "{{$field}}";
-            $replacements[] = "{$value}";
-        }
-
-        $message = class_exists($class = $this->owner_type) ?
-            $class::$customMessage : 'Model not found';
-
-        return str_replace(
-            $patterns,
-            $replacements,
-            $message
-        );
+        if( class_exists($class = $this->owner_type))
+            return $this->resolveCustomMessage($class::$logCustomMessage);
+        else
+            return false;
     }
-
+ 
     /**
      * Custom output fields
      *
@@ -120,19 +107,15 @@ class Log extends Model
      */
     public function getCustomFieldsAttribute()
     {
-        $newcustomFields = [];
-        $customFields    = class_exists($class = $this->owner_type) ?
-            $class::$customFields : [];
-
-        foreach($customFields as $field => $message)
-        {
-            $newcustomFields[$field] = str_replace(
-                ['{new}', '{old}'],
-                [$this->new_value[$field], $this->old_value[$field]],
-                $message
-            );
+        if(class_exists($class = $this->owner_type)){
+            $customFields = [];
+            foreach($class::$logCustomFields as $field => $message)
+                $customFields[$field] = $this->resolveCustomMessage($message);
+ 
+            return $customFields;
+        } else {
+            return false;
         }
-        return $newcustomFields;
     }
     
     /**
