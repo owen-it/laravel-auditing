@@ -76,16 +76,6 @@ class Log extends Model
     {
         return $this->new_value;
     }
-
-    /**
-     * Returns the object we have the history of
-     *
-     * @return false|Object
-     */
-    public function getHistoryOfAttribute()
-    {
-        return $this->historyOf();
-    }
         
     /**
      * Get elapsed time
