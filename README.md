@@ -134,29 +134,17 @@ class MyAppController extends BaseController
 
     public function index()
     {
-        $pessoa = Pessoa::find(1);
-        ...
+        $pessoa = Pessoa::find(1); // Obtem pessoa
+        $pessoa->logs; // Obtém todos os logs 
+        $pessoa->logs->first(); // Obtém o primeiro log registrado
+        $pessoa->logs->last();  // Obtém primeiro log registrado
+        $pessoa->logs->find(2); // Seleciona log
     }
 
     ...
 }
 ```
-Localizando todos os logs
-```php
-$pessoa->logs; 
-```
-Localiza o primeiro registro de log criado
-```php
-$pessoa->logs->first(); 
-```
-Localiza o último registro de log criado
-```php
-$pessoa->logs->last(); 
-```
-Selecionando registro de log
-```php
-$pessoa->logs->find(2); 
-```
+
 Exibindo valores registrados
 ```php
 $log = $pessoa->logs->first();
