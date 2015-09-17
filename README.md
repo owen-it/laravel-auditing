@@ -189,16 +189,17 @@ Obtendo registros de logs:
     
     // App\Http\MyAppController.php 
     ...
-    
-    $pessoa = Pessoa::find(1); // Obtem pessoa
-    return View::make('auditing', array('logs' => $pessoa->logs));
-    
+    public function auditing()
+    {
+    	$pessoa = Pessoa::find(1); // Obtem pessoa
+    	return View::make('auditing', array('logs' => $pessoa->logs));
+    }
     ...
     
 ```
 Apresentando registros de log:
 ```php
-    // resources/views/my-app/auditing.html
+    // resources/views/my-app/auditing.blade.php
     ...
     <ol>
         @forelse($log as $logs)
