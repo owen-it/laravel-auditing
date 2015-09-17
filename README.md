@@ -165,7 +165,7 @@ $logs = Log::with(['owner', 'user'])->get();
 <a name="apresentacao"></a>
 ## Apresentando log
 
-É possível definir mensagens personalizadas para apresentação dos logs. Essas mensagens podem ser definidas tanto para o modelo como para campos especificos. A parte dinâmica da mensagem pode ser feita através de campos segmentados por ponto encapsulados por chaves ```{objeto.campo}```. 
+É possível definir mensagens personalizadas para apresentação dos logs. Essas mensagens podem ser definidas tanto para o modelo como para campos especificos. A parte dinâmica da mensagem pode ser feita através de campos segmentados por ponto encapsulados por chaves `{objeto.campo}`. 
 
 Defina as mensagens para o modelo:
 ```php
