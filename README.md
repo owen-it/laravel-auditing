@@ -70,7 +70,9 @@ Dreams é uma api  desenvolvida para servir como exemplo ou direcionamento para 
 Para registrar o log de alterações, simplesmente adicione a trait `OwnerIt\Auditing\AuditingTrait` no model que deseja auditar, exemplo:
 
 ```php
-namespace MyApp\Models;
+// app/Models/Pessoa.php
+
+namespace App\Models;
 
 use OwenIt\Auditing\AuditingTrait;
 
@@ -88,7 +90,9 @@ class Pessoa extends Eloquent
 Para manter o log das alterações do seu model usando Legacy class, você pode estender a class `OwnerIt\Auditing\Auditing`, exemplo:
 
 ```php
-namespace App;
+// app/Models/Pessoa.php
+
+namespace App\Models;
 
 use OwenIt\Auditing\Auditing;
 
@@ -189,7 +193,7 @@ class Pessoa extends Auditing
 Obtendo registros de logs:
 ```php
     
-    // App\Http\MyAppController.php 
+    // app\Http\Controllers\MyAppController.php 
     ...
     public function auditing()
     {
