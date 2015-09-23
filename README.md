@@ -11,9 +11,9 @@
 
 > Auditing é baseado no package  [revisionable](https://packagist.org/packages/VentureCraft/revisionable)
 
-## Instalação
+## Installation
 
-Auditing é instalado via [composer](http://getcomposer.org/doc/00-intro.md), os detalhes estão em [packagist, aqui.](https://packagist.org/packages/owen-it/laravel-auditing)
+Auditing is installed with [composer](http://getcomposer.org/doc/00-intro.md), the details are  [here](https://packagist.org/packages/owen-it/laravel-auditing).
 
 Execute o seguinte comando para obter a versão mais recente do pacote:
 
