@@ -13,7 +13,7 @@ It is always important to have change history records in the system. The Auditin
 
 ## Installation
 
-Auditing is installable via [composer](http://getcomposer.org/doc/00-intro.md),the details are [here](https://packagist.org/packages/owen-it/laravel-auditing).
+Auditing is installable via [composer](http://getcomposer.org/doc/00-intro.md), the details are [here](https://packagist.org/packages/owen-it/laravel-auditing).
 
 Run the following command to get the latest version package
 
