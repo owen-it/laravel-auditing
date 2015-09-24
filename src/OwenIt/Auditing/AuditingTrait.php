@@ -15,46 +15,26 @@ trait AuditingTrait
 	* @var array
 	*/
 	private $updatedData = [];
+
+	/**
+	* @var array
+	*/
+	private $dontKeep = [];
+
+	/**
+	* @var array
+	*/
+	private $doKeep = [];
 	
 	/**
 	* @var boolean
 	*/
 	private $updating = false;
-	
-	/**
-	* @var array
-	*/
-	protected $dontKeep = [];
-	
-	/**
-	* @var array
-	*/
-	protected $doKeep = [];
-	
+
 	/**
 	* @var array
 	*/
 	protected $dirtyData = [];
-	
-	/**
-	* @var bool
-	*/
-	protected $auditEnabled = true;
-	
-	/**
-	* @var array
-	*/
-	protected $auditableTypes = ['created', 'saved', 'deleted'];
-	
-	/**
-	* @var string
-	*/
-	public static $logCustomMessage = '{type} in {created_at}';
-	
-	/**
-	* @var array
-	*/
-	public static $logCustomFields = [];
 
 	/**
 	* Init auditing
@@ -139,10 +119,12 @@ trait AuditingTrait
 				}
 			}
 
+			// Dont keep log of
 			$this->dontKeep = isset($this->dontKeepLogOf) ?
 				$this->dontKeepLogOf + $this->dontKeep
 				: $this->dontKeep;
 
+			// Keep log of
 			$this->doKeep = isset($this->keepLogOf) ?
 				$this->keepLogOf + $this->doKeep
 				: $this->doKeep;
@@ -331,7 +313,12 @@ trait AuditingTrait
 	 */
 	public function isTypeAuditable($key)
 	{
-		if (in_array($key, $this->auditableTypes)) {
+		$auditableTypes = isset($this->auditableTypes) 
+						  ? $this->auditableTypes 
+						  : ['created', 'saved', 'deleted'];
+
+		// Checks if the type is in the collection of type-auditable
+		if (in_array($key, $auditableTypes)) {
 			return true;
 		}
 

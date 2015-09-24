@@ -94,8 +94,8 @@ class Log extends Model
      */
     public function getCustomMessageAttribute()
     {
-        if( class_exists($class = $this->owner_type))
-            return $this->resolveCustomMessage($class::$logCustomMessage);
+        if( class_exists($class = $this->owner_type) )
+            return $this->resolveCustomMessage($this->getCustomMessage($class));
         else
             return false;
     }
@@ -107,15 +107,43 @@ class Log extends Model
      */
     public function getCustomFieldsAttribute()
     {
-        if(class_exists($class = $this->owner_type)){
+        if( class_exists($class = $this->owner_type) ){
             $customFields = [];
-            foreach($class::$logCustomFields as $field => $message)
+            foreach($this->getCustomFields($class) as $field => $message)
                 $customFields[$field] = $this->resolveCustomMessage($message);
  
             return $customFields;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get custom message
+     *
+     * @return String
+     */
+    public function getCustomMessage($class)
+    {
+        if( !isset($class::$logCustomMessage) ){
+            return 'Not defined custom message!';
+        }
+
+        return $class::$logCustomMessage;
+    }
+
+    /**
+     * Get custom fields
+     *
+     * @return String
+     */
+    public function getCustomFields($class)
+    {
+        if( !isset($class::$logCustomFields) ){
+            return [];
+        }
+
+        return $class::$logCustomFields;
     }
     
     /**
