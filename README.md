@@ -110,7 +110,7 @@ As configurações do comportamento do Auditing são realizadas com a declaraç�
 
 * Desativar o log após um numero "X": `$historyLimit = 500`
 * Desativar/ativar o log(Auditoria): `$auditEnabled = false`
-* Desativar o log para campos específicos: `$dontKeep = ['campo1', 'campo2']`
+* Desativar o log para campos específicos: `$dontKeepLogOf = ['campo1', 'campo2']`
 
 ```php
 namespace App;
@@ -121,9 +121,10 @@ class Pessoa extends Model
 {
     use OwenIt\Auditing\AuditingTrait;
 
-    protected $auditEnabled  = false;      // Desativa o registro de log nesta model.
-    protected $historyLimit = 500;         // Desativa o registro de log após 500 registros.
-    protected $dontKeep = ['cpf', 'nome']; // Informe os campos que NÃO deseja registrar no log.
+    protected $auditEnabled   = false;      // Desativa o registro de log nesta model.
+    protected $historyLimit   = 500;         // Desativa o registro de log após 500 registros.
+    protected $dontKeepLogOf  = ['cpf', 'nome']; // Informe os campos que NÃO deseja registrar no log.
+    protected $doKeepLogOf    = ['cpf', 'nome']; // Informe os campos que deseja registrar no log.
     protected $auditableTypes = ['created', 'saved', 'deleted']; // Informe quais ações deseja auditar
 }
 ```
@@ -208,12 +209,12 @@ Apresentando registros de log:
     // resources/views/my-app/auditing.blade.php
     ...
     <ol>
-        @forelse($log as $logs)
+        @forelse($logs as $log)
             <li>
                 {{ $log->customMessage }}
                 <ul>
-                    @forelse($custom as $log->customFields)
-                        <li>{{ $custom }}</li>
+                    @forelse($log->customFields as $field => $message)
+                        <li>{{ $message }}</li>
                     @endforelse
                 </ul>
             </li>
