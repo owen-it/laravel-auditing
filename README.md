@@ -37,8 +37,7 @@ Use the following command to publish settings:
 ```
 php artisan vendor:publish
 ```
-
-Agora vc precisa executar a migration para criar a tabela 'logs' na sua base de dados, é nesta tabela que serão registrados os logs.
+Now you need execute the mitration to create the table ```logs``` in your database, this table is used for save logs of altering.
 
 ```
 php artisan migrate
