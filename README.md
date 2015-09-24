@@ -213,7 +213,7 @@ Apresentando registros de log:
                 {{ $log->customMessage }}
                 <ul>
                     @forelse($custom as $log->customFields)
-                        <li>$custom</li>
+                        <li>{{ $custom }}</li>
                     @endforelse
                 </ul>
             </li>
