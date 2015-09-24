@@ -21,7 +21,7 @@ Run the following command to get the latest version package
 composer require owen-it/laravel-auditing
 ```
 
-Em seu arquivo `config/app.php` adicione `OwenIt\Auditing\AuditingServiceProvider::class` no final da lista de `providers`:
+In your file `config/app.php` add the provider `OwenIt\Auditing\AuditingServiceProvider::class` in the `providers` list:
 
 ```php
 'providers' => [
@@ -30,9 +30,9 @@ Em seu arquivo `config/app.php` adicione `OwenIt\Auditing\AuditingServiceProvide
 ],
 ```
 
-> Não deixe de registrar o provider, pois ele é requisito para as proximas etapas.
+> Note: This provider is important for the publication of configuration files.
 
-Publique as configurações usando o comando a seguir:
+Use the following command to publish settings:
 
 ```
 php artisan vendor:publish
