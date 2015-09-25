@@ -44,24 +44,25 @@ php artisan migrate
 
 
 ## Docs
-* [Dreams (Exemplo)](#dreams)
-* [Implementação](#intro)
-* [Configuração](#config)
-* [Consultando o Log](#consulta)
-* [Apresentando Log](#apresentacao)
-* [Contribuindo](#contributing)
-* [Tendo problemas?](#faq)
+* [Dreams (Exemplo)](#example)
+* [Implementation](#implementation)
+* [Configuration](#configuration)
+* [Getting the Logs](#getting)
+* [Featuring Log](#featuring)
+* [Contributing](#contributing)
+* [Having problems?](#faq)
+* [license](#license)
 
 
-<a name="dreams"></a>
+<a name="example"></a>
 ## Dreams (Exemplo)
 Dreams é uma api  desenvolvida para servir como exemplo ou direcionamento para desenvolvedores que utilizam laravel-auditing. Você pode acessar a aplicação [aqui](https://dreams-.herokuapp.com). O back-end (api) foi desenvolvido em laravel 5.1 e o front-end (app) em AngularJs, os detalhe estãos logo abaixo:
 * [Link para aplicação](https://dreams-.herokuapp.com) 
 * [Código fonte api-dreams](https://github.com/owen-it/api-dreams)
 * [Código fonte app-dreams](https://github.com/owen-it/app-dreams)
 
-<a name="intro"></a>
-## Implementação
+<a name="implementation"></a>
+## Implementation
 
 ### Implementação baseada em Trait
 
@@ -101,8 +102,8 @@ class Pessoa extends Auditing
 ```
 > Nota: Observe que também trabalha com models namespaced.
 
-<a name="config"></a>
-### Configurações
+<a name="configuration"></a>
+### Configuration
 
 As configurações do comportamento do Auditing são realizadas com a declaração de atributos na model. Veja os exemplos abaixo: 
 
@@ -126,8 +127,8 @@ class Pessoa extends Model
 }
 ```
 
-<a name="consulta"></a>
-## Consultando o Log
+<a name="getting"></a>
+## Getting the Logs
 
 ```php
 namespace App\Http\Controllers;
@@ -164,8 +165,8 @@ $logs = Log::with(['owner', 'user'])->get();
 > ... 
 >```
 
-<a name="apresentacao"></a>
-## Apresentando log
+<a name="featuring"></a>
+## Featuring Log
 
 É possível definir mensagens personalizadas para apresentação dos logs. Essas mensagens podem ser definidas tanto para o modelo como para campos especificos. A parte dinâmica da mensagem pode ser feita através de campos segmentados por ponto encapsulados por chaves `{objeto.campo}`. 
 
@@ -234,20 +235,21 @@ Resposta:
 </ol>
 
 <a name="contributing"></a>
-## Contribuindo
+## Contributing
 
 Contribuições são bem-vindas; para manter as coisas organizadas, todos os bugs e solicitações devem ser abertas na aba issues do github para o projeto principal, no [owen-it/laravel-auditing/issues](https://github.com/owen-it/laravel-auditing/issues)
 
 Todos os pedidos de pull devem ser feitas para o branch develop, para que possam ser testados antes de serem incorporados pela branch master.
 
 <a name="faq"></a>
-## Tendo problemas?
+## Having problems?
 
 Se você está tendo problemas com o uso deste pacote, existe probabilidade de alguém já ter enfrentado o mesmo problema. Você pode procurar respostas comuns para os seus problemas em:
 
 * [Github Issues](https://github.com/owen-it/laravel-auditing/issues?page=1&state=closed)
 
-### Licença
+<a name="license"></a>
+### License
 
 O pacote laravel-auditoria é software open-source licenciado sob a [licença MIT](http://opensource.org/licenses/MIT)
 
