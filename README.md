@@ -20,12 +20,11 @@ Run the following command to get the latest version package
 ```
 composer require owen-it/laravel-auditing
 ```
-
-In your file `config/app.php` add the provider `OwenIt\Auditing\AuditingServiceProvider::class` in the `providers` list:
+Open ```config/app.php``` and register the required service provider.
 
 ```php
 'providers' => [
-    ...
+    // ...
     OwenIt\Auditing\AuditingServiceProvider::class,
 ],
 ```
