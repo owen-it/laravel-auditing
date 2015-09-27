@@ -210,7 +210,7 @@ Getting change logs
     ...
     
 ```
-Apresentando registros de log:
+Featuring log records:
 ```php
     // resources/views/my-app/auditing.blade.php
     ...
@@ -233,10 +233,10 @@ Apresentando registros de log:
 ```
 Answer:
 <ol>
-  <li>Jhon Doe atualizou os dados de Rafael      
+  <li>Jhon Doe been updated by Rafael      
     <ul>
-      <li>Antes Rafael | Depois Rafael França</li>
-      <li>Antes 00000000000 | Depois 11122233396 </li>
+      <li>Before Rafael and after Rafael França</li>
+      <li>Before 00000000000 and after 11122233396</li>
     </ul>
   </li>                
   <li>...</li>
@@ -245,14 +245,14 @@ Answer:
 <a name="contributing"></a>
 ## Contributing
 
-Contribuições são bem-vindas; para manter as coisas organizadas, todos os bugs e solicitações devem ser abertas na aba issues do github para o projeto principal, no [owen-it/laravel-auditing/issues](https://github.com/owen-it/laravel-auditing/issues)
+Contributions are welcomed; to keep things organized, all bugs and requests should be opened on github issues tab for the main project in the [owen-it/laravel-auditing/issues](https://github.com/owen-it/laravel-auditing/issues).
 
-Todos os pedidos de pull devem ser feitas para o branch develop, para que possam ser testados antes de serem incorporados pela branch master.
+All pull requests should be made to the branch Develop, so they can be tested before being merged into the master branch.
 
 <a name="faq"></a>
 ## Having problems?
 
-Se você está tendo problemas com o uso deste pacote, existe probabilidade de alguém já ter enfrentado o mesmo problema. Você pode procurar respostas comuns para os seus problemas em:
+If you are having problems with the use of this package, there is likely someone has faced the same problem. You can find common answers to their problems:
 
 * [Github Issues](https://github.com/owen-it/laravel-auditing/issues?page=1&state=closed)
 
