@@ -259,5 +259,5 @@ If you are having problems with the use of this package, there is likely someone
 <a name="license"></a>
 ### License
 
-The laravel-audit package is open source software licensed under the [licença MIT](http://opensource.org/licenses/MIT)
+The laravel-audit package is open source software licensed under the [license MIT](http://opensource.org/licenses/MIT)
 
