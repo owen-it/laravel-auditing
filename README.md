@@ -121,9 +121,9 @@ class People extends Model
 {
     use OwenIt\Auditing\AuditingTrait;
 
-    protected $auditEnabled  = false;      // Desativa o registro de log nesta model.
-    protected $historyLimit = 500;         // Desativa o registro de log após 500 registros.
-    protected $dontKeep = ['cpf', 'nome']; // Informe os campos que NÃO deseja registrar no log.
+    protected $auditEnabled  = false;      // Disables the log record in this model.
+    protected $historyLimit = 500;         // Disables the log record after 500 records.
+    protected $dontKeep = ['cpf', 'nome']; // Enter the fields you want to NOT register with the log.
     protected $auditableTypes = ['created', 'saved', 'deleted']; // Informe quais ações deseja auditar
 }
 ```
@@ -204,8 +204,8 @@ Getting change logs
     ...
     public function auditing()
     {
-    	$pessoa = Pessoa::find(1); // Get people
-    	return View::make('auditing', ['logs' => $pessoa->logs]); // Get logs
+    	$people = People::find(1); // Get people
+    	return View::make('auditing', ['logs' => $people->logs]); // Get logs
     }
     ...
     
@@ -259,5 +259,5 @@ If you are having problems with the use of this package, there is likely someone
 <a name="license"></a>
 ### License
 
-O pacote laravel-auditoria é software open-source licenciado sob a [licença MIT](http://opensource.org/licenses/MIT)
+The laravel-audit package is open source software licensed under the [licença MIT](http://opensource.org/licenses/MIT)
 
