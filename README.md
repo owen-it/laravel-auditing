@@ -35,7 +35,7 @@ Em seu arquivo `config/app.php` adicione `OwenIt\Auditing\AuditingServiceProvide
 Publique as configurações usando o comando a seguir:
 
 ```
-php artisan vendor:publish
+php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
 ```
 
 Agora vc precisa executar a migration para criar a tabela 'logs' na sua base de dados, é nesta tabela que serão registrados os logs.
