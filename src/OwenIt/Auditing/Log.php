@@ -185,7 +185,7 @@ class Log extends Model
      * @param $default
      * @return mixed
      */
-    public function valueSegment($object, $key, $default)
+    public function getValueSegmented($object, $key, $default)
     {
         if (is_null($key) || trim($key) == '') {
             return $object;
