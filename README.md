@@ -1,44 +1,39 @@
 
-
-<img src="http://owen.com.br/imagens_para_web/auditing.png" style="width: 100%" alt="laravel-auditing" />
-
 [![Latest Stable Version](https://poser.pugx.org/owen-it/laravel-auditing/version)](https://packagist.org/packages/owen-it/laravel-auditing)
 [![Total Downloads](https://poser.pugx.org/owen-it/laravel-auditing/downloads)](https://packagist.org/packages/owen-it/laravel-auditing)
 [![Latest Unstable Version](https://poser.pugx.org/owen-it/laravel-auditing/v/unstable)](//packagist.org/packages/owen-it/laravel-auditing)
 [![License](https://poser.pugx.org/owen-it/laravel-auditing/license.svg)](https://packagist.org/packages/owen-it/laravel-auditing)
 
-É sempre importante ter o histórico de alterações dos registros no sistema. O Auditing faz exatamente isso de forma simples e prática, bastando você extende-lo na model que gostaria de registrar o log de alterações. 
+It is always important to have change history records in the system. The Auditing does just that simple and practical way, you simply extends it in the model you would like to register the change log. 
 
-> Auditing é baseado no package  [revisionable](https://packagist.org/packages/VentureCraft/revisionable)
+> Auditing is based on the package [revisionable](https://packagist.org/packages/VentureCraft/revisionable)
 
 ## Installation
 
-Auditing is installed with [composer](http://getcomposer.org/doc/00-intro.md), the details are  [here](https://packagist.org/packages/owen-it/laravel-auditing).
+Auditing is installable via [composer](http://getcomposer.org/doc/00-intro.md), the details are [here](https://packagist.org/packages/owen-it/laravel-auditing).
 
-Execute o seguinte comando para obter a versão mais recente do pacote:
+Run the following command to get the latest version package
 
 ```
 composer require owen-it/laravel-auditing
 ```
-
-Em seu arquivo `config/app.php` adicione `OwenIt\Auditing\AuditingServiceProvider::class` no final da lista de `providers`:
+Open ```config/app.php``` and register the required service provider.
 
 ```php
 'providers' => [
-    ...
+    // ...
     OwenIt\Auditing\AuditingServiceProvider::class,
 ],
 ```
 
-> Não deixe de registrar o provider, pois ele é requisito para as proximas etapas.
+> Note: This provider is important for the publication of configuration files.
 
-Publique as configurações usando o comando a seguir:
+Use the following command to publish settings:
 
 ```
 php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
 ```
-
-Agora vc precisa executar a migration para criar a tabela 'logs' na sua base de dados, é nesta tabela que serão registrados os logs.
+Now you need execute the mitration to create the table ```logs``` in your database, this table is used for save logs of altering.
 
 ```
 php artisan migrate
@@ -46,165 +41,174 @@ php artisan migrate
 
 
 ## Docs
-* [Dreams (Exemplo)](#dreams)
-* [Implementação](#intro)
-* [Configuração](#config)
-* [Consultando o Log](#consulta)
-* [Apresentando Log](#apresentacao)
-* [Contribuindo](#contributing)
-* [Tendo problemas?](#faq)
+* [Dreams (Example)](#example)
+* [Implementation](#implementation)
+* [Configuration](#configuration)
+* [Getting the Logs](#getting)
+* [Featuring Log](#featuring)
+* [Contributing](#contributing)
+* [Having problems?](#faq)
+* [license](#license)
 
 
-<a name="dreams"></a>
-## Dreams (Exemplo)
-Dreams é uma api  desenvolvida para servir como exemplo ou direcionamento para desenvolvedores que utilizam laravel-auditing. Você pode acessar a aplicação [aqui](https://dreams-.herokuapp.com). O back-end (api) foi desenvolvido em laravel 5.1 e o front-end (app) em AngularJs, os detalhe estãos logo abaixo:
-* [Link para aplicação](https://dreams-.herokuapp.com) 
-* [Código fonte api-dreams](https://github.com/owen-it/api-dreams)
-* [Código fonte app-dreams](https://github.com/owen-it/app-dreams)
+<a name="example"></a>
+## Dreams (Examle)
+Dreams is a developed api to serve as an example or direction for developers using laravel-auditing. You can access the application [here](https://dreams-.herokuapp.com). The back-end (api) was developed in laravel 5.1 and the front-end (app) in angularjs, the detail are these:
 
-<a name="intro"></a>
-## Implementação
+* [Link for application](https://dreams-.herokuapp.com) 
+* [Source code api-dreams](https://github.com/owen-it/api-dreams)
+* [Source code app-dreams](https://github.com/owen-it/app-dreams)
 
-### Implementação baseada em Trait
+<a name="implementation"></a>
+## Implementation
 
-Para registrar o log de alterações, simplesmente adicione a trait `OwnerIt\Auditing\AuditingTrait` no model que deseja auditar, exemplo:
+### Implementation using ```Trait```
+
+To register the change log, use the trait `OwnerIt\Auditing\AuditingTrait` in the model you want to audit
 
 ```php
-// app/Models/Pessoa.php
-
+// app/Models/People.php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\AuditingTrait;
 
-class Pessoa extends Eloquent 
+class People extends Model 
 {
     use AuditingTrait;
-    ...
+    //...
 }
+
 ```
 
-> Nota: Traits exigem PHP >= 5.4
+> Note: Traits require PHP >= 5.4
 
-### Implementação baseada em Legacy class
+### Base implementation Legacy Class
 
-Para manter o log das alterações do seu model usando Legacy class, você pode estender a class `OwnerIt\Auditing\Auditing`, exemplo:
+To register the chage log with Legacy class, extend the class `OwnerIt\Auditing\Auditing` in the model you want to audit. Example:
 
 ```php
-// app/Models/Pessoa.php
+// app/Models/People.php
 
 namespace App\Models;
 
 use OwenIt\Auditing\Auditing;
 
-class Pessoa extends Auditing 
+class People extends Auditing 
 {
-    ...    
+    //...    
 }
 ```
-> Nota: Observe que também trabalha com models namespaced.
 
-<a name="config"></a>
-### Configurações
+<a name="configuration"></a>
+### Configuration
 
-As configurações do comportamento do Auditing são realizadas com a declaração de atributos na model. Veja os exemplos abaixo: 
+The Auditing behavior settings are carried out with the declaration of attributes in the model. See the examples below:
 
-* Desativar o log após um numero "X": `$historyLimit = 500`
-* Desativar/ativar o log(Auditoria): `$auditEnabled = false`
-* Desativar o log para campos específicos: `$dontKeepLogOf = ['campo1', 'campo2']`
+* Turn off logging after a number "X": `$historyLimit = 500`
+* Disable / enable logging (Audit): `$auditEnabled = false`
+* Turn off logging for specific fields: `$dontKeep = ['campo1', 'campo2']`
+
 
 ```php
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pessoa extends Model 
+class People extends Model 
 {
     use OwenIt\Auditing\AuditingTrait;
 
-    protected $auditEnabled   = false;      // Desativa o registro de log nesta model.
-    protected $historyLimit   = 500;         // Desativa o registro de log após 500 registros.
-    protected $dontKeepLogOf  = ['cpf', 'nome']; // Informe os campos que NÃO deseja registrar no log.
-    protected $doKeepLogOf    = ['cpf', 'nome']; // Informe os campos que deseja registrar no log.
+    protected $auditEnabled  = false;      // Disables the log record in this model.
+    protected $historyLimit = 500;         // Disables the log record after 500 records.
+    protected $dontKeep = ['cpf', 'nome']; // Enter the fields you want to NOT register with the log.
     protected $auditableTypes = ['created', 'saved', 'deleted']; // Informe quais ações deseja auditar
 }
 ```
 
-<a name="consulta"></a>
-## Consultando o Log
+<a name="getting"></a>
+## Getting the Logs
 
 ```php
 namespace App\Http\Controllers;
 
-use App\Pessoa;
+use App\Models\People;
 
 class MyAppController extends BaseController 
 {
 
     public function index()
     {
-        $pessoa = Pessoa::find(1); // Obtem pessoa
-        $pessoa->logs; // Obtém todos os logs 
-        $pessoa->logs->first(); // Obtém o primeiro log registrado
-        $pessoa->logs->last();  // Obtém primeiro log registrado
-        $pessoa->logs->find(2); // Seleciona log
+        $people = People::find(1); // Get people
+        $people->logs; // Get all logs
+        $people->logs->first(); // Get first log
+        $people->logs->last();  // Get last log
+        $people->logs->find(2); // Selects log
     }
 
     ...
 }
 ```
-
-Obtendo logs com usuário responsável pela alteração e o model auditado
+Getting logs with user responsible for the change.
 ```php
 use OwenIt\Auditing\Log;
 
-$logs = Log::with(['owner', 'user'])->get();
+$logs = Log::with(['user'])->get();
 
 ```
-> Nota: Lembre-se de definir corretamente o model do usuário no arquivo ``` config/auth.php ```
+or
+```php
+use App\Models\People;
+
+$logs = People::logs->with(['user'])->get();
+
+```
+
+> Note: Remember to properly define the user model in the file ``` config/auth.php ```
 >```php
 > ...
 > 'model' => App\User::class,
 > ... 
 >```
 
-<a name="apresentacao"></a>
-## Apresentando log
+<a name="featuring"></a>
+## Featuring Log
 
-É possível definir mensagens personalizadas para apresentação dos logs. Essas mensagens podem ser definidas tanto para o modelo como para campos especificos. A parte dinâmica da mensagem pode ser feita através de campos segmentados por ponto encapsulados por chaves `{objeto.campo}`. 
+You it can set custom messages for presentation of logs. These messages can be set for both the model as for specific fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{objeto.field} or {objeto.objeto.field}`. 
 
-Defina as mensagens para o modelo:
+Set messages to the model
 ```php
 namespace App;
 
 use OwenIt\Auditing\Auditing;
 
-class Pessoa extends Auditing 
+class People extends Auditing 
 {
     ...
 
-	public static $logCustomMessage = '{user.nome} atualizou os dados de {old.nome}';
+	public static $logCustomMessage = '{user.nome} been updated by {old.nome}';
 	public static $logCustomFields = [
-	    'nome' => 'Antes {old.nome} | Depois {new.nome}',
-	    'cpf'  => 'Antes {old.cpf}  | Depois {new.cpf}' 
+	    'nome' => 'Before {old.nome} and after {new.nome}',
+	    'cpf'  => 'Before {old.cpf}  and after {new.cpf}' 
 	];
 	
 	...
 }
 ```
-Obtendo registros de logs:
+Getting change logs 
 ```php
     
     // app\Http\Controllers\MyAppController.php 
     ...
     public function auditing()
     {
-    	$pessoa = Pessoa::find(1); // Obtem pessoa
-    	return View::make('auditing', ['logs' => $pessoa->logs]); // Obtendo logs
+    	$people = People::find(1); // Get people
+    	return View::make('auditing', ['logs' => $people->logs]); // Get logs
     }
     ...
     
 ```
-Apresentando registros de log:
+Featuring log records:
 ```php
     // resources/views/my-app/auditing.blade.php
     ...
@@ -225,32 +229,33 @@ Apresentando registros de log:
     ...
     
 ```
-Resposta:
+Answer:
 <ol>
-  <li>Jhon Doe atualizou os dados de Rafael      
+  <li>Jhon Doe been updated by Rafael      
     <ul>
-      <li>Antes Rafael | Depois Rafael França</li>
-      <li>Antes 00000000000 | Depois 11122233396 </li>
+      <li>Before Rafael and after Rafael França</li>
+      <li>Before 00000000000 and after 11122233396</li>
     </ul>
   </li>                
   <li>...</li>
 </ol>
 
 <a name="contributing"></a>
-## Contribuindo
+## Contributing
 
-Contribuições são bem-vindas; para manter as coisas organizadas, todos os bugs e solicitações devem ser abertas na aba issues do github para o projeto principal, no [owen-it/laravel-auditing/issues](https://github.com/owen-it/laravel-auditing/issues)
+Contributions are welcomed; to keep things organized, all bugs and requests should be opened on github issues tab for the main project in the [owen-it/laravel-auditing/issues](https://github.com/owen-it/laravel-auditing/issues).
 
-Todos os pedidos de pull devem ser feitas para o branch develop, para que possam ser testados antes de serem incorporados pela branch master.
+All pull requests should be made to the branch Develop, so they can be tested before being merged into the master branch.
 
 <a name="faq"></a>
-## Tendo problemas?
+## Having problems?
 
-Se você está tendo problemas com o uso deste pacote, existe probabilidade de alguém já ter enfrentado o mesmo problema. Você pode procurar respostas comuns para os seus problemas em:
+If you are having problems with the use of this package, there is likely someone has faced the same problem. You can find common answers to their problems:
 
 * [Github Issues](https://github.com/owen-it/laravel-auditing/issues?page=1&state=closed)
 
-### Licença
+<a name="license"></a>
+### License
 
-O pacote laravel-auditoria é software open-source licenciado sob a [licença MIT](http://opensource.org/licenses/MIT)
+The laravel-audit package is open source software licensed under the [license MIT](http://opensource.org/licenses/MIT)
 
