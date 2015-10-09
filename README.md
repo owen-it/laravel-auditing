@@ -137,7 +137,6 @@ use App\Team;
 
 class MyAppController extends BaseController 
 {
-
     public function index()
     {
         $team = Team::find(1); // Get team
@@ -146,8 +145,7 @@ class MyAppController extends BaseController
         $team->logs->last();  // Get last log
         $team->logs->find(2); // Selects log
     }
-
-    ...
+    //...
 }
 ```
 Getting logs with user responsible for the change.
@@ -241,7 +239,7 @@ Answer:
       <li>No one was defined as owner</li>
     </ul>
   </li>
-  <li>Rafael França created a team 8 day ago   
+  <li>Rafael França deleted a team 2 day ago   
     <ul>
       <li>No details</li>
     </ul>
