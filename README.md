@@ -67,13 +67,13 @@ Dreams is a developed api to serve as an example or direction for developers usi
 To register the change log, use the trait `OwnerIt\Auditing\AuditingTrait` in the model you want to audit
 
 ```php
-// app/Models/People.php
-namespace App\Models;
+// app/Team.php
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\AuditingTrait;
 
-class People extends Model 
+class Team extends Model 
 {
     use AuditingTrait;
     //...
@@ -88,13 +88,12 @@ class People extends Model
 To register the chage log with Legacy class, extend the class `OwnerIt\Auditing\Auditing` in the model you want to audit. Example:
 
 ```php
-// app/Models/People.php
-
-namespace App\Models;
+// app/Team.php
+namespace App;
 
 use OwenIt\Auditing\Auditing;
 
-class People extends Auditing 
+class Team extends Auditing 
 {
     //...    
 }
@@ -111,17 +110,18 @@ The Auditing behavior settings are carried out with the declaration of attribute
 
 
 ```php
+// app/Team.php
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class People extends Model 
+class Team extends Model 
 {
     use OwenIt\Auditing\AuditingTrait;
 
     protected $auditEnabled  = false;      // Disables the log record in this model.
     protected $historyLimit = 500;         // Disables the log record after 500 records.
-    protected $dontKeep = ['cpf', 'nome']; // Enter the fields you want to NOT register with the log.
+    protected $dontKeep = ['created_at', 'updated_at'']; // Fields you do NOT want to register.
     protected $auditableTypes = ['created', 'saved', 'deleted']; // Informe quais ações deseja auditar
 }
 ```
@@ -130,20 +130,21 @@ class People extends Model
 ## Getting the Logs
 
 ```php
+// app/Http/Controller/MyAppController.php
 namespace App\Http\Controllers;
 
-use App\Models\People;
+use App\Team;
 
 class MyAppController extends BaseController 
 {
 
     public function index()
     {
-        $people = People::find(1); // Get people
-        $people->logs; // Get all logs
-        $people->logs->first(); // Get first log
-        $people->logs->last();  // Get last log
-        $people->logs->find(2); // Selects log
+        $team = Team::find(1); // Get team
+        $team->logs; // Get all logs
+        $team->logs->first(); // Get first log
+        $team->logs->last();  // Get last log
+        $team->logs->find(2); // Selects log
     }
 
     ...
@@ -158,9 +159,9 @@ $logs = Log::with(['user'])->get();
 ```
 or
 ```php
-use App\Models\People;
+use App\Team;
 
-$logs = People::logs->with(['user'])->get();
+$logs = Team::logs->with(['user'])->get();
 
 ```
 
@@ -178,34 +179,35 @@ You it can set custom messages for presentation of logs. These messages can be s
 
 Set messages to the model
 ```php
+// app/Team.php
 namespace App;
 
 use OwenIt\Auditing\Auditing;
 
-class People extends Auditing 
+class Team extends Auditing 
 {
-    ...
-
-	public static $logCustomMessage = '{user.nome} been updated by {old.nome}';
-	public static $logCustomFields = [
-	    'nome' => 'Before {old.nome} and after {new.nome}',
-	    'cpf'  => 'Before {old.cpf}  and after {new.cpf}' 
-	];
-	
-	...
+    //...
+    public static $logCustomMessage = '{user.name|Anonymous} {type} a team {elapsed_time}';
+    public static $logCustomFields = [
+        'name'  => 'The name was defined as {new.name}',
+        'owner' => [
+            'updated' => '{new.owner} owns the team',
+            'created' => '{new.owner|No one} was defined as owner'
+        ],
+    ];
+    //...
 }
 ```
 Getting change logs 
 ```php
-    
-    // app\Http\Controllers\MyAppController.php 
-    ...
-    public function auditing()
-    {
-    	$people = People::find(1); // Get people
-    	return View::make('auditing', ['logs' => $people->logs]); // Get logs
-    }
-    ...
+// app/Http/Controllers/MyAppController.php 
+//...
+public function auditing()
+{
+    $logs = Team::find(1)->logs; // Get logs of team
+    return view('auditing', compact('logs'));
+}
+//...
     
 ```
 Featuring log records:
@@ -213,12 +215,14 @@ Featuring log records:
     // resources/views/my-app/auditing.blade.php
     ...
     <ol>
-        @forelse($logs as $log)
+        @forelse ($logs as $log)
             <li>
                 {{ $log->customMessage }}
                 <ul>
-                    @forelse($log->customFields as $field => $message)
-                        <li>{{ $message }}</li>
+                    @forelse ($log->customFields as $custom)
+                        <li>{{ $custom }}</li>
+                    @empty
+                        <li>No details</li>
                     @endforelse
                 </ul>
             </li>
@@ -231,12 +235,17 @@ Featuring log records:
 ```
 Answer:
 <ol>
-  <li>Jhon Doe been updated by Rafael      
+  <li>Antério Vieira created a team 1 day ago   
     <ul>
-      <li>Before Rafael and after Rafael França</li>
-      <li>Before 00000000000 and after 11122233396</li>
+      <li>The name was defined as gestao</li>
+      <li>No one was defined as owner</li>
     </ul>
-  </li>                
+  </li>
+  <li>Rafael França created a team 8 day ago   
+    <ul>
+      <li>No details</li>
+    </ul>
+  </li>  
   <li>...</li>
 </ol>
 
