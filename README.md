@@ -1,7 +1,4 @@
 
-
-<img src="http://owen.com.br/imagens_para_web/auditing.png" style="width: 100%" alt="laravel-auditing" />
-
 [![Latest Stable Version](https://poser.pugx.org/owen-it/laravel-auditing/version)](https://packagist.org/packages/owen-it/laravel-auditing)
 [![Total Downloads](https://poser.pugx.org/owen-it/laravel-auditing/downloads)](https://packagist.org/packages/owen-it/laravel-auditing)
 [![Latest Unstable Version](https://poser.pugx.org/owen-it/laravel-auditing/v/unstable)](//packagist.org/packages/owen-it/laravel-auditing)
@@ -34,7 +31,7 @@ Open ```config/app.php``` and register the required service provider.
 Use the following command to publish settings:
 
 ```
-php artisan vendor:publish
+php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
 ```
 Now you need execute the mitration to create the table ```logs``` in your database, this table is used for save logs of altering.
 
@@ -111,6 +108,7 @@ The Auditing behavior settings are carried out with the declaration of attribute
 * Turn off logging after a number "X": `$historyLimit = 500`
 * Disable / enable logging (Audit): `$auditEnabled = false`
 * Turn off logging for specific fields: `$dontKeep = ['campo1', 'campo2']`
+
 
 ```php
 namespace App;
@@ -215,12 +213,12 @@ Featuring log records:
     // resources/views/my-app/auditing.blade.php
     ...
     <ol>
-        @forelse($log as $logs)
+        @forelse($logs as $log)
             <li>
                 {{ $log->customMessage }}
                 <ul>
-                    @forelse($custom as $log->customFields)
-                        <li>$custom</li>
+                    @forelse($log->customFields as $field => $message)
+                        <li>{{ $message }}</li>
                     @endforelse
                 </ul>
             </li>

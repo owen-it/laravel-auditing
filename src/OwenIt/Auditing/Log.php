@@ -94,8 +94,8 @@ class Log extends Model
      */
     public function getCustomMessageAttribute()
     {
-        if( class_exists($class = $this->owner_type))
-            return $this->resolveCustomMessage($class::$logCustomMessage);
+        if( class_exists($class = $this->owner_type) )
+            return $this->resolveCustomMessage($this->getCustomMessage($class));
         else
             return false;
     }
@@ -107,15 +107,52 @@ class Log extends Model
      */
     public function getCustomFieldsAttribute()
     {
-        if(class_exists($class = $this->owner_type)){
+        if( class_exists($class = $this->owner_type) ){
             $customFields = [];
-            foreach($class::$logCustomFields as $field => $message)
-                $customFields[$field] = $this->resolveCustomMessage($message);
- 
+            foreach($this->getCustomFields($class) as $field => $message){
+                // Custom message
+                $customMessage = $this->resolveCustomMessage(
+                    array_get($message, $this->type, $message)
+                );
+
+                // Check if message was custom
+                if($customMessage){
+                    $customFields[$field] = $customMessage;
+                }
+            }
+
             return $customFields;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get custom message
+     *
+     * @return String
+     */
+    public function getCustomMessage($class)
+    {
+        if( !isset($class::$logCustomMessage) ){
+            return 'Not defined custom message!';
+        }
+
+        return $class::$logCustomMessage;
+    }
+
+    /**
+     * Get custom fields
+     *
+     * @return String
+     */
+    public function getCustomFields($class)
+    {
+        if( !isset($class::$logCustomFields) ){
+            return [];
+        }
+
+        return $class::$logCustomFields;
     }
     
     /**
@@ -126,12 +163,17 @@ class Log extends Model
      */
     public function resolveCustomMessage($message)
     {
-        preg_match_all('/\{[\w.]+\}/', $message, $segments);
+        preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
         foreach(current($segments) as $segment){
-            $key = str_replace(['{', '}'], '', $segment);
-            $message = str_replace($segment, $this->valueSegment($this, $key, $key), $message);
+            $s = str_replace(['{', '}'], '', $segment);
+            $keys = explode('|', $s);
+            $valueSegmented = $this->getValueSegmented($this, $keys[0], isset($keys[1]) ? $keys[1] : false);
+            if(!$valueSegmented){
+                return false;
+            }
+            $message = str_replace($segment, $valueSegmented, $message);
         }
- 
+
         return $message;
     }
     
@@ -143,7 +185,7 @@ class Log extends Model
      * @param $default
      * @return mixed
      */
-    public function valueSegment($object, $key, $default)
+    public function getValueSegmented($object, $key, $default)
     {
         if (is_null($key) || trim($key) == '') {
             return $object;
