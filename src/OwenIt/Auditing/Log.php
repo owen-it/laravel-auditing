@@ -110,14 +110,10 @@ class Log extends Model
         if( class_exists($class = $this->owner_type) ){
             $customFields = [];
             foreach($this->getCustomFields($class) as $field => $message){
-                // Custom message
-                $customMessage = $this->resolveCustomMessage(
-                    array_get($message, $this->type, $message)
-                );
-
-                // Check if message was custom
-                if($customMessage){
-                    $customFields[$field] = $customMessage;
+                if(is_array($message) && isset($message[$this->type])){
+                    $customFields[$field] = $this->resolveCustomMessage($message[$this->type]);
+                } elseif(is_string($message)) {
+                    $customFields[$field] = $this->resolveCustomMessage($message);
                 }
             }
 
