@@ -231,7 +231,7 @@ Featuring log records:
     ...
     
 ```
-Answer:
+Result:
 <ol>
   <li>Antério Vieira created a team 1 day ago   
     <ul>
