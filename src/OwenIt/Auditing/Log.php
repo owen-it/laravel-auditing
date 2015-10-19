@@ -211,7 +211,7 @@ class Log extends Model
     public function getValueSegmented($object, $key, $default)
     {
         if (is_null($key) || trim($key) == '') {
-            return $object;
+            return $default;
         }
 
         foreach (explode('.', $key) as $segment) 
