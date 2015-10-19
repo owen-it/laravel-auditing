@@ -173,7 +173,7 @@ $logs = Team::logs->with(['user'])->get();
 <a name="featuring"></a>
 ## Featuring Log
 
-You it can set custom messages for presentation of logs. These messages can be set for both the model as for specific fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{objeto.field} or {objeto.objeto.field}`. 
+You it can set custom messages for presentation of logs. These messages can be set for both the model as for specific fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{objeto.value.value} or {object.value|Default value} or {object.value||callbackMethod}`. 
 
 Set messages to the model
 ```php
@@ -185,14 +185,19 @@ use OwenIt\Auditing\Auditing;
 class Team extends Auditing 
 {
     //...
-    public static $logCustomMessage = '{user.name|Anonymous} {type} a team {elapsed_time}';
+    public static $logCustomMessage = '{user.name|Anonymous} {type} a team {elapsed_time}'; // with default value
     public static $logCustomFields = [
-        'name'  => 'The name was defined as {new.name}',
+        'name'  => 'The name was defined as {new.name||getNewName}', // with callback method
         'owner' => [
             'updated' => '{new.owner} owns the team',
             'created' => '{new.owner|No one} was defined as owner'
         ],
     ];
+    
+    public function getNewName($log)
+    {
+        return $log->new['name'];
+    }
     //...
 }
 ```
