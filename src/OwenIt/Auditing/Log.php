@@ -25,6 +25,13 @@ class Log extends Model
     protected $appends = ['custom_message', 'custom_fields', 'elapsed_time'];
 
     /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected $with = ['user', 'owner'];
+
+    /**
      * Get model auditing
      *
      * @return array revision history
