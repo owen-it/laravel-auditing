@@ -170,6 +170,11 @@ class Log extends Model
         foreach(current($segments) as $segment){
             $s = str_replace(['{', '}'], '', $segment);
             $keys = explode('|', $s);
+
+            if(empty($keys[1]) && isset($keys[2])){
+                $keys[1] = $this->callback($keys[2]);
+            }
+
             $valueSegmented = $this->getValueSegmented($this, $keys[0], isset($keys[1]) ? $keys[1] : false);
             if(!$valueSegmented){
                 return false;
@@ -178,6 +183,21 @@ class Log extends Model
         }
 
         return $message;
+    }
+
+    /**
+     * Message callback
+     *
+     * @param $function
+     * @return mixed
+     */
+    public function callback($method)
+    {
+        if(method_exists($this->owner, $method)){
+            return $this->owner->{$method}($this);
+        }
+
+        return;
     }
     
     /**
