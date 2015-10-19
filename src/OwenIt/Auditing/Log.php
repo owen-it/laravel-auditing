@@ -124,7 +124,7 @@ class Log extends Model
                 }
             }
 
-            return $customFields;
+            return array_filter($customFields);
         } else {
             return false;
         }
