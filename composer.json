@@ -1,6 +1,6 @@
 {
     "name": "owen-it/laravel-auditing",
-    "description": "Keep a change history for your models using laravel version 5.1.",
+    "description": "Keep a change history for your models using laravel version 5.1.*",
     "keywords": ["log", "auditing", "laravel", "register", "observe"],
     "homepage": "https://github.com/owen-it/laravel-auditing",
     "type": "package",
@@ -11,14 +11,14 @@
             "email": "anteriovieira@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.5.9",
         "illuminate/support": "~5.0|~5.1"
     },
     "autoload": {
         "psr-4": {
-            "OwenIt\\Auditing\\": "src"
+            "OwenIt\\Auditing\\": "src/"
         }
-    }
+    },    
+    "minimum-stability": "dev"
 }
