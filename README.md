@@ -41,23 +41,14 @@ php artisan migrate
 
 
 ## Docs
-* [Dreams (Example)](#example)
 * [Implementation](#implementation)
 * [Configuration](#configuration)
 * [Getting the Logs](#getting)
-* [Featuring Log](#featuring)
+* [Customizing log message](#customizing)
+* [Examples](#examples)
 * [Contributing](#contributing)
 * [Having problems?](#faq)
 * [license](#license)
-
-
-<a name="example"></a>
-## Dreams (Examle)
-Dreams is a developed api to serve as an example or direction for developers using laravel-auditing. You can access the application [here](https://dreams-.herokuapp.com). The back-end (api) was developed in laravel 5.1 and the front-end (app) in angularjs, the detail are these:
-
-* [Link for application](https://dreams-.herokuapp.com) 
-* [Source code api-dreams](https://github.com/owen-it/api-dreams)
-* [Source code app-dreams](https://github.com/owen-it/app-dreams)
 
 <a name="implementation"></a>
 ## Implementation
@@ -170,10 +161,12 @@ $logs = Team::logs->with(['user'])->get();
 > ... 
 >```
 
-<a name="featuring"></a>
-## Featuring Log
+<a name="customizing"></a>
+## Customizing log message
 
 You it can set custom messages for presentation of logs. These messages can be set for both the model as for specific fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{objeto.value.value} or {object.value|Default value} or {object.value||callbackMethod}`. 
+
+> Note: This implementation is optional, you can make these customizations where desired.
 
 Set messages to the model
 ```php
@@ -251,6 +244,19 @@ Result:
   </li>  
   <li>...</li>
 </ol>
+
+<a name="examples"></a>
+## Examples
+
+##### Auditing teams
+For convenience we decided to use the [spark](https://github.com/laravel/spark) for this example, the demonstration of auditing is simple and self explanatory. [Click here](https://github.com/anteriovieira/auditing-teams) and see for yourself.
+
+##### Dreams
+Dreams is a developed api to serve as an example or direction for developers using laravel-auditing. You can access the application [here](https://dreams-.herokuapp.com). The back-end (api) was developed in laravel 5.1 and the front-end (app) in angularjs, the detail are these:
+
+* [Link for application](https://dreams-.herokuapp.com) 
+* [Source code api-dreams](https://github.com/owen-it/api-dreams)
+* [Source code app-dreams](https://github.com/owen-it/app-dreams)
 
 <a name="contributing"></a>
 ## Contributing
