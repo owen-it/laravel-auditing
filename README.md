@@ -109,11 +109,14 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model 
 {
     use OwenIt\Auditing\AuditingTrait;
-
-    protected $auditEnabled  = false;      // Disables the log record in this model.
-    protected $historyLimit = 500;         // Disables the log record after 500 records.
-    protected $dontKeep = ['created_at', 'updated_at']; // Fields you do NOT want to register.
-    protected $auditableTypes = ['created', 'saved', 'deleted']; // Informe quais ações deseja auditar
+    // Disables the log record in this model.
+    protected $auditEnabled  = false;
+    // Disables the log record after 500 records.
+    protected $historyLimit = 500; 
+    // Fields you do NOT want to register.
+    protected $dontKeep = ['created_at', 'updated_at'];
+    // Tell what actions you want to audit.
+    protected $auditableTypes = ['created', 'saved', 'deleted'];
 }
 ```
 
