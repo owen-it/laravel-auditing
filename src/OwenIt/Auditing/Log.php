@@ -12,13 +12,14 @@ class Log extends Model
     public $table = 'logs';
 
     /**
-     * Cast values
+     * Cast values.
+     *
      * @var array
      */
     protected $casts = ['old_value' => 'json', 'new_value' => 'json'];
 
     /**
-     * Added attribute
+     * Added attribute.
      *
      * @var array
      */
@@ -32,7 +33,7 @@ class Log extends Model
     protected $with = ['user', 'owner'];
 
     /**
-     * Get model auditing
+     * Get model auditing.
      *
      * @return array revision history
      */
@@ -40,9 +41,9 @@ class Log extends Model
     {
         return $this->morphTo();
     }
-    
+
     /**
-     * Author responsible for the change
+     * Author responsible for the change.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -52,22 +53,25 @@ class Log extends Model
     }
 
     /**
-     * Returns data of model
+     * Returns data of model.
      *
-     * @return Object|false
+     * @return object|false
      */
     public function restore()
     {
         if (class_exists($class = $this->owner_type)) {
             $model = $this->$class->findOrFail($this->owner_id);
             $model->fill($this->old_value);
+
             return $model->save();
         }
+
         return false;
     }
 
     /**
-     * Get old value
+     * Get old value.
+     *
      * @return mixed
      */
     public function getOldAttribute()
@@ -76,16 +80,17 @@ class Log extends Model
     }
 
     /**
-     * Get new value
+     * Get new value.
+     *
      * @return mixed
      */
     public function getNewAttribute()
     {
         return $this->new_value;
     }
-        
+
     /**
-     * Get elapsed time
+     * Get elapsed time.
      * 
      * @return mixed
      */
@@ -95,31 +100,32 @@ class Log extends Model
     }
 
     /**
-     * Custom output message
+     * Custom output message.
      *
      * @return mixed
      */
     public function getCustomMessageAttribute()
     {
-        if( class_exists($class = $this->owner_type) )
+        if (class_exists($class = $this->owner_type)) {
             return $this->resolveCustomMessage($this->getCustomMessage($class));
-        else
+        } else {
             return false;
+        }
     }
- 
+
     /**
-     * Custom output fields
+     * Custom output fields.
      *
      * @return array
      */
     public function getCustomFieldsAttribute()
     {
-        if( class_exists($class = $this->owner_type) ){
+        if (class_exists($class = $this->owner_type)) {
             $customFields = [];
-            foreach($this->getCustomFields($class) as $field => $message){
-                if(is_array($message) && isset($message[$this->type])){
+            foreach ($this->getCustomFields($class) as $field => $message) {
+                if (is_array($message) && isset($message[$this->type])) {
                     $customFields[$field] = $this->resolveCustomMessage($message[$this->type]);
-                } elseif(is_string($message)) {
+                } elseif (is_string($message)) {
                     $customFields[$field] = $this->resolveCustomMessage($message);
                 }
             }
@@ -131,13 +137,13 @@ class Log extends Model
     }
 
     /**
-     * Get custom message
+     * Get custom message.
      *
-     * @return String
+     * @return string
      */
     public function getCustomMessage($class)
     {
-        if( !isset($class::$logCustomMessage) ){
+        if (!isset($class::$logCustomMessage)) {
             return 'Not defined custom message!';
         }
 
@@ -145,38 +151,39 @@ class Log extends Model
     }
 
     /**
-     * Get custom fields
+     * Get custom fields.
      *
-     * @return String
+     * @return string
      */
     public function getCustomFields($class)
     {
-        if( !isset($class::$logCustomFields) ){
+        if (!isset($class::$logCustomFields)) {
             return [];
         }
 
         return $class::$logCustomFields;
     }
-    
+
     /**
-     * Resolve custom message
+     * Resolve custom message.
      *
      * @param $message
+     *
      * @return mixed
      */
     public function resolveCustomMessage($message)
     {
         preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
-        foreach(current($segments) as $segment){
+        foreach (current($segments) as $segment) {
             $s = str_replace(['{', '}'], '', $segment);
             $keys = explode('|', $s);
 
-            if(empty($keys[1]) && isset($keys[2])){
+            if (empty($keys[1]) && isset($keys[2])) {
                 $keys[1] = $this->callback($keys[2]);
             }
 
             $valueSegmented = $this->getValueSegmented($this, $keys[0], isset($keys[1]) ? $keys[1] : false);
-            if(!$valueSegmented){
+            if (!$valueSegmented) {
                 return false;
             }
             $message = str_replace($segment, $valueSegmented, $message);
@@ -186,26 +193,28 @@ class Log extends Model
     }
 
     /**
-     * Message callback
+     * Message callback.
      *
      * @param $function
+     *
      * @return mixed
      */
     public function callback($method)
     {
-        if(method_exists($this->owner, $method)){
+        if (method_exists($this->owner, $method)) {
             return $this->owner->{$method}($this);
         }
 
         return;
     }
-    
+
     /**
-     * Get Value of segment
+     * Get Value of segment.
      *
      * @param $object
      * @param $key
      * @param $default
+     *
      * @return mixed
      */
     public function getValueSegmented($object, $key, $default)
@@ -214,10 +223,9 @@ class Log extends Model
             return $default;
         }
 
-        foreach (explode('.', $key) as $segment) 
-        {
+        foreach (explode('.', $key) as $segment) {
             $object = is_array($object) ? (object) $object : $object;
-            if (! isset($object->{$segment}) ) {
+            if (!isset($object->{$segment})) {
                 return $default;
             }
 
@@ -226,5 +234,4 @@ class Log extends Model
 
         return $object;
     }
-
 }

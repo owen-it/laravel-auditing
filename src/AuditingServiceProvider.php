@@ -6,7 +6,6 @@ use Illuminate\Support\ServiceProvider;
 
 /**
  * This is the owen auditing service provider class.
- *
  */
 class AuditingServiceProvider extends ServiceProvider
 {
@@ -39,7 +38,6 @@ class AuditingServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
     }
 
     /**
@@ -51,5 +49,4 @@ class AuditingServiceProvider extends ServiceProvider
     {
         return [];
     }
-
 }
