@@ -3,30 +3,27 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Log;
-
 class Auditing extends Model
 {
+    use AuditingTrait;
 
-	use AuditingTrait;
+    /**
+     * @var bool
+     */
+    protected $auditEnabled = true;
 
-	/**
-	* @var bool
-	*/
-	protected $auditEnabled = true;
+    /**
+     * @var array
+     */
+    protected $auditableTypes = ['created', 'saved', 'deleted'];
 
-	/**
-	* @var array
-	*/
-	protected $auditableTypes = ['created', 'saved', 'deleted'];
+    /**
+     * @var string
+     */
+    public static $logCustomMessage = '{type} in {created_at}';
 
-	/**
-	* @var string
-	*/
-	public static $logCustomMessage = '{type} in {created_at}';
-	
-	/**
-	* @var array
-	*/
-	public static $logCustomFields = [];
+    /**
+     * @var array
+     */
+    public static $logCustomFields = [];
 }

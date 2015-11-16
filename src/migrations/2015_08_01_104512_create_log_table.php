@@ -18,7 +18,7 @@ class CreateLogTable extends Migration
             $table->integer('owner_id');
             $table->text('old_value')->nullable();
             $table->text('new_value')->nullable();
-			$table->string('type');
+            $table->string('type');
             $table->timestamps();
         });
     }
