@@ -97,7 +97,7 @@ The Auditing behavior settings are carried out with the declaration of attribute
 
 * Turn off logging after a number "X": `$historyLimit = 500`
 * Disable / enable logging (Audit): `$auditEnabled = false`
-* Turn off logging for specific fields: `$dontKeep = ['campo1', 'campo2']`
+* Turn off logging for specific fields: `$dontKeepLogOf = ['field1', 'field2']`
 
 
 ```php
@@ -114,7 +114,7 @@ class Team extends Model
     // Disables the log record after 500 records.
     protected $historyLimit = 500; 
     // Fields you do NOT want to register.
-    protected $dontKeep = ['created_at', 'updated_at'];
+    protected $dontKeepLogOf = ['created_at', 'updated_at'];
     // Tell what actions you want to audit.
     protected $auditableTypes = ['created', 'saved', 'deleted'];
 }
