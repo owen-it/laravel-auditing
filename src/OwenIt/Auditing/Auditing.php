@@ -3,6 +3,7 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Database\Eloquent\Model;
+
 class Auditing extends Model
 {
     use AuditingTrait;
