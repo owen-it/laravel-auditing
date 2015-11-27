@@ -26,7 +26,7 @@ class AuditingServiceProvider extends ServiceProvider
      */
     protected function setupMigrations()
     {
-        $source = realpath(__DIR__.'/migrations/');
+        $source = realpath(__DIR__.'/../migrations/');
 
         $this->publishes([$source => database_path('migrations')], 'migrations');
     }
