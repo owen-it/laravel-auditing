@@ -2,9 +2,9 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Application as LaravelApp;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * This is the owen auditing service provider class.
