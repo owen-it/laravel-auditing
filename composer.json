@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "OwenIt\\Auditing\\": "src/"
+            "OwenIt\\Auditing\\": "src/OwenIt/"
         }
     },    
     "minimum-stability": "dev"
