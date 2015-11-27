@@ -18,7 +18,10 @@
     "autoload": {
         "psr-4": {
             "OwenIt\\Auditing\\": "src/OwenIt/"
-        }
+        },
     },    
+    "autoload-dev": {
+	"classmap": ["tests"]
+    },
     "minimum-stability": "dev"
 }
