@@ -210,7 +210,7 @@ public function auditing()
     
 ```
 Featuring log records:
-```php
+```
     // resources/views/my-app/auditing.blade.php
     ...
     <ol>
