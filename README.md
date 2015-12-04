@@ -167,7 +167,7 @@ $logs = Team::logs->with(['user'])->get();
 <a name="customizing"></a>
 ## Customizing log message
 
-You it can set custom messages for presentation of logs. These messages can be set for both the model as for specific fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{objeto.value.value} or {object.value|Default value} or {object.value||callbackMethod}`. 
+You it can set custom messages for presentation of logs. These messages can be set for both the model as for specific fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{object.value.value} or {object.value|Default value} or {object.value||callbackMethod}`. 
 
 > Note: This implementation is optional, you can make these customizations where desired.
 
