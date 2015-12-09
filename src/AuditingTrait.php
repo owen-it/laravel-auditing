@@ -138,25 +138,39 @@ trait AuditingTrait
 
     /**
      * Audit creation.
+     *
+     * @return void
      */
     public function auditCreation()
     {
-        if ((!isset($this->auditEnabled) || $this->auditEnabled)) {
-            return $this->audit([
-                'old_value'  => null,
-                'new_value'  => $this->updatedData,
-                'owner_type' => get_class($this),
-                'owner_id'   => $this->getKey(),
-                'user_id'    => $this->getUserId(),
-                'type'       => 'created',
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
-            ]);
+        if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
+            $LimitReached = true;
+        } else {
+            $LimitReached = false;
+        }
+        if (isset($this->logCleanup)) {
+            $LogCleanup = $this->LogCleanup;
+        } else {
+            $LogCleanup = false;
+        }
+
+        if (((!isset($this->auditEnabled) || $this->auditEnabled)) && (!$LimitReached || $LogCleanup)) {
+            $log = ['old_value' => null];
+
+            foreach ($this->updatedData as $key => $value) {
+                if ($this->isAuditing($key)) {
+                    $log['new_value'][$key] = $value;
+                }
+            }
+
+            $this->audit($log, 'created');
         }
     }
 
     /**
      * Audit updated.
+     *
+     * @return void
      */
     public function auditUpdate()
     {
@@ -174,19 +188,20 @@ trait AuditingTrait
         if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) && (!$LimitReached || $LogCleanup)) {
             $changes_to_record = $this->changedAuditingFields();
             if (count($changes_to_record)) {
-                $log = ['type' => 'updated'];
                 foreach ($changes_to_record as $key => $change) {
                     $log['old_value'][$key] = array_get($this->originalData, $key);
                     $log['new_value'][$key] = array_get($this->updatedData, $key);
                 }
 
-                $this->audit($log);
+                $this->audit($log, 'updated');
             }
         }
     }
 
     /**
      * Audit deletion.
+     *
+     * @return mixed
      */
     public function auditDeletion()
     {
@@ -195,20 +210,16 @@ trait AuditingTrait
             return $this->audit([
                 'old_value'  => $this->updatedData,
                 'new_value'  => null,
-                'owner_type' => get_class($this),
-                'owner_id'   => $this->getKey(),
-                'user_id'    => $this->getUserId(),
-                'type'       => 'deleted',
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
-            ]);
+            ], 'deleted');
         }
     }
 
     /**
      * Audit model.
+     *
+     * @return OwenIt\Auditing\Log
      */
-    public function audit(array $log)
+    public function audit(array $log, $type)
     {
         $logAuditing = [
             'old_value'  => json_encode($log['old_value']),
@@ -216,7 +227,7 @@ trait AuditingTrait
             'owner_type' => get_class($this),
             'owner_id'   => $this->getKey(),
             'user_id'    => $this->getUserId(),
-            'type'       => $log['type'],
+            'type'       => $type,
             'created_at' => new \DateTime(),
             'updated_at' => new \DateTime(),
         ];
