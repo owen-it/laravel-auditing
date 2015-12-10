@@ -201,23 +201,38 @@ trait AuditingTrait
     /**
      * Audit deletion.
      *
-     * @return mixed
+     * @return void
      */
     public function auditDeletion()
     {
-        if ((!isset($this->auditEnabled) || $this->auditEnabled)
-            && $this->isAuditing('deleted_at')) {
-            return $this->audit([
-                'old_value'  => $this->updatedData,
-                'new_value'  => null,
-            ], 'deleted');
+        if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
+            $LimitReached = true;
+        } else {
+            $LimitReached = false;
+        }
+        if (isset($this->logCleanup)) {
+            $LogCleanup = $this->LogCleanup;
+        } else {
+            $LogCleanup = false;
+        }
+
+        if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->isAuditing('deleted_at')) && (!$LimitReached || $LogCleanup)) {
+            $log = ['new_value' => null];
+
+            foreach ($this->updatedData as $key => $value) {
+                if ($this->isAuditing($key)) {
+                    $log['old_value'][$key] = $value;
+                }
+            }
+
+            $this->audit($log, 'deleted');
         }
     }
 
     /**
      * Audit model.
      *
-     * @return OwenIt\Auditing\Log
+     * @return Log
      */
     public function audit(array $log, $type)
     {
