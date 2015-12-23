@@ -19,7 +19,7 @@ class AuditingServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->setupMigrations($this->app);
-//        $this->setupConfig($this->app);
+        $this->setupConfig($this->app);
     }
 
     /**
