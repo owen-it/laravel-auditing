@@ -33,7 +33,7 @@ Use the following command to publish settings:
 ```
 php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
 ```
-Now you need execute the mitration to create the table ```logs``` in your database, this table is used for save logs of altering.
+Now you need execute the migration to create the table ```logs``` in your database, this table is used for save logs of altering.
 
 ```
 php artisan migrate
