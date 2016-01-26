@@ -4,13 +4,13 @@
 [![Latest Unstable Version](https://poser.pugx.org/owen-it/laravel-auditing/v/unstable)](//packagist.org/packages/owen-it/laravel-auditing)
 [![License](https://poser.pugx.org/owen-it/laravel-auditing/license.svg)](https://packagist.org/packages/owen-it/laravel-auditing)
 
-It is always important to have change history records in the system. The Auditing does just that simple and practical way, you simply extends it in the model you would like to register the change log. 
+Laravel Auditing allows you to record changes to an Eloquent model's set of data by simply adding its trait to your model. Laravel Auditing also provides a simple interface for retreiving an audit trail for a piece of data and allows for a great deal of customization in how that data is provided.
 
 > Auditing is based on the package [revisionable](https://packagist.org/packages/VentureCraft/revisionable)
 
 ## Installation
 
-Auditing is installable via [composer](http://getcomposer.org/doc/00-intro.md), the details are [here](https://packagist.org/packages/owen-it/laravel-auditing).
+Laravel Auditing can be installed with [Composer](http://getcomposer.org/doc/00-intro.md), the details are [here](https://packagist.org/packages/owen-it/laravel-auditing).
 
 Run the following command to get the latest version package:
 
@@ -28,12 +28,12 @@ Open ```config/app.php``` and register the required service provider.
 
 > Note: This provider is important for the publication of configuration files.
 
-Use the following command to publish settings:
+Use the following command to publish configuration settings:
 
 ```
 php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
 ```
-Now you need execute the migration to create the table ```logs``` in your database, this table is used for save logs of altering.
+Finally, execute the migration to create the ```logs``` table in your database. This table is used to save audit logs.
 
 ```
 php artisan migrate
@@ -72,11 +72,9 @@ class Team extends Model
 
 ```
 
-> Note: Traits require PHP >= 5.4
-
 ### Base implementation Legacy Class
 
-To register the chage log with Legacy class, extend the class `OwnerIt\Auditing\Auditing` in the model you want to audit. Example:
+It is also possible to have your model extend the `OwnerIt\Auditing\Auditing` class to enable auditing. Example:
 
 ```php
 // app/Team.php
