@@ -156,6 +156,7 @@ trait AuditingTrait
 
         if (((!isset($this->auditEnabled) || $this->auditEnabled)) && (!$LimitReached || $LogCleanup)) {
             $log = ['old_value' => null];
+            $log['new_value'] = [];
 
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
