@@ -91,7 +91,7 @@ class Log extends Model
 
     /**
      * Get elapsed time.
-     * 
+     *
      * @return mixed
      */
     public function getElapsedTimeAttribute()
@@ -204,8 +204,6 @@ class Log extends Model
         if (method_exists($this->owner, $method)) {
             return $this->owner->{$method}($this);
         }
-
-        return;
     }
 
     /**

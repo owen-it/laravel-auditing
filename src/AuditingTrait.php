@@ -265,8 +265,6 @@ trait AuditingTrait
         } catch (\Exception $e) {
             return;
         }
-
-        return;
     }
 
     /**
@@ -342,7 +340,5 @@ trait AuditingTrait
         if (in_array($key, $auditableTypes)) {
             return true;
         }
-
-        return;
     }
 }
