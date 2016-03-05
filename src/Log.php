@@ -205,6 +205,16 @@ class Log extends Model
             return $this->owner->{$method}($this);
         }
     }
+    
+    /**
+     * Get the database connection for the model.
+     *
+     * @return \Illuminate\Database\Connection
+     */
+    public function getConnection()
+    {
+        return static::resolveConnection(\Config::get('auditing.connection'));
+    }
 
     /**
      * Get Value of segment.
