@@ -7,11 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Log extends Model
 {
     /**
-     * @var string
-     */
-    public $table = 'logs';
-
-    /**
      * Cast values.
      *
      * @var array
@@ -233,6 +228,7 @@ class Log extends Model
 
         foreach (explode('.', $key) as $segment) {
             $object = is_array($object) ? (object) $object : $object;
+            
             if (!isset($object->{$segment})) {
                 return $default;
             }
@@ -241,5 +237,21 @@ class Log extends Model
         }
 
         return $object;
+    }
+    
+    /**
+     * Get the table associated with the model.
+     *
+     * @return string
+     */
+    public function getTable()
+    {
+        $table = \Config::get('auditing.table');
+
+        if (isset($table)) {
+            return $table;
+        }
+
+        return str_replace('\\', '', Str::snake(Str::plural(class_basename($this))));
     }
 }
