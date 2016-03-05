@@ -205,7 +205,7 @@ class Log extends Model
             return $this->owner->{$method}($this);
         }
     }
-    
+
     /**
      * Get the database connection for the model.
      *

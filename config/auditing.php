@@ -21,7 +21,7 @@ return [
     | is often just the "User" model but you may use whatever you like.
     |
     */
-    
+
     'model' => App\User::class,
 
     /*
@@ -33,5 +33,5 @@ return [
     |
     */
     'connection' => null,
-    
+
 ];
