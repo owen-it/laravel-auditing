@@ -228,7 +228,7 @@ class Log extends Model
 
         foreach (explode('.', $key) as $segment) {
             $object = is_array($object) ? (object) $object : $object;
-            
+
             if (!isset($object->{$segment})) {
                 return $default;
             }
@@ -238,7 +238,7 @@ class Log extends Model
 
         return $object;
     }
-    
+
     /**
      * Get the table associated with the model.
      *
