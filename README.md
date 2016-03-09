@@ -89,8 +89,9 @@ class Team extends Auditing
 ```
 
 <a name="configuration"></a>
-### Configuration
+## Configuration
 
+### Auditing behavior settings
 The Auditing behavior settings are carried out with the declaration of attributes in the model. See the examples below:
 
 * Turn off logging after a number "X": `$historyLimit = 500`
@@ -116,6 +117,23 @@ class Team extends Model
     // Tell what actions you want to audit.
     protected $auditableTypes = ['created', 'saved', 'deleted'];
 }
+```
+### Auditing settings
+Here you can specify the audit package settings
+
+```php
+// config/auditing.php
+return [
+
+    // Authentication Model
+    'model' => App\User::class,
+
+    // Database Connection
+    'connection' => null,
+
+    // Table Name
+    'table' => 'logs',
+];
 ```
 
 <a name="getting"></a>
