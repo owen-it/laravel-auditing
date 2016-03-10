@@ -119,7 +119,12 @@ class Team extends Model
 }
 ```
 ### Auditing settings
-Here you can specify the audit package settings
+Using the configuration file, you can define:
+* The Model used to represent the current user of application.
+* A different database connection for audit.
+* The table name used for log registers.
+    
+The configuration file can be found at `config/auditing.php`
 
 ```php
 // config/auditing.php
