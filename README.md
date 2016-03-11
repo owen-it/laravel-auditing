@@ -94,8 +94,8 @@ class Team extends Auditing
 ### Auditing behavior settings
 The Auditing behavior settings are carried out with the declaration of attributes in the model. See the examples below:
 
-* Turn off logging after a number "X": `$historyLimit = 500`
-* Disable / enable logging (Audit): `$auditEnabled = false`
+* Turn off logging after a number of logs: `$historyLimit = 500`
+* Disable / enable logging: `$auditEnabled = false`
 * Turn off logging for specific fields: `$dontKeepLogOf = ['field1', 'field2']`
 
 
@@ -188,7 +188,7 @@ $logs = Team::logs->with(['user'])->get();
 <a name="customizing"></a>
 ## Customizing log message
 
-You can define your own log messages for presentation. These messages can be defined for both the model as well as for each one of fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{object.value.value} or {object.value|Default value} or {object.value||callbackMethod}`. 
+You can define your own log messages for presentation. These messages can be defined for both the model as well as for each one of fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{object.property.property} or {object.property|Default value} or {object.property||callbackMethod}`. 
 
 > Note: This implementation is optional, you can make these customizations where desired.
 
