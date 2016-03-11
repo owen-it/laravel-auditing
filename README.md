@@ -10,14 +10,14 @@ Laravel Auditing allows you to record changes to an Eloquent model's set of data
 
 ## Installation
 
-Laravel Auditing can be installed with [Composer](http://getcomposer.org/doc/00-intro.md), the details are [here](https://packagist.org/packages/owen-it/laravel-auditing).
+Laravel Auditing can be installed with [Composer](http://getcomposer.org/doc/00-intro.md), more details about this package in Composer can be found [here](https://packagist.org/packages/owen-it/laravel-auditing).
 
 Run the following command to get the latest version package:
 
 ```
 composer require owen-it/laravel-auditing
 ```
-Open ```config/app.php``` and register the required service provider.
+Open the file ```config/app.php``` and then add the service provider, this step is required.
 
 ```php
 'providers' => [
@@ -28,12 +28,12 @@ Open ```config/app.php``` and register the required service provider.
 
 > Note: This provider is important for the publication of configuration files.
 
-Use the following command to publish configuration settings:
+Only after complete the step before, use the following command to publish configuration settings:
 
 ```
 php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
 ```
-Finally, execute the migration to create the ```logs``` table in your database. This table is used to save audit logs.
+Finally, execute the migration to create the ```logs``` table in your database. This table is used to save audit the logs.
 
 ```
 php artisan migrate
@@ -119,7 +119,12 @@ class Team extends Model
 }
 ```
 ### Auditing settings
-Here you can specify the audit package settings
+Using the configuration file, you can define:
+* The Model used to represent the current user of application.
+* A different database connection for audit.
+* The table name used for log registers.
+    
+The configuration file can be found at `config/auditing.php`
 
 ```php
 // config/auditing.php
@@ -183,7 +188,7 @@ $logs = Team::logs->with(['user'])->get();
 <a name="customizing"></a>
 ## Customizing log message
 
-You it can set custom messages for presentation of logs. These messages can be set for both the model as for specific fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{object.value.value} or {object.value|Default value} or {object.value||callbackMethod}`. 
+You can define your own log messages for presentation. These messages can be defined for both the model as well as for each one of fields.The dynamic part of the message can be done by targeted fields per dot segmented as`{object.value.value} or {object.value|Default value} or {object.value||callbackMethod}`. 
 
 > Note: This implementation is optional, you can make these customizations where desired.
 
