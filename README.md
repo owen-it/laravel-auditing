@@ -98,6 +98,7 @@ The Auditing behavior settings are carried out with the declaration of attribute
 * Disable / enable logging: `$auditEnabled = false`
 * Turn off logging for specific fields: `$dontKeepLogOf = ['field1', 'field2']`
 
+> Note: This implementation is optional, you can make these customizations where desired.
 
 ```php
 // app/Team.php
@@ -108,6 +109,7 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model 
 {
     use OwenIt\Auditing\AuditingTrait;
+    
     // Disables the log record in this model.
     protected $auditEnabled  = false;
     // Disables the log record after 500 records.
