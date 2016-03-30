@@ -56,7 +56,7 @@ class Log extends Model
     {
         if (class_exists($class = $this->owner_type)) {
             $model = $this->$class->findOrFail($this->owner_id);
-            
+
             $model->fill($this->old_value);
 
             return $model->save();
@@ -118,7 +118,7 @@ class Log extends Model
     {
         if (class_exists($class = $this->owner_type)) {
             $customFields = [];
-            
+
             foreach ($this->getCustomFields($class) as $field => $message) {
                 if (is_array($message) && isset($message[$this->type])) {
                     $customFields[$field] = $this->resolveCustomMessage($message[$this->type]);
@@ -173,7 +173,7 @@ class Log extends Model
         preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
         foreach (current($segments) as $segment) {
             $s = str_replace(['{', '}'], '', $segment);
-            
+
             $keys = explode('|', $s);
 
             if (empty($keys[1]) && isset($keys[2])) {
@@ -181,11 +181,11 @@ class Log extends Model
             }
 
             $valueSegmented = $this->getValueSegmented($this, $keys[0], isset($keys[1]) ? $keys[1] : ' ');
-            
+
             if (!$valueSegmented) {
                 return false;
             }
-            
+
             $message = str_replace($segment, $valueSegmented, $message);
         }
 
