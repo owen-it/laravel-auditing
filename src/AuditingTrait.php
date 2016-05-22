@@ -244,6 +244,8 @@ trait AuditingTrait
             'owner_id'   => $this->getKey(),
             'user_id'    => $this->getUserId(),
             'type'       => $type,
+            'route'       => \Request::route()->getName() ? \Request::route()->getName() : \Request::route()->getUri(),
+            'ip'         => \Request::ip(),
             'created_at' => new \DateTime(),
             'updated_at' => new \DateTime(),
         ];
