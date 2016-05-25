@@ -14,7 +14,7 @@ class AddFieldsToLogTable extends Migration
     {
         Schema::table('logs', function (Blueprint $table) {
             $table->string('route')->after('type')->nullable();
-            $table->ipAddress('ip')->after('route')->nullable();
+            $table->string('ip', 45)->after('route')->nullable();
         });
     }
 
