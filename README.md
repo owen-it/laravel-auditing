@@ -196,27 +196,28 @@ You can define your own log messages for presentation. These messages can be def
 
 Set messages to the model
 ```php
-// app/Team.php
-namespace App;
+// app/models/Post.php
 
+namespace App\Models;
 use OwenIt\Auditing\Auditing;
 
-class Team extends Auditing 
+class Post extends Auditing 
 {
     //...
-    public static $logCustomMessage = '{user.name|Anonymous} {type} a team {elapsed_time}'; // with default value
+    public static $logCustomMessage = '{user.name|Anonymous} {type} a post {elapsed_time}'; // with default value
     public static $logCustomFields = [
-        'name'  => 'The name was defined as {new.name||getNewName}', // with callback method
-        'owner' => [
-            'updated' => '{new.owner} owns the team',
-            'created' => '{new.owner|No one} was defined as owner'
-        ],
+        'title'  => 'The title was defined as "{new.title||getNewTitle}"', // with callback method
+        'ip' => [
+            'updated' => 'The post has been updated from the ip address: {new.ip}.',
+            'created' => 'The post was created from the ip address: {new.ip|Not registered}.'
+        ]
     ];
     
-    public function getNewName($log)
+    public function getNewTitle($log)
     {
-        return $log->new['name'];
+        return $log->new['title'];
     }
+    
     //...
 }
 ```
@@ -224,17 +225,17 @@ Getting change logs
 ```php
 // app/Http/Controllers/MyAppController.php 
 //...
-public function auditing()
-{
-    $logs = Team::find(1)->logs; // Get logs of team
-    return view('auditing', compact('logs'));
-}
+    public function auditing()
+    {
+        $logs = Post::find(1)->logs; // Get logs of Post
+        return view('admin.auditing', compact('logs'));
+    }
 //...
     
 ```
 Featuring log records:
 ```
-    // resources/views/my-app/auditing.blade.php
+    // resources/views/admin/auditing.blade.php
     ...
     <ol>
         @forelse ($logs as $log)
@@ -257,19 +258,28 @@ Featuring log records:
 ```
 Result:
 <ol>
-  <li>Antério Vieira created a team 1 day ago   
+  <li>Antério Vieira created a post 1 day ago   
     <ul>
-      <li>The name was defined as gestao</li>
-      <li>No one was defined as owner</li>
+      <li>The title was defined as "Did someone say rapid?"</li>
+      <li>The post was created from the ip address: 192.168.10.1</li>
     </ul>
   </li>
-  <li>Rafael França deleted a team 2 day ago   
+  <li>Antério Vieira updated a post 1 day ago   
+    <ul>
+      <li>The title was updated as "Did someone say rapid?"</li>
+      <li>The post was updated from the ip address: 192.168.10.1</li>
+    </ul>
+  </li>
+  <li>Raphael França deleted a post 2 day ago   
     <ul>
       <li>No details</li>
     </ul>
   </li>  
   <li>...</li>
 </ol>
+
+Table:
+![auditing-table](https://cloud.githubusercontent.com/assets/1490347/15525219/b34085d8-21fe-11e6-8729-926513fe3caa.jpg)
 
 <a name="examples"></a>
 ## Examples
