@@ -44,4 +44,15 @@ return [
     */
 
     'table' => 'logs',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit console
+    |--------------------------------------------------------------------------
+    |
+    | Whether we should audit queries run through console (eg. php artisan db:seed).
+    |
+    */
+
+    'audit_console' => false,
 ];
