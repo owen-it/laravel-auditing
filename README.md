@@ -207,15 +207,21 @@ class Post extends Auditing
     public static $logCustomMessage = '{user.name|Anonymous} {type} a post {elapsed_time}'; // with default value
     public static $logCustomFields = [
         'title'  => 'The title was defined as "{new.title||getNewTitle}"', // with callback method
-        'ip' => [
-            'updated' => 'The post has been updated from the ip address: {new.ip}.',
-            'created' => 'The post was created from the ip address: {new.ip|Not registered}.'
+        'ip' => 'The changes were recorded from the address {ip|route|getAnotherthing}',
+        'publish_date' => [
+            'created' => 'Publication date: {new.publish_date}',
+            'updated' => 'The post publication date has been updated from {old.publish_date} to {new.publish_date}'
         ]
     ];
     
     public function getNewTitle($log)
     {
-        return $log->new['title'];
+        return $log->old['title'];
+    }
+    
+    public function getAnotherthing($log)
+    {
+        return ':(';
     }
     
     //...
@@ -261,18 +267,20 @@ Result:
   <li>Antério Vieira created a post 1 day ago   
     <ul>
       <li>The title was defined as "Did someone say rapid?"</li>
-      <li>The post was created from the ip address: 192.168.10.1</li>
+      <li>The changes were recorded from the address 192.168.10.1</li>
+      <li>Publication date: 2016-05-25 00:49:26.0</li>
     </ul>
   </li>
   <li>Antério Vieira updated a post 1 day ago   
     <ul>
       <li>The title was updated as "Did someone say rapid?"</li>
-      <li>The post was updated from the ip address: 192.168.10.1</li>
+      <li>The changes were recorded from the address 192.168.10.1</li>
+      <li>The post publication date has been updated from 2016-05-20 00:49:26.0 to 2016-05-25 00:49:26.0</li>
     </ul>
   </li>
   <li>Raphael França deleted a post 2 day ago   
     <ul>
-      <li>No details</li>
+      <li>The changes were recorded from the address 192.168.10.1</li>
     </ul>
   </li>  
   <li>...</li>
