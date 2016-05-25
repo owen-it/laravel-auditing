@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateLogTable extends Migration
 {
@@ -11,7 +12,7 @@ class CreateLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('logs', function ($table) {
+        Schema::create('logs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->nullable();
             $table->string('owner_type');
