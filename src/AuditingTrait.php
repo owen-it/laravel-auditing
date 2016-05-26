@@ -104,7 +104,7 @@ trait AuditingTrait
      */
     public function prepareAudit()
     {
-        if (!isset($this->auditEnabled) || $this->auditEnabled) {
+        if ($this->isAuditEnabled()) {
             $this->originalData = $this->original;
             $this->updatedData = $this->attributes;
 
@@ -154,7 +154,7 @@ trait AuditingTrait
             $LogCleanup = false;
         }
 
-        if (((!isset($this->auditEnabled) || $this->auditEnabled)) && (!$LimitReached || $LogCleanup)) {
+        if ((($this->isAuditEnabled())) && (!$LimitReached || $LogCleanup)) {
             $log = ['old_value' => null];
             $log['new_value'] = [];
 
@@ -186,7 +186,7 @@ trait AuditingTrait
             $LogCleanup = false;
         }
 
-        if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) && (!$LimitReached || $LogCleanup)) {
+        if ((($this->isAuditEnabled()) && $this->updating) && (!$LimitReached || $LogCleanup)) {
             $changes_to_record = $this->changedAuditingFields();
             if (count($changes_to_record)) {
                 foreach ($changes_to_record as $key => $change) {
@@ -217,7 +217,7 @@ trait AuditingTrait
             $LogCleanup = false;
         }
 
-        if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->isAuditing('deleted_at')) && (!$LimitReached || $LogCleanup)) {
+        if ((($this->isAuditEnabled()) && $this->isAuditing('deleted_at')) && (!$LimitReached || $LogCleanup)) {
             $log = ['new_value' => null];
 
             foreach ($this->updatedData as $key => $value) {
@@ -244,7 +244,7 @@ trait AuditingTrait
             'owner_id'    => $this->getKey(),
             'user_id'     => $this->getUserId(),
             'type'        => $type,
-            'route'       => \Request::route()->getName() ? \Request::route()->getName() : \Request::route()->getUri(),
+            'route'       => $this->getCurrentRoute(),
             'ip'          => \Request::ip(),
             'created_at'  => new \DateTime(),
             'updated_at'  => new \DateTime(),
@@ -267,6 +267,20 @@ trait AuditingTrait
         } catch (\Exception $e) {
             return;
         }
+    }
+
+    /**
+     * Get the current request's route if available.
+     *
+     * @return string
+     */
+    protected function getCurrentRoute()
+    {
+        if (\App::runningInConsole()) {
+            return 'console';
+        }
+
+        return \Request::route()->getName() ? \Request::route()->getName() : \Request::route()->getUri();
     }
 
     /**
@@ -313,6 +327,21 @@ trait AuditingTrait
 
         // Checks whether the auditable list is clean
         return empty($this->doKeep);
+    }
+
+    /**
+     * Is Auditing enabled?
+     *
+     * @return bool
+     */
+    private function isAuditEnabled()
+    {
+        // Check that the model has audit enabled and also check that we aren't running in cosole or that we want to log console too.
+        if ((!isset($this->auditEnabled) || $this->auditEnabled) && (!\App::runningInConsole() || \Config::get('auditing.audit_console'))) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
