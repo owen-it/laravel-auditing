@@ -250,7 +250,16 @@ trait AuditingTrait
             'updated_at'  => new \DateTime(),
         ];
 
-        return Log::insert($logAuditing);
+        return $this->saveAudit($logAuditing);
+    }
+
+    /**
+     * @param array $fields
+     * @return Log
+     */
+    protected function saveAudit(array $fields)
+    {
+        return Log::insert($fields);
     }
 
     /**
