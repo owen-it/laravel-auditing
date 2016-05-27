@@ -254,9 +254,10 @@ trait AuditingTrait
     }
 
     /**
-     * Save Audit
-     * 
+     * Save Audit.
+     *
      * @param array $fields
+     *
      * @return Log
      */
     protected function saveAudit(array $fields)
@@ -293,13 +294,14 @@ trait AuditingTrait
 
         return \Request::route()->getName() ?: \Request::route()->getUri();
     }
-    
+
     /**
-     * Get IP Address
+     * Get IP Address.
      *
      * @return mixed
      */
-    public function getIpAddress (){
+    public function getIpAddress()
+    {
         return \Request::ip();
     }
 
