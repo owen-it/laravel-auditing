@@ -238,16 +238,16 @@ trait AuditingTrait
     public function audit(array $log, $type)
     {
         $logAuditing = [
-            'old_value'   => json_encode($log['old_value']),
-            'new_value'   => json_encode($log['new_value']),
+            'old_value'   => $this->asJson($log['old_value']),
+            'new_value'   => $this->asJson($log['new_value']),
             'owner_type'  => get_class($this),
             'owner_id'    => $this->getKey(),
             'user_id'     => $this->getUserId(),
             'type'        => $type,
             'route'       => $this->getCurrentRoute(),
-            'ip'          => \Request::ip(),
-            'created_at'  => new \DateTime(),
-            'updated_at'  => new \DateTime(),
+            'ip'          => $this->getIpAddress(),
+            'created_at'  => $this->freshTimestamp(),
+            'updated_at'  => $this->freshTimestamp(),
         ];
 
         return $this->saveAudit($logAuditing);
@@ -292,6 +292,15 @@ trait AuditingTrait
         }
 
         return \Request::route()->getName() ?: \Request::route()->getUri();
+    }
+    
+    /**
+     * Get IP Address
+     *
+     * @return mixed
+     */
+    public function getIpAddress (){
+        return \Request::ip();
     }
 
     /**
