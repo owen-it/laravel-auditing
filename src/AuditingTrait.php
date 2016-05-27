@@ -290,7 +290,7 @@ trait AuditingTrait
             return 'console';
         }
 
-        return \Request::route()->getName() ? \Request::route()->getName() : \Request::route()->getUri();
+        return \Request::route()->getName() ?: \Request::route()->getUri();
     }
 
     /**
