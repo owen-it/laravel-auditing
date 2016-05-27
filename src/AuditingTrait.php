@@ -254,8 +254,9 @@ trait AuditingTrait
     }
 
     /**
+     * Save Audit
+     * 
      * @param array $fields
-     *
      * @return Log
      */
     protected function saveAudit(array $fields)
