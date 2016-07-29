@@ -89,7 +89,7 @@ class Team extends Auditing
 ```
 
 <a name="configuration"></a>
-## Configuration
+## Configuration (optional)
 
 ### Auditing behavior settings
 The Auditing behavior settings are carried out with the declaration of attributes in the model. See the examples below:
