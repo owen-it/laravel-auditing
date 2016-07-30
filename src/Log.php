@@ -182,10 +182,6 @@ class Log extends Model
 
             $valueSegmented = $this->getValueSegmented($this, $keys[0], isset($keys[1]) ? $keys[1] : ' ');
 
-            if (!$valueSegmented) {
-                return false;
-            }
-
             $message = str_replace($segment, $valueSegmented, $message);
         }
 
