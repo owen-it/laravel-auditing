@@ -93,7 +93,7 @@ class Log extends Model
      */
     public function getElapsedTimeAttribute()
     {
-        return $this->created_at->diffForHumans();
+        return $this->created_at ? $this->created_at->diffForHumans() : '';
     }
 
     /**
