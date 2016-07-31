@@ -94,7 +94,7 @@ trait AuditingTrait
     }
 
     /**
-     * Generates a list of the last $limit logs
+     * Generates a list of the last $limit logs.
      *
      * @param int    $limit
      * @param string $order
@@ -232,7 +232,9 @@ trait AuditingTrait
         ];
 
         // Insert the log and clear the oldest logs if given a limit.
-        if($this->saveAudit($logAuditing)) $this->clearOlderLogs();
+        if ($this->saveAudit($logAuditing)) {
+            $this->clearOlderLogs();
+        }
     }
 
     /**
@@ -240,14 +242,14 @@ trait AuditingTrait
      *
      * @return void
      */
-    private function clearOlderLogs(){
-
+    private function clearOlderLogs()
+    {
         $logHistoryCount = $this->logHistory()->count();
         $logHistoryOlder = $logHistoryCount - $this->historyLimit;
 
         if (isset($this->historyLimit) && $logHistoryOlder > 0) {
             $logs = $this->logHistory($logHistoryOlder, 'asc');
-            $logs->each(function($log){
+            $logs->each(function ($log) {
                 $log->delete();
             });
         }
