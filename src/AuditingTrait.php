@@ -79,7 +79,7 @@ trait AuditingTrait
     }
 
     /**
-     * Generates a list of the last $limit revisions made to any objects
+     * Generates a list of the last $limit logs made to any objects
      * of the class it is being called from.
      *
      * @param int    $limit
@@ -94,6 +94,8 @@ trait AuditingTrait
     }
 
     /**
+     * Generates a list of the last $limit logs
+     *
      * @param int    $limit
      * @param string $order
      *
@@ -106,9 +108,12 @@ trait AuditingTrait
 
     /**
      * Prepare audit model.
+     *
+     * @return void
      */
     public function prepareAudit()
     {
+        // If auditing is enabled
         if ($this->isAuditEnabled()) {
             $this->originalData = $this->original;
             $this->updatedData = $this->attributes;
@@ -136,6 +141,7 @@ trait AuditingTrait
 
             // Get changed data
             $this->dirtyData = $this->getDirty();
+
             // Tells whether the record exists in the database
             $this->updating = $this->exists;
         }
@@ -148,18 +154,8 @@ trait AuditingTrait
      */
     public function auditCreation()
     {
-        if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
-            $LimitReached = true;
-        } else {
-            $LimitReached = false;
-        }
-        if (isset($this->logCleanup)) {
-            $LogCleanup = $this->LogCleanup;
-        } else {
-            $LogCleanup = false;
-        }
-
-        if ((($this->isAuditEnabled())) && (!$LimitReached || $LogCleanup)) {
+        // If auditing is enabled
+        if ($this->isAuditEnabled()) {
             $log = ['old_value' => null];
             $log['new_value'] = [];
 
@@ -180,18 +176,8 @@ trait AuditingTrait
      */
     public function auditUpdate()
     {
-        if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
-            $LimitReached = true;
-        } else {
-            $LimitReached = false;
-        }
-        if (isset($this->logCleanup)) {
-            $LogCleanup = $this->LogCleanup;
-        } else {
-            $LogCleanup = false;
-        }
-
-        if ((($this->isAuditEnabled()) && $this->updating) && (!$LimitReached || $LogCleanup)) {
+        // If auditing is enabled and object updated
+        if ($this->isAuditEnabled() && $this->updating) {
             $changes_to_record = $this->changedAuditingFields();
             if (count($changes_to_record)) {
                 foreach ($changes_to_record as $key => $change) {
@@ -211,18 +197,8 @@ trait AuditingTrait
      */
     public function auditDeletion()
     {
-        if (isset($this->historyLimit) && $this->logHistory()->count() >= $this->historyLimit) {
-            $LimitReached = true;
-        } else {
-            $LimitReached = false;
-        }
-        if (isset($this->logCleanup)) {
-            $LogCleanup = $this->LogCleanup;
-        } else {
-            $LogCleanup = false;
-        }
-
-        if ((($this->isAuditEnabled()) && $this->isAuditing('deleted_at')) && (!$LimitReached || $LogCleanup)) {
+        // If auditing is enabled
+        if ($this->isAuditEnabled() && $this->isAuditing('deleted_at')) {
             $log = ['new_value' => null];
 
             foreach ($this->updatedData as $key => $value) {
@@ -255,7 +231,26 @@ trait AuditingTrait
             'updated_at'  => $this->freshTimestamp(),
         ];
 
-        return $this->saveAudit($logAuditing);
+        // Insert the log and clear the oldest logs if given a limit.
+        if($this->saveAudit($logAuditing)) $this->clearOlderLogs();
+    }
+
+    /**
+     * Clear the oldest logs if given a limit.
+     *
+     * @return void
+     */
+    private function clearOlderLogs(){
+
+        $logHistoryCount = $this->logHistory()->count();
+        $logHistoryOlder = $logHistoryCount - $this->historyLimit;
+
+        if (isset($this->historyLimit) && $logHistoryOlder > 0) {
+            $logs = $this->logHistory($logHistoryOlder, 'asc');
+            $logs->each(function($log){
+                $log->delete();
+            });
+        }
     }
 
     /**
@@ -321,7 +316,8 @@ trait AuditingTrait
         foreach ($this->dirtyData as $key => $value) {
             if ($this->isAuditing($key) && !is_array($value)) {
                 // Check whether the current value is difetente the original value
-                if (!isset($this->originalData[$key]) || $this->originalData[$key] != $this->updatedData[$key]) {
+                if (!isset($this->originalData[$key]) ||
+                    $this->originalData[$key] != $this->updatedData[$key]) {
                     $changes_to_record[$key] = $value;
                 }
             } else {
@@ -363,8 +359,10 @@ trait AuditingTrait
      */
     private function isAuditEnabled()
     {
-        // Check that the model has audit enabled and also check that we aren't running in cosole or that we want to log console too.
-        if ((!isset($this->auditEnabled) || $this->auditEnabled) && (!App::runningInConsole() || Config::get('auditing.audit_console'))) {
+        // Check that the model has audit enabled and also check that we aren't
+        // running in cosole or that we want to log console too.
+        if ((!isset($this->auditEnabled) || $this->auditEnabled)
+            && (!App::runningInConsole() || Config::get('auditing.audit_console'))) {
             return true;
         }
 
