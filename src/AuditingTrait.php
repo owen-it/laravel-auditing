@@ -2,9 +2,10 @@
 
 namespace OwenIt\Auditing;
 
-use App;
-use Config;
-use Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Request;
 
 trait AuditingTrait
 {
@@ -277,8 +278,8 @@ trait AuditingTrait
     protected function getUserId()
     {
         try {
-            if (\Auth::check()) {
-                return \Auth::user()->getAuthIdentifier();
+            if (Auth::check()) {
+                return Auth::user()->getAuthIdentifier();
             }
         } catch (\Exception $e) {
             return;
@@ -296,7 +297,7 @@ trait AuditingTrait
             return 'console';
         }
 
-        return Request::route()->getName() ?: Request::route()->getUri();
+        return Request::fullUrl();
     }
 
     /**
