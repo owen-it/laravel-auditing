@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use App;
 use Request;
 
 trait AuditingTrait
@@ -290,7 +291,7 @@ trait AuditingTrait
      */
     protected function getCurrentRoute()
     {
-        if (\App::runningInConsole()) {
+        if (App::runningInConsole()) {
             return 'console';
         }
 
@@ -361,7 +362,7 @@ trait AuditingTrait
     private function isAuditEnabled()
     {
         // Check that the model has audit enabled and also check that we aren't running in cosole or that we want to log console too.
-        if ((!isset($this->auditEnabled) || $this->auditEnabled) && (!\App::runningInConsole() || \Config::get('auditing.audit_console'))) {
+        if ((!isset($this->auditEnabled) || $this->auditEnabled) && (!App::runningInConsole() || \Config::get('auditing.audit_console'))) {
             return true;
         }
 
