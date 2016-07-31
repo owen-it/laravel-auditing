@@ -115,9 +115,10 @@ class Team extends Auditing
 ### Auditing behavior settings
 The Auditing behavior settings are carried out with the declaration of attributes in the model. See the examples below:
 
-* Turn off logging after a number of logs: `$historyLimit = 500`
 * Disable / enable logging: `$auditEnabled = false`
-* Turn off logging for specific fields: `$dontKeepLogOf = ['field1', 'field2']`
+* Clear the oldest records after: `$historyLimit = 100`
+* Turn off logging for specific fields: `$dontKeepLogOf = ['created_at', 'updated_at']`
+* Tell what actions you want to audit. `$auditableTypes = ['created', 'saved', 'deleted']`
 
 > Note: This implementation is optional, you can make these customizations where desired.
 
@@ -133,16 +134,20 @@ class Team extends Model
     
     // Disables the log record in this model.
     protected $auditEnabled  = false;
-    // Disables the log record after 500 records.
-    protected $historyLimit = 500; 
+    
+    // Clear the oldest records after 100 records.
+    protected $historyLimit = 100; 
+    
     // Fields you do NOT want to register.
     protected $dontKeepLogOf = ['created_at', 'updated_at'];
+    
     // Tell what actions you want to audit.
     protected $auditableTypes = ['created', 'saved', 'deleted'];
 }
 ```
 ### Auditing settings
 Using the configuration file, you can define:
+
 * The Model used to represent the current user of application.
 * A different database connection for audit.
 * The table name used for log registers.
