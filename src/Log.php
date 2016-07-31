@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
@@ -44,7 +45,7 @@ class Log extends Model
      */
     public function user()
     {
-        return $this->belongsTo(\Config::get('auditing.model'));
+        return $this->belongsTo(Config::get('auditing.model'));
     }
 
     /**
@@ -209,7 +210,7 @@ class Log extends Model
      */
     public function getConnection()
     {
-        return static::resolveConnection(\Config::get('auditing.connection'));
+        return static::resolveConnection(Config::get('auditing.connection'));
     }
 
     /**
@@ -247,7 +248,7 @@ class Log extends Model
      */
     public function getTable()
     {
-        $table = \Config::get('auditing.table');
+        $table = Config::get('auditing.table');
 
         if (isset($table)) {
             return $table;
