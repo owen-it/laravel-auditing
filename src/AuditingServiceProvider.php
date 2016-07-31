@@ -3,7 +3,6 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\Application as LaravelApp;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -25,15 +24,15 @@ class AuditingServiceProvider extends ServiceProvider
     /**
      * Setup the config.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param $app
      *
      * @return void
      */
-    protected function setupConfig(Application $app)
+    protected function setupConfig($app)
     {
         $source = realpath(__DIR__.'/../config/auditing.php');
 
-        if ($app instanceof LaravelApp && $app->runningInConsole()) {
+        if ($app->runningInConsole()) {
             $this->publishes([$source => config_path('auditing.php')]);
         }
 
@@ -42,14 +41,16 @@ class AuditingServiceProvider extends ServiceProvider
 
     /**
      * Setup the migrations.
+     * 
+     * @param $app
      *
      * @return void
      */
-    protected function setupMigrations(Application $app)
+    protected function setupMigrations($app)
     {
         $source = realpath(__DIR__.'/../database/migrations/');
 
-        if ($app instanceof LaravelApp && $app->runningInConsole()) {
+        if ($app->runningInConsole()) {
             $this->publishes([$source => database_path('migrations')], 'migrations');
         }
     }
