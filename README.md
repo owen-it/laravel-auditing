@@ -17,6 +17,8 @@ Run the following command to get the latest version package:
 ```
 composer require owen-it/laravel-auditing
 ```
+
+### Laravel
 Open the file ```config/app.php``` and then add the service provider, this step is required.
 
 ```php
@@ -25,7 +27,6 @@ Open the file ```config/app.php``` and then add the service provider, this step 
     OwenIt\Auditing\AuditingServiceProvider::class,
 ],
 ```
-
 > Note: This provider is important for the publication of configuration files.
 
 Only after complete the step before, use the following command to publish configuration settings:
@@ -35,6 +36,26 @@ php artisan vendor:publish --provider="OwenIt\Auditing\AuditingServiceProvider"
 ```
 Finally, execute the migration to create the ```logs``` table in your database. This table is used to save audit the logs.
 
+```
+php artisan migrate
+```
+
+### Lumen (From version 2.3.6)
+Open the file ```bootstrap/app.php``` and then add the service provider, this step is required.
+
+```php
+$app->register(OwenIt\Auditing\AuditingServiceProvider::class);
+```
+You should uncomment the $app->withFacades() and $app->withEloquent() call in your `bootstrap/app.php` file.
+```php
+// ...
+$app->withFacades();
+
+$app->withEloquent();
+// ...
+```
+
+Then execute the migration to create the ```logs``` table in your database. This table is used to save audit the logs.
 ```
 php artisan migrate
 ```
