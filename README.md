@@ -207,7 +207,7 @@ class Post extends Auditing
     public static $logCustomMessage = '{user.name|Anonymous} {type} a post {elapsed_time}'; // with default value
     public static $logCustomFields = [
         'title'  => 'The title was defined as "{new.title||getNewTitle}"', // with callback method
-        'ip' => 'Registered from the address {ip|route|getAnotherthing}',
+        'ip' => 'Registered from the address {ip||getAnotherthing}',
         'publish_date' => [
             'created' => 'Publication date: {new.publish_date}',
             'updated' => 'The post publication date has been updated from {old.publish_date} to {new.publish_date}'
