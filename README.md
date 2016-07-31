@@ -116,9 +116,9 @@ class Team extends Auditing
 The Auditing behavior settings are carried out with the declaration of attributes in the model. See the examples below:
 
 * Disable / enable logging: `$auditEnabled = false`
-* Clear the oldest records after: `$historyLimit = 100`
+* Clear the oldest records: `$historyLimit = 100`
 * Turn off logging for specific fields: `$dontKeepLogOf = ['created_at', 'updated_at']`
-* Tell what actions you want to audit. `$auditableTypes = ['created', 'saved', 'deleted']`
+* Tell what actions you want to audit: `$auditableTypes = ['created', 'saved', 'deleted']`
 
 > Note: This implementation is optional, you can make these customizations where desired.
 
@@ -152,7 +152,7 @@ Using the configuration file, you can define:
 * A different database connection for audit.
 * The table name used for log registers.
     
-The configuration file can be found at `config/auditing.php`
+The configuration file can be found at `config/auditing.php`.
 
 ```php
 // config/auditing.php
@@ -182,11 +182,20 @@ class MyAppController extends BaseController
 {
     public function index()
     {
-        $team = Team::find(1); // Get team
-        $team->logs; // Get all logs
-        $team->logs->first(); // Get first log
-        $team->logs->last();  // Get last log
-        $team->logs->find(2); // Selects log
+        // Get team
+        $team = Team::find(1); 
+        
+        // Get all logs
+        $team->logs; 
+        
+        // Get first log
+        $team->logs->first(); 
+        
+        // Get last log
+        $team->logs->last();  
+        
+        // Selects log
+        $team->logs->find(2); 
     }
     //...
 }
@@ -206,7 +215,7 @@ $logs = Team::logs->with(['user'])->get();
 
 ```
 
-> Note: Remember to properly define the user model in the file ``` config/auditing.php ```
+> Note: Remember to properly define the user model in the file ``` config/auditing.php ```.
 >```php
 > ...
 > 'model' => App\User::class,
@@ -229,14 +238,17 @@ use OwenIt\Auditing\Auditing;
 
 class Post extends Auditing 
 {
-    //...
-    public static $logCustomMessage = '{user.name|Anonymous} {type} a post {elapsed_time}'; // with default value
+    
+    // with default value
+    public static $logCustomMessage = '{user.name|Anonymous} {type} a post {elapsed_time}'; 
+    
+    // with callback method
     public static $logCustomFields = [
-        'title'  => 'The title was defined as "{new.title||getNewTitle}"', // with callback method
+        'title'  => 'The title was defined as "{new.title||getNewTitle}"', 
         'ip' => 'Registered from the address {ip||getAnotherthing}',
         'publish_date' => [
             'created' => 'Publication date: {new.publish_date}',
-            'updated' => 'The post publication date has been updated from {old.publish_date} to {new.publish_date}'
+            'delete' =>  'Post removed from {new.publish_date}'
         ]
     ];
     
@@ -256,13 +268,15 @@ class Post extends Auditing
 Getting change logs 
 ```php
 // app/Http/Controllers/MyAppController.php 
-//...
+    
+    //...
     public function auditing()
     {
-        $logs = Post::find(1)->logs; // Get logs of Post
+        // Get logs of Post
+        $logs = Post::find(1)->logs; 
         return view('admin.auditing', compact('logs'));
     }
-//...
+    //...
     
 ```
 Featuring log records:
