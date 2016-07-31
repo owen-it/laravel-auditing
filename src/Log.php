@@ -2,8 +2,8 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class Log extends Model
 {
