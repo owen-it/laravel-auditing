@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -41,7 +40,7 @@ class AuditingServiceProvider extends ServiceProvider
 
     /**
      * Setup the migrations.
-     * 
+     *
      * @param $app
      *
      * @return void
