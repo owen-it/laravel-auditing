@@ -259,7 +259,7 @@ class Post extends Auditing
     
     public function getAnotherthing($log)
     {
-        return ':(';
+        return ';)';
     }
     
     //...
@@ -273,7 +273,8 @@ Getting change logs
     public function auditing()
     {
         // Get logs of Post
-        $logs = Post::find(1)->logs; 
+        $logs = Post::find(1)->logs;
+        
         return view('admin.auditing', compact('logs'));
     }
     //...
@@ -325,9 +326,6 @@ Result:
   </li>  
   <li>...</li>
 </ol>
-
-Database:
-![auditing-table](https://cloud.githubusercontent.com/assets/1490347/15525219/b34085d8-21fe-11e6-8729-926513fe3caa.jpg)
 
 <a name="examples"></a>
 ## Examples
