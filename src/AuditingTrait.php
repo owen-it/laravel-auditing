@@ -2,6 +2,8 @@
 
 namespace OwenIt\Auditing;
 
+use Request;
+
 trait AuditingTrait
 {
     /**
@@ -292,7 +294,7 @@ trait AuditingTrait
             return 'console';
         }
 
-        return \Request::route()->getName() ?: \Request::route()->getUri();
+        return Request::route()->getName() ?: Request::route()->getUri();
     }
 
     /**
@@ -302,7 +304,7 @@ trait AuditingTrait
      */
     public function getIpAddress()
     {
-        return \Request::ip();
+        return Request::ip();
     }
 
     /**
