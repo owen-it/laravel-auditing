@@ -154,6 +154,8 @@ Using the configuration file, you can define:
     
 The configuration file can be found at `config/auditing.php`.
 
+> Note: This implementation is optional.
+
 ```php
 // config/auditing.php
 return [
