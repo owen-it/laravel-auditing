@@ -128,12 +128,12 @@ trait AuditingTrait
 
             // Dont keep log of
             $this->dontKeep = isset($this->dontKeepLogOf) ?
-                $this->dontKeepLogOf + $this->dontKeep
+                array_merge($this->dontKeepLogOf, $this->dontKeep)
                 : $this->dontKeep;
 
             // Keep log of
             $this->doKeep = isset($this->keepLogOf) ?
-                $this->keepLogOf + $this->doKeep
+                array_merge($this->keepLogOf, $this->doKeep)
                 : $this->doKeep;
 
             unset($this->attributes['dontKeepLogOf']);
