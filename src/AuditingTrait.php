@@ -222,7 +222,7 @@ trait AuditingTrait
             'new_value'   => $this->asJson($log['new_value']),
             'owner_type'  => get_class($this),
             'owner_id'    => $this->getKey(),
-            'user_id'     => $this->getUserId(),
+            'user_id'     => $this->getLoggedInUserId(),
             'type'        => $type,
             'route'       => $this->getCurrentRoute(),
             'ip'          => $this->getIpAddress(),
@@ -271,7 +271,7 @@ trait AuditingTrait
      *
      * @return null
      */
-    protected function getUserId()
+    protected function getLoggedInUserId()
     {
         try {
             if (Auth::check()) {
