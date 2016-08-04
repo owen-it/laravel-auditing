@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Event;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -217,6 +218,7 @@ trait AuditingTrait
      */
     public function audit(array $log, $type)
     {
+        // Log data
         $logAuditing = [
             'old_value'   => $this->asJson($log['old_value']),
             'new_value'   => $this->asJson($log['new_value']),
@@ -230,9 +232,14 @@ trait AuditingTrait
             'updated_at'  => $this->freshTimestamp(),
         ];
 
-        // Insert the log and clear the oldest logs if given a limit.
+        // Records the changes in the model.
         if ($this->saveAudit($logAuditing)) {
+            // Clear the oldest logs if given a limit.
             $this->clearOlderLogs();
+
+            // The fire method will dispatch the event to all of its
+            // registered listeners.
+            Event::fire('auditing.'.$type, [$this]);
         }
     }
 
