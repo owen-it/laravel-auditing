@@ -156,8 +156,7 @@ trait AuditingTrait
     {
         // If auditing is enabled
         if ($this->isAuditEnabled()) {
-            $log = ['old_value' => null];
-            $log['new_value'] = [];
+            $log = ['new_value' => null, 'old_value' => null];
 
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
