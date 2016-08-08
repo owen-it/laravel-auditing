@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Event;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -128,12 +129,12 @@ trait AuditingTrait
 
             // Dont keep log of
             $this->dontKeep = isset($this->dontKeepLogOf) ?
-                $this->dontKeepLogOf + $this->dontKeep
+                array_merge($this->dontKeepLogOf, $this->dontKeep)
                 : $this->dontKeep;
 
             // Keep log of
             $this->doKeep = isset($this->keepLogOf) ?
-                $this->keepLogOf + $this->doKeep
+                array_merge($this->keepLogOf, $this->doKeep)
                 : $this->doKeep;
 
             unset($this->attributes['dontKeepLogOf']);
@@ -156,8 +157,7 @@ trait AuditingTrait
     {
         // If auditing is enabled
         if ($this->isAuditEnabled()) {
-            $log = ['old_value' => null];
-            $log['new_value'] = [];
+            $log = ['new_value' => null, 'old_value' => null];
 
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
@@ -218,12 +218,13 @@ trait AuditingTrait
      */
     public function audit(array $log, $type)
     {
+        // Log data
         $logAuditing = [
             'old_value'   => $this->asJson($log['old_value']),
             'new_value'   => $this->asJson($log['new_value']),
             'owner_type'  => get_class($this),
             'owner_id'    => $this->getKey(),
-            'user_id'     => $this->getUserId(),
+            'user_id'     => $this->getLoggedInUserId(),
             'type'        => $type,
             'route'       => $this->getCurrentRoute(),
             'ip'          => $this->getIpAddress(),
@@ -231,9 +232,14 @@ trait AuditingTrait
             'updated_at'  => $this->freshTimestamp(),
         ];
 
-        // Insert the log and clear the oldest logs if given a limit.
+        // Records the changes in the model.
         if ($this->saveAudit($logAuditing)) {
+            // Clear the oldest logs if given a limit.
             $this->clearOlderLogs();
+
+            // The fire method will dispatch the event to all of its
+            // registered listeners.
+            Event::fire('auditing.'.$type, [$this]);
         }
     }
 
@@ -272,7 +278,7 @@ trait AuditingTrait
      *
      * @return null
      */
-    protected function getUserId()
+    protected function getLoggedInUserId()
     {
         try {
             if (Auth::check()) {
