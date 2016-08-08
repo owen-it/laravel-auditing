@@ -1,14 +1,22 @@
 {
     "name": "owen-it/laravel-auditing",
     "description": "Keep a change history for your models using laravel and lumen",
-    "keywords": ["audit", "auditing", "activity", "laravel", "log", "logging", "register", "observe", "lumen"],
-    "homepage": "https://github.com/owen-it/laravel-auditing",
+    "keywords": ["audit", "auditing", "activity", "laravel", "log", "logging", "register", "observer", "lumen"],
+    "homepage": "https://laravel-auditing.com",
     "type": "package",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/owen-it/laravel-auditing/issues",
+        "source": "https://github.com/owen-it/laravel-auditing"
+    },
     "authors": [
         {
             "name": "Antério",
             "email": "anteriovieira@gmail.com"
+        },
+        {
+            "name": "Raphael França",
+            "email": "raphaelfrancabsb@gmail.com"
         }
     ],
     "require": {
@@ -16,7 +24,7 @@
         "illuminate/support": "5.1.* || 5.2.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0"
+        "phpunit/phpunit": "~4.1"
     },
     "autoload": {
         "psr-4": {
@@ -24,7 +32,7 @@
         }
     },
     "autoload-dev": {
-	"classmap": ["tests"]
+	    "classmap": ["tests"]
     },
     "minimum-stability": "dev"
 }
