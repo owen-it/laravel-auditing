@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/support": "5.3.*",
+        "illuminate/support": "5.1.* || 5.2.* || 5.3.*",
         "ramsey/uuid": "~3.0"
     },
     "require-dev": {
