@@ -55,7 +55,7 @@ class Log extends Model
      */
     public function restore()
     {
-        if (class_exists($class = $this->owner_type)) {
+        if (class_exists($class = $this->getActualClassNameForMorph($this->owner_type))) {
             $model = $this->$class->findOrFail($this->owner_id);
 
             $model->fill($this->old_value);
@@ -103,7 +103,7 @@ class Log extends Model
      */
     public function getCustomMessageAttribute()
     {
-        if (class_exists($class = $this->owner_type)) {
+        if (class_exists($class = $this->getActualClassNameForMorph($this->owner_type))) {
             return $this->resolveCustomMessage($this->getCustomMessage($class));
         } else {
             return false;
@@ -117,7 +117,7 @@ class Log extends Model
      */
     public function getCustomFieldsAttribute()
     {
-        if (class_exists($class = $this->owner_type)) {
+        if (class_exists($class = $this->getActualClassNameForMorph($this->owner_type))) {
             $customFields = [];
 
             foreach ($this->getCustomFields($class) as $field => $message) {
