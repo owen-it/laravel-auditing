@@ -222,7 +222,7 @@ trait AuditingTrait
         $logAuditing = [
             'old_value'   => $this->asJson($log['old_value']),
             'new_value'   => $this->asJson($log['new_value']),
-            'owner_type'  => get_class($this),
+            'owner_type'  => $this->getMorphClass(),
             'owner_id'    => $this->getKey(),
             'user_id'     => $this->getLoggedInUserId(),
             'type'        => $type,
