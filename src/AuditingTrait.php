@@ -56,7 +56,7 @@ trait AuditingTrait
         });
 
         static::saved(function ($model) {
-            if ($model->isTypeAuditable('saved')) {
+            if ($model->isTypeAuditable('saved') || $model->isTypeAuditable('updated')) {
                 $model->auditUpdate();
             }
         });
@@ -398,7 +398,7 @@ trait AuditingTrait
     {
         $auditableTypes = isset($this->auditableTypes)
                           ? $this->auditableTypes
-                          : ['created', 'saved', 'deleted'];
+                          : ['created', 'saved', 'deleted', 'updated'];
 
         // Checks if the type is in the collection of type-auditable
         if (in_array($key, $auditableTypes)) {
