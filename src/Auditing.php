@@ -15,6 +15,13 @@ class Auditing extends Model
     public $incrementing = false;
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -27,6 +34,13 @@ class Auditing extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['created_at'];
 
     /**
      * The attributes that should be cast to native types.
@@ -74,7 +88,7 @@ class Auditing extends Model
      */
     public function getElapsedTimeAttribute()
     {
-        return !$this->created_at ?: $this->created_at->diffForHumans();
+        return $this->created_at->diffForHumans();
     }
 
     /**
