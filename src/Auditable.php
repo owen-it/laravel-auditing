@@ -53,9 +53,9 @@ trait Auditable
     protected $newData = [];
 
     /**
-     * @var array
+     * @var string
      */
-    protected $typeAuditable = null;
+    protected $typeAuditing = '';
 
     /**
      * Init auditing.
@@ -207,8 +207,7 @@ trait Auditable
             'user_id'        => $this->getLoggedInUserId(),
             'route'          => $this->getCurrentRoute(),
             'ip_address'     => $this->getIpAddress(),
-            'created_at'     => $this->freshTimestamp(),
-            'updated_at'     => $this->freshTimestamp(),
+            'created_at'     => $this->freshTimestamp()
         ];
     }
 
@@ -327,12 +326,12 @@ trait Auditable
      */
     public function isTypeAuditable($key)
     {
-        // Verify if auditable enabled
+        // Verify if auditing enabled
         if (!$this->isAuditEnabled()) {
             return false;
         }
 
-        // Get the types auditing
+        // Get the auditable types
         $auditableTypes = isset($this->auditableTypes) ? $this->auditableTypes
                           : ['created', 'updated', 'deleted', 'saved', 'restored'];
 
