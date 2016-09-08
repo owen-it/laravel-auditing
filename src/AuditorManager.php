@@ -2,8 +2,8 @@
 
 namespace OwenIt\Auditing;
 
-use InvalidArgumentException;
 use Illuminate\Support\Manager;
+use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Dispatcher;
 
 class AuditorManager extends Manager implements Dispatcher
@@ -14,11 +14,12 @@ class AuditorManager extends Manager implements Dispatcher
      * @var string
      */
     protected $defaultAuditor = 'database';
-	
+
     /**
      * Audit the given information.
-     * 
+     *
      * @param $auditable
+     *
      * @return void
      */
     public function audit($auditable)
@@ -29,15 +30,15 @@ class AuditorManager extends Manager implements Dispatcher
             return;
         }
 
-        foreach($auditors as $auditor){
+        foreach ($auditors as $auditor) {
             $auditable = clone $auditable;
 
             // Review audit
-            if (! $this->auditReview($auditable, $auditor)) {
+            if (!$this->auditReview($auditable, $auditor)) {
                 continue;
             }
 
-            $report  = $this->driver($auditor)->audit($auditable);
+            $report = $this->driver($auditor)->audit($auditable);
 
             // Report audit
             $this->app->make('events')->fire(
@@ -49,7 +50,8 @@ class AuditorManager extends Manager implements Dispatcher
     /**
      * Get a auditor instance.
      *
-     * @param  string|null  $name
+     * @param string|null $name
+     *
      * @return mixed
      */
     public function auditor($name = null)
@@ -58,11 +60,12 @@ class AuditorManager extends Manager implements Dispatcher
     }
 
     /**
-     * Review audit and determines if the 
+     * Review audit and determines if the
      * entity can be audited.
      *
-     * @param  mixed  $auditable
-     * @param  string  $auditor
+     * @param mixed  $auditable
+     * @param string $auditor
+     *
      * @return bool
      */
     protected function auditReview($auditable, $auditor)
@@ -75,24 +78,24 @@ class AuditorManager extends Manager implements Dispatcher
     /**
      * Create a new driver instance.
      *
-     * @param  string  $driver
-     * @return mixed
+     * @param string $driver
      *
      * @throws \InvalidArgumentException
+     *
+     * @return mixed
      */
     protected function createDriver($driver)
     {
         try {
             return parent::createDriver($driver);
         } catch (InvalidArgumentException $e) {
-
             if (class_exists($driver)) {
                 return $this->app->make($driver);
             }
 
             throw $e;
         }
-    }    
+    }
 
     /**
      * Create an instance of the database driver.

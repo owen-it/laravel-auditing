@@ -2,10 +2,9 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Dispatcher;
 
-trait Auditor 
+trait Auditor
 {
     /**
      * @var array
@@ -27,7 +26,8 @@ trait Auditor
      *
      * @return array
      */
-    public function getAuditors(){
+    public function getAuditors()
+    {
         return isset($this->auditors) ? (array) $this->auditors : $this->auditorsDefaults;
     }
 }

@@ -2,12 +2,11 @@
 
 namespace OwenIt\Auditing;
 
-use Event;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
+use Ramsey\Uuid\Uuid;
 
 trait Auditable
 {
@@ -32,7 +31,7 @@ trait Auditable
      * @var array
      */
     private $updatedData = [];
-    
+
     /**
      * @var bool
      */
@@ -155,18 +154,17 @@ trait Auditable
 
             $changesToTecord = $this->changedAuditingFields();
 
-            if(empty($changesToTecord)){
+            if (empty($changesToTecord)) {
                 return;
             }
-           
+
             foreach ($changesToTecord as $key => $change) {
                 $this->oldData[$key] = array_get($this->originalData, $key);
-                
+
                 $this->newData[$key] = array_get($this->updatedData, $key);
             }
 
             $this->audit();
-            
         }
     }
 
@@ -193,10 +191,10 @@ trait Auditable
 
     /**
      * Audit model.
-     *  
+     *
      * @return array
      */
-    public function toAudit ()
+    public function toAudit()
     {
         // Auditable data
         return [
@@ -251,7 +249,7 @@ trait Auditable
      */
     public function getIpAddress()
     {
-        return Request::ip();  
+        return Request::ip();
     }
 
     /**
@@ -268,7 +266,6 @@ trait Auditable
                 // Check whether the current value is difetente the original value
                 if (!isset($this->originalData[$key]) ||
                     $this->originalData[$key] != $this->updatedData[$key]) {
-
                     $changesToTecord[$key] = $value;
                 }
             } else {
@@ -315,7 +312,6 @@ trait Auditable
         // running in cosole or that we want to log console too.
         if ((!isset($this->auditEnabled) || $this->auditEnabled)
             && (!App::runningInConsole() || Config::get('auditing.audit_console'))) {
-            
             return true;
         }
 
@@ -332,7 +328,7 @@ trait Auditable
     public function isTypeAuditable($key)
     {
         // Verify if auditable enabled
-        if(! $this->isAuditEnabled()){
+        if (!$this->isAuditEnabled()) {
             return false;
         }
 

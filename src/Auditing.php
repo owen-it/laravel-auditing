@@ -2,8 +2,8 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class Auditing extends Model
 {
@@ -44,9 +44,9 @@ class Auditing extends Model
      * @var array
      */
     protected $appends = [
-        'custom_message', 
-        'custom_fields', 
-        'elapsed_time'
+        'custom_message',
+        'custom_fields',
+        'elapsed_time',
     ];
 
     /**
@@ -111,7 +111,7 @@ class Auditing extends Model
 
             return array_filter($customFields);
         }
-            
+
         return [];
     }
 
@@ -215,7 +215,7 @@ class Auditing extends Model
         foreach (explode('.', $key) as $segment) {
             $object = is_array($object) ? (object) $object : $object;
 
-            if (! isset($object->{$segment})) {
+            if (!isset($object->{$segment})) {
                 return $default;
             }
 
@@ -240,5 +240,4 @@ class Auditing extends Model
 
         return str_replace('\\', '', Str::snake(Str::plural(class_basename($this))));
     }
-
 }

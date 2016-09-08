@@ -28,8 +28,9 @@ class AuditReport
     /**
      * Create a new event instance.
      *
-     * @param  mixed  $auditable
-     * @param  string  $auditor
+     * @param mixed  $auditable
+     * @param string $auditor
+     *
      * @return void
      */
     public function __construct($auditable, $auditor, $report = null)
