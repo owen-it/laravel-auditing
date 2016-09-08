@@ -1,4 +1,5 @@
 <?php
+
 use OwenIt\Auditing\Auditable;
 
 class AuditableTest extends PHPUnit_Framework_TestCase
@@ -11,8 +12,9 @@ class AuditableTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class ModelAuditable {
-	use Auditable;
+class ModelAuditable
+{
+    use Auditable;
 
-	public static $logCustomMessage = '{user.name} {type} a post {elapsed_time}';
+    public static $logCustomMessage = '{user.name} {type} a post {elapsed_time}';
 }
