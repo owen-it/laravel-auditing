@@ -3,9 +3,9 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Support\ServiceProvider;
-use OwenIt\Auditing\Contracts\Dispatcher;
-use OwenIt\Auditing\Console\AuditorMakeCommand;
 use OwenIt\Auditing\Console\AuditingTableCommand;
+use OwenIt\Auditing\Console\AuditorMakeCommand;
+use OwenIt\Auditing\Contracts\Dispatcher;
 
 /**
  * This is the owen auditing service provider class.

@@ -1,9 +1,8 @@
 <?php
+
 namespace OwenIt\Auditing;
 
-use Ramsey\Uuid\Uuid;
-
-trait DatabaseAudits 
+trait DatabaseAudits
 {
     /**
      * Idenfiable name.
@@ -14,7 +13,7 @@ trait DatabaseAudits
     {
         return $this->getKey();
     }
-	
+
     /**
      * Get the entity's audits.
      */
@@ -39,5 +38,4 @@ trait DatabaseAudits
                  ->limit($auditsHistoryOlder)->delete();
         }
     }
-
 }
