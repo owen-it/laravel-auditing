@@ -2,10 +2,12 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Contracts\Dispatcher;
 use OwenIt\Auditing\Console\AuditorMakeCommand;
 use OwenIt\Auditing\Console\AuditingTableCommand;
+use OwenIt\Auditing\Facades\Auditing as AuditingFacade;
 
 /**
  * This is the owen auditing service provider class.
@@ -52,6 +54,8 @@ class AuditingServiceProvider extends ServiceProvider
             AuditorMakeCommand::class,
         ]);
 
+        $this->app->bind('OwenIt\Auditing\Auditing', Auditing::class);
+
         $this->app->singleton(AuditorManager::class, function ($app) {
             return new AuditorManager($app);
         });
@@ -59,6 +63,8 @@ class AuditingServiceProvider extends ServiceProvider
         $this->app->alias(
             AuditorManager::class, Dispatcher::class
         );
+
+        AliasLoader::getInstance()->alias('Auditing', AuditingFacade::class);
     }
 
     /**
@@ -68,6 +74,6 @@ class AuditingServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [AuditorManager::class, Dispatcher::class];
+        return [AuditorManager::class, Dispatcher::class, AuditingFacade::class];
     }
 }
