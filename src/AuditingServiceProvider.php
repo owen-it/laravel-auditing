@@ -3,6 +3,9 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Support\ServiceProvider;
+use OwenIt\Auditing\Contracts\Dispatcher;
+use OwenIt\Auditing\Console\AuditorMakeCommand;
+use OwenIt\Auditing\Console\AuditingTableCommand;
 
 /**
  * This is the owen auditing service provider class.
@@ -16,7 +19,6 @@ class AuditingServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->setupMigrations($this->app);
         $this->setupConfig($this->app);
     }
 
@@ -39,28 +41,24 @@ class AuditingServiceProvider extends ServiceProvider
     }
 
     /**
-     * Setup the migrations.
-     *
-     * @param $app
-     *
-     * @return void
-     */
-    protected function setupMigrations($app)
-    {
-        $source = realpath(__DIR__.'/../database/migrations/');
-
-        if ($app->runningInConsole()) {
-            $this->publishes([$source => database_path('migrations')], 'migrations');
-        }
-    }
-
-    /**
      * Register the service provider.
      *
      * @return void
      */
     public function register()
     {
+        $this->commands([
+            AuditingTableCommand::class,
+            AuditorMakeCommand::class,
+        ]);
+
+        $this->app->singleton(AuditorManager::class, function ($app) {
+            return new AuditorManager($app);
+        });
+
+        $this->app->alias(
+            AuditorManager::class, Dispatcher::class
+        );
     }
 
     /**
@@ -70,6 +68,6 @@ class AuditingServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [];
+        return [AuditorManager::class, Dispatcher::class];
     }
 }

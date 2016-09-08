@@ -1,0 +1,30 @@
+<?php
+
+namespace DummyNamespace;
+
+use OwenIt\Auditing\Contracts\Dispatcher as AuditContract;
+
+class DummyClass extends AuditContract
+{
+
+    /**
+     * Create a new auditor instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Audit the given information.
+     * 
+     * @param $auditable
+     * @return mixed
+     */
+    public function audit($auditing)
+    {
+        //
+    }
+}
