@@ -207,7 +207,7 @@ trait Auditable
             'user_id'        => $this->getLoggedInUserId(),
             'route'          => $this->getCurrentRoute(),
             'ip_address'     => $this->getIpAddress(),
-            'created_at'     => $this->freshTimestamp()
+            'created_at'     => $this->freshTimestamp(),
         ];
     }
 
