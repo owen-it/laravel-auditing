@@ -3,22 +3,20 @@
 namespace OwenIt\Auditing;
 
 use Event;
+use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 
-trait AuditingTrait
+trait Auditable
 {
-    /**
-     * @var array
-     */
-    private $originalData = [];
+    use DatabaseAudits, Auditor;
 
     /**
      * @var array
      */
-    private $updatedData = [];
+    private $doKeep = [];
 
     /**
      * @var array
@@ -28,8 +26,13 @@ trait AuditingTrait
     /**
      * @var array
      */
-    private $doKeep = [];
+    private $originalData = [];
 
+    /**
+     * @var array
+     */
+    private $updatedData = [];
+    
     /**
      * @var bool
      */
@@ -41,70 +44,41 @@ trait AuditingTrait
     protected $dirtyData = [];
 
     /**
+     * @var array
+     */
+    protected $oldData = [];
+
+    /**
+     * @var array
+     */
+    protected $newData = [];
+
+    /**
+     * @var array
+     */
+    protected $typeAuditable = null;
+
+    /**
      * Init auditing.
      */
-    public static function bootAuditingTrait()
+    public static function bootAuditable()
     {
         static::saving(function ($model) {
             $model->prepareAudit();
         });
 
         static::created(function ($model) {
-            if ($model->isTypeAuditable('created')) {
-                $model->auditCreation();
-            }
+            $model->auditCreation();
         });
 
         static::saved(function ($model) {
-            if ($model->isTypeAuditable('saved')) {
-                $model->auditUpdate();
-            }
+            $model->auditUpdate();
         });
 
         static::deleted(function ($model) {
-            if ($model->isTypeAuditable('deleted')) {
-                $model->prepareAudit();
-                $model->auditDeletion();
-            }
+            $model->prepareAudit();
+            $model->auditDeletion();
         });
-    }
-
-    /**
-     * Get list of logs.
-     *
-     * @return mixed
-     */
-    public function logs()
-    {
-        return $this->morphMany(Log::class, 'owner');
-    }
-
-    /**
-     * Generates a list of the last $limit logs made to any objects
-     * of the class it is being called from.
-     *
-     * @param int    $limit
-     * @param string $order
-     *
-     * @return mixed
-     */
-    public static function classLogHistory($limit = 100, $order = 'desc')
-    {
-        return Log::where('owner_type', get_called_class())
-            ->orderBy('updated_at', $order)->limit($limit)->get();
-    }
-
-    /**
-     * Generates a list of the last $limit logs.
-     *
-     * @param int    $limit
-     * @param string $order
-     *
-     * @return mixed
-     */
-    public function logHistory($limit = 100, $order = 'desc')
-    {
-        return static::classLogHistory($limit, $order);
     }
 
     /**
@@ -117,28 +91,27 @@ trait AuditingTrait
         // If auditing is enabled
         if ($this->isAuditEnabled()) {
             $this->originalData = $this->original;
+
             $this->updatedData = $this->attributes;
 
             foreach ($this->updatedData as $key => $val) {
                 if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
                     unset($this->originalData[$key]);
+
                     unset($this->updatedData[$key]);
+
                     array_push($this->dontKeep, $key);
                 }
             }
-
-            // Dont keep log of
-            $this->dontKeep = isset($this->dontKeepLogOf) ?
-                array_merge($this->dontKeepLogOf, $this->dontKeep)
+            // Dont keep audit of
+            $this->dontKeep = isset($this->dontKeepAuditOf) ?
+                array_merge($this->dontKeepAuditOf, $this->dontKeep)
                 : $this->dontKeep;
 
-            // Keep log of
-            $this->doKeep = isset($this->keepLogOf) ?
-                array_merge($this->keepLogOf, $this->doKeep)
+            // Keep audit of
+            $this->doKeep = isset($this->keepAuditOf) ?
+                array_merge($this->keepAuditOf, $this->doKeep)
                 : $this->doKeep;
-
-            unset($this->attributes['dontKeepLogOf']);
-            unset($this->attributes['keepLogOf']);
 
             // Get changed data
             $this->dirtyData = $this->getDirty();
@@ -156,16 +129,16 @@ trait AuditingTrait
     public function auditCreation()
     {
         // If auditing is enabled
-        if ($this->isAuditEnabled()) {
-            $log = ['new_value' => null, 'old_value' => null];
+        if ($this->isTypeAuditable('created')) {
+            $this->typeAuditing = 'created';
 
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
-                    $log['new_value'][$key] = $value;
+                    $this->newData[$key] = $value;
                 }
             }
 
-            $this->audit($log, 'created');
+            $this->audit();
         }
     }
 
@@ -177,16 +150,23 @@ trait AuditingTrait
     public function auditUpdate()
     {
         // If auditing is enabled and object updated
-        if ($this->isAuditEnabled() && $this->updating) {
-            $changes_to_record = $this->changedAuditingFields();
-            if (count($changes_to_record)) {
-                foreach ($changes_to_record as $key => $change) {
-                    $log['old_value'][$key] = array_get($this->originalData, $key);
-                    $log['new_value'][$key] = array_get($this->updatedData, $key);
-                }
+        if (($this->isTypeAuditable('saved') || $this->isTypeAuditable('updated')) && $this->updating) {
+            $this->typeAuditing = 'updated';
 
-                $this->audit($log, 'updated');
+            $changesToTecord = $this->changedAuditingFields();
+
+            if(empty($changesToTecord)){
+                return;
             }
+           
+            foreach ($changesToTecord as $key => $change) {
+                $this->oldData[$key] = array_get($this->originalData, $key);
+                
+                $this->newData[$key] = array_get($this->updatedData, $key);
+            }
+
+            $this->audit();
+            
         }
     }
 
@@ -198,79 +178,40 @@ trait AuditingTrait
     public function auditDeletion()
     {
         // If auditing is enabled
-        if ($this->isAuditEnabled() && $this->isAuditing('deleted_at')) {
-            $log = ['new_value' => null];
+        if ($this->isTypeAuditable('deleted') && $this->isAuditing('deleted_at')) {
+            $this->typeAuditing = 'deleted';
 
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
-                    $log['old_value'][$key] = $value;
+                    $this->old[$key] = $value;
                 }
             }
 
-            $this->audit($log, 'deleted');
+            $this->audit();
         }
     }
 
     /**
      * Audit model.
-     *
-     * @return Log
+     *  
+     * @return array
      */
-    public function audit(array $log, $type)
+    public function toAudit ()
     {
-        // Log data
-        $logAuditing = [
-            'old_value'   => $this->asJson($log['old_value']),
-            'new_value'   => $this->asJson($log['new_value']),
-            'owner_type'  => get_class($this),
-            'owner_id'    => $this->getKey(),
-            'user_id'     => $this->getLoggedInUserId(),
-            'type'        => $type,
-            'route'       => $this->getCurrentRoute(),
-            'ip'          => $this->getIpAddress(),
-            'created_at'  => $this->freshTimestamp(),
-            'updated_at'  => $this->freshTimestamp(),
+        // Auditable data
+        return [
+            'id'             => (string) Uuid::uuid4(),
+            'old'            => $this->oldData,
+            'new'            => $this->newData,
+            'type'           => $this->typeAuditing,
+            'auditable_id'   => $this->getKey(),
+            'auditable_type' => $this->getMorphClass(),
+            'user_id'        => $this->getLoggedInUserId(),
+            'route'          => $this->getCurrentRoute(),
+            'ip_address'     => $this->getIpAddress(),
+            'created_at'     => $this->freshTimestamp(),
+            'updated_at'     => $this->freshTimestamp(),
         ];
-
-        // Records the changes in the model.
-        if ($this->saveAudit($logAuditing)) {
-            // Clear the oldest logs if given a limit.
-            $this->clearOlderLogs();
-
-            // The fire method will dispatch the event to all of its
-            // registered listeners.
-            Event::fire('auditing.'.$type, [$this]);
-        }
-    }
-
-    /**
-     * Clear the oldest logs if given a limit.
-     *
-     * @return void
-     */
-    private function clearOlderLogs()
-    {
-        $logHistoryCount = $this->logHistory()->count();
-        $logHistoryOlder = $logHistoryCount - $this->historyLimit;
-
-        if (isset($this->historyLimit) && $logHistoryOlder > 0) {
-            $logs = $this->logHistory($logHistoryOlder, 'asc');
-            $logs->each(function ($log) {
-                $log->delete();
-            });
-        }
-    }
-
-    /**
-     * Save Audit.
-     *
-     * @param array $fields
-     *
-     * @return Log
-     */
-    protected function saveAudit(array $fields)
-    {
-        return Log::insert($fields);
     }
 
     /**
@@ -310,7 +251,7 @@ trait AuditingTrait
      */
     public function getIpAddress()
     {
-        return Request::ip();
+        return Request::ip();  
     }
 
     /**
@@ -320,21 +261,24 @@ trait AuditingTrait
      */
     private function changedAuditingFields()
     {
-        $changes_to_record = [];
+        $changesToTecord = [];
+
         foreach ($this->dirtyData as $key => $value) {
             if ($this->isAuditing($key) && !is_array($value)) {
                 // Check whether the current value is difetente the original value
                 if (!isset($this->originalData[$key]) ||
                     $this->originalData[$key] != $this->updatedData[$key]) {
-                    $changes_to_record[$key] = $value;
+
+                    $changesToTecord[$key] = $value;
                 }
             } else {
                 unset($this->updatedData[$key]);
+
                 unset($this->originalData[$key]);
             }
         }
 
-        return $changes_to_record;
+        return $changesToTecord;
     }
 
     /**
@@ -371,20 +315,11 @@ trait AuditingTrait
         // running in cosole or that we want to log console too.
         if ((!isset($this->auditEnabled) || $this->auditEnabled)
             && (!App::runningInConsole() || Config::get('auditing.audit_console'))) {
+            
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Idenfiable name.
-     *
-     * @return mixed
-     */
-    public function identifiableName()
-    {
-        return $this->getKey();
     }
 
     /**
@@ -396,13 +331,20 @@ trait AuditingTrait
      */
     public function isTypeAuditable($key)
     {
-        $auditableTypes = isset($this->auditableTypes)
-                          ? $this->auditableTypes
-                          : ['created', 'saved', 'deleted'];
+        // Verify if auditable enabled
+        if(! $this->isAuditEnabled()){
+            return false;
+        }
 
-        // Checks if the type is in the collection of type-auditable
+        // Get the types auditing
+        $auditableTypes = isset($this->auditableTypes) ? $this->auditableTypes
+                          : ['created', 'updated', 'deleted', 'saved', 'restored'];
+
+        // Checks if the type is in the collection of type auditable
         if (in_array($key, $auditableTypes)) {
             return true;
         }
+
+        return false;
     }
 }
