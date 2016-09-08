@@ -36,6 +36,13 @@ class Auditing extends Model
     protected $guarded = [];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['created_at'];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -81,7 +88,7 @@ class Auditing extends Model
      */
     public function getElapsedTimeAttribute()
     {
-        return !$this->created_at ?: $this->created_at->diffForHumans();
+        return $this->created_at->diffForHumans();
     }
 
     /**
