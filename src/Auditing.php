@@ -136,11 +136,11 @@ class Auditing extends Model
      */
     public function getCustomMessage($class)
     {
-        if (!isset($class::$logCustomMessage)) {
+        if (!isset($class::$auditCustomMessage)) {
             return 'Not defined custom message!';
         }
 
-        return $class::$logCustomMessage;
+        return $class::$auditCustomMessage;
     }
 
     /**
@@ -150,11 +150,11 @@ class Auditing extends Model
      */
     public function getCustomFields($class)
     {
-        if (!isset($class::$logCustomFields)) {
+        if (!isset($class::$auditCustomFields)) {
             return [];
         }
 
-        return $class::$logCustomFields;
+        return $class::$auditCustomFields;
     }
 
     /**
