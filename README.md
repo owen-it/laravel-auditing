@@ -8,4 +8,4 @@ Laravel Auditing allows you to record changes to an Eloquent model's set of data
 
 ## Official Documentation
 
-Documentation for the package can be found on the [Laravel Auditing website](http://laravel-auditing.com).
+Documentation for the package can be found on the [Laravel Auditing website](http://laravel-auditing.herokuapp.com).
