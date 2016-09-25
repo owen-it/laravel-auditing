@@ -30,7 +30,7 @@ class AuditorManager extends Manager implements Dispatcher
             return;
         }
 
-        foreach ($auditors as $auditor) {
+        foreach ((array) $auditors as $auditor) {
             $auditable = clone $auditable;
 
             // Review audit
