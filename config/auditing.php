@@ -55,4 +55,15 @@ return [
     */
 
     'audit_console' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Auditor
+    |--------------------------------------------------------------------------
+    |
+    | The default auditor used to audit model.
+    |
+    */
+
+    'default_auditor' => 'database',
 ];
