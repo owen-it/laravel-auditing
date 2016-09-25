@@ -2,8 +2,8 @@
 
 namespace OwenIt\Auditing;
 
-use InvalidArgumentException;
 use Illuminate\Support\Manager;
+use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Dispatcher;
 
 class AuditorManager extends Manager implements Dispatcher
@@ -30,7 +30,7 @@ class AuditorManager extends Manager implements Dispatcher
             return;
         }
 
-        foreach ($auditors as $auditor) {
+        foreach ((array) $auditors as $auditor) {
             $auditable = clone $auditable;
 
             // Review audit
