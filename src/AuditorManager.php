@@ -2,8 +2,8 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Support\Manager;
 use InvalidArgumentException;
+use Illuminate\Support\Manager;
 use OwenIt\Auditing\Contracts\Dispatcher;
 
 class AuditorManager extends Manager implements Dispatcher

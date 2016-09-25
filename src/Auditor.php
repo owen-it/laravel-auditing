@@ -2,15 +2,11 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Dispatcher;
 
 trait Auditor
 {
-    /**
-     * @var array
-     */
-    protected $auditorsDefaults = ['database'];
-
     /**
      * Audit the given information.
      *
@@ -28,6 +24,6 @@ trait Auditor
      */
     public function getAuditors()
     {
-        return isset($this->auditors) ? (array) $this->auditors : $this->auditorsDefaults;
+        return isset($this->auditors) ? (array) $this->auditors : Config::get('auditing.default_auditor');
     }
 }
