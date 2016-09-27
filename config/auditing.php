@@ -61,7 +61,7 @@ return [
     | Default Auditor
     |--------------------------------------------------------------------------
     |
-    | The default auditor used to audit model.
+    | The default auditor used to audit the eloquent model.
     |
     */
 
