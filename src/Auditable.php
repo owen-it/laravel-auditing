@@ -181,7 +181,7 @@ trait Auditable
 
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
-                    $this->old[$key] = $value;
+                    $this->oldData[$key] = $value;
                 }
             }
 
