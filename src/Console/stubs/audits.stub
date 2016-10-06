@@ -13,7 +13,7 @@ class CreateAuditsTable extends Migration
     public function up()
     {
         Schema::create('audits', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->uuid('id')->primary();
             $table->string('type');
             $table->morphs('auditable');
             $table->text('old')->nullable();
