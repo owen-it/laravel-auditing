@@ -181,7 +181,7 @@ trait Auditable
 
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
-                    $this->old[$key] = $value;
+                    $this->oldData[$key] = $value;
                 }
             }
 
@@ -199,8 +199,8 @@ trait Auditable
         // Auditable data
         return [
             'id'             => (string) Uuid::uuid4(),
-            'old'            => $this->oldData,
-            'new'            => $this->newData,
+            'old'            => $this->cleanHiddenAuditAttributes($this->oldData),
+            'new'            => $this->cleanHiddenAuditAttributes($this->newData),
             'type'           => $this->typeAuditing,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
@@ -341,5 +341,54 @@ trait Auditable
         }
 
         return false;
+    }
+
+    /**
+     * Whether to clean the attributes which are hidden or not visible.
+     *
+     * @return bool
+     */
+    public function isAuditRespectsHidden()
+    {
+        return isset($this->auditRespectsHidden) && $this->auditRespectsHidden;
+    }
+
+    /**
+     * Remove the value of attributes which are hidden or not visible on the model.
+     *
+     * @param $attributes
+     *
+     * @return array
+     */
+    public function cleanHiddenAuditAttributes(array $attributes)
+    {
+        if ($this->isAuditRespectsHidden()) {
+
+            // Get hidden and visible attributes from the model
+            $hidden = $this->getHidden();
+            $visible = $this->getVisible();
+
+            // If visible is set, set to null any attributes which are not in visible
+            if (count($visible) > 0) {
+                foreach ($attributes as $key => &$value) {
+                    if (!in_array($key, $visible)) {
+                        $value = null;
+                    }
+                }
+            }
+
+            unset($value);
+
+            // If hidden is set, set to null any attributes which are in hidden
+            if (count($hidden) > 0) {
+                foreach ($hidden as $key) {
+                    if (array_key_exists($key, $attributes)) {
+                        $attributes[$key] = null;
+                    }
+                }
+            }
+        }
+
+        return $attributes;
     }
 }
