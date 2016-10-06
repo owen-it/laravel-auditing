@@ -4,24 +4,24 @@ use OwenIt\Auditing\Auditable;
 
 class AuditableTest extends PHPUnit_Framework_TestCase
 {
-	public function tearDown()
+    public function tearDown()
     {
         Mockery::close();
     }
 
-	public function testWithAuditRespectsHidden()
-	{
-		$auditableMock = Mockery::mock(ModelAuditableTestRaw::class.'[isAuditRespectsHidden]');
-        
-        $auditableMock->shouldReceive('isAuditRespectsHidden')->andReturn(false);
-	}
+    public function testWithAuditRespectsHidden()
+    {
+        $auditableMock = Mockery::mock(ModelAuditableTestRaw::class.'[isAuditRespectsHidden]');
 
-	public function testWithoutAuditRespectsHidden()
-	{
-		$auditableMock = Mockery::mock(ModelAuditableTestConfigs::class.'[isAuditRespectsHidden]');
-        
+        $auditableMock->shouldReceive('isAuditRespectsHidden')->andReturn(false);
+    }
+
+    public function testWithoutAuditRespectsHidden()
+    {
+        $auditableMock = Mockery::mock(ModelAuditableTestConfigs::class.'[isAuditRespectsHidden]');
+
         $auditableMock->shouldReceive('isAuditRespectsHidden')->andReturn(true);
-	}
+    }
 
     public function testItGetsLogCustomMessage()
     {
@@ -33,7 +33,7 @@ class AuditableTest extends PHPUnit_Framework_TestCase
 
 class ModelAuditableTestRaw
 {
-	use Auditable;
+    use Auditable;
 }
 
 class ModelAuditableTestCustomsValues
