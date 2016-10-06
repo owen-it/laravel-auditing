@@ -4,17 +4,48 @@ use OwenIt\Auditing\Auditable;
 
 class AuditableTest extends PHPUnit_Framework_TestCase
 {
-    public function test_it_gets_the_table_name()
+	public function tearDown()
     {
-        $logCustomMessage = ModelAuditable::$logCustomMessage;
+        Mockery::close();
+    }
+
+	public function testWithAuditRespectsHidden()
+	{
+		$auditableMock = Mockery::mock(ModelAuditableTestRaw::class.'[isAuditRespectsHidden]');
+        
+        $auditableMock->shouldReceive('isAuditRespectsHidden')->andReturn(false);
+	}
+
+	public function testWithoutAuditRespectsHidden()
+	{
+		$auditableMock = Mockery::mock(ModelAuditableTestConfigs::class.'[isAuditRespectsHidden]');
+        
+        $auditableMock->shouldReceive('isAuditRespectsHidden')->andReturn(true);
+	}
+
+    public function testItGetsLogCustomMessage()
+    {
+        $logCustomMessage = ModelAuditableTestCustomsValues::$logCustomMessage;
 
         $this->assertEquals('{user.name} {type} a post {elapsed_time}', $logCustomMessage);
     }
 }
 
-class ModelAuditable
+class ModelAuditableTestRaw
+{
+	use Auditable;
+}
+
+class ModelAuditableTestCustomsValues
 {
     use Auditable;
 
     public static $logCustomMessage = '{user.name} {type} a post {elapsed_time}';
+}
+
+class ModelAuditableTestConfigs
+{
+    use Auditable;
+
+    public static $auditRespectsHidden = true;
 }
