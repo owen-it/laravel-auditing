@@ -1,6 +1,7 @@
 <?php
 
 use OwenIt\Auditing\Auditable;
+use Illuminate\Database\Eloquent\Model;
 
 class AuditableTest extends PHPUnit_Framework_TestCase
 {
@@ -9,18 +10,26 @@ class AuditableTest extends PHPUnit_Framework_TestCase
         Mockery::close();
     }
 
-    public function testWithAuditRespectsHidden()
+    public function testWithAuditRespectsWithoutHidden()
     {
-        $auditableMock = Mockery::mock(ModelAuditableTestRaw::class.'[isAuditRespectsHidden]');
+        $attributes = ['name' => 'Anterio', 'password' => '12345'];
 
-        $auditableMock->shouldReceive('isAuditRespectsHidden')->andReturn(false);
+        $auditable = new ModelAuditableTestRaw();
+
+        $result = $auditable->cleanHiddenAuditAttributes($attributes);
+
+        $this->assertEquals($attributes, $result);
     }
 
-    public function testWithoutAuditRespectsHidden()
+    public function testWithAuditRespectsWithHidden()
     {
-        $auditableMock = Mockery::mock(ModelAuditableTestConfigs::class.'[isAuditRespectsHidden]');
+        $attributes = ['name' => 'Anterio', 'password' => '12345'];
 
-        $auditableMock->shouldReceive('isAuditRespectsHidden')->andReturn(true);
+        $auditable = new ModelAuditableTestCustomsValues();
+
+        $result = $auditable->cleanHiddenAuditAttributes($attributes);
+
+        $this->assertEquals(['name' => 'Anterio', 'password' => null], $result);
     }
 
     public function testItGetsLogCustomMessage()
@@ -36,9 +45,13 @@ class ModelAuditableTestRaw
     use Auditable;
 }
 
-class ModelAuditableTestCustomsValues
+class ModelAuditableTestCustomsValues extends Model
 {
     use Auditable;
+
+    protected $hidden = ['password'];
+
+    protected $auditRespectsHidden = true;
 
     public static $logCustomMessage = '{user.name} {type} a post {elapsed_time}';
 }
