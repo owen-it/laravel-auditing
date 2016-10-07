@@ -11,11 +11,11 @@ class AuditingQueuedAuditTest extends PHPUnit_Framework_TestCase
 
     public function testQueueAudit()
     {
-    	$job = new AuditQueuedModels('auditable');
+        $job = new AuditQueuedModels('auditable');
 
-    	$manager = Mockery::mock('OwenIt\Auditing\AuditorManager');
-    	$manager->shouldReceive('audit')->once()->with('auditable');
+        $manager = Mockery::mock('OwenIt\Auditing\AuditorManager');
+        $manager->shouldReceive('audit')->once()->with('auditable');
 
-    	$job->handle($manager);
+        $job->handle($manager);
     }
 }
