@@ -2,9 +2,12 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Support\Manager;
 use InvalidArgumentException;
+use Illuminate\Support\Manager;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Dispatcher;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Bus\Dispatcher as Bus;
 
 class AuditorManager extends Manager implements Dispatcher
 {
@@ -24,6 +27,10 @@ class AuditorManager extends Manager implements Dispatcher
      */
     public function audit($auditable)
     {
+        if($auditable instanceof ShouldQueue && Config::get('auditing.should_queue', false)){
+            return $this->queueAudit($auditable);
+        }
+
         $auditors = $auditable->getAuditors();
 
         if (empty($auditors)) {
@@ -45,6 +52,21 @@ class AuditorManager extends Manager implements Dispatcher
                 new Events\AuditReport($auditable, $auditor, $report)
             );
         }
+    }
+
+    /**
+     * Queue the given auditable instance.
+     *
+     * @param  mixed  $auditable
+     * @return void
+     */
+    public function queueAudit($auditable)
+    {
+        $bus = $this->app->make(Bus::class);
+
+        $job = (new AuditQueueModels($auditable));
+
+        $bus->dispatcher($job);
     }
 
     /**
