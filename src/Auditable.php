@@ -197,7 +197,7 @@ trait Auditable
     public function toAudit()
     {
         // Auditable data
-        return [
+        return $this->transformAudit([
             'id'             => (string) Uuid::uuid4(),
             'old'            => $this->cleanHiddenAuditAttributes($this->oldData),
             'new'            => $this->cleanHiddenAuditAttributes($this->newData),
@@ -208,7 +208,19 @@ trait Auditable
             'route'          => $this->getCurrentRoute(),
             'ip_address'     => $this->getIpAddress(),
             'created_at'     => $this->freshTimestamp(),
-        ];
+        ]);
+    }
+
+    /**
+     * Allows transforming the audit data array 
+     * before it is passed into the database. 
+     *
+     * @param array $data
+     * @return array
+     */
+    public function transformAudit(array $data)
+    {
+        return $data;
     }
 
     /**
