@@ -212,10 +212,11 @@ trait Auditable
     }
 
     /**
-     * Allows transforming the audit data array 
-     * before it is passed into the database. 
+     * Allows transforming the audit data array
+     * before it is passed into the database.
      *
      * @param array $data
+     *
      * @return array
      */
     public function transformAudit(array $data)
