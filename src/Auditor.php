@@ -8,13 +8,13 @@ use OwenIt\Auditing\Contracts\Dispatcher;
 trait Auditor
 {
     /**
-     * Audit the given information.
+     * Audit the model auditable.
      *
      * @return void
      */
     public function audit()
     {
-        app(Dispatcher::class)->audit($this);
+        app(Dispatcher::class)->makeAudit($this);
     }
 
     /**

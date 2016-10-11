@@ -2,6 +2,9 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Contracts\Bus\Dispatcher as Bus;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Dispatcher;
@@ -16,9 +19,25 @@ class AuditorManager extends Manager implements Dispatcher
     protected $defaultAuditor = 'database';
 
     /**
-     * Audit the given information.
+     * Audit the model auditable.
      *
-     * @param $auditable
+     * @param mixed $auditable
+     *
+     * @return void
+     */
+    public function makeAudit($auditable)
+    {
+        if (Config::get('auditing.queue', false)) {
+            return $this->queueAudit($auditable);
+        }
+
+        $this->audit($auditable);
+    }
+
+    /**
+     * Audit the model auditable.
+     *
+     * @param midex $auditable
      *
      * @return void
      */
@@ -45,6 +64,18 @@ class AuditorManager extends Manager implements Dispatcher
                 new Events\AuditReport($auditable, $auditor, $report)
             );
         }
+    }
+
+    /**
+     * Queue the given auditable instance.
+     *
+     * @param mixed $auditable
+     *
+     * @return void
+     */
+    public function queueAudit($auditable)
+    {
+        dispatch(new AuditQueuedModels($auditable));
     }
 
     /**

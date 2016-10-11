@@ -7,7 +7,7 @@ use OwenIt\Auditing\Auditing;
 class DatabaseAuditor
 {
     /**
-     * Audit the given model.
+     * Audit the model auditable.
      *
      * @param mixed $auditable
      *
