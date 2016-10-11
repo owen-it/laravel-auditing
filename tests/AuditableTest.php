@@ -1,7 +1,7 @@
 <?php
 
-use OwenIt\Auditing\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Auditable;
 
 class AuditableTest extends PHPUnit_Framework_TestCase
 {
