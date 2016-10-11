@@ -131,6 +131,7 @@ trait Auditable
         if ($this->isTypeAuditable('created')) {
             $this->typeAuditing = 'created';
 
+            $this->newData = [];
             foreach ($this->updatedData as $key => $value) {
                 if ($this->isAuditing($key)) {
                     $this->newData[$key] = $value;
@@ -158,6 +159,8 @@ trait Auditable
                 return;
             }
 
+            $this->oldData = [];
+            $this->newData = [];
             foreach ($changesToTecord as $key => $change) {
                 $this->oldData[$key] = array_get($this->originalData, $key);
 
