@@ -2,8 +2,6 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Contracts\Bus\Dispatcher as Bus;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
