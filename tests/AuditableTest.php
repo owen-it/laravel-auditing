@@ -10,6 +10,16 @@ class AuditableTest extends PHPUnit_Framework_TestCase
         Mockery::close();
     }
 
+    public function testItGetsTransformAudit()
+    {
+        $attributes = ['name' => 'Anterio', 'password' => '12345'];
+
+        $model = new ModelAuditableTestRaw();
+        $result = $model->transformAudit($attributes);
+
+        $this->assertEquals($attributes, $result);
+    }
+
     public function testWithAuditRespectsWithoutHidden()
     {
         $attributes = ['name' => 'Anterio', 'password' => '12345'];
