@@ -18,12 +18,12 @@ class DummyClass implements AuditContract
     }
 
     /**
-     * Audit the given information.
+     * Audit the model auditable.
      * 
-     * @param $auditable
+     * @param mixed $auditable
      * @return mixed
      */
-    public function audit($auditing)
+    public function audit($auditable)
     {
         //
     }
