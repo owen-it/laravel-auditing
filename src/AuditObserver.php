@@ -2,12 +2,13 @@
 
 namespace OwenIt\Auditing;
 
-class AuditObserver 
+class AuditObserver
 {
-	/**
+    /**
      * Handle the saving event for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param \Illuminate\Database\Eloquent\Model $model
+     *
      * @return void
      */
     public function saving($model)
@@ -15,10 +16,11 @@ class AuditObserver
         $model->prepareAudit();
     }
 
-	/**
+    /**
      * Handle the created event for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param \Illuminate\Database\Eloquent\Model $model
+     *
      * @return void
      */
     public function created($model)
@@ -29,7 +31,8 @@ class AuditObserver
     /**
      * Handle the saved event for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param \Illuminate\Database\Eloquent\Model $model
+     *
      * @return void
      */
     public function saved($model)
@@ -40,7 +43,8 @@ class AuditObserver
     /**
      * Handle the deleted event for the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param \Illuminate\Database\Eloquent\Model $model
+     *
      * @return void
      */
     public function deleted($model)
