@@ -62,22 +62,7 @@ trait Auditable
      */
     public static function bootAuditable()
     {
-        static::saving(function ($model) {
-            $model->prepareAudit();
-        });
-
-        static::created(function ($model) {
-            $model->auditCreation();
-        });
-
-        static::saved(function ($model) {
-            $model->auditUpdate();
-        });
-
-        static::deleted(function ($model) {
-            $model->prepareAudit();
-            $model->auditDeletion();
-        });
+        static::observe(new AuditObserver);
     }
 
     /**
