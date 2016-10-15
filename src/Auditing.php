@@ -169,15 +169,17 @@ class Auditing extends Model
         preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
 
         foreach (current($segments) as $segment) {
-            $s = str_replace(['{', '}'], '', $segment);
+            $pipe = str_replace(['{', '}'], '', $segment);
 
-            $keys = explode('|', $s);
+            list($property, $defaultValue, $method) = array_pad(
+                explode('|', $pipe, 3), 3, null
+            );
 
-            if (empty($keys[1]) && isset($keys[2])) {
-                $keys[1] = $this->callback($keys[2]);
+            if (empty($defaultValue) && !empty($method)) {
+                $defaultValue = $this->callback($method);
             }
 
-            $valueSegmented = $this->getValueSegmented($this, $keys[0], isset($keys[1]) ? $keys[1] : ' ');
+            $valueSegmented = $this->getValueSegmented($this, $property, $defaultValue ?: ' ');
 
             $message = str_replace($segment, $valueSegmented, $message);
         }
@@ -194,11 +196,11 @@ class Auditing extends Model
      */
     public function callback($method)
     {
-        $auditable = $this->auditable();
-
-        if (method_exists($auditable, $method)) {
-            return $auditable->{$method}($this);
+        if (method_exists($this->auditable, $method)) {
+            return $this->auditable->{$method}($this);
         }
+
+        return;
     }
 
     /**
