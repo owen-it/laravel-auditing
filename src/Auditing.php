@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing;
 
-use OwenIt\Auditing\AuditCustom;
 use Illuminate\Database\Eloquent\Model;
 
 class Auditing extends Model
@@ -65,5 +64,4 @@ class Auditing extends Model
      * @var string
      */
     protected $table = 'audits';
-
 }
