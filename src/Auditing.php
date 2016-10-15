@@ -248,7 +248,7 @@ class Auditing extends Model
     {
         $table = Config::get('auditing.table');
 
-        if(! empty($table)){
+        if (!empty($table)) {
             return $table;
         }
 
