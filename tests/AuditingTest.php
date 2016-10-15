@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Auditing;
 
 class AuditingTest extends PHPUnit_Framework_TestCase
@@ -10,7 +11,11 @@ class AuditingTest extends PHPUnit_Framework_TestCase
         Mockery::close();
     }
 
-    public function testItGetsCallbackMethos()
+    public function tearUp()
+    {
+    }
+
+    public function testItGetsCustomMessages()
     {
         $auditing = new Auditing();
 
@@ -24,6 +29,34 @@ class AuditingTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('The title was defined as Auditing.', $property);
         $this->assertEquals('The title was defined as no title.', $defaultValue);
         $this->assertEquals('The title was defined as awesome.', $callbackMethod);
+    }
+
+    public function testItGetTableInConfig()
+    {
+        $this->setConfigTable('auditing');
+
+        $auditing = new Auditing();
+        $table = $auditing->getTable();
+
+        $this->assertEquals('auditing', $table);
+    }
+
+    public function testItGetTableWithoutConfig()
+    {
+        $this->setConfigTable(null);
+
+        $auditing = new Auditing();
+        $table = $auditing->getTable();
+
+        $this->assertEquals('audits', $table);
+    }
+
+    public function setConfigTable($table)
+    {
+        Config::shouldReceive('get')
+            ->once()
+            ->with('auditing.table')
+            ->andReturn($table);
     }
 }
 
