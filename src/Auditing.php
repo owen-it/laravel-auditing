@@ -199,8 +199,6 @@ class Auditing extends Model
         if (method_exists($this->auditable, $method)) {
             return $this->auditable->{$method}($this);
         }
-
-        return;
     }
 
     /**
