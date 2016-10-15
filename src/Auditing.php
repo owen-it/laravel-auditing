@@ -248,10 +248,10 @@ class Auditing extends Model
     {
         $table = Config::get('auditing.table');
 
-        if ($table) {
+        if(! empty($table)){
             return $table;
         }
 
-        return str_replace('\\', '', Str::snake(Str::plural(class_basename($this))));
+        return parent::getTable();
     }
 }
