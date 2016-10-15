@@ -40,7 +40,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | This option allows you to control if the operations that audit your models
-    | are queued. When this is set to "true" then all models auditable will get 
+    | are queued. When this is set to "true" then all models auditable will get
     | queued for better performance.
     |
     */

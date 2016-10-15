@@ -13,7 +13,6 @@ class AuditingTest extends PHPUnit_Framework_TestCase
 
     public function tearUp()
     {
-
     }
 
     public function testItGetsCustomMessages()
@@ -34,30 +33,30 @@ class AuditingTest extends PHPUnit_Framework_TestCase
 
     public function testItGetTableInConfig()
     {
-    	$this->setConfigTable('auditing');
+        $this->setConfigTable('auditing');
 
-    	$auditing = new Auditing();
-    	$table = $auditing->getTable();
+        $auditing = new Auditing();
+        $table = $auditing->getTable();
 
-    	$this->assertEquals('auditing', $table);
+        $this->assertEquals('auditing', $table);
     }
 
     public function testItGetTableWithoutConfig()
     {
-    	$this->setConfigTable(null);
+        $this->setConfigTable(null);
 
-    	$auditing = new Auditing();
-    	$table = $auditing->getTable();
+        $auditing = new Auditing();
+        $table = $auditing->getTable();
 
-    	$this->assertEquals('audits', $table);
+        $this->assertEquals('audits', $table);
     }
 
     public function setConfigTable($table)
     {
-    	Config::shouldReceive('get')
-		    ->once()
-		    ->with('auditing.table')
-		    ->andReturn($table);
+        Config::shouldReceive('get')
+            ->once()
+            ->with('auditing.table')
+            ->andReturn($table);
     }
 }
 
