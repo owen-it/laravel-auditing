@@ -1,49 +1,37 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditing;
+use Illuminate\Database\Eloquent\Model;
 
 class AuditingTest extends PHPUnit_Framework_TestCase
 {
-    protected $db;
-
-    public function setUp()
-    {
-        $this->db = new DB;
-
-        $this->db->addConnection([
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-        ]);
-
-        $this->db->addConnection([
-            'driver' => 'sqlite',
-            'read' => [
-                'database'  => ':memory:',
-            ],
-            'write' => [
-                'database'  => ':memory:',
-            ],
-        ], 'read_write');
-
-        $this->db->setAsGlobal();
-    }
-
     public function tearDown()
     {
-        m::close();
+        Mockery::close();
     }
 
     public function testItGetsCallbackMethos()
     {
     	$auditing = new Auditing();
 
-        $model = Mockery::mock();
-        $model->shouldReceive('getNewTitle')->once()->andReturn('awesome');;
+    	$auditing->auditable = new EloquentModelStub();
+    	$auditing->new = ['title' => 'Auditing'];
 
-    	$auditing->auditable = $model;
-    	$message = $auditing->resolveCustomMessage('The title was defined as {||getNewTitle}.');
+    	$property = $auditing->resolveCustomMessage('The title was defined as {new.title}.');
+    	$defaultValue = $auditing->resolveCustomMessage('The title was defined as {new.realtitle|no title}.');
+    	$callbackMethod = $auditing->resolveCustomMessage('The title was defined as {||getNewTitle}.');
 
-    	$this->assertEquals('The title was defined as awesome', $message);
+    	$this->assertEquals("The title was defined as Auditing.", $property);
+    	$this->assertEquals('The title was defined as no title.', $defaultValue);
+    	$this->assertEquals('The title was defined as awesome.', $callbackMethod);
+    }
+
+}
+
+class EloquentModelStub extends Model
+{
+    public function getNewTitle($stub)
+    {
+    	return 'awesome';
     }
 }
