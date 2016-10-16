@@ -20,7 +20,7 @@ Please see [contributing](http://www.laravel-auditing.com/docs/master/contributi
 
 - [Antério Vieira](https://github.com/anteriovieira)
 - [Raphael França](https://github.com/raphaelfranca)
-- [All Contributors][link-contributors]
+- [All Contributors](https://github.com/owen-it/laravel-auditing/graphs/contributors)
 
 ## License
 
