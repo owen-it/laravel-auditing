@@ -1,6 +1,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/owen-it/laravel-auditing/version)](https://packagist.org/packages/owen-it/laravel-auditing)
 [![Latest Unstable Version](https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg)](https://packagist.org/packages/owen-it/laravel-auditing)
+[![Laravel 5.2.x](https://img.shields.io/badge/Laravel-5.2.x-brightgreen.svg?style=flat-square)](http://laravel.com)
 [![Laravel 5.3.x](https://img.shields.io/badge/Laravel-5.3.x-brightgreen.svg?style=flat-square)](http://laravel.com)
 [![Total Downloads](https://poser.pugx.org/owen-it/laravel-auditing/downloads)](https://packagist.org/packages/owen-it/laravel-auditing)
 [![License](https://poser.pugx.org/owen-it/laravel-auditing/license.svg)](https://packagist.org/packages/owen-it/laravel-auditing)
