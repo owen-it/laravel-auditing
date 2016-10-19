@@ -47,11 +47,11 @@ class AuditableTest extends PHPUnit_Framework_TestCase
         $model1 = new ModelAuditableTestConfigs();
 
         $types = [
-                'created', 'updated', 'deleted', 
+                'created', 'updated', 'deleted',
                 'saved', 'restored',
         ];
 
-        $this->assertEquals( $types, $model1->getAuditableTypes());
+        $this->assertEquals($types, $model1->getAuditableTypes());
 
         $model2 = new ModelAuditableTestCustomsValues();
 
