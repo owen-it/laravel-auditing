@@ -4,7 +4,6 @@ namespace OwenIt\Auditing;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Ramsey\Uuid\Uuid;
 
@@ -62,12 +61,12 @@ trait Auditable
      */
     protected $auditUserId = '';
 
-        /**
+    /**
      * @var string
      */
     protected $auditCurrentRoute = '';
 
-        /**
+    /**
      * @var string
      */
     protected $auditIpAddress = '';
@@ -156,7 +155,6 @@ trait Auditable
     public function auditUpdate()
     {
         if ($this->isTypeAuditable('updated') && $this->updating) {
-
             $changesToTecord = $this->changedAuditingFields();
 
             if (empty($changesToTecord)) {
@@ -186,7 +184,6 @@ trait Auditable
     {
         // Checks if an auditable type
         if ($this->isTypeAuditable('deleted') && $this->isAttributeAuditable('deleted_at')) {
-
             foreach ($this->updatedData as $attribute => $value) {
                 if ($this->isAttributeAuditable($attribute)) {
                     $this->oldData[$attribute] = $value;
@@ -331,7 +328,6 @@ trait Auditable
     {
         // Checks if the type is in the collection of type auditable
         if (in_array($type, $this->getAuditableTypes())) {
-
             $this->setAuditType($type);
 
             return true;
@@ -341,7 +337,7 @@ trait Auditable
     }
 
     /**
-     * Set audit type 
+     * Set audit type.
      *
      * @param string $type;
      */
@@ -357,15 +353,12 @@ trait Auditable
      */
     public function getAuditableTypes()
     {
-
-        if(isset($this->auditableTypes)){
-
+        if (isset($this->auditableTypes)) {
             return $this->auditableTypes;
-
         }
 
         return [
-                'created', 'updated', 'deleted', 
+                'created', 'updated', 'deleted',
                 'saved', 'restored',
         ];
     }
