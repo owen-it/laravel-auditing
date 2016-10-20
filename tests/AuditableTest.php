@@ -2,9 +2,9 @@
 
 namespace Tests;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditable;
 
 class AuditableTest extends AbstractTestCase

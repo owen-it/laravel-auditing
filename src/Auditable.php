@@ -3,8 +3,8 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Ramsey\Uuid\Uuid;
 
@@ -77,7 +77,7 @@ trait Auditable
      */
     public static function bootAuditable()
     {
-        if(static::isAuditEnabled()){
+        if (static::isAuditEnabled()) {
             static::observe(new AuditObserver());
         }
     }
@@ -422,7 +422,7 @@ trait Auditable
      */
     public static function isAuditEnabled()
     {
-        if (App::runningInConsole() && ! Config::get('auditing.audit_console')) {
+        if (App::runningInConsole() && !Config::get('auditing.audit_console')) {
             return false;
         }
 
