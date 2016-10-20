@@ -38,7 +38,9 @@
         }
     },
     "autoload-dev": {
-	    "classmap": ["tests"]
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "extra": {
         "branch-alias": {

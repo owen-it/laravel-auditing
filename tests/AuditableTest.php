@@ -1,15 +1,14 @@
 <?php
 
+namespace Tests;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Auditable;
 
-class AuditableTest extends PHPUnit_Framework_TestCase
+class AuditableTest extends AbstractTestCase
 {
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
     public function testItGetsTransformAudit()
     {
         $attributes = ['name' => 'Anterio', 'password' => '12345'];
@@ -71,6 +70,22 @@ class AuditableTest extends PHPUnit_Framework_TestCase
         $logCustomMessage = ModelAuditableTestCustomsValues::$logCustomMessage;
 
         $this->assertEquals('{user.name} {type} a post {elapsed_time}', $logCustomMessage);
+    }
+
+    public function testItRunAuditingEnableConsole()
+    {
+        App::shouldReceive('runningInConsole')->once()->andReturn(true);
+        Config::shouldReceive('get')->once()->with('auditing.audit_console')->andReturn(true);
+
+        $model = new ModelAuditableTestRaw();
+
+        $this->assertTrue($model->isAuditEnabled());
+    }
+
+    public function testItRunAuditingDisabledConsole()
+    {
+        $model = new ModelAuditableTestRaw();
+        $this->assertTrue($model->isAuditEnabled());
     }
 }
 

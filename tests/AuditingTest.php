@@ -1,20 +1,13 @@
 <?php
 
+namespace Tests;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Auditing;
 
-class AuditingTest extends PHPUnit_Framework_TestCase
+class AuditingTest extends AbstractTestCase
 {
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
-    public function tearUp()
-    {
-    }
-
     public function testItGetsCustomMessages()
     {
         $auditing = new Auditing();
