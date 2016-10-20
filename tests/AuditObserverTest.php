@@ -1,14 +1,12 @@
 <?php
 
+namespace Tests;
+
+use Mockery;
 use OwenIt\Auditing\AuditObserver;
 
-class AuditObserverTest extends PHPUnit_Framework_TestCase
+class AuditObserverTest extends AbstractTestCase
 {
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
     public function test_saving_handler_prepare_audit()
     {
         $observer = new AuditObserver();
