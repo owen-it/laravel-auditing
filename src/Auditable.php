@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
+use OwenIt\Auditing\Relations\BelongsToMany;
 use Ramsey\Uuid\Uuid;
 
 trait Auditable
@@ -73,6 +74,16 @@ trait Auditable
     protected $auditIpAddress = '';
 
     /**
+     * @var int
+     */
+    protected $relatedKey;
+
+    /**
+     * @var string
+     */
+    protected $relatedClass;
+
+    /**
      * Init auditing.
      */
     public static function bootAuditable()
@@ -113,6 +124,21 @@ trait Auditable
             array_merge($this->keepAuditOf, $this->doKeep)
             : $this->doKeep;
 
+        // Get changed data
+        $this->dirtyData = $this->getDirty();
+
+        // Prepare general audit data
+        $this->prepareGeneralAuditData();
+
+        // Tells whether the record exists in the database
+        $this->updating = $this->exists;
+    }
+
+    /**
+     * Prepare the general audit data
+     */
+    public function prepareGeneralAuditData()
+    {
         // Get user id
         $this->auditUserId = $this->getLoggedInUserId();
 
@@ -121,12 +147,6 @@ trait Auditable
 
         // Get ip address
         $this->auditIpAddress = $this->getIpAddress();
-
-        // Get changed data
-        $this->dirtyData = $this->getDirty();
-
-        // Tells whether the record exists in the database
-        $this->updating = $this->exists;
     }
 
     /**
@@ -158,9 +178,9 @@ trait Auditable
     public function auditUpdate()
     {
         if ($this->isTypeAuditable('updated') && $this->updating) {
-            $changesToTecord = $this->changedAuditingFields();
+            $changesToRecord = $this->changedAuditingFields();
 
-            if (empty($changesToTecord)) {
+            if (empty($changesToRecord)) {
                 return;
             }
 
@@ -168,7 +188,7 @@ trait Auditable
 
             $this->newData = [];
 
-            foreach ($changesToTecord as $attribute => $change) {
+            foreach ($changesToRecord as $attribute => $change) {
                 $this->oldData[$attribute] = array_get($this->originalData, $attribute);
 
                 $this->newData[$attribute] = array_get($this->updatedData, $attribute);
@@ -198,6 +218,61 @@ trait Auditable
     }
 
     /**
+     * Audit attaching a relationship
+     *
+     * @param array $relationParams
+     */
+    public function auditAttachedRelation(array $relationParams)
+    {
+        if ($this->isTypeAuditable('attached')) {
+            // Prepare the data
+            $this->newData = $relationParams['newData'];
+            $this->setRelatedKey($relationParams['relationId']);
+            $this->setRelatedClass(get_class($this->{$relationParams['relationName']}()->getRelated()));
+
+            // Audit
+            $this->audit();
+        }
+    }
+
+    /**
+     * Audit updating relationships
+     *
+     * @param array $relationParams
+     */
+    public function auditUpdatedRelation(array $relationParams)
+    {
+        if ($this->isTypeAuditable('updatedRelation')) {
+            // Prepare the data
+            $this->oldData = $relationParams['oldData'];
+            $this->newData = $relationParams['newData'];
+            $this->setRelatedKey($relationParams['relationId']);
+            $this->setRelatedClass(get_class($this->{$relationParams['relationName']}()->getRelated()));
+
+            // Audit
+            $this->audit();
+        }
+    }
+
+    /**
+     * Audit detaching a relationship
+     *
+     * @param array $relationParams
+     */
+    public function auditDetachedRelation(array $relationParams)
+    {
+        if ($this->isTypeAuditable('detached')) {
+            // Prepare the data
+            $this->oldData = $relationParams['oldData'];
+            $this->setRelatedKey($relationParams['relationId']);
+            $this->setRelatedClass(get_class($this->{$relationParams['relationName']}()->getRelated()));
+
+            // Audit
+            $this->audit();
+        }
+    }
+
+    /**
      * Audit model.
      *
      * @return array
@@ -211,6 +286,8 @@ trait Auditable
             'type'           => $this->auditType,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
+            'related_id'     => $this->getRelatedKey(),
+            'related_type'   => $this->getRelatedClass(),
             'user_id'        => $this->auditUserId,
             'route'          => $this->auditCurrentRoute,
             'ip_address'     => $this->auditIpAddress,
@@ -282,7 +359,7 @@ trait Auditable
 
         foreach ($this->dirtyData as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute) && !is_array($value)) {
-                // Check whether the current value is difetente the original value
+                // Check whether the current value is different the original value
                 if (!isset($this->originalData[$attribute]) ||
                     $this->originalData[$attribute] != $this->updatedData[$attribute]) {
                     $changesToTecord[$attribute] = $value;
@@ -363,6 +440,7 @@ trait Auditable
         return [
                 'created', 'updated', 'deleted',
                 'saved', 'restored',
+                'attached', 'updatedRelation', 'detached'
         ];
     }
 
@@ -413,6 +491,132 @@ trait Auditable
         }
 
         return $attributes;
+    }
+
+    /**
+     * Define a many-to-many relationship.
+     * This is basically the Laravel functionality replacing the BelongsToMany
+     *
+     * @param  string  $related
+     * @param  string  $table
+     * @param  string  $foreignKey
+     * @param  string  $otherKey
+     * @param  string  $relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
+    {
+        // Get foreign key and other key for later use
+        $instance = new $related;
+        $foreignKey = $foreignKey ?: $this->getForeignKey();
+        $otherKey = $otherKey ?: $instance->getForeignKey();
+
+        // Get the original relationship
+        $belongsToMany = parent::belongsToMany($related, $table, $foreignKey, $otherKey, $relation);
+
+        // Create the overridden relationship
+        return new BelongsToMany(
+            $instance->newQuery(),
+            $this,
+            $belongsToMany->getTable(),
+            $foreignKey,
+            $otherKey,
+            $belongsToMany->getRelationName()
+        );
+    }
+
+    /**
+     * Get the observable event names.
+     *
+     * @return array
+     */
+    public function getObservableEvents()
+    {
+        return array_merge(
+            [
+                'creating', 'created', 'updating', 'updated',
+                'deleting', 'deleted', 'saving', 'saved',
+                'restoring', 'restored',
+                'attached', 'updatedRelation', 'detached'
+            ],
+            $this->observables
+        );
+    }
+
+    /**
+     * Get the key of the related model
+     *
+     * @return string
+     */
+    protected function getRelatedKey()
+    {
+        return $this->relatedKey;
+    }
+
+    /**
+     * Set the key of the related model
+     *
+     * @param string $relatedKey
+     */
+    protected function setRelatedKey($relatedKey)
+    {
+        $this->relatedKey = $relatedKey;
+    }
+
+    /**
+     * Get the class of the related model
+     *
+     * @return string
+     */
+    protected function getRelatedClass()
+    {
+        return $this->relatedClass;
+    }
+
+    /**
+     * Set the class of the related model
+     *
+     * @param string $relatedClass
+     */
+    protected function setRelatedClass($relatedClass)
+    {
+        $this->relatedClass = $relatedClass;
+    }
+
+    /**
+     * Register a relation attached model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function attached($callback, $priority = 0)
+    {
+        static::registerModelEvent("attached", $callback, $priority);
+    }
+
+    /**
+     * Register a relation attached model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function updatedRelation($callback, $priority = 0)
+    {
+        static::registerModelEvent("updatedRelation", $callback, $priority);
+    }
+
+    /**
+     * Register a relation detached model event with the dispatcher.
+     *
+     * @param  \Closure|string  $callback
+     * @param  int  $priority
+     * @return void
+     */
+    public static function detached($callback, $priority = 0)
+    {
+        static::registerModelEvent("detached", $callback, $priority);
     }
 
     /**
