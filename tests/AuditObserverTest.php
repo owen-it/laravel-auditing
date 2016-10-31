@@ -39,4 +39,31 @@ class AuditObserverTest extends AbstractTestCase
         $model->shouldReceive('auditDeletion');
         $observer->deleted($model);
     }
+
+    public function test_attached_handler_audit_attach_relation()
+    {
+        $observer = new AuditObserver();
+        $model = Mockery::mock();
+        $model->shouldReceive('prepareGeneralAuditData');
+        $model->shouldReceive('auditUpdatedRelation');
+        $observer->updatedRelation($model, []);
+    }
+
+    public function test_saved_handler_audit_updated_relation()
+    {
+        $observer = new AuditObserver();
+        $model = Mockery::mock();
+        $model->shouldReceive('prepareGeneralAuditData');
+        $model->shouldReceive('auditUpdatedRelation');
+        $observer->updatedRelation($model, []);
+    }
+
+    public function test_detached_handler_audit_detach_relation()
+    {
+        $observer = new AuditObserver();
+        $model = Mockery::mock();
+        $model->shouldReceive('prepareGeneralAuditData');
+        $model->shouldReceive('auditDetachedRelation');
+        $observer->detached($model, []);
+    }
 }

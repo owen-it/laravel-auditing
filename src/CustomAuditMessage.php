@@ -207,7 +207,7 @@ trait CustomAuditMessage
     {
         // Get the related type, it's guestimation so if this isn't providing what you want simply override this function
         if (in_array($this->type, ['attached', 'updatedRelation', 'detached'])) {
-            $relatedType = strtolower(substr($this->related_type, strrpos($this->related_type, '\\') + 1));
+            $relatedType = strtolower(str_replace('\\', '', substr($this->related_type, strrpos($this->related_type, '\\'))));
 
             switch ($this->type) {
                 case 'attached':
