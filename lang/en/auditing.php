@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | The following language lines are used by the Auditing package.
-    | Feel free to modify these language lines according to your application's 
+    | Feel free to modify these language lines according to your application's
     | requirements.
     |
     */
