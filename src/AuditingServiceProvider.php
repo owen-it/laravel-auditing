@@ -33,13 +33,17 @@ class AuditingServiceProvider extends ServiceProvider
      */
     protected function setupConfig($app)
     {
-        $source = realpath(__DIR__.'/../config/auditing.php');
+        $config = realpath(__DIR__.'/../config/auditing.php');
+        $translation = realpath(__DIR__.'/../lang/en/auditing.php');
 
         if ($app->runningInConsole()) {
-            $this->publishes([$source => config_path('auditing.php')]);
+            $this->publishes([
+                $config      => config_path('auditing.php'),
+                $translation => resource_path('lang/en/auditing.php')
+            ]);
         }
 
-        $this->mergeConfigFrom($source, 'auditing');
+        $this->mergeConfigFrom($config, 'auditing');
     }
 
     /**
