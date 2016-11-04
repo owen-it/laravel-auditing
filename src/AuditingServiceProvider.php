@@ -39,7 +39,7 @@ class AuditingServiceProvider extends ServiceProvider
         if ($app->runningInConsole()) {
             $this->publishes([
                 $config      => config_path('auditing.php'),
-                $translation => resource_path('lang/en/auditing.php')
+                $translation => resource_path('lang/en/auditing.php'),
             ]);
         }
 
