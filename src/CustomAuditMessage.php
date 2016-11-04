@@ -106,7 +106,8 @@ trait CustomAuditMessage
     /**
      * Resolve custom message.
      *
-     * @param  string $message
+     * @param string $message
+     *
      * @return mixed
      */
     public function resolveCustomMessage($message)
