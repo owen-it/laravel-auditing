@@ -1,10 +1,16 @@
+<p align="center">
+<a href="https://www.laravel-auditing.com" target="_blank"><img width="150" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png"></a>
+</p>
 
-[![Latest Stable Version](https://poser.pugx.org/owen-it/laravel-auditing/version)](https://packagist.org/packages/owen-it/laravel-auditing)
-[![Latest Unstable Version](https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg)](https://packagist.org/packages/owen-it/laravel-auditing)
-[![Laravel 5.2.x](https://img.shields.io/badge/Laravel-5.2.x-brightgreen.svg?style=flat-square)](http://laravel.com)
-[![Laravel 5.3.x](https://img.shields.io/badge/Laravel-5.3.x-brightgreen.svg?style=flat-square)](http://laravel.com)
-[![Total Downloads](https://poser.pugx.org/owen-it/laravel-auditing/downloads)](https://packagist.org/packages/owen-it/laravel-auditing)
-[![License](https://poser.pugx.org/owen-it/laravel-auditing/license.svg)](https://packagist.org/packages/owen-it/laravel-auditing)
+<p align="center">
+<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/stable.svg" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg" alt="Unstable Version"></a>
+<a href="http://laravel.com"><img src="https://img.shields.io/badge/Laravel-5.2.x-brightgreen.svg?style=flat-square" alt="Laravel 5.2.x"></a>
+<a href="http://laravel.com"><img src="https://img.shields.io/badge/Laravel-5.3.x-brightgreen.svg?style=flat-square" alt="Laravel 5.3.x"></a>
+<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
+
+## About Laravel-Auditing
 
 Laravel Auditing allows you to record changes to an Eloquent model's set of data by simply adding its trait to your model. Laravel Auditing also provides a simple interface for retreiving an audit trail for a piece of data and allows for a great deal of customization in how that data is provided.
 
