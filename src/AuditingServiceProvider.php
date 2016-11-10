@@ -6,6 +6,7 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditingTableCommand;
 use OwenIt\Auditing\Console\AuditorMakeCommand;
+use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Dispatcher;
 use OwenIt\Auditing\Facades\Auditing as AuditingFacade;
 
@@ -52,6 +53,7 @@ class AuditingServiceProvider extends ServiceProvider
         $this->commands([
             AuditingTableCommand::class,
             AuditorMakeCommand::class,
+            InstallCommand::class,
         ]);
 
         $this->app->bind('OwenIt\Auditing\Auditing', Auditing::class);
