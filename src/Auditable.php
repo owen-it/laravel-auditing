@@ -55,14 +55,31 @@ trait Auditable
     /**
      * @var string
      */
-    protected $typeAuditing = '';
+    protected $auditType = '';
+
+    /**
+     * @var string
+     */
+    protected $auditUserId = '';
+
+    /**
+     * @var string
+     */
+    protected $auditCurrentRoute = '';
+
+    /**
+     * @var string
+     */
+    protected $auditIpAddress = '';
 
     /**
      * Init auditing.
      */
     public static function bootAuditable()
     {
-        static::observe(new AuditObserver());
+        if (static::isAuditEnabled()) {
+            static::observe(new AuditObserver());
+        }
     }
 
     /**
@@ -72,37 +89,44 @@ trait Auditable
      */
     public function prepareAudit()
     {
-        // If auditing is enabled
-        if ($this->isAuditEnabled()) {
-            $this->originalData = $this->original;
+        $this->originalData = $this->original;
 
-            $this->updatedData = $this->attributes;
+        $this->updatedData = $this->attributes;
 
-            foreach ($this->updatedData as $key => $val) {
-                if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
-                    unset($this->originalData[$key]);
+        foreach ($this->updatedData as $attribute => $val) {
+            if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
+                unset($this->originalData[$attribute]);
 
-                    unset($this->updatedData[$key]);
+                unset($this->updatedData[$attribute]);
 
-                    array_push($this->dontKeep, $key);
-                }
+                array_push($this->dontKeep, $attribute);
             }
-            // Dont keep audit of
-            $this->dontKeep = isset($this->dontKeepAuditOf) ?
-                array_merge($this->dontKeepAuditOf, $this->dontKeep)
-                : $this->dontKeep;
-
-            // Keep audit of
-            $this->doKeep = isset($this->keepAuditOf) ?
-                array_merge($this->keepAuditOf, $this->doKeep)
-                : $this->doKeep;
-
-            // Get changed data
-            $this->dirtyData = $this->getDirty();
-
-            // Tells whether the record exists in the database
-            $this->updating = $this->exists;
         }
+
+        // Dont keep audit of
+        $this->dontKeep = isset($this->dontKeepAuditOf) ?
+            array_merge($this->dontKeepAuditOf, $this->dontKeep)
+            : $this->dontKeep;
+
+        // Keep audit of
+        $this->doKeep = isset($this->keepAuditOf) ?
+            array_merge($this->keepAuditOf, $this->doKeep)
+            : $this->doKeep;
+
+        // Get user id
+        $this->auditUserId = $this->getLoggedInUserId();
+
+        // Get curruent route
+        $this->auditCurrentRoute = $this->getCurrentRoute();
+
+        // Get ip address
+        $this->auditIpAddress = $this->getIpAddress();
+
+        // Get changed data
+        $this->dirtyData = $this->getDirty();
+
+        // Tells whether the record exists in the database
+        $this->updating = $this->exists;
     }
 
     /**
@@ -112,14 +136,13 @@ trait Auditable
      */
     public function auditCreation()
     {
-        // If auditing is enabled
+        // Checks if an auditable type
         if ($this->isTypeAuditable('created')) {
-            $this->typeAuditing = 'created';
-
             $this->newData = [];
-            foreach ($this->updatedData as $key => $value) {
-                if ($this->isAuditing($key)) {
-                    $this->newData[$key] = $value;
+
+            foreach ($this->updatedData as $attribute => $value) {
+                if ($this->isAttributeAuditable($attribute)) {
+                    $this->newData[$attribute] = $value;
                 }
             }
 
@@ -134,10 +157,7 @@ trait Auditable
      */
     public function auditUpdate()
     {
-        // If auditing is enabled and object updated
-        if (($this->isTypeAuditable('saved') || $this->isTypeAuditable('updated')) && $this->updating) {
-            $this->typeAuditing = 'updated';
-
+        if ($this->isTypeAuditable('updated') && $this->updating) {
             $changesToTecord = $this->changedAuditingFields();
 
             if (empty($changesToTecord)) {
@@ -145,11 +165,13 @@ trait Auditable
             }
 
             $this->oldData = [];
-            $this->newData = [];
-            foreach ($changesToTecord as $key => $change) {
-                $this->oldData[$key] = array_get($this->originalData, $key);
 
-                $this->newData[$key] = array_get($this->updatedData, $key);
+            $this->newData = [];
+
+            foreach ($changesToTecord as $attribute => $change) {
+                $this->oldData[$attribute] = array_get($this->originalData, $attribute);
+
+                $this->newData[$attribute] = array_get($this->updatedData, $attribute);
             }
 
             $this->audit();
@@ -163,13 +185,11 @@ trait Auditable
      */
     public function auditDeletion()
     {
-        // If auditing is enabled
-        if ($this->isTypeAuditable('deleted') && $this->isAuditing('deleted_at')) {
-            $this->typeAuditing = 'deleted';
-
-            foreach ($this->updatedData as $key => $value) {
-                if ($this->isAuditing($key)) {
-                    $this->oldData[$key] = $value;
+        // Checks if an auditable type
+        if ($this->isTypeAuditable('deleted') && $this->isAttributeAuditable('deleted_at')) {
+            foreach ($this->updatedData as $attribute => $value) {
+                if ($this->isAttributeAuditable($attribute)) {
+                    $this->oldData[$attribute] = $value;
                 }
             }
 
@@ -184,17 +204,16 @@ trait Auditable
      */
     public function toAudit()
     {
-        // Auditable data
         return $this->transformAudit([
             'id'             => (string) Uuid::uuid4(),
             'old'            => $this->cleanHiddenAuditAttributes($this->oldData),
             'new'            => $this->cleanHiddenAuditAttributes($this->newData),
-            'type'           => $this->typeAuditing,
+            'type'           => $this->auditType,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            'user_id'        => $this->getLoggedInUserId(),
-            'route'          => $this->getCurrentRoute(),
-            'ip_address'     => $this->getIpAddress(),
+            'user_id'        => $this->auditUserId,
+            'route'          => $this->auditCurrentRoute,
+            'ip_address'     => $this->auditIpAddress,
             'created_at'     => $this->freshTimestamp(),
         ]);
     }
@@ -261,17 +280,17 @@ trait Auditable
     {
         $changesToTecord = [];
 
-        foreach ($this->dirtyData as $key => $value) {
-            if ($this->isAuditing($key) && !is_array($value)) {
+        foreach ($this->dirtyData as $attribute => $value) {
+            if ($this->isAttributeAuditable($attribute) && !is_array($value)) {
                 // Check whether the current value is difetente the original value
-                if (!isset($this->originalData[$key]) ||
-                    $this->originalData[$key] != $this->updatedData[$key]) {
-                    $changesToTecord[$key] = $value;
+                if (!isset($this->originalData[$attribute]) ||
+                    $this->originalData[$attribute] != $this->updatedData[$attribute]) {
+                    $changesToTecord[$attribute] = $value;
                 }
             } else {
-                unset($this->updatedData[$key]);
+                unset($this->updatedData[$attribute]);
 
-                unset($this->originalData[$key]);
+                unset($this->originalData[$attribute]);
             }
         }
 
@@ -279,21 +298,21 @@ trait Auditable
     }
 
     /**
-     * Is Auditing?
+     * Determine whether a attribute is auditable for audit manipulation.
      *
-     * @param $key
+     * @param $attribute
      *
      * @return bool
      */
-    private function isAuditing($key)
+    private function isAttributeAuditable($attribute)
     {
         // Checks if the field is in the collection of auditable
-        if (isset($this->doKeep) && in_array($key, $this->doKeep)) {
+        if (isset($this->doKeep) && in_array($attribute, $this->doKeep)) {
             return true;
         }
 
         // Checks if the field is in the collection of non-auditable
-        if (isset($this->dontKeep) && in_array($key, $this->dontKeep)) {
+        if (isset($this->dontKeep) && in_array($attribute, $this->dontKeep)) {
             return false;
         }
 
@@ -302,16 +321,18 @@ trait Auditable
     }
 
     /**
-     * Is Auditing enabled?
+     *  Determine whether a type is auditable.
+     *
+     * @param string $type
      *
      * @return bool
      */
-    private function isAuditEnabled()
+    public function isTypeAuditable($type)
     {
-        // Check that the model has audit enabled and also check that we aren't
-        // running in cosole or that we want to log console too.
-        if ((!isset($this->auditEnabled) || $this->auditEnabled)
-            && (!App::runningInConsole() || Config::get('auditing.audit_console'))) {
+        // Checks if the type is in the collection of type auditable
+        if (in_array($type, $this->getAuditableTypes())) {
+            $this->setAuditType($type);
+
             return true;
         }
 
@@ -319,29 +340,30 @@ trait Auditable
     }
 
     /**
-     * Verify is type auditable.
+     * Set audit type.
      *
-     * @param $key
-     *
-     * @return bool
+     * @param string $type;
      */
-    public function isTypeAuditable($key)
+    public function setAuditType($type)
     {
-        // Verify if auditing enabled
-        if (!$this->isAuditEnabled()) {
-            return false;
+        $this->auditType = $type;
+    }
+
+    /**
+     * Get the auditable types.
+     *
+     * @return array
+     */
+    public function getAuditableTypes()
+    {
+        if (isset($this->auditableTypes)) {
+            return $this->auditableTypes;
         }
 
-        // Get the auditable types
-        $auditableTypes = isset($this->auditableTypes) ? $this->auditableTypes
-                          : ['created', 'updated', 'deleted', 'saved', 'restored'];
-
-        // Checks if the type is in the collection of type auditable
-        if (in_array($key, $auditableTypes)) {
-            return true;
-        }
-
-        return false;
+        return [
+                'created', 'updated', 'deleted',
+                'saved', 'restored',
+        ];
     }
 
     /**
@@ -371,8 +393,8 @@ trait Auditable
 
             // If visible is set, set to null any attributes which are not in visible
             if (count($visible) > 0) {
-                foreach ($attributes as $key => &$value) {
-                    if (!in_array($key, $visible)) {
+                foreach ($attributes as $attribute => &$value) {
+                    if (!in_array($attribute, $visible)) {
                         $value = null;
                     }
                 }
@@ -382,14 +404,28 @@ trait Auditable
 
             // If hidden is set, set to null any attributes which are in hidden
             if (count($hidden) > 0) {
-                foreach ($hidden as $key) {
-                    if (array_key_exists($key, $attributes)) {
-                        $attributes[$key] = null;
+                foreach ($hidden as $attribute) {
+                    if (array_key_exists($attribute, $attributes)) {
+                        $attributes[$attribute] = null;
                     }
                 }
             }
         }
 
         return $attributes;
+    }
+
+    /**
+     * Determine whether audit enabled.
+     *
+     * @return bool
+     */
+    public static function isAuditEnabled()
+    {
+        if (App::runningInConsole() && !Config::get('auditing.audit_console')) {
+            return false;
+        }
+
+        return true;
     }
 }
