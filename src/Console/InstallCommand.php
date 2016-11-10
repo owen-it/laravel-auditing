@@ -27,14 +27,13 @@ class InstallCommand extends Command
      * @return void
      */
     public function fire()
-    {        
-        $this->info("Publishing the config files");
+    {
+        $this->info('Publishing the config files');
         Artisan::call('vendor:publish', ['--provider' => 'OwenIt\Auditing\AuditingServiceProvider']);
 
-        $this->info("Publishing the migration file");
+        $this->info('Publishing the migration file');
         Artisan::call('auditing:table');
 
-        $this->info("Successfully installed Laravel Auditing! Enjoy :)");
-        return;
+        $this->info('Successfully installed Laravel Auditing! Enjoy :)');
     }
 }
