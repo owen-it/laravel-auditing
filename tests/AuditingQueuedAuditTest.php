@@ -1,14 +1,12 @@
 <?php
 
+namespace Tests;
+
+use Mockery;
 use OwenIt\Auditing\AuditQueuedModels;
 
-class AuditingQueuedAuditTest extends PHPUnit_Framework_TestCase
+class AuditingQueuedAuditTest extends AbstractTestCase
 {
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
     public function testQueueAudit()
     {
         $job = new AuditQueuedModels('auditable');

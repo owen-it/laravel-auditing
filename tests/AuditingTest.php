@@ -1,20 +1,13 @@
 <?php
 
+namespace Tests;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Auditing;
 
-class AuditingTest extends PHPUnit_Framework_TestCase
+class AuditingTest extends AbstractTestCase
 {
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
-    public function tearUp()
-    {
-    }
-
     public function testItGetsCustomMessages()
     {
         $auditing = new Auditing();
@@ -29,6 +22,26 @@ class AuditingTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('The title was defined as Auditing.', $property);
         $this->assertEquals('The title was defined as no title.', $defaultValue);
         $this->assertEquals('The title was defined as awesome.', $callbackMethod);
+    }
+
+    public function testItGetsAuditedTypeAttribute()
+    {
+        $auditing = new Auditing();
+
+        $auditing->auditable = new EloquentModelStub();
+        $auditing->related_type = 'Fake\Relation';
+
+        $auditing->type = 'attached';
+        $this->assertNotEquals($auditing->audited_type, $auditing->type);
+
+        $auditing->type = 'attached';
+        $this->assertNotEquals($auditing->audited_type, $auditing->type);
+
+        $auditing->type = 'detached';
+        $this->assertNotEquals($auditing->audited_type, $auditing->type);
+
+        $auditing->type = 'nonsense';
+        $this->assertEquals($auditing->audited_type, $auditing->type);
     }
 
     public function testItGetTableInConfig()

@@ -1,15 +1,14 @@
 <?php
 
+namespace Tests;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Auditable;
 
-class AuditableTest extends PHPUnit_Framework_TestCase
+class AuditableTest extends AbstractTestCase
 {
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
     public function testItGetsTransformAudit()
     {
         $attributes = ['name' => 'Anterio', 'password' => '12345'];
@@ -42,11 +41,52 @@ class AuditableTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['name' => 'Anterio', 'password' => null], $result);
     }
 
+    public function testItGetAuditableTypes()
+    {
+        $model1 = new ModelAuditableTestConfigs();
+
+        $types = [
+                'created', 'updated', 'deleted',
+                'saved', 'restored',
+                'attached', 'updatedRelation', 'detached'
+        ];
+
+        $this->assertEquals($types, $model1->getAuditableTypes());
+
+        $model2 = new ModelAuditableTestCustomsValues();
+
+        $this->assertEquals(['created'], $model2->getAuditableTypes());
+    }
+
+    public function testItIsTypeAuditable()
+    {
+        $model = new ModelAuditableTestRaw();
+
+        $this->assertTrue($model->isTypeAuditable('created'));
+        $this->assertFalse($model->isTypeAuditable('foo'));
+    }
+
     public function testItGetsLogCustomMessage()
     {
         $logCustomMessage = ModelAuditableTestCustomsValues::$logCustomMessage;
 
         $this->assertEquals('{user.name} {type} a post {elapsed_time}', $logCustomMessage);
+    }
+
+    public function testItRunAuditingEnableConsole()
+    {
+        App::shouldReceive('runningInConsole')->once()->andReturn(true);
+        Config::shouldReceive('get')->once()->with('auditing.audit_console')->andReturn(true);
+
+        $model = new ModelAuditableTestRaw();
+
+        $this->assertTrue($model->isAuditEnabled());
+    }
+
+    public function testItRunAuditingDisabledConsole()
+    {
+        $model = new ModelAuditableTestRaw();
+        $this->assertTrue($model->isAuditEnabled());
     }
 }
 
@@ -62,6 +102,8 @@ class ModelAuditableTestCustomsValues extends Model
     protected $hidden = ['password'];
 
     protected $auditRespectsHidden = true;
+
+    protected $auditableTypes = ['created'];
 
     public static $logCustomMessage = '{user.name} {type} a post {elapsed_time}';
 }

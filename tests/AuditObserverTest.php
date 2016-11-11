@@ -1,14 +1,12 @@
 <?php
 
+namespace Tests;
+
+use Mockery;
 use OwenIt\Auditing\AuditObserver;
 
-class AuditObserverTest extends PHPUnit_Framework_TestCase
+class AuditObserverTest extends AbstractTestCase
 {
-    public function tearDown()
-    {
-        Mockery::close();
-    }
-
     public function test_saving_handler_prepare_audit()
     {
         $observer = new AuditObserver();
@@ -40,5 +38,32 @@ class AuditObserverTest extends PHPUnit_Framework_TestCase
         $model->shouldReceive('prepareAudit');
         $model->shouldReceive('auditDeletion');
         $observer->deleted($model);
+    }
+
+    public function test_attached_handler_audit_attach_relation()
+    {
+        $observer = new AuditObserver();
+        $model = Mockery::mock();
+        $model->shouldReceive('prepareGeneralAuditData');
+        $model->shouldReceive('auditUpdatedRelation');
+        $observer->updatedRelation($model, []);
+    }
+
+    public function test_saved_handler_audit_updated_relation()
+    {
+        $observer = new AuditObserver();
+        $model = Mockery::mock();
+        $model->shouldReceive('prepareGeneralAuditData');
+        $model->shouldReceive('auditUpdatedRelation');
+        $observer->updatedRelation($model, []);
+    }
+
+    public function test_detached_handler_audit_detach_relation()
+    {
+        $observer = new AuditObserver();
+        $model = Mockery::mock();
+        $model->shouldReceive('prepareGeneralAuditData');
+        $model->shouldReceive('auditDetachedRelation');
+        $observer->detached($model, []);
     }
 }
