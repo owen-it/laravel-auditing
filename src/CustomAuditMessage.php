@@ -24,7 +24,7 @@ trait CustomAuditMessage
      */
     public function user()
     {
-        return $this->belongsTo(Config::get('auditing.model'));
+        return $this->belongsTo(Config::get('auth.providers.users.model'));
     }
 
     /**
