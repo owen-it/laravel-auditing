@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditingTableCommand;
 use OwenIt\Auditing\Console\AuditorMakeCommand;
 use OwenIt\Auditing\Console\InstallCommand;
