@@ -111,7 +111,7 @@ trait CustomAuditMessage
     {
         preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
 
-        $compareMessage=$message;
+        $compareMessage = $message;
 
         foreach (current($segments) as $segment) {
             $pipe = str_replace(['{', '}'], '', $segment);
@@ -131,7 +131,7 @@ trait CustomAuditMessage
             $compareMessage=str_replace($segment, ' ', $compareMessage);
 
         }
-        if($compareMessage == $message){
+        if ($compareMessage == $message) {
             return null;
         }
         return $message;
