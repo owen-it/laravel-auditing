@@ -111,12 +111,12 @@ trait CustomAuditMessage
     {
         // We will search for all segments in the message
         preg_match_all('/\{[\w.| ]+\}/', $message, $matches, PREG_PATTERN_ORDER);
-        
+
         $segments = current($matches);
 
-        // If no segments are found, we will 
+        // If no segments are found, we will
         // return the message immediately.
-        if(! count($segments)) {
+        if (!count($segments)) {
             return $message;
         }
 
@@ -135,9 +135,9 @@ trait CustomAuditMessage
             // If we do not find anything, we will return an empty value.
             $valueSegmented = $this->getValueSegmented($this, $property, $defaultValue ?: null);
 
-            // If any segmented value is found we will update the message 
+            // If any segmented value is found we will update the message
             // and remove it from the list of segments.
-            if(! empty($valueSegmented)) {
+            if (!empty($valueSegmented)) {
 
                 // Update message
                 $message = str_replace($segment, $valueSegmented, $message);
@@ -149,7 +149,7 @@ trait CustomAuditMessage
 
         // If all segments are found we return the updated message,
         // but any segment is not found return an empty value
-        return ! count($segments) ? $message : null;
+        return !count($segments) ? $message : null;
     }
 
     /**
