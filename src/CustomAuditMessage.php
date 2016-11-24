@@ -131,8 +131,6 @@ trait CustomAuditMessage
                 $defaultValue = $this->resolveCallbackMethod($method);
             }
 
-            //var_dump($property, $defaultValue, $method); die;
-
             // Now let's go through the model looking for the segmented value.
             // If we do not find anything, we will return an empty value.
             $valueSegmented = $this->getValueSegmented($this, $property, $defaultValue ?: null);
