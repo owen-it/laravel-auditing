@@ -110,7 +110,7 @@ trait CustomAuditMessage
     public function resolveCustomMessage($message)
     {
         $compareMessage = $message;
-        
+
         preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
 
         foreach (current($segments) as $segment) {
@@ -124,16 +124,15 @@ trait CustomAuditMessage
                 $defaultValue = $this->callback($method);
             }
 
-
             $valueSegmented = $this->getValueSegmented($this, $property, $defaultValue ?: ' ');
 
             $message = str_replace($segment, $valueSegmented, $message);
             $compareMessage = str_replace($segment, ' ', $compareMessage);
-
         }
         if ($compareMessage == $message) {
             return;
         }
+        
         return $message;
     }
 
