@@ -132,7 +132,7 @@ trait CustomAuditMessage
         if ($compareMessage == $message) {
             return;
         }
-        
+
         return $message;
     }
 
