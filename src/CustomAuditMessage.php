@@ -128,11 +128,11 @@ trait CustomAuditMessage
             $valueSegmented = $this->getValueSegmented($this, $property, $defaultValue ?: ' ');
 
             $message = str_replace($segment, $valueSegmented, $message);
-            $compareMessage=str_replace($segment, ' ', $compareMessage);
+            $compareMessage = str_replace($segment, ' ', $compareMessage);
 
         }
         if ($compareMessage == $message) {
-            return null;
+            return ;
         }
         return $message;
     }
