@@ -130,7 +130,7 @@ trait CustomAuditMessage
             $compareMessage = str_replace($segment, ' ', $compareMessage);
         }
         if ($compareMessage == $message) {
-            return;
+            return ;
         }
         
         return $message;
