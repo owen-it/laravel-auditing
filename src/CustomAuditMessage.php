@@ -112,9 +112,18 @@ trait CustomAuditMessage
      */
     public function resolveCustomMessage($message)
     {
-        preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
+        // We will search for all segments in the message
+        preg_match_all('/\{[\w.| ]+\}/', $message, $matches, PREG_PATTERN_ORDER);
 
-        foreach (current($segments) as $segment) {
+        $segments = current($matches);
+
+        // If no segments are found, we will
+        // return the message immediately.
+        if (!count($segments)) {
+            return $message;
+        }
+
+        foreach ($segments as $order => $segment) {
             $pipe = str_replace(['{', '}'], '', $segment);
 
             list($property, $defaultValue, $method) = array_pad(
@@ -122,27 +131,40 @@ trait CustomAuditMessage
             );
 
             if (empty($defaultValue) && !empty($method)) {
-                $defaultValue = $this->callback($method);
+                $defaultValue = $this->resolveCallbackMethod($method);
             }
 
-            $valueSegmented = $this->getValueSegmented($this, $property, $defaultValue ?: ' ');
+            // Now let's go through the model looking for the segmented value.
+            // If we do not find anything, we will return an empty value.
+            $valueSegmented = $this->getValueSegmented($this, $property, $defaultValue ?: null);
 
-            $message = str_replace($segment, $valueSegmented, $message);
+            // If any segmented value is found we will update the message
+            // and remove it from the list of segments.
+            if (!empty($valueSegmented)) {
+
+                // Update message
+                $message = str_replace($segment, $valueSegmented, $message);
+
+                // Remove segment from list
+                 unset($segments[$order]);
+            }
         }
 
-        return $message;
+        // If all segments are found we return the updated message,
+        // but any segment is not found return an empty value
+        return !count($segments) ? $message : null;
     }
 
     /**
-     * Message callback.
+     * Resvolve callback method.
      *
      * @param $function
      *
      * @return mixed
      */
-    public function callback($method)
+    public function resolveCallbackMethod($method)
     {
-        if (method_exists($this->auditable, $method)) {
+        if (is_callable([$this->auditable, $method])) {
             return $this->auditable->{$method}($this);
         }
     }

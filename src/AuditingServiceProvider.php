@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditingTableCommand;
 use OwenIt\Auditing\Console\AuditorMakeCommand;
@@ -70,7 +69,7 @@ class AuditingServiceProvider extends ServiceProvider
             AuditorManager::class, Dispatcher::class
         );
 
-        AliasLoader::getInstance()->alias('Auditing', AuditingFacade::class);
+        $this->app->alias('Auditing', AuditingFacade::class);
     }
 
     /**
