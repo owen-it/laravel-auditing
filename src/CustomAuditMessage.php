@@ -109,9 +109,9 @@ trait CustomAuditMessage
      */
     public function resolveCustomMessage($message)
     {
-        preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
-
         $compareMessage = $message;
+        
+        preg_match_all('/\{[\w.| ]+\}/', $message, $segments);
 
         foreach (current($segments) as $segment) {
             $pipe = str_replace(['{', '}'], '', $segment);
