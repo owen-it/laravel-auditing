@@ -6,11 +6,13 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
+use OwenIt\Auditing\Observers\Audit;
 use Ramsey\Uuid\Uuid;
 
 trait Auditable
 {
-    use DatabaseAudits, Auditor;
+    use Auditor;
+    use DatabaseAudits;
 
     /**
      * @var array
@@ -78,7 +80,7 @@ trait Auditable
     public static function bootAuditable()
     {
         if (static::isAuditEnabled()) {
-            static::observe(new AuditObserver());
+            static::observe(new Audit);
         }
     }
 
