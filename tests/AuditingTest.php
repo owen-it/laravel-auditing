@@ -24,6 +24,26 @@ class AuditingTest extends AbstractTestCase
         $this->assertEquals('The title was defined as awesome.', $callbackMethod);
     }
 
+    public function testItGetsAuditedTypeAttribute()
+    {
+        $auditing = new Auditing();
+
+        $auditing->auditable = new EloquentModelStub();
+        $auditing->related_type = 'Fake\Relation';
+
+        $auditing->type = 'attached';
+        $this->assertNotEquals($auditing->audited_type, $auditing->type);
+
+        $auditing->type = 'attached';
+        $this->assertNotEquals($auditing->audited_type, $auditing->type);
+
+        $auditing->type = 'detached';
+        $this->assertNotEquals($auditing->audited_type, $auditing->type);
+
+        $auditing->type = 'nonsense';
+        $this->assertEquals($auditing->audited_type, $auditing->type);
+    }
+
     public function testItGetTableInConfig()
     {
         $this->setConfigTable('auditing');

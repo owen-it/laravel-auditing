@@ -48,6 +48,7 @@ class AuditableTest extends AbstractTestCase
         $types = [
                 'created', 'updated', 'deleted',
                 'saved', 'restored',
+                'attached', 'updatedRelation', 'detached'
         ];
 
         $this->assertEquals($types, $model1->getAuditableTypes());
