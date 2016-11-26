@@ -2,14 +2,16 @@
 
 namespace OwenIt\Auditing\Events;
 
+use OwenIt\Auditing\Contracts\Auditable;
+
 class AuditReport
 {
     /**
-     * The auditable entity.
+     * The Auditable model.
      *
-     * @var mixed
+     * @var \OwenIt\Auditing\Contracts\Auditable
      */
-    public $auditable;
+    public $model;
 
     /**
      * The auditor name.
@@ -28,16 +30,14 @@ class AuditReport
     /**
      * Create a new event instance.
      *
-     * @param mixed  $auditable
-     * @param string $auditor
-     * @param mixed  $report
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
+     * @param string                               $auditor
+     * @param mixed                                $report
      */
-    public function __construct($auditable, $auditor, $report = null)
+    public function __construct(Auditable $model, $auditor, $report = null)
     {
-        $this->report = $report;
-
+        $this->model = $model;
         $this->auditor = $auditor;
-
-        $this->auditable = $auditable;
+        $this->report = $report;
     }
 }
