@@ -23,8 +23,6 @@ class AuditReview
      *
      * @param mixed  $auditable
      * @param string $auditor
-     *
-     * @return void
      */
     public function __construct($auditable, $auditor)
     {
