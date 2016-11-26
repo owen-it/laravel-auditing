@@ -31,4 +31,25 @@ interface Auditable
      * @return void
      */
     public function auditDeletion();
+
+    /**
+     * Return data for Audit.
+     *
+     * @return array
+     */
+    public function toAudit();
+
+    /**
+     * Get the Auditors.
+     *
+     * @return array
+     */
+    public function getAuditors();
+
+    /**
+     * Clear the oldest audit's if given a limit.
+     *
+     * @return void
+     */
+    public function clearOlderAudits();
 }
