@@ -1,21 +1,23 @@
 <?php
 
-namespace OwenIt\Auditing;
+namespace OwenIt\Auditing\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use OwenIt\Auditing\AuditorManager;
 use OwenIt\Auditing\Console\AuditingTableCommand;
 use OwenIt\Auditing\Console\AuditorMakeCommand;
 use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Dispatcher;
-use OwenIt\Auditing\Facades\Auditing as AuditingFacade;
 
-/**
- * This is the owen auditing service provider class.
- */
 class AuditingServiceProvider extends ServiceProvider
 {
     /**
-     * Boot the service provider.
+     * {@inheritdoc}
+     */
+    protected $defer = true;
+
+    /**
+     * Bootstrap the service provider.
      *
      * @return void
      */
@@ -59,26 +61,21 @@ class AuditingServiceProvider extends ServiceProvider
             InstallCommand::class,
         ]);
 
-        $this->app->bind('OwenIt\Auditing\Auditing', Auditing::class);
-
         $this->app->singleton(AuditorManager::class, function ($app) {
             return new AuditorManager($app);
         });
 
-        $this->app->alias(
-            AuditorManager::class, Dispatcher::class
-        );
-
-        $this->app->alias('Auditing', AuditingFacade::class);
+        $this->app->alias(AuditorManager::class, Dispatcher::class);
     }
 
     /**
-     * Get the services provided by the provider.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function provides()
     {
-        return [AuditorManager::class, Dispatcher::class, AuditingFacade::class];
+        return [
+            AuditorManager::class,
+            Dispatcher::class,
+        ];
     }
 }
