@@ -1,19 +1,18 @@
 <?php
 
-namespace OwenIt\Auditing;
+namespace OwenIt\Auditing\Traits;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
+use OwenIt\Auditing\Contracts\Dispatcher;
+use OwenIt\Auditing\Models\Audit as AuditModel;
 use OwenIt\Auditing\Observers\Audit;
 use Ramsey\Uuid\Uuid;
 
 trait Auditable
 {
-    use Auditor;
-    use DatabaseAudits;
-
     /**
      * @var array
      */
@@ -57,22 +56,22 @@ trait Auditable
     /**
      * @var string
      */
-    protected $auditType = '';
+    protected $auditEvent;
 
     /**
      * @var string
      */
-    protected $auditUserId = '';
+    protected $auditUserId;
 
     /**
      * @var string
      */
-    protected $auditCurrentRoute = '';
+    protected $auditCurrentUrl;
 
     /**
      * @var string
      */
-    protected $auditIpAddress = '';
+    protected $auditIpAddress;
 
     /**
      * Init auditing.
@@ -82,6 +81,16 @@ trait Auditable
         if (static::isAuditEnabled()) {
             static::observe(new Audit);
         }
+    }
+
+    /**
+     * Auditable Model audits
+     *
+     * @return  \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function audits()
+    {
+        return $this->morphMany(AuditModel::class, 'auditable');
     }
 
     /**
@@ -96,12 +105,10 @@ trait Auditable
         $this->updatedData = $this->attributes;
 
         foreach ($this->updatedData as $attribute => $val) {
-            if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
-                unset($this->originalData[$attribute]);
+            if (gettype($val) == 'object' && ! method_exists($val, '__toString')) {
+                unset($this->originalData[$attribute], $this->updatedData[$attribute]);
 
-                unset($this->updatedData[$attribute]);
-
-                array_push($this->dontKeep, $attribute);
+                $this->dontKeep[] = $attribute;
             }
         }
 
@@ -115,13 +122,13 @@ trait Auditable
             array_merge($this->keepAuditOf, $this->doKeep)
             : $this->doKeep;
 
-        // Get user id
+        // Get User ID
         $this->auditUserId = $this->getLoggedInUserId();
 
-        // Get curruent route
-        $this->auditCurrentRoute = $this->getCurrentRoute();
+        // Get current URL
+        $this->auditCurrentUrl = $this->getCurrentUrl();
 
-        // Get ip address
+        // Get IP address
         $this->auditIpAddress = $this->getIpAddress();
 
         // Get changed data
@@ -138,8 +145,8 @@ trait Auditable
      */
     public function auditCreation()
     {
-        // Checks if an auditable type
-        if ($this->isTypeAuditable('created')) {
+        // Check if the event is auditable
+        if ($this->isEventAuditable('created')) {
             $this->newData = [];
 
             foreach ($this->updatedData as $attribute => $value) {
@@ -159,7 +166,7 @@ trait Auditable
      */
     public function auditUpdate()
     {
-        if ($this->isTypeAuditable('updated') && $this->updating) {
+        if ($this->isEventAuditable('updated') && $this->updating) {
             $changesToTecord = $this->changedAuditingFields();
 
             if (empty($changesToTecord)) {
@@ -187,8 +194,8 @@ trait Auditable
      */
     public function auditDeletion()
     {
-        // Checks if an auditable type
-        if ($this->isTypeAuditable('deleted') && $this->isAttributeAuditable('deleted_at')) {
+        // Checks if an the event is auditable
+        if ($this->isEventAuditable('deleted') && $this->isAttributeAuditable('deleted_at')) {
             foreach ($this->updatedData as $attribute => $value) {
                 if ($this->isAttributeAuditable($attribute)) {
                     $this->oldData[$attribute] = $value;
@@ -206,31 +213,18 @@ trait Auditable
      */
     public function toAudit()
     {
-        return $this->transformAudit([
+        return [
             'id'             => (string) Uuid::uuid4(),
             'old'            => $this->cleanHiddenAuditAttributes($this->oldData),
             'new'            => $this->cleanHiddenAuditAttributes($this->newData),
-            'type'           => $this->auditType,
+            'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
             'user_id'        => $this->auditUserId,
-            'route'          => $this->auditCurrentRoute,
+            'url'            => $this->auditCurrentUrl,
             'ip_address'     => $this->auditIpAddress,
             'created_at'     => $this->freshTimestamp(),
-        ]);
-    }
-
-    /**
-     * Allows transforming the audit data array
-     * before it is passed into the database.
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    public function transformAudit(array $data)
-    {
-        return $data;
+        ];
     }
 
     /**
@@ -254,7 +248,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function getCurrentRoute()
+    protected function getCurrentUrl()
     {
         if (App::runningInConsole()) {
             return 'console';
@@ -323,48 +317,50 @@ trait Auditable
     }
 
     /**
-     *  Determine whether a type is auditable.
+     * Determine whether an event is auditable.
      *
-     * @param string $type
+     * @param string $event
      *
      * @return bool
      */
-    public function isTypeAuditable($type)
+    public function isEventAuditable($event)
     {
-        // Checks if the type is in the collection of type auditable
-        if (in_array($type, $this->getAuditableTypes())) {
-            $this->setAuditType($type);
-
-            return true;
+        if (! in_array($event, $this->getAuditableEvents())) {
+            return false;
         }
+
+        $this->setAuditEvent($event);
 
         return false;
     }
 
     /**
-     * Set audit type.
+     * Set audit event.
      *
-     * @param string $type;
+     * @param string $event;
      */
-    public function setAuditType($type)
+    public function setAuditEvent($event)
     {
-        $this->auditType = $type;
+        $this->auditEvent = $event;
     }
 
     /**
-     * Get the auditable types.
+     * Get the auditable events.
      *
      * @return array
      */
-    public function getAuditableTypes()
+    public function getAuditableEvents()
     {
-        if (isset($this->auditableTypes)) {
-            return $this->auditableTypes;
+        if (isset($this->auditableEvents)) {
+            return $this->auditableEvents;
         }
 
         return [
-                'created', 'updated', 'deleted',
-                'saved', 'restored',
+            'created',
+            'updated',
+            'deleted',
+            'saved',
+            'restored',
         ];
     }
 
@@ -429,5 +425,50 @@ trait Auditable
         }
 
         return true;
+    }
+
+    /**
+     * Get the Auditors.
+     *
+     * @return array
+     */
+    public function getAuditors()
+    {
+        return isset($this->auditors) ? $this->auditors : Config::get('auditing.default_auditor');
+    }
+
+    /**
+     * Audit the model auditable.
+     *
+     * @return void
+     */
+    public function audit()
+    {
+        app(Dispatcher::class)->audit($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearOlderAudits()
+    {
+        $auditsHistoryCount = $this->audits()->count();
+
+        $auditsHistoryOlder = $auditsHistoryCount - $this->auditLimit;
+
+        if (isset($this->auditLimit) && $auditsHistoryOlder > 0) {
+            $this->audits()->orderBy('created_at', 'asc')
+                ->limit($auditsHistoryOlder)->delete();
+        }
+    }
+
+    /**
+     * Identifiable name
+     *
+     * @return mixed
+     */
+    public function identifiableName()
+    {
+        return $this->getKey();
     }
 }
