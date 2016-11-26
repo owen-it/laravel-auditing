@@ -4,6 +4,7 @@ namespace OwenIt\Auditing;
 
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
+use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\Dispatcher;
 
 class AuditorManager extends Manager implements Dispatcher
@@ -16,45 +17,29 @@ class AuditorManager extends Manager implements Dispatcher
     protected $defaultAuditor = 'database';
 
     /**
-     * Audit the model auditable.
-     *
-     * @param mixed $auditable
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function makeAudit($auditable)
+    public function audit(Auditable $model)
     {
-        $this->audit($auditable);
-    }
-
-    /**
-     * Audit the model auditable.
-     *
-     * @param midex $auditable
-     *
-     * @return void
-     */
-    public function audit($auditable)
-    {
-        $auditors = $auditable->getAuditors();
+        $auditors = $model->getAuditors();
 
         if (empty($auditors)) {
             return;
         }
 
         foreach ((array) $auditors as $auditor) {
-            $auditable = clone $auditable;
+            $model = clone $model;
 
             // Review audit
-            if (!$this->auditReview($auditable, $auditor)) {
+            if (! $this->auditReview($model, $auditor)) {
                 continue;
             }
 
-            $report = $this->driver($auditor)->audit($auditable);
+            $report = $this->driver($auditor)->audit($model);
 
             // Report audit
             $this->app->make('events')->fire(
-                new Events\AuditReport($auditable, $auditor, $report)
+                new Events\AuditReport($model, $auditor, $report)
             );
         }
     }
@@ -75,26 +60,20 @@ class AuditorManager extends Manager implements Dispatcher
      * Review audit and determines if the
      * entity can be audited.
      *
-     * @param mixed  $auditable
-     * @param string $auditor
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
+     * @param string                               $auditor
      *
      * @return bool
      */
-    protected function auditReview($auditable, $auditor)
+    protected function auditReview(Auditable $model, $auditor)
     {
         return $this->app->make('events')->until(
-            new Events\AuditReview($auditable, $auditor)
+            new Events\AuditReview($model, $auditor)
         ) !== false;
     }
 
     /**
-     * Create a new driver instance.
-     *
-     * @param string $driver
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     protected function createDriver($driver)
     {
@@ -112,7 +91,7 @@ class AuditorManager extends Manager implements Dispatcher
     /**
      * Create an instance of the database driver.
      *
-     * @return \OwenIt\Auditing\Auditor\DatabaseAuditor
+     * @return \OwenIt\Auditing\Auditors\DatabaseAuditor
      */
     protected function createDatabaseDriver()
     {
@@ -120,9 +99,7 @@ class AuditorManager extends Manager implements Dispatcher
     }
 
     /**
-     * Get the default auditor driver name.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDefaultDriver()
     {
