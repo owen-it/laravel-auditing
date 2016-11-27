@@ -442,7 +442,7 @@ trait Auditable
      */
     public function getAuditors()
     {
-        return isset($this->auditors) ? $this->auditors : Config::get('auditing.default_auditor');
+        return isset($this->auditors) ? $this->auditors : Config::get('auditing.auditors');
     }
 
     /**
