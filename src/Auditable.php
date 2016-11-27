@@ -1,6 +1,6 @@
 <?php
 
-namespace OwenIt\Auditing\Traits;
+namespace OwenIt\Auditing;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use OwenIt\Auditing\Contracts\Dispatcher;
 use OwenIt\Auditing\Models\Audit as AuditModel;
-use OwenIt\Auditing\Observers\Audit;
+use OwenIt\Auditing\Observers\Audit as AuditObserver;
 use Ramsey\Uuid\Uuid;
 
 trait Auditable
@@ -79,7 +79,7 @@ trait Auditable
     public static function bootAuditable()
     {
         if (static::isAuditEnabled()) {
-            static::observe(new Audit);
+            static::observe(new AuditObserver);
         }
     }
 
@@ -331,7 +331,7 @@ trait Auditable
 
         $this->setAuditEvent($event);
 
-        return false;
+        return true;
     }
 
     /**
