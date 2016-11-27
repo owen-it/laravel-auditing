@@ -9,8 +9,7 @@ class CreateAuditsTable extends Migration
     /**
      * Run the migrations.
      *
-     * @access  public
-     * @return  void
+     * @return void
      */
     public function up()
     {
@@ -30,8 +29,7 @@ class CreateAuditsTable extends Migration
     /**
      * Reverse the migrations.
      *
-     * @access  public
-     * @return  void
+     * @return void
      */
     public function down()
     {
