@@ -2,11 +2,11 @@
 
 namespace OwenIt\Auditing\Tests;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Tests\Stubs\AuditableModel;
+use OwenIt\Auditing\Tests\Stubs\AuditableModel2;
+use OwenIt\Auditing\Tests\Stubs\AuditableModel3;
 
 class AuditableTest extends AbstractTestCase
 {
@@ -17,7 +17,7 @@ class AuditableTest extends AbstractTestCase
             'password' => '12345',
         ];
 
-        $auditable = new AuditableModel1();
+        $auditable = new AuditableModel();
 
         $result = $auditable->cleanHiddenAuditAttributes($attributes);
 
@@ -68,7 +68,7 @@ class AuditableTest extends AbstractTestCase
 
     public function testItIsEventAuditable()
     {
-        $model = new AuditableModel1();
+        $model = new AuditableModel();
 
         $this->assertTrue($model->isEventAuditable('created'));
         $this->assertFalse($model->isEventAuditable('foo'));
@@ -85,41 +85,14 @@ class AuditableTest extends AbstractTestCase
             ->with('auditing.audit_console')
             ->andReturn(true);
 
-        $model = new AuditableModel1();
+        $model = new AuditableModel();
 
         $this->assertTrue($model->isAuditEnabled());
     }
 
     public function testItRunAuditingDisabledConsole()
     {
-        $model = new AuditableModel1();
+        $model = new AuditableModel();
         $this->assertTrue($model->isAuditEnabled());
     }
-}
-
-class AuditableModel1 implements AuditableContract
-{
-    use Auditable;
-}
-
-class AuditableModel2 implements AuditableContract
-{
-    use Auditable;
-
-    public static $auditRespectsHidden = true;
-}
-
-class AuditableModel3 extends Model implements AuditableContract
-{
-    use Auditable;
-
-    protected $hidden = [
-        'password',
-    ];
-
-    protected $auditRespectsHidden = true;
-
-    protected $auditableEvents = [
-        'created',
-    ];
 }

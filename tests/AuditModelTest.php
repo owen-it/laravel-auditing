@@ -2,11 +2,9 @@
 
 namespace OwenIt\Auditing\Tests;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Tests\Stubs\AuditableModel;
 
 class AuditModelTest extends AbstractTestCase
 {
@@ -75,9 +73,4 @@ class AuditModelTest extends AbstractTestCase
             ->with('auditing.table', $default)
             ->andReturn($table ?: $default);
     }
-}
-
-class AuditableModel extends Model implements AuditableContract
-{
-    use Auditable;
 }
