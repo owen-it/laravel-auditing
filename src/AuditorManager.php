@@ -31,7 +31,7 @@ class AuditorManager extends Manager implements Dispatcher
             $model = clone $model;
 
             // Review audit
-            if (! $this->auditReview($model, $auditor)) {
+            if (!$this->auditReview($model, $auditor)) {
                 continue;
             }
 

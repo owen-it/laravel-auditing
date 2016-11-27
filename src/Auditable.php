@@ -79,14 +79,14 @@ trait Auditable
     public static function bootAuditable()
     {
         if (static::isAuditEnabled()) {
-            static::observe(new AuditObserver);
+            static::observe(new AuditObserver());
         }
     }
 
     /**
-     * Auditable Model audits
+     * Auditable Model audits.
      *
-     * @return  \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function audits()
     {
@@ -105,7 +105,7 @@ trait Auditable
         $this->updatedData = $this->attributes;
 
         foreach ($this->updatedData as $attribute => $val) {
-            if (gettype($val) == 'object' && ! method_exists($val, '__toString')) {
+            if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
                 unset($this->originalData[$attribute], $this->updatedData[$attribute]);
 
                 $this->dontKeep[] = $attribute;
@@ -325,7 +325,7 @@ trait Auditable
      */
     public function isEventAuditable($event)
     {
-        if (! in_array($event, $this->getAuditableEvents())) {
+        if (!in_array($event, $this->getAuditableEvents())) {
             return false;
         }
 
@@ -463,7 +463,7 @@ trait Auditable
     }
 
     /**
-     * Identifiable name
+     * Identifiable name.
      *
      * @return mixed
      */

@@ -43,21 +43,21 @@ class Audit extends Model
     ];
 
     /**
-     * Audit data
+     * Audit data.
      *
      * @var array
      */
     protected $data = [];
 
     /**
-     * The Audit attributes that belong to the metadata
+     * The Audit attributes that belong to the metadata.
      *
      * @var array
      */
     protected $metadata = [];
 
     /**
-     * The Auditable attributes that were modified
+     * The Auditable attributes that were modified.
      *
      * @var array
      */
@@ -100,7 +100,7 @@ class Audit extends Model
     }
 
     /**
-     * Audit data resolver
+     * Audit data resolver.
      *
      * @return array
      */
@@ -138,14 +138,15 @@ class Audit extends Model
     }
 
     /**
-     * Get an Audit data value
+     * Get an Audit data value.
      *
-     * @param  string $key
+     * @param string $key
+     *
      * @return mixed|null
      */
     public function getDataValue($key)
     {
-        if (! array_key_exists($key, $this->data)) {
+        if (!array_key_exists($key, $this->data)) {
             return null;
         }
 
@@ -168,7 +169,7 @@ class Audit extends Model
     }
 
     /**
-     * Get the Audit metadata
+     * Get the Audit metadata.
      *
      * @return array
      */
@@ -188,7 +189,7 @@ class Audit extends Model
     }
 
     /**
-     * Get the Auditable modified attributes
+     * Get the Auditable modified attributes.
      *
      * @return array
      */
@@ -202,7 +203,7 @@ class Audit extends Model
 
         foreach ($this->modified as $key) {
             $attribute = substr($key, 4);
-            $state     = substr($key, 0, 3);
+            $state = substr($key, 0, 3);
 
             $modified[$attribute][$state] = $this->getDataValue($key);
         }
