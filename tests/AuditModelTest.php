@@ -10,22 +10,41 @@ use OwenIt\Auditing\Models\Audit;
 
 class AuditModelTest extends AbstractTestCase
 {
-    public function testGetModifiedPass()
+    public function testGetMetadataModified()
     {
         $audit = new Audit();
 
         $audit->auditable = new AuditableModel();
+        $audit->ip_address = '::1';
+        $audit->event = 'created';
+        $audit->user_id = 1;
+        $audit->url = 'http://www.foo.bar/baz';
+
         $audit->old = [];
         $audit->new = [
-            'title' => 'Auditing',
+            'title'   => 'Auditing',
+            'content' => 'Natum accumsan eu vel.',
+        ];
+
+        $metadata = [
+            'audit_event'      => $audit->event,
+            'audit_url'        => $audit->url,
+            'audit_created_at' => $audit->created_at,
+            'user_ip_address'  => $audit->ip_address,
+            'user_id'          => $audit->user_id,
         ];
 
         $modified = [
-            'title' => [
+            'title'     => [
                 'new' => 'Auditing',
+            ],
+
+            'content'   => [
+                'new' => 'Natum accumsan eu vel.',
             ],
         ];
 
+        $this->assertEquals($metadata, $audit->getMetadata());
         $this->assertEquals($modified, $audit->getModified());
     }
 
