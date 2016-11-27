@@ -13,6 +13,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Authentication Model
+    |--------------------------------------------------------------------------
+    |
+    | When using the "Eloquent" authentication driver, we need to know which
+    | Eloquent model should be used to retrieve your users. Of course, it
+    | is often just the "User" model but you may use whatever you like.
+    |
+    */
+
+    'model' => App\User::class,
+
+    /*
+    |--------------------------------------------------------------------------
     | Database Connection
     |--------------------------------------------------------------------------
     |
@@ -45,12 +58,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Auditor
+    | Default Auditors
     |--------------------------------------------------------------------------
     |
-    | The default auditor used to audit the eloquent model.
+    | The default auditors used to keep track of changes.
     |
     */
 
-    'default_auditor' => 'database',
+    'auditors' => [
+        'database',
+    ],
 ];
