@@ -142,12 +142,12 @@ class Audit extends Model
      *
      * @param string $key
      *
-     * @return mixed|null
+     * @return mixed
      */
     public function getDataValue($key)
     {
         if (!array_key_exists($key, $this->data)) {
-            return null;
+            return;
         }
 
         $value = $this->data[$key];
