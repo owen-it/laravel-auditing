@@ -13,16 +13,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Model
+    | User Model & Resolver
     |--------------------------------------------------------------------------
     |
-    | When using the "Eloquent" authentication driver, we need to know which
-    | Eloquent model should be used to retrieve your users. Of course, it
-    | is often just the "User" model but you may use whatever you like.
+    | Define the User model class and how to resolve a logged User ID.
     |
     */
 
-    'model' => App\User::class,
+    'user' => [
+        'model'    => App\User::class,
+        'resolver' => function () {
+            return auth()->check() ? auth()->user()->getAuthIdentifier() : null;
+        },
+    ],
 
     /*
     |--------------------------------------------------------------------------

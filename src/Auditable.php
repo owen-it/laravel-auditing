@@ -3,13 +3,13 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use OwenIt\Auditing\Contracts\Dispatcher;
 use OwenIt\Auditing\Models\Audit as AuditModel;
 use OwenIt\Auditing\Observers\Audit as AuditObserver;
 use Ramsey\Uuid\Uuid;
+use UnexpectedValueException;
 
 trait Auditable
 {
@@ -59,21 +59,6 @@ trait Auditable
     protected $auditEvent;
 
     /**
-     * @var string
-     */
-    protected $auditUserId;
-
-    /**
-     * @var string
-     */
-    protected $auditCurrentUrl;
-
-    /**
-     * @var string
-     */
-    protected $auditIpAddress;
-
-    /**
      * Init auditing.
      */
     public static function bootAuditable()
@@ -105,7 +90,7 @@ trait Auditable
         $this->updatedData = $this->attributes;
 
         foreach ($this->updatedData as $attribute => $val) {
-            if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
+            if (is_object($val) && !method_exists($val, '__toString')) {
                 unset($this->originalData[$attribute], $this->updatedData[$attribute]);
 
                 $this->dontKeep[] = $attribute;
@@ -121,15 +106,6 @@ trait Auditable
         $this->doKeep = isset($this->keepAuditOf) ?
             array_merge($this->keepAuditOf, $this->doKeep)
             : $this->doKeep;
-
-        // Get User ID
-        $this->auditUserId = $this->getLoggedInUserId();
-
-        // Get current URL
-        $this->auditCurrentUrl = $this->getCurrentUrl();
-
-        // Get IP address
-        $this->auditIpAddress = $this->getIpAddress();
 
         // Get changed data
         $this->dirtyData = $this->getDirty();
@@ -207,9 +183,7 @@ trait Auditable
     }
 
     /**
-     * Audit model.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function toAudit()
     {
@@ -220,9 +194,9 @@ trait Auditable
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            'user_id'        => $this->auditUserId,
-            'url'            => $this->auditCurrentUrl,
-            'ip_address'     => $this->auditIpAddress,
+            'user_id'        => $this->resolveUserId(),
+            'url'            => $this->resolveUrl(),
+            'ip_address'     => Request::ip(),
             'created_at'     => $this->freshTimestamp(),
         ]);
     }
@@ -236,43 +210,34 @@ trait Auditable
     }
 
     /**
-     * Get user id.
+     * Resolve the ID of the logged User
      *
-     * @return null
+     * @throws UnexpectedValueException
+     * @return mixed|null
      */
-    protected function getLoggedInUserId()
+    protected function resolveUserId()
     {
-        try {
-            if (Auth::check()) {
-                return Auth::user()->getAuthIdentifier();
-            }
-        } catch (\Exception $e) {
-            return;
+        $resolver = Config::get('auditing.user.resolver');
+
+        if (!is_callable($resolver)) {
+            throw new UnexpectedValueException('Invalid User resolver, expecting callable');
         }
+
+        return $resolver();
     }
 
     /**
-     * Get the current request's route if available.
+     * Resolve the current request URL if available.
      *
      * @return string
      */
-    protected function getCurrentUrl()
+    protected function resolveUrl()
     {
         if (App::runningInConsole()) {
             return 'console';
         }
 
         return Request::fullUrl();
-    }
-
-    /**
-     * Get IP Address.
-     *
-     * @return mixed
-     */
-    public function getIpAddress()
-    {
-        return Request::ip();
     }
 
     /**

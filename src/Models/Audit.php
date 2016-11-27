@@ -96,7 +96,7 @@ class Audit extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Config::get('auditing.model'));
+        return $this->belongsTo(Config::get('auditing.user.model'));
     }
 
     /**
