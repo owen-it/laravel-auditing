@@ -23,10 +23,6 @@ class AuditorManager extends Manager implements Dispatcher
     {
         $auditors = $model->getAuditors();
 
-        if (empty($auditors)) {
-            return;
-        }
-
         foreach ((array) $auditors as $auditor) {
             $model = clone $model;
 
