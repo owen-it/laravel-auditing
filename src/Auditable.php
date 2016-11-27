@@ -469,14 +469,4 @@ trait Auditable
                 ->limit($auditsHistoryOlder)->delete();
         }
     }
-
-    /**
-     * Identifiable name.
-     *
-     * @return mixed
-     */
-    public function identifiableName()
-    {
-        return $this->getKey();
-    }
 }
