@@ -8,7 +8,7 @@ use OwenIt\Auditing\Models\Audit;
 class DatabaseAuditor
 {
     /**
-     * Perform an audit to the Auditable model.
+     * Audit the Auditable model.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *

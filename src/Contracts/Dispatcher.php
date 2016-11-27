@@ -5,7 +5,7 @@ namespace OwenIt\Auditing\Contracts;
 interface Dispatcher
 {
     /**
-     * Perform an audit to the Auditable model.
+     * Audit the Auditable model.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
