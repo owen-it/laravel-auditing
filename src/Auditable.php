@@ -213,7 +213,7 @@ trait Auditable
      */
     public function toAudit()
     {
-        return [
+        return $this->transformAudit([
             'id'             => (string) Uuid::uuid4(),
             'old'            => $this->cleanHiddenAuditAttributes($this->oldData),
             'new'            => $this->cleanHiddenAuditAttributes($this->newData),
@@ -224,7 +224,15 @@ trait Auditable
             'url'            => $this->auditCurrentUrl,
             'ip_address'     => $this->auditIpAddress,
             'created_at'     => $this->freshTimestamp(),
-        ];
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transformAudit(array $data)
+    {
+        return $data;
     }
 
     /**

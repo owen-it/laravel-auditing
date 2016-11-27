@@ -52,4 +52,14 @@ interface Auditable
      * @return void
      */
     public function clearOlderAudits();
+
+    /**
+     * Allows transforming the audit data
+     * before it's passed to the database.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function transformAudit(array $data);
 }
