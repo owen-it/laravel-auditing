@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace OwenIt\Auditing\Tests;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
@@ -9,6 +9,9 @@ use PHPUnit_Framework_TestCase;
 
 abstract class AbstractTestCase extends PHPUnit_Framework_TestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     public function tearDown()
     {
         Mockery::close();
@@ -16,6 +19,9 @@ abstract class AbstractTestCase extends PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         App::shouldReceive('runningInConsole')

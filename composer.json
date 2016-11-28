@@ -37,7 +37,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "OwenIt\\Auditing\\Tests\\": "tests/"
         }
     },
     "extra": {

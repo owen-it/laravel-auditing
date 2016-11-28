@@ -2,25 +2,24 @@
 
 namespace OwenIt\Auditing\Auditors;
 
-use OwenIt\Auditing\Auditing;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Models\Audit;
 
 class DatabaseAuditor
 {
     /**
-     * Audit the model auditable.
+     * Audit the Auditable model.
      *
-     * @param mixed $auditable
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function audit($auditable)
+    public function audit(Auditable $model)
     {
-        $report = Auditing::create(
-            $auditable->toAudit()
-        );
+        $report = Audit::create($model->toAudit());
 
         if ($report) {
-            $auditable->clearOlderAudits();
+            $model->clearOlderAudits();
         }
 
         return $report;

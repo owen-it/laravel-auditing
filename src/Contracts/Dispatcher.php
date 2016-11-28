@@ -5,11 +5,11 @@ namespace OwenIt\Auditing\Contracts;
 interface Dispatcher
 {
     /**
-     * Audit the given information.
+     * Audit the Auditable model.
      *
-     * @param $auditable
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
-    public function audit($auditing);
+    public function audit(Auditable $model);
 }

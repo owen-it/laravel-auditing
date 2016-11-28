@@ -1,17 +1,19 @@
 <?php
 
-namespace OwenIt\Auditing;
+namespace OwenIt\Auditing\Observers;
 
-class AuditObserver
+use OwenIt\Auditing\Contracts\Auditable;
+
+class Audit
 {
     /**
      * Handle the saving event for the model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
-    public function saving($model)
+    public function saving(Auditable $model)
     {
         $model->prepareAudit();
     }
@@ -19,11 +21,11 @@ class AuditObserver
     /**
      * Handle the created event for the model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
-    public function created($model)
+    public function created(Auditable $model)
     {
         $model->auditCreation();
     }
@@ -31,11 +33,11 @@ class AuditObserver
     /**
      * Handle the saved event for the model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
-    public function saved($model)
+    public function saved(Auditable $model)
     {
         $model->auditUpdate();
     }
@@ -43,11 +45,11 @@ class AuditObserver
     /**
      * Handle the deleted event for the model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
-    public function deleted($model)
+    public function deleted(Auditable $model)
     {
         $model->prepareAudit();
         $model->auditDeletion();
