@@ -68,7 +68,7 @@ class Audit extends Model
      */
     public function getConnection()
     {
-        return static::resolveConnection(Config::get('auditing.connection'));
+        return static::resolveConnection(Config::get('audit.drivers.database.connection'));
     }
 
     /**
@@ -76,7 +76,7 @@ class Audit extends Model
      */
     public function getTable()
     {
-        return Config::get('auditing.table', parent::getTable());
+        return Config::get('audit.drivers.database.table', parent::getTable());
     }
 
     /**
@@ -96,7 +96,7 @@ class Audit extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Config::get('auditing.user.model'));
+        return $this->belongsTo(Config::get('audit.user.model'));
     }
 
     /**
