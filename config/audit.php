@@ -29,46 +29,38 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Database Connection
+    | Default Driver
     |--------------------------------------------------------------------------
     |
-    | Here is the the database connection for the auditing log.
-    |
-    */
-    'connection' => null,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table
-    |--------------------------------------------------------------------------
-    |
-    | Here is the the table associated with the auditing model.
+    | The default audit driver used to keep track of changes.
     |
     */
 
-    'table' => 'audits',
+    'default' => 'database',
 
     /*
     |--------------------------------------------------------------------------
-    | Audit console
+    | Auditors (Audit Drivers)
+    |--------------------------------------------------------------------------
+    |
+    | Available auditors and respective configurations.
+    |
+    */
+    'auditors' => [
+        'database' => [
+            'table'      => 'audits',
+            'connection' => null,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Console?
     |--------------------------------------------------------------------------
     |
     | Whether we should audit queries run through console (eg. php artisan db:seed).
     |
     */
 
-    'audit_console' => false,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Auditors
-    |--------------------------------------------------------------------------
-    |
-    | The default auditors used to keep track of changes.
-    |
-    */
-
-    'auditors' => [
-        'database',
-    ],
+    'console' => false,
 ];
