@@ -1,11 +1,11 @@
 <?php
 
-namespace OwenIt\Auditing\Auditors;
+namespace OwenIt\Auditing\Drivers;
 
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Models\Audit;
 
-class DatabaseAuditor
+class Database
 {
     /**
      * Audit the Auditable model.
