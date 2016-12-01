@@ -5,49 +5,31 @@ namespace OwenIt\Auditing\Contracts;
 interface Auditable
 {
     /**
-     * Prepare audit model.
+     * Set the Audit event.
      *
-     * @return void
+     * @param string $event
+     *
+     * @return Auditable
      */
-    public function prepareAudit();
+    public function setAuditEvent($event);
 
     /**
-     * Audit creation.
+     * Return data for an Audit.
      *
-     * @return void
-     */
-    public function auditCreation();
-
-    /**
-     * Audit updated.
-     *
-     * @return void
-     */
-    public function auditUpdate();
-
-    /**
-     * Audit deletion.
-     *
-     * @return void
-     */
-    public function auditDeletion();
-
-    /**
-     * Return data for Audit.
-     *
+     * @throws \RuntimeException
      * @return array
      */
     public function toAudit();
 
     /**
-     * Get the Auditors.
+     * Get the Audit Drivers.
      *
-     * @return array
+     * @return array|string
      */
-    public function getAuditors();
+    public function getAuditDrivers();
 
     /**
-     * Clear the oldest audit's if given a limit.
+     * Clear the oldest audits if given a limit.
      *
      * @return void
      */
@@ -55,7 +37,7 @@ interface Auditable
 
     /**
      * Allows transforming the audit data
-     * before it's passed to the database.
+     * before being passed to an Auditor.
      *
      * @param array $data
      *
