@@ -16,9 +16,7 @@ class AuditableObserver
      */
     public function created(Auditable $model)
     {
-        $model->setEloquentEvent('created');
-
-        Auditor::audit($model);
+        Auditor::audit($model->setAuditEvent('created'));
     }
 
     /**
@@ -30,9 +28,7 @@ class AuditableObserver
      */
     public function updated(Auditable $model)
     {
-        $model->setEloquentEvent('updated');
-
-        Auditor::audit($model);
+        Auditor::audit($model->setAuditEvent('updated'));
     }
 
     /**
@@ -44,9 +40,7 @@ class AuditableObserver
      */
     public function deleted(Auditable $model)
     {
-        $model->setEloquentEvent('deleted');
-
-        Auditor::audit($model);
+        Auditor::audit($model->setAuditEvent('deleted'));
     }
 
     /**
@@ -58,8 +52,6 @@ class AuditableObserver
      */
     public function restored(Auditable $model)
     {
-        $model->setEloquentEvent('restored');
-
-        Auditor::audit($model);
+        Auditor::audit($model->setAuditEvent('restored'));
     }
 }
