@@ -2,10 +2,10 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-interface Dispatcher
+interface Auditor
 {
     /**
-     * Audit the Auditable model.
+     * Perform an audit.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
