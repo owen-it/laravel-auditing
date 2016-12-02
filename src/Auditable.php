@@ -28,6 +28,13 @@ trait Auditable
     protected $exclude = [];
 
     /**
+     * Audit in strict mode?
+     *
+     * @var bool
+     */
+    protected $strictMode = false;
+
+    /**
      * Audit event name.
      *
      * @var string
@@ -64,13 +71,19 @@ trait Auditable
     protected function updateExclusions()
     {
         foreach ($this->attributes as $attribute => $value) {
+            // When in strict mode, hidden and non visible attributes will be excluded
+            if ($this->strictMode && (in_array($attribute, $this->hidden) || !in_array($attribute, $this->visible))) {
+                $this->exclude[] = $attribute;
+                continue;
+            }
+
             // Apart from null, non scalar values will be excluded
             if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
                 $this->exclude[] = $attribute;
             }
         }
 
-        // Remove any duplicates
+        // Remove any duplicates that may exist
         $this->exclude = array_unique($this->exclude);
     }
 
@@ -166,8 +179,8 @@ trait Auditable
 
         return $this->transformAudit([
             'id'             => (string) Uuid::uuid4(),
-            'old'            => $this->cleanHiddenAuditAttributes($old),
-            'new'            => $this->cleanHiddenAuditAttributes($new),
+            'old'            => $old,
+            'new'            => $new,
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
@@ -293,52 +306,6 @@ trait Auditable
             'deleted',
             'restored',
         ];
-    }
-
-    /**
-     * Whether to clean the attributes which are hidden or not visible.
-     *
-     * @return bool
-     */
-    public function isAuditRespectsHidden()
-    {
-        return isset($this->auditRespectsHidden) && $this->auditRespectsHidden;
-    }
-
-    /**
-     * Remove the value of attributes which are hidden or not visible on the model.
-     *
-     * @param $attributes
-     *
-     * @return array
-     */
-    public function cleanHiddenAuditAttributes(array $attributes)
-    {
-        if ($this->isAuditRespectsHidden()) {
-
-            // Get hidden and visible attributes from the model
-            $visible = $this->getVisible();
-
-            // If visible is set, set to null any attributes which are not in visible
-            if (count($visible) > 0) {
-                foreach ($attributes as $attribute => &$value) {
-                    if (!in_array($attribute, $visible)) {
-                        $value = null;
-                    }
-                }
-            }
-
-            unset($value);
-
-            // If hidden is set, set to null any attributes which are in hidden
-            foreach ($this->getHidden() as $attribute) {
-                if (array_key_exists($attribute, $attributes)) {
-                    $attributes[$attribute] = null;
-                }
-            }
-        }
-
-        return $attributes;
     }
 
     /**
