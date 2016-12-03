@@ -3,8 +3,8 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Support\ServiceProvider;
-use OwenIt\Auditing\Console\AuditTableCommand;
 use OwenIt\Auditing\Console\AuditDriverMakeCommand;
+use OwenIt\Auditing\Console\AuditTableCommand;
 use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Auditor;
 
