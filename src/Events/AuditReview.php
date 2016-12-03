@@ -3,6 +3,7 @@
 namespace OwenIt\Auditing\Events;
 
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\AuditDriver;
 
 class AuditReview
 {
@@ -14,21 +15,21 @@ class AuditReview
     public $model;
 
     /**
-     * The auditor name.
+     * Audit driver.
      *
-     * @var string
+     * @var \OwenIt\Auditing\Contracts\AuditDriver
      */
-    public $auditor;
+    public $driver;
 
     /**
      * Create a new event instance.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     * @param string                               $auditor
+     * @param \OwenIt\Auditing\Contracts\Auditable   $model
+     * @param \OwenIt\Auditing\Contracts\AuditDriver $driver
      */
-    public function __construct(Auditable $model, $auditor)
+    public function __construct(Auditable $model, AuditDriver $driver)
     {
         $this->model = $model;
-        $this->auditor = $auditor;
+        $this->driver = $driver;
     }
 }
