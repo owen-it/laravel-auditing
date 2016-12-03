@@ -31,7 +31,7 @@ class InstallCommand extends Command
     {
         $this->info('Publishing the config files');
         Artisan::call('vendor:publish', [
-            '--provider' => AuditingServiceProvider::class
+            '--provider' => AuditingServiceProvider::class,
         ]);
 
         $this->info('Publishing the migration file');
