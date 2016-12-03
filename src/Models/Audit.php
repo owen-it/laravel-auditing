@@ -172,9 +172,11 @@ class Audit extends Model
     /**
      * Get the Audit metadata.
      *
+     * @param bool $json
+     *
      * @return array
      */
-    public function getMetadata()
+    public function getMetadata($json = false)
     {
         if (empty($this->data)) {
             $this->resolveData();
@@ -186,15 +188,17 @@ class Audit extends Model
             $metadata[$key] = $this->getDataValue($key);
         }
 
-        return $metadata;
+        return $json ? json_encode($metadata) : $metadata;
     }
 
     /**
      * Get the Auditable modified attributes.
      *
+     * @param bool $json
+     *
      * @return array
      */
-    public function getModified()
+    public function getModified($json = false)
     {
         if (empty($this->data)) {
             $this->resolveData();
@@ -209,6 +213,6 @@ class Audit extends Model
             $modified[$attribute][$state] = $this->getDataValue($key);
         }
 
-        return $modified;
+        return $json ? json_encode($modified) : $modified;
     }
 }
