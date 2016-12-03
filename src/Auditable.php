@@ -178,7 +178,8 @@ trait Auditable
         $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
 
         if (!method_exists($this, $method)) {
-            throw new RuntimeException(sprintf('Unable to handle "%s" event, %s() method missing',
+            throw new RuntimeException(sprintf(
+                'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
                 $method
             ));
@@ -214,7 +215,7 @@ trait Auditable
     }
 
     /**
-     * Resolve the ID of the logged User
+     * Resolve the ID of the logged User.
      *
      * @throws UnexpectedValueException
      * @return mixed|null
