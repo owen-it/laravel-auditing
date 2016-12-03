@@ -22,22 +22,21 @@ interface Auditable
     public function toAudit();
 
     /**
-     * Get the Audit Drivers.
+     * Get the Audit Driver.
      *
-     * @return array|string
+     * @return string
      */
-    public function getAuditDrivers();
+    public function getAuditDriver();
 
     /**
-     * Clear the oldest audits if given a limit.
+     * Get the Audit threshold.
      *
-     * @return void
+     * @return int
      */
-    public function clearOlderAudits();
+    public function getAuditThreshold();
 
     /**
-     * Allows transforming the audit data
-     * before being passed to an Auditor.
+     * Transform the data before performing an audit.
      *
      * @param array $data
      *

@@ -35,6 +35,20 @@ trait Auditable
     protected $strictMode = false;
 
     /**
+     * Audit driver.
+     *
+     * @var string
+     */
+    protected $auditDriver;
+
+    /**
+     * Audit threshold.
+     *
+     * @var int
+     */
+    protected $auditThreshold = 0;
+
+    /**
      * Audit event name.
      *
      * @var string
@@ -325,23 +339,16 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getAuditDrivers()
+    public function getAuditDriver()
     {
-        return isset($this->auditDrivers) ? $this->auditDrivers : Config::get('audit.default');
+        return $this->auditDriver;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function clearOlderAudits()
+    public function getAuditThreshold()
     {
-        $auditsHistoryCount = $this->audits()->count();
-
-        $auditsHistoryOlder = $auditsHistoryCount - $this->auditLimit;
-
-        if (isset($this->auditLimit) && $auditsHistoryOlder > 0) {
-            $this->audits()->orderBy('created_at', 'asc')
-                ->limit($auditsHistoryOlder)->delete();
-        }
+        return $this->auditThreshold;
     }
 }
