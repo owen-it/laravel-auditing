@@ -14,7 +14,7 @@ install:
     - travis_retry composer install --no-interaction --prefer-dist
 
 script:
-    - vendor/bin/phpunit --verbose --coverage-text
+    - vendor/bin/phpunit --verbose
 
 matrix:
     fast_finish: true
