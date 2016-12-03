@@ -218,6 +218,7 @@ trait Auditable
      * Resolve the ID of the logged User.
      *
      * @throws UnexpectedValueException
+     *
      * @return mixed|null
      */
     protected function resolveUserId()
