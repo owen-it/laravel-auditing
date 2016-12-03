@@ -7,7 +7,7 @@ interface Auditor
     /**
      * Get an audit driver instance.
      *
-     * @param Auditable $model
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return AuditDriver
      */
