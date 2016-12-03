@@ -18,21 +18,21 @@ trait Auditable
      *
      * @var array
      */
-    protected $include = [];
+    protected $auditInclude = [];
 
     /**
      * Attributes to exclude from the Audit.
      *
      * @var array
      */
-    protected $exclude = [];
+    protected $auditExclude = [];
 
     /**
-     * Audit in strict mode?
+     * Should the audit be strict?
      *
      * @var bool
      */
-    protected $strictMode = false;
+    protected $auditStrict = false;
 
     /**
      * Audit driver.
@@ -78,27 +78,27 @@ trait Auditable
     }
 
     /**
-     * Update excluded attributes.
+     * Update excluded audit attributes.
      *
      * @return void
      */
-    protected function updateExclusions()
+    protected function updateAuditExclusions()
     {
         foreach ($this->attributes as $attribute => $value) {
             // When in strict mode, hidden and non visible attributes will be excluded
-            if ($this->strictMode && (in_array($attribute, $this->hidden) || !in_array($attribute, $this->visible))) {
-                $this->exclude[] = $attribute;
+            if ($this->auditStrict && (in_array($attribute, $this->hidden) || !in_array($attribute, $this->visible))) {
+                $this->auditExclude[] = $attribute;
                 continue;
             }
 
             // Apart from null, non scalar values will be excluded
             if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
-                $this->exclude[] = $attribute;
+                $this->auditExclude[] = $attribute;
             }
         }
 
         // Remove any duplicates that may exist
-        $this->exclude = array_unique($this->exclude);
+        $this->auditExclude = array_unique($this->auditExclude);
     }
 
     /**
@@ -184,7 +184,7 @@ trait Auditable
             ));
         }
 
-        $this->updateExclusions();
+        $this->updateAuditExclusions();
 
         $old = [];
         $new = [];
@@ -272,13 +272,13 @@ trait Auditable
     private function isAttributeAuditable($attribute)
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->exclude)) {
+        if (in_array($attribute, $this->auditExclude)) {
             return false;
         }
 
         // The attribute is auditable when explicitly
         // listed or when the include array is empty
-        return in_array($attribute, $this->include) || empty($this->include);
+        return in_array($attribute, $this->auditInclude) || empty($this->auditInclude);
     }
 
     /**
