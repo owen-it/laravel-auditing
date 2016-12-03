@@ -4,6 +4,7 @@ namespace OwenIt\Auditing\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use OwenIt\Auditing\AuditingServiceProvider;
 
 class InstallCommand extends Command
 {
@@ -29,7 +30,9 @@ class InstallCommand extends Command
     public function fire()
     {
         $this->info('Publishing the config files');
-        Artisan::call('vendor:publish', ['--provider' => 'OwenIt\Auditing\AuditingServiceProvider']);
+        Artisan::call('vendor:publish', [
+            '--provider' => AuditingServiceProvider::class
+        ]);
 
         $this->info('Publishing the migration file');
         Artisan::call('auditing:table');

@@ -4,28 +4,28 @@ namespace OwenIt\Auditing\Console;
 
 use Illuminate\Console\GeneratorCommand;
 
-class AuditorMakeCommand extends GeneratorCommand
+class AuditDriverMakeCommand extends GeneratorCommand
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'make:auditor';
+    protected $name = 'make:audit-driver';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new auditor class';
+    protected $description = 'Create a new audit driver class';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Auditor';
+    protected $type = 'AuditDriver';
 
     /**
      * Get the stub file for the generator.
@@ -34,7 +34,7 @@ class AuditorMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/auditor.stub';
+        return __DIR__.'/stubs/driver.stub';
     }
 
     /**
@@ -46,6 +46,6 @@ class AuditorMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Auditors';
+        return $rootNamespace.'\Drivers';
     }
 }
