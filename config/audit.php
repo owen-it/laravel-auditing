@@ -40,13 +40,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Auditors (Audit Drivers)
+    | Audit Drivers
     |--------------------------------------------------------------------------
     |
-    | Available auditors and respective configurations.
+    | Available audit drivers and respective configurations.
     |
     */
-    'auditors' => [
+    'drivers' => [
         'database' => [
             'table'      => 'audits',
             'connection' => null,
