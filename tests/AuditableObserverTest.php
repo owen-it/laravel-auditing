@@ -10,7 +10,7 @@ use OwenIt\Auditing\Facades\Auditor;
 class AuditableObserverTest extends AbstractTestCase
 {
     /**
-     * Test the AuditableObserver class instantiation
+     * Test the AuditableObserver class instantiation.
      *
      * @return AuditableObserver
      */
@@ -24,7 +24,7 @@ class AuditableObserverTest extends AbstractTestCase
     }
 
     /**
-     * Test Auditable class mock
+     * Test Auditable class mock.
      *
      * @return Auditable
      */
@@ -38,7 +38,7 @@ class AuditableObserverTest extends AbstractTestCase
     }
 
     /**
-     * Test AuditableObserver methods to PASS
+     * Test AuditableObserver methods to PASS.
      *
      * @depends testAuditableObserverInstantiation
      * @depends testAuditableMock

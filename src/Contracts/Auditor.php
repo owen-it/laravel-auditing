@@ -7,7 +7,8 @@ interface Auditor
     /**
      * Get an audit driver instance.
      *
-     * @param  Auditable $model
+     * @param Auditable $model
+     *
      * @return AuditDriver
      */
     public function auditDriver(Auditable $model);

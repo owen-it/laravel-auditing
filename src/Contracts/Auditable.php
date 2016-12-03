@@ -17,6 +17,7 @@ interface Auditable
      * Return data for an Audit.
      *
      * @throws \RuntimeException
+     *
      * @return array
      */
     public function toAudit();
