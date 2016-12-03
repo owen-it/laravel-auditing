@@ -3,25 +3,39 @@
 namespace OwenIt\Auditing\Drivers;
 
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\AuditDriver;
 use OwenIt\Auditing\Models\Audit;
 
-class Database
+class Database implements AuditDriver
 {
     /**
-     * Audit the Auditable model.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
-     * @return \Illuminate\Database\Eloquent\Model
+     * {@inheritdoc}
      */
     public function audit(Auditable $model)
     {
-        $report = Audit::create($model->toAudit());
+        return Audit::create($model->toAudit());
+    }
 
-        if ($report) {
-            $model->clearOlderAudits();
+    /**
+     * {@inheritdoc}
+     */
+    public function prune(Auditable $model)
+    {
+        if ($threshold = $model->getAuditThreshold() > 0) {
+            $total = $model->audits()->count();
+
+            $forRemoval = ($total - $threshold);
+
+            if ($forRemoval > 0) {
+                $model->audits()
+                    ->orderBy('created_at', 'asc')
+                    ->limit($forRemoval)
+                    ->delete();
+
+                return true;
+            }
         }
 
-        return $report;
+        return false;
     }
 }
