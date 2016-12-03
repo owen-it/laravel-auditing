@@ -30,7 +30,7 @@ class AuditTableCommand extends Command
     protected $files;
 
     /**
-     * Composer
+     * Composer.
      *
      * @var \Illuminate\Support\Composer
      */
