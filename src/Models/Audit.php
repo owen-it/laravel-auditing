@@ -108,6 +108,7 @@ class Audit extends Model
     {
         // Metadata
         $this->data = [
+            'audit_id'         => $this->id,
             'audit_event'      => $this->event,
             'audit_url'        => $this->url,
             'audit_created_at' => $this->created_at,
