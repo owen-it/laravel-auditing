@@ -38,8 +38,8 @@ class Audit extends Model
      * {@inheritdoc}
      */
     protected $casts = [
-        'old' => 'json',
-        'new' => 'json',
+        'old_values' => 'json',
+        'new_values' => 'json',
     ];
 
     /**
@@ -124,11 +124,11 @@ class Audit extends Model
         $this->metadata = array_keys($this->data);
 
         // Modified Auditable attributes
-        foreach ($this->new as $key => $value) {
+        foreach ($this->new_values as $key => $value) {
             $this->data['new_'.$key] = $value;
         }
 
-        foreach ($this->old as $key => $value) {
+        foreach ($this->old_values as $key => $value) {
             $this->data['old_'.$key] = $value;
         }
 

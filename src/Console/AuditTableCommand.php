@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Composer;
 
-class AuditingTableCommand extends Command
+class AuditTableCommand extends Command
 {
     /**
      * The console command name.
@@ -20,7 +20,7 @@ class AuditingTableCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Create a migration for the auditing table';
+    protected $description = 'Create a migration for the audits table';
 
     /**
      * The filesystem instance.
@@ -30,6 +30,8 @@ class AuditingTableCommand extends Command
     protected $files;
 
     /**
+     * Composer
+     *
      * @var \Illuminate\Support\Composer
      */
     protected $composer;
@@ -39,8 +41,6 @@ class AuditingTableCommand extends Command
      *
      * @param \Illuminate\Filesystem\Filesystem $files
      * @param \Illuminate\Support\Composer      $composer
-     *
-     * @return void
      */
     public function __construct(Filesystem $files, Composer $composer)
     {

@@ -193,8 +193,8 @@ trait Auditable
 
         return $this->transformAudit([
             'id'             => (string) Uuid::uuid4(),
-            'old'            => $old,
-            'new'            => $new,
+            'old_values'     => $old,
+            'new_values'     => $new,
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
