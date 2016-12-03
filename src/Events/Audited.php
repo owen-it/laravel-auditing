@@ -6,7 +6,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
 use OwenIt\Auditing\Models\Audit;
 
-class AuditReport
+class Audited
 {
     /**
      * The Auditable model.
@@ -30,7 +30,7 @@ class AuditReport
     public $report;
 
     /**
-     * Create a new event instance.
+     * Create a new Audited event instance.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable   $model
      * @param \OwenIt\Auditing\Contracts\AuditDriver $driver

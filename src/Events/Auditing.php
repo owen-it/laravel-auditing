@@ -5,7 +5,7 @@ namespace OwenIt\Auditing\Events;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
 
-class AuditReview
+class Auditing
 {
     /**
      * The Auditable model.
@@ -22,7 +22,7 @@ class AuditReview
     public $driver;
 
     /**
-     * Create a new event instance.
+     * Create a new Auditing event instance.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable   $model
      * @param \OwenIt\Auditing\Contracts\AuditDriver $driver

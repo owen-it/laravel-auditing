@@ -57,8 +57,7 @@ class Auditor extends Manager implements AuditorContract
     {
         $driver = $this->auditDriver($model);
 
-        // Review audit
-        if (!$this->auditReview($model, $driver)) {
+        if (!$this->fireAuditingEvent($model, $driver)) {
             return;
         }
 
@@ -66,9 +65,8 @@ class Auditor extends Manager implements AuditorContract
             $driver->prune($model);
         }
 
-        // Report audit
         $this->app->make('events')->fire(
-            new Events\AuditReport($model, $driver, $audit)
+            new Events\Audited($model, $driver, $audit)
         );
     }
 
@@ -83,17 +81,17 @@ class Auditor extends Manager implements AuditorContract
     }
 
     /**
-     * Review audit and determine if the entity can be audited.
+     * Fire the Auditing event.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable   $model
      * @param \OwenIt\Auditing\Contracts\AuditDriver $driver
      *
      * @return bool
      */
-    protected function auditReview(Auditable $model, AuditDriver $driver)
+    protected function fireAuditingEvent(Auditable $model, AuditDriver $driver)
     {
         return $this->app->make('events')->until(
-            new Events\AuditReview($model, $driver)
+            new Events\Auditing($model, $driver)
         ) !== false;
     }
 }
