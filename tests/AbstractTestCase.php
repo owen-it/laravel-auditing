@@ -5,9 +5,9 @@ namespace OwenIt\Auditing\Tests;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Mockery;
-use PHPUnit_Framework_TestCase;
+use PHPUnit_Framework_TestCase as TestCase;
 
-abstract class AbstractTestCase extends PHPUnit_Framework_TestCase
+abstract class AbstractTestCase extends TestCase
 {
     /**
      * {@inheritdoc}
@@ -28,7 +28,7 @@ abstract class AbstractTestCase extends PHPUnit_Framework_TestCase
             ->andReturn(true);
 
         Config::shouldReceive('get')
-            ->with('auditing.audit_console')
+            ->with('audit.console')
             ->andReturn(true);
 
         parent::setUp();
