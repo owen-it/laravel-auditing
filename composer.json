@@ -1,7 +1,21 @@
 {
     "name": "owen-it/laravel-auditing",
-    "description": "Keep a change history for your models using laravel and lumen",
-    "keywords": ["audit", "auditing", "activity", "laravel", "log", "logging", "register", "observer", "lumen"],
+    "description": "Audit changes of your Eloquent models in Laravel/Lumen",
+    "keywords": [
+        "activity",
+        "audit",
+        "auditing",
+        "change",
+        "eloquent",
+        "history",
+        "log",
+        "logging",
+        "observer",
+        "laravel",
+        "lumen",
+        "record",
+        "track"
+    ],
     "homepage": "https://laravel-auditing.com",
     "type": "package",
     "license": "MIT",
@@ -13,6 +27,10 @@
         {
             "name": "Antério Vieira",
             "email": "anteriovieira@gmail.com"
+        },
+        {
+            "name": "Quetzy Garcia",
+            "email": "quetzyg@altek.org"
         },
         {
             "name": "Raphael França",
