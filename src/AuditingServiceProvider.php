@@ -1,13 +1,12 @@
 <?php
 
-namespace OwenIt\Auditing\Providers;
+namespace OwenIt\Auditing;
 
 use Illuminate\Support\ServiceProvider;
-use OwenIt\Auditing\AuditorManager;
-use OwenIt\Auditing\Console\AuditingTableCommand;
-use OwenIt\Auditing\Console\AuditorMakeCommand;
+use OwenIt\Auditing\Console\AuditDriverMakeCommand;
+use OwenIt\Auditing\Console\AuditTableCommand;
 use OwenIt\Auditing\Console\InstallCommand;
-use OwenIt\Auditing\Contracts\Dispatcher;
+use OwenIt\Auditing\Contracts\Auditor;
 
 class AuditingServiceProvider extends ServiceProvider
 {
@@ -35,15 +34,15 @@ class AuditingServiceProvider extends ServiceProvider
      */
     protected function setupConfig($app)
     {
-        $config = realpath(__DIR__.'/../config/auditing.php');
+        $config = realpath(__DIR__.'/../config/audit.php');
 
         if ($app->runningInConsole()) {
             $this->publishes([
-                $config => config_path('auditing.php'),
+                $config => config_path('audit.php'),
             ]);
         }
 
-        $this->mergeConfigFrom($config, 'auditing');
+        $this->mergeConfigFrom($config, 'audit');
     }
 
     /**
@@ -54,16 +53,14 @@ class AuditingServiceProvider extends ServiceProvider
     public function register()
     {
         $this->commands([
-            AuditingTableCommand::class,
-            AuditorMakeCommand::class,
+            AuditTableCommand::class,
+            AuditDriverMakeCommand::class,
             InstallCommand::class,
         ]);
 
-        $this->app->singleton(AuditorManager::class, function ($app) {
-            return new AuditorManager($app);
+        $this->app->singleton(Auditor::class, function ($app) {
+            return new \OwenIt\Auditing\Auditor($app);
         });
-
-        $this->app->alias(AuditorManager::class, Dispatcher::class);
     }
 
     /**
@@ -72,8 +69,7 @@ class AuditingServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            AuditorManager::class,
-            Dispatcher::class,
+            Auditor::class,
         ];
     }
 }

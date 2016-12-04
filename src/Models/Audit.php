@@ -38,8 +38,8 @@ class Audit extends Model
      * {@inheritdoc}
      */
     protected $casts = [
-        'old' => 'json',
-        'new' => 'json',
+        'old_values' => 'json',
+        'new_values' => 'json',
     ];
 
     /**
@@ -68,7 +68,7 @@ class Audit extends Model
      */
     public function getConnection()
     {
-        return static::resolveConnection(Config::get('auditing.connection'));
+        return static::resolveConnection(Config::get('audit.drivers.database.connection'));
     }
 
     /**
@@ -76,7 +76,7 @@ class Audit extends Model
      */
     public function getTable()
     {
-        return Config::get('auditing.table', parent::getTable());
+        return Config::get('audit.drivers.database.table', parent::getTable());
     }
 
     /**
@@ -96,7 +96,7 @@ class Audit extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Config::get('auditing.model'));
+        return $this->belongsTo(Config::get('audit.user.model'));
     }
 
     /**
@@ -108,6 +108,7 @@ class Audit extends Model
     {
         // Metadata
         $this->data = [
+            'audit_id'         => $this->id,
             'audit_event'      => $this->event,
             'audit_url'        => $this->url,
             'audit_created_at' => $this->created_at,
@@ -124,11 +125,11 @@ class Audit extends Model
         $this->metadata = array_keys($this->data);
 
         // Modified Auditable attributes
-        foreach ($this->new as $key => $value) {
+        foreach ($this->new_values as $key => $value) {
             $this->data['new_'.$key] = $value;
         }
 
-        foreach ($this->old as $key => $value) {
+        foreach ($this->old_values as $key => $value) {
             $this->data['old_'.$key] = $value;
         }
 
@@ -171,9 +172,11 @@ class Audit extends Model
     /**
      * Get the Audit metadata.
      *
+     * @param bool $json
+     *
      * @return array
      */
-    public function getMetadata()
+    public function getMetadata($json = false)
     {
         if (empty($this->data)) {
             $this->resolveData();
@@ -185,15 +188,17 @@ class Audit extends Model
             $metadata[$key] = $this->getDataValue($key);
         }
 
-        return $metadata;
+        return $json ? json_encode($metadata) : $metadata;
     }
 
     /**
      * Get the Auditable modified attributes.
      *
+     * @param bool $json
+     *
      * @return array
      */
-    public function getModified()
+    public function getModified($json = false)
     {
         if (empty($this->data)) {
             $this->resolveData();
@@ -208,6 +213,6 @@ class Audit extends Model
             $modified[$attribute][$state] = $this->getDataValue($key);
         }
 
-        return $modified;
+        return $json ? json_encode($modified) : $modified;
     }
 }

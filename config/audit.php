@@ -13,59 +13,54 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Authentication Model
+    | User Model & Resolver
     |--------------------------------------------------------------------------
     |
-    | When using the "Eloquent" authentication driver, we need to know which
-    | Eloquent model should be used to retrieve your users. Of course, it
-    | is often just the "User" model but you may use whatever you like.
+    | Define the User model class and how to resolve a logged User ID.
     |
     */
 
-    'model' => App\User::class,
+    'user' => [
+        'model'    => App\User::class,
+        'resolver' => function () {
+            return auth()->check() ? auth()->user()->getAuthIdentifier() : null;
+        },
+    ],
 
     /*
     |--------------------------------------------------------------------------
-    | Database Connection
+    | Default Driver
     |--------------------------------------------------------------------------
     |
-    | Here is the the database connection for the auditing log.
-    |
-    */
-    'connection' => null,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table
-    |--------------------------------------------------------------------------
-    |
-    | Here is the the table associated with the auditing model.
+    | The default audit driver used to keep track of changes.
     |
     */
 
-    'table' => 'audits',
+    'default' => 'database',
 
     /*
     |--------------------------------------------------------------------------
-    | Audit console
+    | Audit Drivers
+    |--------------------------------------------------------------------------
+    |
+    | Available audit drivers and respective configurations.
+    |
+    */
+    'drivers' => [
+        'database' => [
+            'table'      => 'audits',
+            'connection' => null,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Console?
     |--------------------------------------------------------------------------
     |
     | Whether we should audit queries run through console (eg. php artisan db:seed).
     |
     */
 
-    'audit_console' => false,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Auditors
-    |--------------------------------------------------------------------------
-    |
-    | The default auditors used to keep track of changes.
-    |
-    */
-
-    'auditors' => [
-        'database',
-    ],
+    'console' => false,
 ];
