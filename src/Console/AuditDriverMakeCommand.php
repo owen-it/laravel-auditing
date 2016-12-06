@@ -46,6 +46,6 @@ class AuditDriverMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Drivers';
+        return $rootNamespace.'\AuditDrivers';
     }
 }
