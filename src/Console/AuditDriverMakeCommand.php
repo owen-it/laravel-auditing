@@ -7,30 +7,22 @@ use Illuminate\Console\GeneratorCommand;
 class AuditDriverMakeCommand extends GeneratorCommand
 {
     /**
-     * The console command name.
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected $name = 'make:audit-driver';
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * {@inheritdoc}
      */
-    protected $description = 'Create a new audit driver class';
+    protected $description = 'Create a new driver for auditing';
 
     /**
-     * The type of class being generated.
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected $type = 'AuditDriver';
 
     /**
-     * Get the stub file for the generator.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     protected function getStub()
     {
@@ -38,11 +30,7 @@ class AuditDriverMakeCommand extends GeneratorCommand
     }
 
     /**
-     * Get the default namespace for the class.
-     *
-     * @param string $rootNamespace
-     *
-     * @return string
+     * {@inheritdoc}
      */
     protected function getDefaultNamespace($rootNamespace)
     {
