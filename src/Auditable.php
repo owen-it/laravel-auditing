@@ -35,6 +35,13 @@ trait Auditable
     protected $auditStrict = false;
 
     /**
+     * Should the timestamps be audited?
+     *
+     * @var bool
+     */
+    protected $auditTimestamps = false;
+
+    /**
      * Audit driver.
      *
      * @var string
@@ -84,21 +91,29 @@ trait Auditable
      */
     protected function updateAuditExclusions()
     {
-        foreach ($this->attributes as $attribute => $value) {
-            // When in strict mode, hidden and non visible attributes will be excluded
-            if ($this->auditStrict && (in_array($attribute, $this->hidden) || !in_array($attribute, $this->visible))) {
-                $this->auditExclude[] = $attribute;
-                continue;
-            }
+        // When in strict mode, hidden and non visible attributes are excluded
+        if ($this->auditStrict) {
+            $this->auditExclude = array_merge($this->auditExclude, $this->hidden);
 
+            if (!empty($this->visible)) {
+                $this->auditExclude = array_diff(array_keys($this->attributes), $this->visible);
+            }
+        }
+
+        if (!$this->auditTimestamps) {
+            array_push($this->auditExclude, static::CREATED_AT, static::UPDATED_AT);
+
+            $this->auditExclude[] = defined('static::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
+        }
+
+        $attributes = array_except($this->attributes, $this->auditExclude);
+
+        foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
                 $this->auditExclude[] = $attribute;
             }
         }
-
-        // Remove any duplicates that may exist
-        $this->auditExclude = array_unique($this->auditExclude);
     }
 
     /**
