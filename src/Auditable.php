@@ -95,8 +95,9 @@ trait Auditable
         if ($this->auditStrict) {
             $this->auditExclude = array_merge($this->auditExclude, $this->hidden);
 
-            if (!empty($this->visible)) {
-                $this->auditExclude = array_diff(array_keys($this->attributes), $this->visible);
+            if (count($this->visible)) {
+                $invisible = array_diff(array_keys($this->attributes), $this->visible);
+                $this->auditExclude = array_merge($this->auditExclude, $invisible);
             }
         }
 
