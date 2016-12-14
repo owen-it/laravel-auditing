@@ -63,7 +63,7 @@ trait Auditable
     protected $auditEvent;
 
     /**
-     * Auditable boot.
+     * Auditable boot logic.
      *
      * @return void
      */
@@ -95,8 +95,9 @@ trait Auditable
         if ($this->auditStrict) {
             $this->auditExclude = array_merge($this->auditExclude, $this->hidden);
 
-            if (!empty($this->visible)) {
-                $this->auditExclude = array_diff(array_keys($this->attributes), $this->visible);
+            if (count($this->visible)) {
+                $invisible = array_diff(array_keys($this->attributes), $this->visible);
+                $this->auditExclude = array_merge($this->auditExclude, $invisible);
             }
         }
 
@@ -143,9 +144,11 @@ trait Auditable
      */
     protected function auditUpdatedAttributes(array &$old, array &$new)
     {
-        foreach ($this->getModifiedAttributes() as $attribute => $value) {
-            $old[$attribute] = array_get($this->original, $attribute);
-            $new[$attribute] = array_get($this->attributes, $attribute);
+        foreach ($this->getDirty() as $attribute => $value) {
+            if ($this->isAttributeAuditable($attribute)) {
+                $old[$attribute] = array_get($this->original, $attribute);
+                $new[$attribute] = array_get($this->attributes, $attribute);
+            }
         }
     }
 
@@ -259,24 +262,6 @@ trait Auditable
         }
 
         return Request::fullUrl();
-    }
-
-    /**
-     * Get the modified attributes.
-     *
-     * @return array
-     */
-    private function getModifiedAttributes()
-    {
-        $modified = [];
-
-        foreach ($this->getDirty() as $attribute => $value) {
-            if ($this->isAttributeAuditable($attribute)) {
-                $modified[$attribute] = $value;
-            }
-        }
-
-        return $modified;
     }
 
     /**

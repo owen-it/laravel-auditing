@@ -9,16 +9,12 @@ use Illuminate\Support\Composer;
 class AuditTableCommand extends Command
 {
     /**
-     * The console command name.
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected $name = 'auditing:table';
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected $description = 'Create a migration for the audits table';
 
@@ -37,10 +33,7 @@ class AuditTableCommand extends Command
     protected $composer;
 
     /**
-     * Create a new audits table command instance.
-     *
-     * @param \Illuminate\Filesystem\Filesystem $files
-     * @param \Illuminate\Support\Composer      $composer
+     * {@inheritdoc}
      */
     public function __construct(Filesystem $files, Composer $composer)
     {

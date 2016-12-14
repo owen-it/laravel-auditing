@@ -14,7 +14,7 @@ class AuditDriverMakeCommand extends GeneratorCommand
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Create a new driver for auditing';
+    protected $description = 'Create a new audit driver';
 
     /**
      * {@inheritdoc}

@@ -58,7 +58,7 @@ return [
     | Audit Console?
     |--------------------------------------------------------------------------
     |
-    | Whether we should audit queries run through console (eg. php artisan db:seed).
+    | Whether we should audit console events (eg. php artisan db:seed).
     |
     */
 

@@ -9,16 +9,12 @@ use OwenIt\Auditing\AuditingServiceProvider;
 class InstallCommand extends Command
 {
     /**
-     * The console command name.
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected $name = 'auditing:install';
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected $description = 'Install the Laravel Auditing package';
 
