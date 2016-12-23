@@ -220,8 +220,8 @@ trait AuditingTrait
     {
         // Log data
         $logAuditing = [
-            'old_value'   => $this->asJson($log['old_value']),
-            'new_value'   => $this->asJson($log['new_value']),
+            'old_value'   => $log['old_value'],
+            'new_value'   => $log['new_value'],
             'owner_type'  => get_class($this),
             'owner_id'    => $this->getKey(),
             'user_id'     => $this->getLoggedInUserId(),
@@ -270,7 +270,7 @@ trait AuditingTrait
      */
     protected function saveAudit(array $fields)
     {
-        return Log::insert($fields);
+        return Log::create($fields);
     }
 
     /**
