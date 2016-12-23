@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Config;
 
 class Log extends Model
 {
+    
+    /**
+     * Fillable fields.
+     *
+     * @var array
+     */
+    protected $fillable = ['user_id','owner_type','owner_id','old_value','new_value','type','route','ip','justification','created_at','updated_at'];
+    
     /**
      * Cast values.
      *
