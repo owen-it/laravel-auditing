@@ -111,8 +111,8 @@ class Audit extends Model
             'audit_id'         => $this->id,
             'audit_event'      => $this->event,
             'audit_url'        => $this->url,
+            'audit_ip_address' => $this->ip_address,
             'audit_created_at' => $this->created_at,
-            'user_ip_address'  => $this->ip_address,
             'user_id'          => $this->user_id,
         ];
 
@@ -189,6 +189,7 @@ class Audit extends Model
         foreach ($this->metadata as $key) {
             $metadata[$key] = $this->getDataValue($key);
         }
+
 
         return $json ? json_encode($metadata, $options, $depth) : $metadata;
     }
