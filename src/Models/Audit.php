@@ -112,7 +112,7 @@ class Audit extends Model
             'audit_event'      => $this->event,
             'audit_url'        => $this->url,
             'audit_ip_address' => $this->ip_address,
-            'audit_created_at' => $this->created_at,
+            'audit_created_at' => $this->serializeDate($this->created_at),
             'user_id'          => $this->user_id,
         ];
 
