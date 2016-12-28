@@ -190,7 +190,6 @@ class Audit extends Model
             $metadata[$key] = $this->getDataValue($key);
         }
 
-
         return $json ? json_encode($metadata, $options, $depth) : $metadata;
     }
 
