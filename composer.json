@@ -21,11 +21,11 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/bus": "5.2.*|5.3.*",
-        "illuminate/contracts": "5.2.*|5.3.*",
-        "illuminate/database": "5.2.*|5.3.*",
-        "illuminate/queue": "5.2.*|5.3.*",
-        "illuminate/support": "5.2.*|5.3.*",
+        "illuminate/bus": "5.2.*|5.3.*|5.4.*",
+        "illuminate/contracts": "5.2.*|5.3.*|5.4.*",
+        "illuminate/database": "5.2.*|5.3.*|5.4.*",
+        "illuminate/queue": "5.2.*|5.3.*|5.4.*",
+        "illuminate/support": "5.2.*|5.3.*|5.4.*",
         "ramsey/uuid": "~3.0"
     },
     "require-dev": {
