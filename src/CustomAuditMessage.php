@@ -219,4 +219,31 @@ trait CustomAuditMessage
 
         return parent::getTable();
     }
+
+    /**
+     * Get the audited type for in custom messages
+     *
+     * @return string
+     */
+    public function getAuditedTypeAttribute()
+    {
+        // Get the related type, it's guestimation so if this isn't providing what you want simply override this function
+        if (in_array($this->type, ['attached', 'updatedRelation', 'detached'])) {
+            $relatedType = strtolower(str_replace('\\', '', substr($this->related_type, strrpos($this->related_type, '\\'))));
+
+            switch ($this->type) {
+                case 'attached':
+                    return "attached a {$relatedType} to";
+                    break;
+                case 'updatedRelation':
+                    return "updated a related {$relatedType} attached to";
+                    break;
+                case 'detached':
+                    return "detached a {$relatedType} from";
+                    break;
+            }
+        }
+
+        return $this->type;
+    }
 }
