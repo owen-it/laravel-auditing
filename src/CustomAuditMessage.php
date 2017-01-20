@@ -3,11 +3,14 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Lang;
 
 trait CustomAuditMessage
 {
     /**
      * Get the auditable entity that the audits belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function auditable()
     {
@@ -21,7 +24,7 @@ trait CustomAuditMessage
      */
     public function user()
     {
-        return $this->belongsTo(Config::get('auditing.model'));
+        return $this->belongsTo(Config::get('auth.providers.users.model'));
     }
 
     /**
@@ -43,9 +46,9 @@ trait CustomAuditMessage
     {
         if (class_exists($class = $this->auditable_type)) {
             return $this->resolveCustomMessage($this->getCustomMessage($class));
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -80,16 +83,16 @@ trait CustomAuditMessage
     public function getCustomMessage($class)
     {
         if (!isset($class::$auditCustomMessage)) {
-            return 'Not defined custom message!';
+            return Lang::get('auditing.undefined.message');
         }
 
-        return $class::$auditCustomMessage;
+        return Lang::get($class::$auditCustomMessage);
     }
 
     /**
      * Get custom fields.
      *
-     * @return string
+     * @return array
      */
     public function getCustomFields($class)
     {
@@ -97,13 +100,13 @@ trait CustomAuditMessage
             return [];
         }
 
-        return $class::$auditCustomFields;
+        return Lang::get($class::$auditCustomFields);
     }
 
     /**
      * Resolve custom message.
      *
-     * @param $message
+     * @param string $message
      *
      * @return mixed
      */
