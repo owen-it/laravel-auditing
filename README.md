@@ -10,17 +10,16 @@
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
 
-## About Laravel-Auditing
-
-Laravel Auditing allows you to record changes to an Eloquent model's set of data by simply adding its trait to your model. Laravel Auditing also provides a simple interface for retreiving an audit trail for a piece of data and allows for a great deal of customization in how that data is provided.
+The Laravel Auditing package allows you to record changes to an Eloquent model's set of data over time.
+Retrieving the audit trail for a piece of data is straightforward, allowing for a great deal of customization in how that data is provided.
 
 ## Official Documentation
 
-Documentation for the package can be found on the [Laravel Auditing website](http://www.laravel-auditing.com) or [Documentation Repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/README.md).
+Package documentation can be found on the [Laravel Auditing website](http://www.laravel-auditing.com) or at the [Documentation Repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/README.md).
 
 ## Contributing
 
-Please see [contributing](http://www.laravel-auditing.com/docs/master/contributing) for details.
+Please see the [contributing](http://www.laravel-auditing.com/docs/master/contributing) entry for details.
 
 ## Credits
 
