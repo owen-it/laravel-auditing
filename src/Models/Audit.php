@@ -15,11 +15,6 @@ class Audit extends Model
     /**
      * {@inheritdoc}
      */
-    public $incrementing = false;
-
-    /**
-     * {@inheritdoc}
-     */
     public $timestamps = false;
 
     /**

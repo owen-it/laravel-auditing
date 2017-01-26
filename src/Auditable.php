@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Models\Audit as AuditModel;
-use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -212,7 +211,6 @@ trait Auditable
         $this->{$method}($old, $new);
 
         return $this->transformAudit([
-            'id'             => (string) Uuid::uuid4(),
             'old_values'     => $old,
             'new_values'     => $new,
             'event'          => $this->auditEvent,
