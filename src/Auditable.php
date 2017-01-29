@@ -5,7 +5,6 @@
  * @author     Antério Vieira <anteriovieira@gmail.com>
  * @author     Quetzy Garcia  <quetzyg@altek.org>
  * @author     Raphael França <raphaelfrancabsb@gmail.com>
- *
  * @copyright  2015-2017
  *
  * For the full copyright and license information,
