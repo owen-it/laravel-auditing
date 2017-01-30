@@ -38,7 +38,7 @@ class AuditableObserverTest extends AbstractTestCase
     }
 
     /**
-     * Test AuditableObserver methods to PASS.
+     * Test AuditableObserver created method to PASS.
      *
      * @depends testAuditableObserverInstantiation
      * @depends testAuditableMock
@@ -48,25 +48,88 @@ class AuditableObserverTest extends AbstractTestCase
      *
      * @return void
      */
-    public function testAuditableObserverMethodsPass(AuditableObserver $observer, Auditable $model)
+    public function testAuditableObserverCreatedPass(AuditableObserver $observer, Auditable $model)
     {
         Auditor::shouldReceive('execute')
-            ->times(4)
+            ->once()
             ->with($model);
 
-        $methods = [
-            'created',
-            'updated',
-            'deleted',
-            'restored',
-        ];
+        $model->shouldReceive('setAuditEvent')
+            ->with('created')
+            ->andReturn($model);
 
-        foreach ($methods as $method) {
-            $model->shouldReceive('setAuditEvent')
-                ->with($method)
-                ->andReturn($model);
+        $observer->created($model);
+    }
 
-            call_user_func([$observer, $method], $model);
-        }
+    /**
+     * Test AuditableObserver updated method to PASS.
+     *
+     * @depends testAuditableObserverInstantiation
+     * @depends testAuditableMock
+     *
+     * @param AuditableObserver $observer
+     * @param Auditable         $model
+     *
+     * @return void
+     */
+    public function testAuditableObserverUpdatedPass(AuditableObserver $observer, Auditable $model)
+    {
+        Auditor::shouldReceive('execute')
+            ->once()
+            ->with($model);
+
+        $model->shouldReceive('setAuditEvent')
+            ->with('updated')
+            ->andReturn($model);
+
+        $observer->updated($model);
+    }
+
+    /**
+     * Test AuditableObserver deleted method to PASS.
+     *
+     * @depends testAuditableObserverInstantiation
+     * @depends testAuditableMock
+     *
+     * @param AuditableObserver $observer
+     * @param Auditable         $model
+     *
+     * @return void
+     */
+    public function testAuditableObserverDeletedPass(AuditableObserver $observer, Auditable $model)
+    {
+        Auditor::shouldReceive('execute')
+            ->once()
+            ->with($model);
+
+        $model->shouldReceive('setAuditEvent')
+            ->with('deleted')
+            ->andReturn($model);
+
+        $observer->deleted($model);
+    }
+
+    /**
+     * Test AuditableObserver restored method to PASS.
+     *
+     * @depends testAuditableObserverInstantiation
+     * @depends testAuditableMock
+     *
+     * @param AuditableObserver $observer
+     * @param Auditable         $model
+     *
+     * @return void
+     */
+    public function testAuditableObserverRestoredPass(AuditableObserver $observer, Auditable $model)
+    {
+        Auditor::shouldReceive('execute')
+            ->once()
+            ->with($model);
+
+        $model->shouldReceive('setAuditEvent')
+            ->with('restored')
+            ->andReturn($model);
+
+        $observer->restored($model);
     }
 }

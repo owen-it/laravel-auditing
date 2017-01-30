@@ -1,4 +1,16 @@
 <?php
+/**
+ * This file is part of the Laravel Auditing package.
+ *
+ * @author     Antério Vieira <anteriovieira@gmail.com>
+ * @author     Quetzy Garcia  <quetzyg@altek.org>
+ * @author     Raphael França <raphaelfrancabsb@gmail.com>
+ * @copyright  2015-2017
+ *
+ * For the full copyright and license information,
+ * please view the LICENSE.md file that was distributed
+ * with this source code.
+ */
 
 namespace OwenIt\Auditing;
 
@@ -7,7 +19,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Models\Audit as AuditModel;
-use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -81,7 +92,8 @@ trait Auditable
      */
     public function audits()
     {
-        return $this->morphMany(AuditModel::class, 'auditable');
+        return $this->morphMany(AuditModel::class, 'auditable')
+            ->orderBy('created_at', 'DESC');
     }
 
     /**
@@ -211,7 +223,6 @@ trait Auditable
         $this->{$method}($old, $new);
 
         return $this->transformAudit([
-            'id'             => (string) Uuid::uuid4(),
             'old_values'     => $old,
             'new_values'     => $new,
             'event'          => $this->auditEvent,
