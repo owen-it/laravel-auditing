@@ -55,10 +55,14 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('created')
             ->andReturn($model);
 
         $observer->created($model);
+
+        // Unset the Mocked instance so that the next test works properly
+        Auditor::clearResolvedInstance(\OwenIt\Auditing\Contracts\Auditor::class);
     }
 
     /**
@@ -79,10 +83,14 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('updated')
             ->andReturn($model);
 
         $observer->updated($model);
+
+        // Unset the Mocked instance so that the next test works properly
+        Auditor::clearResolvedInstance(\OwenIt\Auditing\Contracts\Auditor::class);
     }
 
     /**
@@ -103,10 +111,14 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('deleted')
             ->andReturn($model);
 
         $observer->deleted($model);
+
+        // Unset the Mocked instance so that the next test works properly
+        Auditor::clearResolvedInstance(\OwenIt\Auditing\Contracts\Auditor::class);
     }
 
     /**
@@ -127,6 +139,7 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('restored')
             ->andReturn($model);
 
