@@ -12,25 +12,25 @@ abstract class AbstractTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
-    {
-        Mockery::close();
-
-        parent::tearDown();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setUp()
     {
         App::shouldReceive('runningInConsole')
             ->andReturn(true);
 
         Config::shouldReceive('get')
-            ->with('audit.console')
+            ->with('audit.console', false)
             ->andReturn(true);
 
         parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tearDown()
+    {
+        Mockery::close();
+
+        parent::tearDown();
     }
 }
