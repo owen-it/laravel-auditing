@@ -61,8 +61,7 @@ class AuditableObserverTest extends AbstractTestCase
 
         $observer->created($model);
 
-        // Unset the Mocked instance so that the next test works properly
-        Auditor::clearResolvedInstance(\OwenIt\Auditing\Contracts\Auditor::class);
+        Auditor::clearResolvedInstances();
     }
 
     /**
@@ -89,8 +88,7 @@ class AuditableObserverTest extends AbstractTestCase
 
         $observer->updated($model);
 
-        // Unset the Mocked instance so that the next test works properly
-        Auditor::clearResolvedInstance(\OwenIt\Auditing\Contracts\Auditor::class);
+        Auditor::clearResolvedInstances();
     }
 
     /**
@@ -117,8 +115,7 @@ class AuditableObserverTest extends AbstractTestCase
 
         $observer->deleted($model);
 
-        // Unset the Mocked instance so that the next test works properly
-        Auditor::clearResolvedInstance(\OwenIt\Auditing\Contracts\Auditor::class);
+        Auditor::clearResolvedInstances();
     }
 
     /**
