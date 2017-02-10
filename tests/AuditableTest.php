@@ -11,14 +11,14 @@ use RuntimeException;
 class AuditableTest extends AbstractTestCase
 {
     /**
-     * Test the Auditable toAudit() method to FAIL (Invalid event).
+     * Test the Auditable toAudit() method to FAIL (Invalid audit event).
      *
      * @expectedException        RuntimeException
      * @expectedExceptionMessage A valid audit event must be set
      *
      * @return void
      */
-    public function testAuditableToAuditFailInvalidEvent()
+    public function testAuditableToAuditFailInvalidAuditEvent()
     {
         $model = new AuditableModelStub();
 
@@ -53,14 +53,14 @@ class AuditableTest extends AbstractTestCase
     }
 
     /**
-     * Test the Auditable toAudit() method to FAIL (Invalid User resolver).
+     * Test the Auditable toAudit() method to FAIL (Invalid User id resolver).
      *
      * @expectedException        RuntimeException
      * @expectedExceptionMessage Invalid User resolver type, callable expected
      *
      * @return void
      */
-    public function testAuditableToAuditFailInvalidUserResolver()
+    public function testAuditableToAuditFailInvalidUserIdResolver()
     {
         Config::shouldReceive('get')
             ->once()
