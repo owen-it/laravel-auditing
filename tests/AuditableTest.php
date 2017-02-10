@@ -11,11 +11,14 @@ use RuntimeException;
 class AuditableTest extends AbstractTestCase
 {
     /**
-     * Test the Auditable toAudit() method to PASS (Empty data).
+     * Test the Auditable toAudit() method to FAIL (Invalid event).
+     *
+     * @expectedException        RuntimeException
+     * @expectedExceptionMessage A valid audit event must be set
      *
      * @return void
      */
-    public function testAuditableToAuditPassEmptyData()
+    public function testAuditableToAuditFailInvalidEvent()
     {
         $model = new AuditableModelStub();
 
