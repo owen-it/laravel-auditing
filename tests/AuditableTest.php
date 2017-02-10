@@ -11,7 +11,7 @@ use RuntimeException;
 class AuditableTest extends AbstractTestCase
 {
     /**
-     * Test the Auditable toAudit() method to FAIL (Invalid audit event).
+     * Test the toAudit() method to FAIL (Invalid audit event).
      *
      * @expectedException        RuntimeException
      * @expectedExceptionMessage A valid audit event must be set
@@ -31,7 +31,7 @@ class AuditableTest extends AbstractTestCase
     }
 
     /**
-     * Test the Auditable toAudit() method to FAIL (Audit event method missing).
+     * Test the toAudit() method to FAIL (Audit event method missing).
      *
      * @expectedException        RuntimeException
      * @expectedExceptionMessage Unable to handle "foo" event, auditFooAttributes() method missing
@@ -53,7 +53,7 @@ class AuditableTest extends AbstractTestCase
     }
 
     /**
-     * Test the Auditable toAudit() method to FAIL (Invalid User id resolver).
+     * Test the toAudit() method to FAIL (Invalid User id resolver).
      *
      * @expectedException        RuntimeException
      * @expectedExceptionMessage Invalid User resolver type, callable expected
@@ -77,7 +77,7 @@ class AuditableTest extends AbstractTestCase
     }
 
     /**
-     * Test the Auditable toAudit() method to PASS.
+     * Test the toAudit() method to PASS.
      *
      * @return void
      */
@@ -112,7 +112,7 @@ class AuditableTest extends AbstractTestCase
     }
 
     /**
-     * Test the Auditable getAuditableEvents() method to PASS (default values).
+     * Test the getAuditableEvents() method to PASS (default values).
      *
      * @return void
      */
@@ -126,7 +126,7 @@ class AuditableTest extends AbstractTestCase
     }
 
     /**
-     * Test the Auditable getAuditableEvents() method to PASS (custom values).
+     * Test the getAuditableEvents() method to PASS (custom values).
      *
      * @return void
      */
