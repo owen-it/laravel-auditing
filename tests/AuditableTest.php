@@ -77,7 +77,7 @@ class AuditableTest extends AbstractTestCase
     }
 
     /**
-     * Test the Auditable toAudit() method to PASS
+     * Test the Auditable toAudit() method to PASS.
      *
      * @return void
      */
@@ -109,5 +109,37 @@ class AuditableTest extends AbstractTestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('created_at', $auditData);
+    }
+
+    /**
+     * Test the Auditable getAuditableEvents() method to PASS (default values).
+     *
+     * @return void
+     */
+    public function testAuditableGetAuditableEventsPassDefault()
+    {
+        $model = new AuditableModelStub();
+
+        $events = $model->getAuditableEvents();
+
+        $this->assertCount(4, $events);
+    }
+
+    /**
+     * Test the Auditable getAuditableEvents() method to PASS (custom values).
+     *
+     * @return void
+     */
+    public function testAuditableGetAuditableEventsPassCustom()
+    {
+        $model = new AuditableModelStub();
+
+        $model->auditableEvents = [
+            'created',
+        ];
+
+        $events = $model->getAuditableEvents();
+
+        $this->assertCount(1, $events);
     }
 }
