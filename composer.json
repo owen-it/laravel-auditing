@@ -57,6 +57,9 @@
             "OwenIt\\Auditing\\Tests\\": "tests/"
         }
     },
+    "suggest": {
+        "laravelista/lumen-vendor-publish": "Needed to publish the package configuration in Lumen"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "4.0-dev"
