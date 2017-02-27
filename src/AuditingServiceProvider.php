@@ -50,7 +50,7 @@ class AuditingServiceProvider extends ServiceProvider
 
         if ($app->runningInConsole()) {
             $this->publishes([
-                $config => config_path('audit.php'),
+                $config => base_path('config/audit.php'),
             ]);
         }
 
