@@ -26,7 +26,7 @@ return [
     'user' => [
         'model'    => App\User::class,
         'resolver' => function () {
-            return auth()->check() ? auth()->user()->getAuthIdentifier() : null;
+            return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
         },
     ],
 
