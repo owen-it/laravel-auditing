@@ -141,4 +141,30 @@ class AuditableTest extends TestCase
 
         $this->assertEquals([], $data);
     }
+
+    /**
+     * Test the getAuditDriver() method to PASS (default).
+     *
+     * @return void
+     */
+    public function testGetAuditDriverDefaultPass()
+    {
+        $model = new AuditableModelStub();
+
+        $this->assertNull($model->getAuditDriver());
+    }
+
+    /**
+     * Test the getAuditDriver() method to PASS (custom).
+     *
+     * @return void
+     */
+    public function testGetAuditDriverCustomPass()
+    {
+        $model = new AuditableModelStub();
+
+        $model->setAuditDriver('database');
+
+        $this->assertEquals('database', $model->getAuditDriver());
+    }
 }
