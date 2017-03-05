@@ -17,4 +17,16 @@ class AuditableModelStub extends Model implements AuditableContract
     {
         return '127.0.0.1';
     }
+
+    /**
+     * Set the value of the Audit driver.
+     *
+     * @param string $driver
+     *
+     * @return void
+     */
+    public function setAuditDriver($driver)
+    {
+        $this->auditDriver = $driver;
+    }
 }
