@@ -202,7 +202,7 @@ trait Auditable
     public function toAudit()
     {
         if (!$this->isEventAuditable($this->auditEvent)) {
-            return [];
+            throw new RuntimeException('A valid audit event must be set');
         }
 
         $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
@@ -282,7 +282,7 @@ trait Auditable
      *
      * @return bool
      */
-    private function isAttributeAuditable($attribute)
+    protected function isAttributeAuditable($attribute)
     {
         // The attribute should not be audited
         if (in_array($attribute, $this->auditExclude)) {
@@ -301,7 +301,7 @@ trait Auditable
      *
      * @return bool
      */
-    private function isEventAuditable($event)
+    protected function isEventAuditable($event)
     {
         return in_array($event, $this->getAuditableEvents());
     }
