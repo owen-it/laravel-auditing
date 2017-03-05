@@ -230,7 +230,7 @@ trait Auditable
             'auditable_type' => $this->getMorphClass(),
             'user_id'        => $this->resolveUserId(),
             'url'            => $this->resolveUrl(),
-            'ip_address'     => Request::ip(),
+            'ip_address'     => $this->resolveIpAddress(),
             'created_at'     => $this->freshTimestamp(),
         ]);
     }
@@ -273,6 +273,16 @@ trait Auditable
         }
 
         return Request::fullUrl();
+    }
+
+    /**
+     * Resolve the current IP address
+     *
+     * @return string
+     */
+    protected function resolveIpAddress()
+    {
+        return Request::ip();
     }
 
     /**
