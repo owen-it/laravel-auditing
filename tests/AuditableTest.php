@@ -167,4 +167,30 @@ class AuditableTest extends TestCase
 
         $this->assertEquals('database', $model->getAuditDriver());
     }
+
+    /**
+     * Test the getAuditThreshold() method to PASS (default).
+     *
+     * @return void
+     */
+    public function testGetAuditThresholdDefaultPass()
+    {
+        $model = new AuditableModelStub();
+
+        $this->assertEquals(0, $model->getAuditThreshold());
+    }
+
+    /**
+     * Test the getAuditThreshold() method to PASS (custom).
+     *
+     * @return void
+     */
+    public function testGetAuditThresholdCustomPass()
+    {
+        $model = new AuditableModelStub();
+
+        $model->setAuditThreshold(100);
+
+        $this->assertEquals(100, $model->getAuditThreshold());
+    }
 }
