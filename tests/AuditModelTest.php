@@ -2,9 +2,10 @@
 
 namespace OwenIt\Auditing\Tests;
 
+use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Models\Audit;
 
-class AuditModelTest extends AbstractTestCase
+class AuditModelTest extends TestCase
 {
     /**
      * Test the Audit class instantiation.

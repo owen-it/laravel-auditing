@@ -3,12 +3,12 @@
 namespace OwenIt\Auditing\Tests;
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
 use Mockery;
+use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Tests\Stubs\AuditableModelStub;
 use RuntimeException;
 
-class AuditableTest extends AbstractTestCase
+class AuditableTest extends TestCase
 {
     /**
      * Test the toAudit() method to FAIL (Invalid audit event).
@@ -20,14 +20,14 @@ class AuditableTest extends AbstractTestCase
      */
     public function testAuditableToAuditFailInvalidAuditEvent()
     {
+        Config::set('audit.console', true);
+
         $model = new AuditableModelStub();
 
         // Invalid auditable event
         $model->setAuditEvent('foo');
 
-        $auditData = $model->toAudit();
-
-        $this->assertEmpty($auditData);
+        $model->toAudit();
     }
 
     /**
@@ -62,18 +62,13 @@ class AuditableTest extends AbstractTestCase
      */
     public function testAuditableToAuditFailInvalidUserIdResolver()
     {
-        Config::shouldReceive('get')
-            ->once()
-            ->with('audit.user.resolver')
-            ->andReturn(null);
+        Config::set('audit.user.resolver', null);
 
         $model = new AuditableModelStub();
 
         $model->setAuditEvent('created');
 
         $model->toAudit();
-
-        Config::clearResolvedInstances();
     }
 
     /**
@@ -83,21 +78,13 @@ class AuditableTest extends AbstractTestCase
      */
     public function testAuditableToAuditPass()
     {
-        Config::shouldReceive('get')
-            ->once()
-            ->with('audit.user.resolver')
-            ->andReturn(function () {
-                return rand(1, 256);
-            });
-
-        Request::shouldReceive('ip')
-            ->once()
-            ->andReturn('127.0.0.1');
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
 
         $model = new AuditableModelStub();
 
         $model->setAuditEvent('created');
-
         $auditData = $model->toAudit();
 
         $this->assertArrayHasKey('old_values', $auditData);

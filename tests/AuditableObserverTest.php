@@ -3,12 +3,24 @@
 namespace OwenIt\Auditing\Tests;
 
 use Mockery;
+use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\AuditableObserver;
+use OwenIt\Auditing\AuditingServiceProvider;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Facades\Auditor;
 
-class AuditableObserverTest extends AbstractTestCase
+class AuditableObserverTest extends TestCase
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            AuditingServiceProvider::class,
+        ];
+    }
+
     /**
      * Test the AuditableObserver class instantiation.
      *
@@ -60,8 +72,6 @@ class AuditableObserverTest extends AbstractTestCase
             ->andReturn($model);
 
         $observer->created($model);
-
-        Auditor::clearResolvedInstances();
     }
 
     /**
@@ -87,8 +97,6 @@ class AuditableObserverTest extends AbstractTestCase
             ->andReturn($model);
 
         $observer->updated($model);
-
-        Auditor::clearResolvedInstances();
     }
 
     /**
@@ -114,8 +122,6 @@ class AuditableObserverTest extends AbstractTestCase
             ->andReturn($model);
 
         $observer->deleted($model);
-
-        Auditor::clearResolvedInstances();
     }
 
     /**
