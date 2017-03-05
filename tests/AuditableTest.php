@@ -20,8 +20,6 @@ class AuditableTest extends TestCase
      */
     public function testAuditableToAuditFailInvalidAuditEvent()
     {
-        Config::set('audit.console', true);
-
         $model = new AuditableModelStub();
 
         // Invalid auditable event
