@@ -29,4 +29,16 @@ class AuditableModelStub extends Model implements AuditableContract
     {
         $this->auditDriver = $driver;
     }
+
+    /**
+     * Set the value of the Audit threshold.
+     *
+     * @param int $threshold
+     *
+     * @return void
+     */
+    public function setAuditThreshold($threshold)
+    {
+        $this->auditThreshold = $threshold;
+    }
 }
