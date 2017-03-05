@@ -18,7 +18,7 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testAuditableToAuditFailInvalidAuditEvent()
+    public function testToAuditFailInvalidAuditEvent()
     {
         $model = new AuditableModelStub();
 
@@ -36,7 +36,7 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testAuditableToAuditFailAuditEventMethodMissing()
+    public function testToAuditFailAuditEventMethodMissing()
     {
         $model = Mockery::mock(AuditableModelStub::class)
             ->makePartial()
@@ -58,7 +58,7 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testAuditableToAuditFailInvalidUserIdResolver()
+    public function testToAuditFailInvalidUserIdResolver()
     {
         Config::set('audit.user.resolver', null);
 
@@ -74,7 +74,7 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testAuditableToAuditPass()
+    public function testToAuditPass()
     {
         Config::set('audit.user.resolver', function () {
             return rand(1, 256);
@@ -101,7 +101,7 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testAuditableGetAuditableEventsPassDefault()
+    public function testGetAuditableEventsPassDefault()
     {
         $model = new AuditableModelStub();
 
@@ -115,7 +115,7 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testAuditableGetAuditableEventsPassCustom()
+    public function testGetAuditableEventsPassCustom()
     {
         $model = new AuditableModelStub();
 
