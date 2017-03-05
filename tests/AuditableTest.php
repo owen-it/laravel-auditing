@@ -127,4 +127,18 @@ class AuditableTest extends TestCase
 
         $this->assertCount(1, $events);
     }
+
+    /**
+     * Test the transformAudit() method to PASS.
+     *
+     * @return void
+     */
+    public function testTransformAuditPass()
+    {
+        $model = new AuditableModelStub();
+
+        $data = $model->transformAudit([]);
+
+        $this->assertEquals([], $data);
+    }
 }
