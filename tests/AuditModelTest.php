@@ -209,7 +209,7 @@ EOF;
 
         $modified = $audit->getModified(true, JSON_PRETTY_PRINT);
 
-        $expected = <<< EOF
+        $expected = <<< 'EOF'
 {
     "title": {
         "new": "HOW TO AUDIT ELOQUENT MODELS",
