@@ -276,7 +276,7 @@ trait Auditable
     }
 
     /**
-     * Resolve the current IP address
+     * Resolve the current IP address.
      *
      * @return string
      */
