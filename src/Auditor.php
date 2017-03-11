@@ -16,7 +16,7 @@ namespace OwenIt\Auditing;
 
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
-use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Contracts\AuditDriver;
 use OwenIt\Auditing\Contracts\Auditor as AuditorContract;
 use OwenIt\Auditing\Drivers\Database;
@@ -51,7 +51,7 @@ class Auditor extends Manager implements AuditorContract
     /**
      * {@inheritdoc}
      */
-    public function auditDriver(Auditable $model)
+    public function auditDriver(AuditableContract $model)
     {
         $driver = $this->driver($model->getAuditDriver());
 
@@ -65,7 +65,7 @@ class Auditor extends Manager implements AuditorContract
     /**
      * {@inheritdoc}
      */
-    public function execute(Auditable $model)
+    public function execute(AuditableContract $model)
     {
         $driver = $this->auditDriver($model);
 
@@ -100,7 +100,7 @@ class Auditor extends Manager implements AuditorContract
      *
      * @return bool
      */
-    protected function fireAuditingEvent(Auditable $model, AuditDriver $driver)
+    protected function fireAuditingEvent(AuditableContract $model, AuditDriver $driver)
     {
         return $this->app->make('events')->until(
             new Events\Auditing($model, $driver)
