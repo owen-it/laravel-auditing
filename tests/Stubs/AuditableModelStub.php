@@ -28,7 +28,7 @@ class AuditableModelStub extends Model implements AuditableContract
     protected $casts = [
         'published' => 'bool',
     ];
-    
+
     /**
      * {@inheritdoc}
      */
