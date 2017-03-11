@@ -23,7 +23,7 @@ use OwenIt\Auditing\Tests\Stubs\AuditableModelStub;
 class AuditModelTest extends TestCase
 {
     /**
-     * Set test attributes to an Audit instance
+     * Set test attributes to an Audit instance.
      *
      * @param Audit $audit
      *
