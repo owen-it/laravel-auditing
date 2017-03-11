@@ -202,7 +202,7 @@ trait Auditable
     public function toAudit()
     {
         if (!$this->isEventAuditable($this->auditEvent)) {
-            return [];
+            throw new RuntimeException('A valid audit event must be set');
         }
 
         $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
@@ -230,7 +230,7 @@ trait Auditable
             'auditable_type' => $this->getMorphClass(),
             'user_id'        => $this->resolveUserId(),
             'url'            => $this->resolveUrl(),
-            'ip_address'     => Request::ip(),
+            'ip_address'     => $this->resolveIpAddress(),
             'created_at'     => $this->freshTimestamp(),
         ]);
     }
@@ -276,13 +276,23 @@ trait Auditable
     }
 
     /**
+     * Resolve the current IP address.
+     *
+     * @return string
+     */
+    protected function resolveIpAddress()
+    {
+        return Request::ip();
+    }
+
+    /**
      * Determine if an attribute is eligible for auditing.
      *
      * @param string $attribute
      *
      * @return bool
      */
-    private function isAttributeAuditable($attribute)
+    protected function isAttributeAuditable($attribute)
     {
         // The attribute should not be audited
         if (in_array($attribute, $this->auditExclude)) {
@@ -301,7 +311,7 @@ trait Auditable
      *
      * @return bool
      */
-    private function isEventAuditable($event)
+    protected function isEventAuditable($event)
     {
         return in_array($event, $this->getAuditableEvents());
     }

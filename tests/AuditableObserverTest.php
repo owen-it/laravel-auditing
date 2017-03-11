@@ -1,14 +1,38 @@
 <?php
+/**
+ * This file is part of the Laravel Auditing package.
+ *
+ * @author     Antério Vieira <anteriovieira@gmail.com>
+ * @author     Quetzy Garcia  <quetzyg@altek.org>
+ * @author     Raphael França <raphaelfrancabsb@gmail.com>
+ * @copyright  2015-2017
+ *
+ * For the full copyright and license information,
+ * please view the LICENSE.md file that was distributed
+ * with this source code.
+ */
 
 namespace OwenIt\Auditing\Tests;
 
 use Mockery;
+use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\AuditableObserver;
+use OwenIt\Auditing\AuditingServiceProvider;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Facades\Auditor;
 
-class AuditableObserverTest extends AbstractTestCase
+class AuditableObserverTest extends TestCase
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            AuditingServiceProvider::class,
+        ];
+    }
+
     /**
      * Test the AuditableObserver class instantiation.
      *
@@ -55,6 +79,7 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('created')
             ->andReturn($model);
 
@@ -79,6 +104,7 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('updated')
             ->andReturn($model);
 
@@ -103,6 +129,7 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('deleted')
             ->andReturn($model);
 
@@ -127,6 +154,7 @@ class AuditableObserverTest extends AbstractTestCase
             ->with($model);
 
         $model->shouldReceive('setAuditEvent')
+            ->once()
             ->with('restored')
             ->andReturn($model);
 
