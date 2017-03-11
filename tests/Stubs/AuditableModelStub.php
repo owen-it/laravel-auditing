@@ -13,6 +13,13 @@ class AuditableModelStub extends Model implements AuditableContract
     /**
      * {@inheritdoc}
      */
+    protected $casts = [
+        'published' => 'bool',
+    ];
+    
+    /**
+     * {@inheritdoc}
+     */
     public function resolveIpAddress()
     {
         return '127.0.0.1';
@@ -40,5 +47,17 @@ class AuditableModelStub extends Model implements AuditableContract
     public function setAuditThreshold($threshold)
     {
         $this->auditThreshold = $threshold;
+    }
+
+    /**
+     * Uppercase Title accessor.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getTitleAttribute($value)
+    {
+        return strtoupper($value);
     }
 }
