@@ -10,7 +10,14 @@ use OwenIt\Auditing\Tests\Stubs\AuditableModelStub;
 
 class AuditModelTest extends TestCase
 {
-    private function setAuditAttributes(Audit $audit)
+    /**
+     * Set test attributes to an Audit instance
+     *
+     * @param Audit $audit
+     *
+     * @return void
+     */
+    private function setAuditTestAttributes(Audit $audit)
     {
         $audit->id = 1;
         $audit->event = 'created';
@@ -38,7 +45,7 @@ class AuditModelTest extends TestCase
     public function testResolveDataPass()
     {
         $audit = new Audit();
-        $this->setAuditAttributes($audit);
+        $this->setAuditTestAttributes($audit);
 
         $data = $audit->resolveData();
 
@@ -68,7 +75,7 @@ class AuditModelTest extends TestCase
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
 
-        $this->setAuditAttributes($audit);
+        $this->setAuditTestAttributes($audit);
 
         $auditable = Mockery::mock(AuditableModelStub::class)
             ->makePartial();
@@ -101,7 +108,7 @@ class AuditModelTest extends TestCase
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
 
-        $this->setAuditAttributes($audit);
+        $this->setAuditTestAttributes($audit);
 
         $metadata = $audit->getMetadata();
 
@@ -125,7 +132,7 @@ class AuditModelTest extends TestCase
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
 
-        $this->setAuditAttributes($audit);
+        $this->setAuditTestAttributes($audit);
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
@@ -155,7 +162,7 @@ EOF;
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
 
-        $this->setAuditAttributes($audit);
+        $this->setAuditTestAttributes($audit);
 
         $auditable = Mockery::mock(AuditableModelStub::class)
             ->makePartial();
@@ -181,7 +188,7 @@ EOF;
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
 
-        $this->setAuditAttributes($audit);
+        $this->setAuditTestAttributes($audit);
 
         $auditable = Mockery::mock(AuditableModelStub::class)
             ->makePartial();
