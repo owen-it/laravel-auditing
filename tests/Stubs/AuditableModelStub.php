@@ -38,6 +38,30 @@ class AuditableModelStub extends Model implements AuditableContract
     }
 
     /**
+     * Set the attributes that should be included when auditing.
+     *
+     * @param array $include
+     *
+     * @return void
+     */
+    public function setAuditInclude(array $include)
+    {
+        $this->auditInclude = $include;
+    }
+
+    /**
+     * Set the attributes that should be excluded when auditing.
+     *
+     * @param array $exclude
+     *
+     * @return void
+     */
+    public function setAuditExclude(array $exclude)
+    {
+        $this->auditExclude = $exclude;
+    }
+
+    /**
      * Enable strict auditing.
      *
      * @return void
