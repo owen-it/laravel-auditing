@@ -14,14 +14,32 @@
 
 namespace OwenIt\Auditing\Tests;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
+use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Tests\Stubs\AuditableModelStub;
 use RuntimeException;
 
 class AuditableTest extends TestCase
 {
+    /**
+     * Set test attributes to an Auditable instance.
+     *
+     * @param Auditable $audit
+     *
+     * @return void
+     */
+    private function setAuditableTestAttributes(Auditable $audit)
+    {
+        $audit->created_at = Carbon::now();
+        $audit->updated_at = Carbon::now();
+        $audit->title      = 'How To Audit Eloquent Models';
+        $audit->content    = 'First step: install the laravel-auditing package.';
+        $audit->published  = 1;
+    }
+
     /**
      * Test the toAudit() method to FAIL (Invalid audit event).
      *
@@ -82,20 +100,24 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the toAudit() method to PASS.
+     * Test the toAudit() method to PASS (default).
      *
      * @return void
      */
-    public function testToAuditPass()
+    public function testToAuditPassDefault()
     {
         Config::set('audit.user.resolver', function () {
             return rand(1, 256);
         });
 
         $model = new AuditableModelStub();
+        $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
         $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -106,6 +128,232 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('created_at', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(3, $auditData['new_values']);
+
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('content', $auditData['new_values']);
+        $this->assertArrayHasKey('published', $auditData['new_values']);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (included attributes).
+     *
+     * @return void
+     */
+    public function testToAuditPassIncludedAttributes()
+    {
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableModelStub();
+        $this->setAuditableTestAttributes($model);
+
+        // Set included attributes
+        $model->setAuditInclude([
+            'title',
+            'content',
+        ]);
+
+        $model->setAuditEvent('created');
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('user_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('created_at', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(2, $auditData['new_values']);
+
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('content', $auditData['new_values']);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (excluded attributes).
+     *
+     * @return void
+     */
+    public function testToAuditPassExcludedAttributes()
+    {
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableModelStub();
+        $this->setAuditableTestAttributes($model);
+
+        // Set excluded attributes
+        $model->setAuditExclude([
+            'content',
+        ]);
+
+        $model->setAuditEvent('created');
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('user_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('created_at', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(2, $auditData['new_values']);
+
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('published', $auditData['new_values']);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (with Auditable timestamps).
+     *
+     * @return void
+     */
+    public function testToAuditPassWithAuditableTimestamps()
+    {
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableModelStub();
+        $this->setAuditableTestAttributes($model);
+
+        // Include the created/updated timestamps in new_values array
+        $model->enableTimestampAuditing();
+
+        $model->setAuditEvent('created');
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('user_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('created_at', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(5, $auditData['new_values']);
+
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('content', $auditData['new_values']);
+        $this->assertArrayHasKey('published', $auditData['new_values']);
+        $this->assertArrayHasKey('created_at', $auditData['new_values']);
+        $this->assertArrayHasKey('updated_at', $auditData['new_values']);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (visible strict mode).
+     *
+     * @return void
+     */
+    public function testToAuditPassVisibleStrictMode()
+    {
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableModelStub();
+        $this->setAuditableTestAttributes($model);
+
+        // Strict auditing enabled
+        $model->enableStrictAuditing();
+
+        // Set visible
+        $model->setVisible([
+            'title',
+            'content',
+        ]);
+
+        $model->setAuditEvent('created');
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('user_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('created_at', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(2, $auditData['new_values']);
+
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('content', $auditData['new_values']);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (hidden strict mode).
+     *
+     * @return void
+     */
+    public function testToAuditPassHiddenStrictMode()
+    {
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableModelStub();
+        $this->setAuditableTestAttributes($model);
+
+        // Strict auditing enabled
+        $model->enableStrictAuditing();
+
+        // Set hidden
+        $model->setHidden([
+            'content',
+        ]);
+
+        $model->setAuditEvent('created');
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('user_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('created_at', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(2, $auditData['new_values']);
+
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('published', $auditData['new_values']);
     }
 
     /**
