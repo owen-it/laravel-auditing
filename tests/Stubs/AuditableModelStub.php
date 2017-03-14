@@ -38,6 +38,26 @@ class AuditableModelStub extends Model implements AuditableContract
     }
 
     /**
+     * Enable strict auditing.
+     *
+     * @return void
+     */
+    public function enableStrictAuditing()
+    {
+        $this->auditStrict = true;
+    }
+
+    /**
+     * Include model timestamps when auditing.
+     *
+     * @return void
+     */
+    public function enableTimestampAuditing()
+    {
+        $this->auditTimestamps = true;
+    }
+
+    /**
      * Set the value of the Audit driver.
      *
      * @param string $driver
