@@ -19,7 +19,14 @@ use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Tests\Stubs\AuditableModelStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableDriverStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableExcludeStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableIncludeStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableStrictStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableThresholdStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableTimestampStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableTransformStub;
 use RuntimeException;
 
 class AuditableTest extends TestCase
@@ -50,7 +57,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditFailInvalidAuditEvent()
     {
-        $model = new AuditableModelStub();
+        $model = new AuditableStub();
 
         // Invalid auditable event
         $model->setAuditEvent('foo');
@@ -68,7 +75,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditFailAuditEventMethodMissing()
     {
-        $model = Mockery::mock(AuditableModelStub::class)
+        $model = Mockery::mock(AuditableStub::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -92,7 +99,7 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', null);
 
-        $model = new AuditableModelStub();
+        $model = new AuditableStub();
 
         $model->setAuditEvent('created');
 
@@ -110,7 +117,7 @@ class AuditableTest extends TestCase
             return rand(1, 256);
         });
 
-        $model = new AuditableModelStub();
+        $model = new AuditableStub();
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
@@ -138,27 +145,59 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the toAudit() method to PASS (included attributes).
+     * Test the toAudit() method to PASS (custom transformAudit()).
      *
      * @return void
      */
-    public function testToAuditPassIncludedAttributes()
+    public function testToAuditPassCustomTransformAudit()
     {
         Config::set('audit.user.resolver', function () {
             return rand(1, 256);
         });
 
-        $model = new AuditableModelStub();
-        $this->setAuditableTestAttributes($model);
+        $model = new AuditableTransformStub();
 
-        // Set included attributes
-        $model->setAuditInclude([
-            'title',
-            'content',
-        ]);
+        $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
         $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(10, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('user_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('created_at', $auditData);
+        $this->assertArrayHasKey('foo', $auditData);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (include attributes).
+     *
+     * @return void
+     */
+    public function testToAuditPassIncludeAttributes()
+    {
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableIncludeStub();
+        $this->setAuditableTestAttributes($model);
+
+        $model->setAuditEvent('created');
+        $auditData = $model->toAudit();
+
+        $this->assertEquals([
+            'title',
+            'content',
+        ], $model->getAuditInclude());
 
         // Audit attributes
         $this->assertCount(9, $auditData);
@@ -181,26 +220,25 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the toAudit() method to PASS (excluded attributes).
+     * Test the toAudit() method to PASS (exclude attributes).
      *
      * @return void
      */
-    public function testToAuditPassExcludedAttributes()
+    public function testToAuditPassExcludeAttributes()
     {
         Config::set('audit.user.resolver', function () {
             return rand(1, 256);
         });
 
-        $model = new AuditableModelStub();
+        $model = new AuditableExcludeStub();
         $this->setAuditableTestAttributes($model);
-
-        // Set excluded attributes
-        $model->setAuditExclude([
-            'content',
-        ]);
 
         $model->setAuditEvent('created');
         $auditData = $model->toAudit();
+
+        $this->assertEquals([
+            'content',
+        ], $model->getAuditExclude());
 
         // Audit attributes
         $this->assertCount(9, $auditData);
@@ -233,14 +271,13 @@ class AuditableTest extends TestCase
             return rand(1, 256);
         });
 
-        $model = new AuditableModelStub();
+        $model = new AuditableTimestampStub();
         $this->setAuditableTestAttributes($model);
-
-        // Include the created/updated timestamps in new_values array
-        $model->enableTimestampAuditing();
 
         $model->setAuditEvent('created');
         $auditData = $model->toAudit();
+
+        $this->assertTrue($model->getAuditTimestamps());
 
         // Audit attributes
         $this->assertCount(9, $auditData);
@@ -276,11 +313,8 @@ class AuditableTest extends TestCase
             return rand(1, 256);
         });
 
-        $model = new AuditableModelStub();
+        $model = new AuditableStrictStub();
         $this->setAuditableTestAttributes($model);
-
-        // Strict auditing enabled
-        $model->enableStrictAuditing();
 
         // Set visible
         $model->setVisible([
@@ -290,6 +324,8 @@ class AuditableTest extends TestCase
 
         $model->setAuditEvent('created');
         $auditData = $model->toAudit();
+
+        $this->assertTrue($model->getAuditStrict());
 
         // Audit attributes
         $this->assertCount(9, $auditData);
@@ -322,11 +358,8 @@ class AuditableTest extends TestCase
             return rand(1, 256);
         });
 
-        $model = new AuditableModelStub();
+        $model = new AuditableStrictStub();
         $this->setAuditableTestAttributes($model);
-
-        // Strict auditing enabled
-        $model->enableStrictAuditing();
 
         // Set hidden
         $model->setHidden([
@@ -335,6 +368,8 @@ class AuditableTest extends TestCase
 
         $model->setAuditEvent('created');
         $auditData = $model->toAudit();
+
+        $this->assertTrue($model->getAuditStrict());
 
         // Audit attributes
         $this->assertCount(9, $auditData);
@@ -357,13 +392,13 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the getAuditableEvents() method to PASS (default values).
+     * Test the getAuditableEvents() method to PASS (default).
      *
      * @return void
      */
     public function testGetAuditableEventsPassDefault()
     {
-        $model = new AuditableModelStub();
+        $model = new AuditableStub();
 
         $events = $model->getAuditableEvents();
 
@@ -371,13 +406,13 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the getAuditableEvents() method to PASS (custom values).
+     * Test the getAuditableEvents() method to PASS (custom).
      *
      * @return void
      */
     public function testGetAuditableEventsPassCustom()
     {
-        $model = new AuditableModelStub();
+        $model = new AuditableStub();
 
         $model->auditableEvents = [
             'created',
@@ -389,27 +424,13 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the transformAudit() method to PASS.
-     *
-     * @return void
-     */
-    public function testTransformAuditPass()
-    {
-        $model = new AuditableModelStub();
-
-        $data = $model->transformAudit([]);
-
-        $this->assertEquals([], $data);
-    }
-
-    /**
      * Test the getAuditDriver() method to PASS (default).
      *
      * @return void
      */
-    public function testGetAuditDriverDefaultPass()
+    public function testGetAuditDriverPassDefault()
     {
-        $model = new AuditableModelStub();
+        $model = new AuditableStub();
 
         $this->assertNull($model->getAuditDriver());
     }
@@ -419,11 +440,9 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testGetAuditDriverCustomPass()
+    public function testGetAuditDriverPassCustom()
     {
-        $model = new AuditableModelStub();
-
-        $model->setAuditDriver('database');
+        $model = new AuditableDriverStub();
 
         $this->assertEquals('database', $model->getAuditDriver());
     }
@@ -433,9 +452,9 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testGetAuditThresholdDefaultPass()
+    public function testGetAuditThresholdPassDefault()
     {
-        $model = new AuditableModelStub();
+        $model = new AuditableStub();
 
         $this->assertEquals(0, $model->getAuditThreshold());
     }
@@ -445,11 +464,9 @@ class AuditableTest extends TestCase
      *
      * @return void
      */
-    public function testGetAuditThresholdCustomPass()
+    public function testGetAuditThresholdPassCustom()
     {
-        $model = new AuditableModelStub();
-
-        $model->setAuditThreshold(100);
+        $model = new AuditableThresholdStub();
 
         $this->assertEquals(100, $model->getAuditThreshold());
     }
