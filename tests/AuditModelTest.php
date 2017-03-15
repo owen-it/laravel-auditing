@@ -18,7 +18,7 @@ use Carbon\Carbon;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Models\Audit;
-use OwenIt\Auditing\Tests\Stubs\AuditableModelStub;
+use OwenIt\Auditing\Tests\Stubs\AuditableStub;
 
 class AuditModelTest extends TestCase
 {
@@ -89,7 +89,7 @@ class AuditModelTest extends TestCase
 
         $this->setAuditTestAttributes($audit);
 
-        $auditable = Mockery::mock(AuditableModelStub::class)
+        $auditable = Mockery::mock(AuditableStub::class)
             ->makePartial();
 
         $audit->auditable = $auditable;
@@ -176,7 +176,7 @@ EOF;
 
         $this->setAuditTestAttributes($audit);
 
-        $auditable = Mockery::mock(AuditableModelStub::class)
+        $auditable = Mockery::mock(AuditableStub::class)
             ->makePartial();
 
         $audit->auditable = $auditable;
@@ -202,7 +202,7 @@ EOF;
 
         $this->setAuditTestAttributes($audit);
 
-        $auditable = Mockery::mock(AuditableModelStub::class)
+        $auditable = Mockery::mock(AuditableStub::class)
             ->makePartial();
 
         $audit->auditable = $auditable;
