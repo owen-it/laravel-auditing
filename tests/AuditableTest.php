@@ -42,9 +42,9 @@ class AuditableTest extends TestCase
     {
         $audit->created_at = Carbon::now();
         $audit->updated_at = Carbon::now();
-        $audit->title      = 'How To Audit Eloquent Models';
-        $audit->content    = 'First step: install the laravel-auditing package.';
-        $audit->published  = 1;
+        $audit->title = 'How To Audit Eloquent Models';
+        $audit->content = 'First step: install the laravel-auditing package.';
+        $audit->published = 1;
     }
 
     /**
