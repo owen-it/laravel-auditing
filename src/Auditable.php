@@ -25,46 +25,11 @@ use UnexpectedValueException;
 trait Auditable
 {
     /**
-     * Attributes to include in the Audit.
+     *  Auditable attribute exclusions.
      *
      * @var array
      */
-    protected $auditInclude = [];
-
-    /**
-     * Attributes to exclude from the Audit.
-     *
-     * @var array
-     */
-    protected $auditExclude = [];
-
-    /**
-     * Should the audit be strict?
-     *
-     * @var bool
-     */
-    protected $auditStrict = false;
-
-    /**
-     * Should the timestamps be audited?
-     *
-     * @var bool
-     */
-    protected $auditTimestamps = false;
-
-    /**
-     * Audit driver.
-     *
-     * @var string
-     */
-    protected $auditDriver;
-
-    /**
-     * Audit threshold.
-     *
-     * @var int
-     */
-    protected $auditThreshold = 0;
+    protected $auditableExclusions = [];
 
     /**
      * Audit event name.
@@ -103,28 +68,30 @@ trait Auditable
      */
     protected function updateAuditExclusions()
     {
+        $this->auditableExclusions = $this->getAuditExclude();
+
         // When in strict mode, hidden and non visible attributes are excluded
-        if ($this->auditStrict) {
-            $this->auditExclude = array_merge($this->auditExclude, $this->hidden);
+        if ($this->getAuditStrict()) {
+            $this->auditableExclusions = array_merge($this->auditableExclusions, $this->hidden);
 
             if (count($this->visible)) {
                 $invisible = array_diff(array_keys($this->attributes), $this->visible);
-                $this->auditExclude = array_merge($this->auditExclude, $invisible);
+                $this->auditableExclusions = array_merge($this->auditableExclusions, $invisible);
             }
         }
 
-        if (!$this->auditTimestamps) {
-            array_push($this->auditExclude, static::CREATED_AT, static::UPDATED_AT);
+        if (!$this->getAuditTimestamps()) {
+            array_push($this->auditableExclusions, static::CREATED_AT, static::UPDATED_AT);
 
-            $this->auditExclude[] = defined('static::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
+            $this->auditableExclusions[] = defined('static::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
         }
 
-        $attributes = array_except($this->attributes, $this->auditExclude);
+        $attributes = array_except($this->attributes, $this->auditableExclusions);
 
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
-                $this->auditExclude[] = $attribute;
+                $this->auditableExclusions[] = $attribute;
             }
         }
     }
@@ -295,13 +262,15 @@ trait Auditable
     protected function isAttributeAuditable($attribute)
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->auditExclude)) {
+        if (in_array($attribute, $this->auditableExclusions)) {
             return false;
         }
 
         // The attribute is auditable when explicitly
         // listed or when the include array is empty
-        return in_array($attribute, $this->auditInclude) || empty($this->auditInclude);
+        $include = $this->getAuditInclude();
+
+        return in_array($attribute, $include) || empty($include);
     }
 
     /**
@@ -362,9 +331,41 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
+    public function getAuditInclude()
+    {
+        return isset($this->auditInclude) ? (array) $this->auditInclude : [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditExclude()
+    {
+        return isset($this->auditExclude) ? (array) $this->auditExclude : [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditStrict()
+    {
+        return isset($this->auditStrict) ? (bool) $this->auditStrict : false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditTimestamps()
+    {
+        return isset($this->auditTimestamps) ? (bool) $this->auditTimestamps : false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAuditDriver()
     {
-        return $this->auditDriver;
+        return isset($this->auditDriver) ? $this->auditDriver : null;
     }
 
     /**
@@ -372,6 +373,6 @@ trait Auditable
      */
     public function getAuditThreshold()
     {
-        return $this->auditThreshold;
+        return isset($this->auditThreshold) ? $this->auditThreshold : 0;
     }
 }
