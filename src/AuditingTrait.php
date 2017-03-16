@@ -244,7 +244,7 @@ trait AuditingTrait
     }
 
     /**
-     * Clear the oldest logs if given a limit.
+     * Clear the oldest logs if given a limit otherwise skip database interrogation.
      *
      * @return void
      */
