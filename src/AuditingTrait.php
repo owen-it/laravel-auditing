@@ -244,20 +244,22 @@ trait AuditingTrait
     }
 
     /**
-     * Clear the oldest logs if given a limit.
+     * Clear the oldest logs if given a limit otherwise skip database interrogation.
      *
      * @return void
      */
     private function clearOlderLogs()
     {
-        $logHistoryCount = $this->logHistory()->count();
-        $logHistoryOlder = $logHistoryCount - $this->historyLimit;
+        if (isset($this->historyLimit)) {
+            $logHistoryCount = $this->logHistory()->count();
+            $logHistoryOlder = $logHistoryCount - $this->historyLimit;
 
-        if (isset($this->historyLimit) && $logHistoryOlder > 0) {
-            $logs = $this->logHistory($logHistoryOlder, 'asc');
-            $logs->each(function ($log) {
-                $log->delete();
-            });
+            if ($logHistoryOlder > 0) {
+                $logs = $this->logHistory($logHistoryOlder, 'asc');
+                $logs->each(function ($log) {
+                    $log->delete();
+                });
+            }
         }
     }
 
