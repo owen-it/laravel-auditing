@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Models\Audit as AuditModel;
 use RuntimeException;
 use UnexpectedValueException;
@@ -227,13 +228,17 @@ trait Auditable
      */
     protected function resolveUserId()
     {
-        $resolver = Config::get('audit.user.resolver');
+        $userResolver = Config::get('audit.user.resolver');
 
-        if (!is_callable($resolver)) {
-            throw new UnexpectedValueException('Invalid User resolver type, callable expected');
+        if (is_callable($userResolver)) {
+            return $userResolver();
         }
 
-        return $resolver();
+        if (is_subclass_of($userResolver, UserResolver::class)) {
+            return call_user_func([$userResolver, 'resolveId']);
+        }
+
+        throw new UnexpectedValueException('Invalid User resolver, callable or UserResolver FQCN expected');
     }
 
     /**
