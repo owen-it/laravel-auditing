@@ -27,6 +27,7 @@ use OwenIt\Auditing\Tests\Stubs\AuditableStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableThresholdStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTimestampStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTransformStub;
+use OwenIt\Auditing\Tests\Stubs\UserResolverStub;
 use RuntimeException;
 
 class AuditableTest extends TestCase
@@ -95,7 +96,7 @@ class AuditableTest extends TestCase
      * Test the toAudit() method to FAIL (Invalid User id resolver).
      *
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage Invalid User resolver type, callable expected
+     * @expectedExceptionMessage Invalid User resolver, callable or UserResolver FQCN expected
      *
      * @return void
      */
@@ -160,9 +161,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassCustomTransformAudit()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserResolverStub::class);
 
         $model = new AuditableTransformStub();
 
@@ -241,9 +240,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassExcludeAttributes()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserResolverStub::class);
 
         $model = new AuditableExcludeStub();
         $this->setAuditableTestAttributes($model);
@@ -330,9 +327,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassVisibleStrictMode()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserResolverStub::class);
 
         $model = new AuditableStrictStub();
         $this->setAuditableTestAttributes($model);
