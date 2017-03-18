@@ -51,7 +51,7 @@ class AuditableTest extends TestCase
      * Test the toAudit() method to FAIL (Invalid audit event).
      *
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage A valid audit event must be set
+     * @expectedExceptionMessage A valid audit event has not been set
      *
      * @return void
      */
@@ -61,6 +61,8 @@ class AuditableTest extends TestCase
 
         // Invalid auditable event
         $model->setAuditEvent('foo');
+
+        $this->assertFalse($model->readyForAuditing());
 
         $model->toAudit();
     }
@@ -84,6 +86,8 @@ class AuditableTest extends TestCase
 
         $model->setAuditEvent('foo');
 
+        $this->assertTrue($model->readyForAuditing());
+
         $model->toAudit();
     }
 
@@ -103,6 +107,8 @@ class AuditableTest extends TestCase
 
         $model->setAuditEvent('created');
 
+        $this->assertTrue($model->readyForAuditing());
+
         $model->toAudit();
     }
 
@@ -121,6 +127,9 @@ class AuditableTest extends TestCase
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
         $auditData = $model->toAudit();
 
         // Audit attributes
@@ -160,6 +169,9 @@ class AuditableTest extends TestCase
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
         $auditData = $model->toAudit();
 
         // Audit attributes
@@ -192,6 +204,9 @@ class AuditableTest extends TestCase
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
         $auditData = $model->toAudit();
 
         $this->assertEquals([
@@ -234,6 +249,9 @@ class AuditableTest extends TestCase
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
         $auditData = $model->toAudit();
 
         $this->assertEquals([
@@ -275,6 +293,9 @@ class AuditableTest extends TestCase
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
         $auditData = $model->toAudit();
 
         $this->assertTrue($model->getAuditTimestamps());
@@ -323,6 +344,9 @@ class AuditableTest extends TestCase
         ]);
 
         $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
         $auditData = $model->toAudit();
 
         $this->assertTrue($model->getAuditStrict());
@@ -367,6 +391,9 @@ class AuditableTest extends TestCase
         ]);
 
         $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
         $auditData = $model->toAudit();
 
         $this->assertTrue($model->getAuditStrict());
