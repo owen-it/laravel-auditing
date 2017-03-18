@@ -67,6 +67,10 @@ class Auditor extends Manager implements AuditorContract
      */
     public function execute(AuditableContract $model)
     {
+        if (!$model->readyForAuditing()) {
+            return;
+        }
+
         $driver = $this->auditDriver($model);
 
         if (!$this->fireAuditingEvent($model, $driver)) {

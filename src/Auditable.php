@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Models\Audit as AuditModel;
 use RuntimeException;
 use UnexpectedValueException;
@@ -166,10 +167,18 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
+    public function readyForAuditing()
+    {
+        return $this->isEventAuditable($this->auditEvent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toAudit()
     {
-        if (!$this->isEventAuditable($this->auditEvent)) {
-            throw new RuntimeException('A valid audit event must be set');
+        if (!$this->readyForAuditing()) {
+            throw new RuntimeException('A valid audit event has not been set');
         }
 
         $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
@@ -219,13 +228,17 @@ trait Auditable
      */
     protected function resolveUserId()
     {
-        $resolver = Config::get('audit.user.resolver');
+        $userResolver = Config::get('audit.user.resolver');
 
-        if (!is_callable($resolver)) {
-            throw new UnexpectedValueException('Invalid User resolver type, callable expected');
+        if (is_callable($userResolver)) {
+            return $userResolver();
         }
 
-        return $resolver();
+        if (is_subclass_of($userResolver, UserResolver::class)) {
+            return call_user_func([$userResolver, 'resolveId']);
+        }
+
+        throw new UnexpectedValueException('Invalid User resolver, callable or UserResolver FQCN expected');
     }
 
     /**

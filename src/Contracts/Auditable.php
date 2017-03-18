@@ -26,6 +26,13 @@ interface Auditable
     public function setAuditEvent($event);
 
     /**
+     * Is the model ready for auditing?
+     *
+     * @return bool
+     */
+    public function readyForAuditing();
+
+    /**
      * Return data for an Audit.
      *
      * @throws \RuntimeException
