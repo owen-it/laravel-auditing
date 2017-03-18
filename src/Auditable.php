@@ -166,10 +166,18 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
+    public function readyForAuditing()
+    {
+        return $this->isEventAuditable($this->auditEvent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function toAudit()
     {
-        if (!$this->isEventAuditable($this->auditEvent)) {
-            throw new RuntimeException('A valid audit event must be set');
+        if (!$this->readyForAuditing()) {
+            throw new RuntimeException('A valid audit event has not been set');
         }
 
         $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
