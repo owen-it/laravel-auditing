@@ -33,7 +33,7 @@ class Database implements AuditDriver
      */
     public function prune(Auditable $model)
     {
-        if ($threshold = $model->getAuditThreshold() > 0) {
+        if (($threshold = $model->getAuditThreshold()) > 0) {
             $total = $model->audits()->count();
 
             $forRemoval = ($total - $threshold);
