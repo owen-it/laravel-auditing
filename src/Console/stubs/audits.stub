@@ -46,6 +46,7 @@ class CreateAuditsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('audits');
+        Schema::connection(config('audit.drivers.database.connection'))
+            ->drop(config('audit.drivers.database.table'));
     }
 }
