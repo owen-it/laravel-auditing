@@ -41,6 +41,7 @@ class AuditableObserver
     public function updated(AuditableContract $model)
     {
         if (
+            method_exists($model, 'getDeletedAtColumn') &&
             $model->isDirty($model->getDeletedAtColumn()) &&
             !$model->deleted_at &&
             count($model->getDirty()) == 2 //deleted_at and updated_at
