@@ -44,10 +44,9 @@ class AuditableObserver
             $model->isDirty($model->getDeletedAtColumn()) &&
             !$model->deleted_at &&
             count($model->getDirty()) == 2 //deleted_at and updated_at
-        ){
+        ) {
             // only restoring softdeleted item, no values changed other than deleted_at an updated_at
-        }
-        else {
+        } else {
             Auditor::execute($model->setAuditEvent('updated'));
         }
     }
