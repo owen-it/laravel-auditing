@@ -207,6 +207,7 @@ trait Auditable
             'user_id'        => $this->resolveUserId(),
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
+            'user_agent'     => $this->resolveUserAgent(),
             'created_at'     => $this->freshTimestamp(),
         ]);
     }
@@ -263,6 +264,16 @@ trait Auditable
     protected function resolveIpAddress()
     {
         return Request::ip();
+    }
+
+    /**
+     * Resolve the current User Agent.
+     *
+     * @return string
+     */
+    protected function resolveUserAgent()
+    {
+        return Request::header('User-Agent');
     }
 
     /**

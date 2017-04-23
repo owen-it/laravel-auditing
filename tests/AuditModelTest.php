@@ -35,6 +35,7 @@ class AuditModelTest extends TestCase
         $audit->event = 'created';
         $audit->url = 'http://example.com/create';
         $audit->ip_address = '127.0.0.1';
+        $audit->user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0';
         $audit->created_at = Carbon::now();
         $audit->user_id = 1;
         $audit->new_values = [
@@ -61,12 +62,13 @@ class AuditModelTest extends TestCase
 
         $data = $audit->resolveData();
 
-        $this->assertCount(12, $data);
+        $this->assertCount(13, $data);
 
         $this->assertArrayHasKey('audit_id', $data);
         $this->assertArrayHasKey('audit_event', $data);
         $this->assertArrayHasKey('audit_url', $data);
         $this->assertArrayHasKey('audit_ip_address', $data);
+        $this->assertArrayHasKey('audit_user_agent', $data);
         $this->assertArrayHasKey('audit_created_at', $data);
         $this->assertArrayHasKey('user_id', $data);
         $this->assertArrayHasKey('new_title', $data);
@@ -124,11 +126,12 @@ class AuditModelTest extends TestCase
 
         $metadata = $audit->getMetadata();
 
-        $this->assertCount(6, $metadata);
+        $this->assertCount(7, $metadata);
 
         $this->assertArrayHasKey('audit_id', $metadata);
         $this->assertArrayHasKey('audit_event', $metadata);
         $this->assertArrayHasKey('audit_url', $metadata);
+        $this->assertArrayHasKey('audit_ip_address', $metadata);
         $this->assertArrayHasKey('audit_ip_address', $metadata);
         $this->assertArrayHasKey('audit_created_at', $metadata);
         $this->assertArrayHasKey('user_id', $metadata);
@@ -156,6 +159,7 @@ class AuditModelTest extends TestCase
     "audit_event": "created",
     "audit_url": "http:\/\/example.com\/create",
     "audit_ip_address": "127.0.0.1",
+    "audit_user_agent": "Mozilla\/5.0 (X11; Linux x86_64; rv:53.0) Gecko\/20100101 Firefox\/53.0",
     "audit_created_at": "$now",
     "user_id": 1
 }
