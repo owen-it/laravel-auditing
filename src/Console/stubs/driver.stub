@@ -12,13 +12,13 @@
  * with this source code.
  */
 
-namespace App\AuditDrivers;
+namespace DummyNamespace;
 
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
 use OwenIt\Auditing\Models\Audit;
 
-class CustomDriver implements AuditDriver
+class DummyClass implements AuditDriver
 {
     /**
      * Perform an audit.
