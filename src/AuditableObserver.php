@@ -24,7 +24,7 @@ class AuditableObserver
      *
      * @var bool
      */
-    static $restoring = false;
+    public static $restoring = false;
 
     /**
      * Handle the created event for the model.
