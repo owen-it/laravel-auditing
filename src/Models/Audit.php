@@ -93,7 +93,7 @@ class Audit extends Model
      */
     public function auditable()
     {
-        return $this->morphTo();
+        return $this->morphTo()->withTrashed();
     }
 
     /**
