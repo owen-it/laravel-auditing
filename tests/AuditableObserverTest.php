@@ -84,6 +84,8 @@ class AuditableObserverTest extends TestCase
             ->andReturn($model);
 
         $observer->created($model);
+
+        $this->assertFalse($observer::$restoring);
     }
 
     /**
@@ -109,6 +111,8 @@ class AuditableObserverTest extends TestCase
             ->andReturn($model);
 
         $observer->updated($model);
+
+        $this->assertFalse($observer::$restoring);
     }
 
     /**
@@ -134,6 +138,28 @@ class AuditableObserverTest extends TestCase
             ->andReturn($model);
 
         $observer->deleted($model);
+
+        $this->assertFalse($observer::$restoring);
+    }
+
+    /**
+     * Test AuditableObserver restoring method to PASS.
+     *
+     * @depends testAuditableObserverInstantiation
+     * @depends testAuditableMock
+     *
+     * @param AuditableObserver $observer
+     * @param Auditable         $model
+     *
+     * @return void
+     */
+    public function testAuditableObserverRestoringPass(AuditableObserver $observer, Auditable $model)
+    {
+        $this->assertFalse($observer::$restoring);
+
+        $observer->restoring($model);
+
+        $this->assertTrue($observer::$restoring);
     }
 
     /**
@@ -159,5 +185,7 @@ class AuditableObserverTest extends TestCase
             ->andReturn($model);
 
         $observer->restored($model);
+
+        $this->assertFalse($observer::$restoring);
     }
 }
