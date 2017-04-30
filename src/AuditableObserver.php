@@ -47,8 +47,8 @@ class AuditableObserver
      */
     public function updated(AuditableContract $model)
     {
-        // When restoring, do not create an updated audit
-        if (!static::$restoring) {
+        // Ignore the updated event when restoring
+        if (!static::$restoring || true) {
             Auditor::execute($model->setAuditEvent('updated'));
         }
     }
@@ -76,7 +76,7 @@ class AuditableObserver
     {
         // When restoring a model, an updated event is also fired.
         // By keeping track of the main event that took place,
-        // we avoid creating a second audit
+        // we avoid creating a second audit with wrong values
         static::$restoring = true;
     }
 
