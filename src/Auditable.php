@@ -59,6 +59,7 @@ trait Auditable
     public function audits()
     {
         return $this->morphMany(AuditModel::class, 'auditable')
+            ->groupBy('created_at')
             ->orderBy('created_at', 'DESC');
     }
 
