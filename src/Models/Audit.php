@@ -162,7 +162,7 @@ class Audit extends Model
         $value = $this->data[$key];
 
         // Apply a mutator or a cast the Auditable model may have defined
-        if (starts_with($key, ['new_', 'old_'])) {
+        if ($this->auditable && starts_with($key, ['new_', 'old_'])) {
             $originalKey = substr($key, 4);
 
             if ($this->auditable->hasGetMutator($originalKey)) {
