@@ -72,20 +72,27 @@ trait Auditable
 
         // When in strict mode, hidden and non visible attributes are excluded
         if ($this->getAuditStrict()) {
+            // Hidden attributes
             $this->auditableExclusions = array_merge($this->auditableExclusions, $this->hidden);
 
-            if (count($this->visible)) {
+            // Non visible attributes
+            if (!empty($this->visible)) {
                 $invisible = array_diff(array_keys($this->attributes), $this->visible);
+
                 $this->auditableExclusions = array_merge($this->auditableExclusions, $invisible);
             }
         }
 
+        // Exclude Timestamps
         if (!$this->getAuditTimestamps()) {
             array_push($this->auditableExclusions, static::CREATED_AT, static::UPDATED_AT);
 
-            $this->auditableExclusions[] = defined('static::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
+            if (defined('static::DELETED_AT')) {
+                $this->auditableExclusions[] = static::DELETED_AT;
+            }
         }
 
+        // Valid attributes are all those that made it out of the exclusion array
         $attributes = array_except($this->attributes, $this->auditableExclusions);
 
         foreach ($attributes as $attribute => $value) {
@@ -158,8 +165,8 @@ trait Auditable
      */
     protected function auditRestoredAttributes(array &$old, array &$new)
     {
-        // We apply the same logic as the deleted,
-        // but the old/new order is swapped
+        // Apply the same logic as the deleted event,
+        // but with the old/new arguments swapped
         $this->auditDeletedAttributes($new, $old);
     }
 

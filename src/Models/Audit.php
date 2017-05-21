@@ -184,7 +184,7 @@ class Audit extends Model
      * @param int  $options
      * @param int  $depth
      *
-     * @return array
+     * @return array|string
      */
     public function getMetadata($json = false, $options = 0, $depth = 512)
     {
@@ -208,7 +208,7 @@ class Audit extends Model
      * @param int  $options
      * @param int  $depth
      *
-     * @return array
+     * @return array|string
      */
     public function getModified($json = false, $options = 0, $depth = 512)
     {

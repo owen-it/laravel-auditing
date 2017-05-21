@@ -1,3 +1,11 @@
+## v4.0.6 (2017-05-21)
+### Fixed
+- Calling a member function on null ([#244](https://github.com/owen-it/laravel-auditing/issues/244))
+
+## v4.0.5 (2017-05-03)
+### Fixed
+- Removed problematic ORDER BY from the audits() relation method in the Auditable trait
+
 ## v4.0.4 (2017-05-01)
 ### Added
 - Log the user agent string ([#224](https://github.com/owen-it/laravel-auditing/issues/224))
