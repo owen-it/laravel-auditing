@@ -48,7 +48,7 @@ class AuditableObserver
     public function updated(AuditableContract $model)
     {
         // Ignore the updated event when restoring
-        if (!static::$restoring || true) {
+        if (!static::$restoring) {
             Auditor::execute($model->setAuditEvent('updated'));
         }
     }
