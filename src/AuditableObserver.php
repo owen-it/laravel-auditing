@@ -92,7 +92,7 @@ class AuditableObserver
         Auditor::execute($model->setAuditEvent('restored'));
 
         // Once the model is restored, we need to put everything back
-        // as before, in case an legitimate update event is fired
+        // as before, in case a legitimate update event is fired
         static::$restoring = false;
     }
 }
