@@ -1,3 +1,10 @@
+## v4.0.7 (2017-06-04)
+### Added
+- GitHub issue template file
+
+### Fixed
+- Properly fixed issue ([#233](https://github.com/owen-it/laravel-auditing/issues/233))
+
 ## v4.0.6 (2017-05-21)
 ### Fixed
 - Calling a member function on null ([#244](https://github.com/owen-it/laravel-auditing/issues/244))
