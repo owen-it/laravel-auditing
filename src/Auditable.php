@@ -227,7 +227,7 @@ trait Auditable
         $related_relations_arr        = [];
         $broad_relationship_types_arr = ['BelongsTo', 'HasMany', 'BelongsToMany', 'HasOne'];
 
-        if ( ! $this->auditIncludeRelated)
+        if (! property_exists($this,'auditIncludeRelated') ||  ! $this->auditIncludeRelated)
         {
             return $related_relations_arr;
         }
@@ -265,7 +265,6 @@ trait Auditable
                         /**
                          * this can happen when a foreign key constraint referances the self-same table.
                          */
-                        $x=1;
                     }
                     else
                     {
