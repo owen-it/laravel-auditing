@@ -65,6 +65,7 @@ class AuditTableCommand extends Command
         $fullPath = $this->createBaseMigration();
 
         $this->files->put($fullPath, $this->files->get(__DIR__.'/stubs/audits.stub'));
+        $this->files->put($fullPath, $this->files->get(__DIR__.'/stubs/audit_relations.stub'));
 
         $this->info('Migration created successfully!');
 
