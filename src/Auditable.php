@@ -200,7 +200,7 @@ trait Auditable
         $this->updateAuditExclusions();
 
         $old = [];
-        $new              = [];
+        $new = [];
         $related_relations_arr = $this->generateRelatedRelations();
 
         $this->{$method}($old, $new);
@@ -224,61 +224,50 @@ trait Auditable
 
     public function generateRelatedRelations()
     {
-        $related_relations_arr        = [];
+        $related_relations_arr = [];
         $broad_relationship_types_arr = ['BelongsTo', 'HasMany', 'BelongsToMany', 'HasOne'];
 
-        if (! property_exists($this,'auditIncludeRelated') ||  ! $this->auditIncludeRelated)
-        {
+        if (!property_exists($this, 'auditIncludeRelated') || !$this->auditIncludeRelated) {
             return $related_relations_arr;
         }
-        foreach ($broad_relationship_types_arr as $broad_relationship)
-        {
-
-            $broad_relationship_method = 'get'.ucfirst($broad_relationship) . 'Arr';
-            if ( ! method_exists($this, $broad_relationship_method))
-            {
+        foreach ($broad_relationship_types_arr as $broad_relationship) {
+            $broad_relationship_method = 'get'.ucfirst($broad_relationship).'Arr';
+            if (!method_exists($this, $broad_relationship_method)) {
                 continue;
             }
             $related_relations_arr[$broad_relationship] = [];
-            $relationship_arr                           = $this->$broad_relationship_method();
-            foreach ($relationship_arr as $relationship)
-            {
-                if ( ! method_exists($this, $relationship))
-                {
+            $relationship_arr = $this->$broad_relationship_method();
+            foreach ($relationship_arr as $relationship) {
+                if (!method_exists($this, $relationship)) {
                     continue;
                 }
                 $RelationshipObjArr = $this->$relationship;
-                if ( ! is_iterable($RelationshipObjArr))
-                {
+                if (!is_iterable($RelationshipObjArr)) {
                     $RelationshipObjArr = [$RelationshipObjArr];
                 }
-                foreach ($RelationshipObjArr as $RelationshipObj)
-                {
+                foreach ($RelationshipObjArr as $RelationshipObj) {
                     $related_relations_iten_arr = [
 
                         'type'               => $broad_relationship,
                         'source_relation'    => get_class($this),
                         'source_relation_id' => $this->{$this->primaryKey},
                     ];
-                    if($RelationshipObj == null)
-                    {
-                        /**
+                    if ($RelationshipObj == null) {
+                        /*
                          * this can happen when a foreign key constraint referances the self-same table.
                          */
-                    }
-                    else
-                    {
+                    } else {
                         $related_relations_iten_arr['target_relation'] = get_class($RelationshipObj);
                         $related_relations_iten_arr['target_relation_id'] = $RelationshipObj->{$this->primaryKey};
                     }
-                    $related_relations_arr[$broad_relationship][]    = $related_relations_iten_arr;
-
+                    $related_relations_arr[$broad_relationship][] = $related_relations_iten_arr;
                 }
             }
         }
 
         return $related_relations_arr;
     }
+
     /**
      * {@inheritdoc}
      */
