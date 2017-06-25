@@ -254,21 +254,6 @@ trait Auditable
                 }
                 foreach ($RelationshipObjArr as $RelationshipObj)
                 {
-                    foreach ([ 'BelongsToMany', 'HasOne'] as $broad_relationshipx)
-                    {
-                        if($broad_relationshipx == $broad_relationship)
-                        {
-                            $x=1;
-                        }
-                    }
-                    if(! is_object($RelationshipObj) && $relationship != 'propertyGroup')
-                    {
-                        $x=1;
-                    }
-                    if(! is_object($RelationshipObj))
-                    {
-                        $x=1;
-                    }
                     $related_relations_iten_arr = [
 
                         'type'               => $broad_relationship,
