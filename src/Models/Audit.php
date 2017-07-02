@@ -25,19 +25,7 @@ class Audit extends Model implements AuditContract
     /**
      * {@inheritdoc}
      */
-    public $timestamps = false;
-
-    /**
-     * {@inheritdoc}
-     */
     protected $guarded = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $dates = [
-        'created_at',
-    ];
 
     /**
      * {@inheritdoc}
