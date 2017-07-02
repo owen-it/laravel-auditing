@@ -1,3 +1,10 @@
+## v4.1.0 (2017-07-??)
+### Added
+- Implemented Audit contract, enabling classes to extend other model types ([#211](https://github.com/owen-it/laravel-auditing/issues/211))
+
+### Fixed
+- Allow the User primary and foreign key to be specified in the configuration ([#251](https://github.com/owen-it/laravel-auditing/issues/251))
+
 ## v4.0.7 (2017-06-04)
 ### Added
 - GitHub issue template file
