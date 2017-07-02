@@ -22,11 +22,6 @@ class Audit extends Model
     /**
      * {@inheritdoc}
      */
-    protected $table = 'audits';
-
-    /**
-     * {@inheritdoc}
-     */
     public $timestamps = false;
 
     /**
