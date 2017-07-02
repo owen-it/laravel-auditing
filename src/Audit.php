@@ -88,6 +88,7 @@ trait Audit
             'audit_ip_address' => $this->ip_address,
             'audit_user_agent' => $this->user_agent,
             'audit_created_at' => $this->serializeDate($this->created_at),
+            'audit_updated_at' => $this->serializeDate($this->updated_at),
             'user_id'          => $this->user_id,
         ];
 
