@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class AuditableModelStub extends Model implements AuditableContract
+class AuditableStub extends Model implements AuditableContract
 {
     use Auditable;
 
@@ -38,27 +38,11 @@ class AuditableModelStub extends Model implements AuditableContract
     }
 
     /**
-     * Set the value of the Audit driver.
-     *
-     * @param string $driver
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function setAuditDriver($driver)
+    public function resolveUserAgent()
     {
-        $this->auditDriver = $driver;
-    }
-
-    /**
-     * Set the value of the Audit threshold.
-     *
-     * @param int $threshold
-     *
-     * @return void
-     */
-    public function setAuditThreshold($threshold)
-    {
-        $this->auditThreshold = $threshold;
+        return 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0';
     }
 
     /**

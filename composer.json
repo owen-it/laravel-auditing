@@ -2,10 +2,10 @@
     "name": "owen-it/laravel-auditing",
     "description": "Audit changes of your Eloquent models in Laravel/Lumen",
     "keywords": [
-        "activity",
+        "accountability",
         "audit",
         "auditing",
-        "change",
+        "changes",
         "eloquent",
         "history",
         "log",
@@ -14,7 +14,8 @@
         "laravel",
         "lumen",
         "record",
-        "track"
+        "revision",
+        "tracking"
     ],
     "homepage": "https://laravel-auditing.com",
     "type": "package",
@@ -63,7 +64,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "4.0-dev"
+            "dev-master": "4.1-dev"
         }
     }
 }

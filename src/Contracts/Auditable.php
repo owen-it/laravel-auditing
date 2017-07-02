@@ -26,6 +26,13 @@ interface Auditable
     public function setAuditEvent($event);
 
     /**
+     * Is the model ready for auditing?
+     *
+     * @return bool
+     */
+    public function readyForAuditing();
+
+    /**
      * Return data for an Audit.
      *
      * @throws \RuntimeException
@@ -33,6 +40,34 @@ interface Auditable
      * @return array
      */
     public function toAudit();
+
+    /**
+     * Get the (Auditable) attributes included in audit.
+     *
+     * @return array
+     */
+    public function getAuditInclude();
+
+    /**
+     * Get the (Auditable) attributes excluded from audit.
+     *
+     * @return array
+     */
+    public function getAuditExclude();
+
+    /**
+     * Get the strict audit status.
+     *
+     * @return bool
+     */
+    public function getAuditStrict();
+
+    /**
+     * Get the audit (Auditable) timestamps status.
+     *
+     * @return bool
+     */
+    public function getAuditTimestamps();
 
     /**
      * Get the Audit Driver.

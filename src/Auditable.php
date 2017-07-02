@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Models\Audit as AuditModel;
 use RuntimeException;
 use UnexpectedValueException;
@@ -25,46 +26,11 @@ use UnexpectedValueException;
 trait Auditable
 {
     /**
-     * Attributes to include in the Audit.
+     *  Auditable attribute exclusions.
      *
      * @var array
      */
-    protected $auditInclude = [];
-
-    /**
-     * Attributes to exclude from the Audit.
-     *
-     * @var array
-     */
-    protected $auditExclude = [];
-
-    /**
-     * Should the audit be strict?
-     *
-     * @var bool
-     */
-    protected $auditStrict = false;
-
-    /**
-     * Should the timestamps be audited?
-     *
-     * @var bool
-     */
-    protected $auditTimestamps = false;
-
-    /**
-     * Audit driver.
-     *
-     * @var string
-     */
-    protected $auditDriver;
-
-    /**
-     * Audit threshold.
-     *
-     * @var int
-     */
-    protected $auditThreshold = 0;
+    protected $auditableExclusions = [];
 
     /**
      * Audit event name.
@@ -92,8 +58,7 @@ trait Auditable
      */
     public function audits()
     {
-        return $this->morphMany(AuditModel::class, 'auditable')
-            ->orderBy('created_at', 'DESC');
+        return $this->morphMany(AuditModel::class, 'auditable');
     }
 
     /**
@@ -103,28 +68,37 @@ trait Auditable
      */
     protected function updateAuditExclusions()
     {
-        // When in strict mode, hidden and non visible attributes are excluded
-        if ($this->auditStrict) {
-            $this->auditExclude = array_merge($this->auditExclude, $this->hidden);
+        $this->auditableExclusions = $this->getAuditExclude();
 
-            if (count($this->visible)) {
+        // When in strict mode, hidden and non visible attributes are excluded
+        if ($this->getAuditStrict()) {
+            // Hidden attributes
+            $this->auditableExclusions = array_merge($this->auditableExclusions, $this->hidden);
+
+            // Non visible attributes
+            if (!empty($this->visible)) {
                 $invisible = array_diff(array_keys($this->attributes), $this->visible);
-                $this->auditExclude = array_merge($this->auditExclude, $invisible);
+
+                $this->auditableExclusions = array_merge($this->auditableExclusions, $invisible);
             }
         }
 
-        if (!$this->auditTimestamps) {
-            array_push($this->auditExclude, static::CREATED_AT, static::UPDATED_AT);
+        // Exclude Timestamps
+        if (!$this->getAuditTimestamps()) {
+            array_push($this->auditableExclusions, static::CREATED_AT, static::UPDATED_AT);
 
-            $this->auditExclude[] = defined('static::DELETED_AT') ? static::DELETED_AT : 'deleted_at';
+            if (defined('static::DELETED_AT')) {
+                $this->auditableExclusions[] = static::DELETED_AT;
+            }
         }
 
-        $attributes = array_except($this->attributes, $this->auditExclude);
+        // Valid attributes are all those that made it out of the exclusion array
+        $attributes = array_except($this->attributes, $this->auditableExclusions);
 
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
-                $this->auditExclude[] = $attribute;
+                $this->auditableExclusions[] = $attribute;
             }
         }
     }
@@ -191,9 +165,17 @@ trait Auditable
      */
     protected function auditRestoredAttributes(array &$old, array &$new)
     {
-        // We apply the same logic as the deleted,
-        // but the old/new order is swapped
+        // Apply the same logic as the deleted event,
+        // but with the old/new arguments swapped
         $this->auditDeletedAttributes($new, $old);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function readyForAuditing()
+    {
+        return $this->isEventAuditable($this->auditEvent);
     }
 
     /**
@@ -201,8 +183,8 @@ trait Auditable
      */
     public function toAudit()
     {
-        if (!$this->isEventAuditable($this->auditEvent)) {
-            throw new RuntimeException('A valid audit event must be set');
+        if (!$this->readyForAuditing()) {
+            throw new RuntimeException('A valid audit event has not been set');
         }
 
         $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
@@ -231,6 +213,7 @@ trait Auditable
             'user_id'        => $this->resolveUserId(),
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
+            'user_agent'     => $this->resolveUserAgent(),
             'created_at'     => $this->freshTimestamp(),
         ]);
     }
@@ -252,13 +235,17 @@ trait Auditable
      */
     protected function resolveUserId()
     {
-        $resolver = Config::get('audit.user.resolver');
+        $userResolver = Config::get('audit.user.resolver');
 
-        if (!is_callable($resolver)) {
-            throw new UnexpectedValueException('Invalid User resolver type, callable expected');
+        if (is_callable($userResolver)) {
+            return $userResolver();
         }
 
-        return $resolver();
+        if (is_subclass_of($userResolver, UserResolver::class)) {
+            return call_user_func([$userResolver, 'resolveId']);
+        }
+
+        throw new UnexpectedValueException('Invalid User resolver, callable or UserResolver FQCN expected');
     }
 
     /**
@@ -286,6 +273,16 @@ trait Auditable
     }
 
     /**
+     * Resolve the current User Agent.
+     *
+     * @return string
+     */
+    protected function resolveUserAgent()
+    {
+        return Request::header('User-Agent');
+    }
+
+    /**
      * Determine if an attribute is eligible for auditing.
      *
      * @param string $attribute
@@ -295,13 +292,15 @@ trait Auditable
     protected function isAttributeAuditable($attribute)
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->auditExclude)) {
+        if (in_array($attribute, $this->auditableExclusions)) {
             return false;
         }
 
         // The attribute is auditable when explicitly
         // listed or when the include array is empty
-        return in_array($attribute, $this->auditInclude) || empty($this->auditInclude);
+        $include = $this->getAuditInclude();
+
+        return in_array($attribute, $include) || empty($include);
     }
 
     /**
@@ -362,9 +361,41 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
+    public function getAuditInclude()
+    {
+        return isset($this->auditInclude) ? (array) $this->auditInclude : [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditExclude()
+    {
+        return isset($this->auditExclude) ? (array) $this->auditExclude : [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditStrict()
+    {
+        return isset($this->auditStrict) ? (bool) $this->auditStrict : false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditTimestamps()
+    {
+        return isset($this->auditTimestamps) ? (bool) $this->auditTimestamps : false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAuditDriver()
     {
-        return $this->auditDriver;
+        return isset($this->auditDriver) ? $this->auditDriver : null;
     }
 
     /**
@@ -372,6 +403,6 @@ trait Auditable
      */
     public function getAuditThreshold()
     {
-        return $this->auditThreshold;
+        return isset($this->auditThreshold) ? $this->auditThreshold : 0;
     }
 }
