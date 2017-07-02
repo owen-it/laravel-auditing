@@ -98,7 +98,11 @@ class Audit extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Config::get('audit.user.model'));
+        return $this->belongsTo(
+            Config::get('audit.user.model'),
+            Config::get('audit.user.foreign_key', 'user_id'),
+            Config::get('audit.user.primary_key', 'id')
+        );
     }
 
     /**
