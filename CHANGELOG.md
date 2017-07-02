@@ -2,6 +2,7 @@
 ### Added
 - Implemented Audit contract, enabling classes to extend other model types ([#211](https://github.com/owen-it/laravel-auditing/issues/211))
 - The `updated_at` attribute is now part of the Audit model. Don't forget to update your `audits` table!
+- Added Laravel 5.5 Auto-Discovery support
 
 ### Fixed
 - Allow the User primary and foreign key to be specified in the configuration ([#251](https://github.com/owen-it/laravel-auditing/issues/251))
