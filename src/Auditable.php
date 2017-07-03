@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\UserResolver;
-use OwenIt\Auditing\Models\Audit as AuditModel;
+use OwenIt\Auditing\Contracts\Audit as AuditContract;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -58,7 +58,7 @@ trait Auditable
      */
     public function audits()
     {
-        return $this->morphMany(AuditModel::class, 'auditable');
+        return $this->morphMany(AuditContract::class, 'auditable');
     }
 
     /**

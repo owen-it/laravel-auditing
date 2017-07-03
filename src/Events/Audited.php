@@ -16,7 +16,7 @@ namespace OwenIt\Auditing\Events;
 
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
-use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Contracts\Audit;
 
 class Audited
 {
@@ -46,7 +46,7 @@ class Audited
      *
      * @param \OwenIt\Auditing\Contracts\Auditable   $model
      * @param \OwenIt\Auditing\Contracts\AuditDriver $driver
-     * @param \OwenIt\Auditing\Models\Audit          $audit
+     * @param \OwenIt\Auditing\Contracts\Audit       $audit
      */
     public function __construct(Auditable $model, AuditDriver $driver, Audit $audit = null)
     {
