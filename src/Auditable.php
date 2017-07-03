@@ -55,7 +55,10 @@ trait Auditable
      */
     public function audits()
     {
-        return $this->morphMany(Config::get('audit.implementation'), 'auditable');
+        return $this->morphMany(
+            Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class),
+            'auditable'
+        );
     }
 
     /**
