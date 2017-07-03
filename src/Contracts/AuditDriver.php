@@ -21,7 +21,7 @@ interface AuditDriver
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
-     * @return \OwenIt\Auditing\Models\Audit
+     * @return \OwenIt\Auditing\Contracts\Audit
      */
     public function audit(Auditable $model);
 

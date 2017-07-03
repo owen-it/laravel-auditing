@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\UserResolver;
-use OwenIt\Auditing\Models\Audit as AuditModel;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -52,13 +51,14 @@ trait Auditable
     }
 
     /**
-     * Auditable Model audits.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * {@inheritdoc}
      */
     public function audits()
     {
-        return $this->morphMany(AuditModel::class, 'auditable');
+        return $this->morphMany(
+            Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class),
+            'auditable'
+        );
     }
 
     /**

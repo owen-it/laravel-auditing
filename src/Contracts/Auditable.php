@@ -17,6 +17,13 @@ namespace OwenIt\Auditing\Contracts;
 interface Auditable
 {
     /**
+     * Auditable Model audits.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function audits();
+
+    /**
      * Set the Audit event.
      *
      * @param string $event
