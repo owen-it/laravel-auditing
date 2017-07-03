@@ -14,9 +14,9 @@
 
 namespace OwenIt\Auditing\Events;
 
+use OwenIt\Auditing\Contracts\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
-use OwenIt\Auditing\Contracts\Audit;
 
 class Audited
 {
