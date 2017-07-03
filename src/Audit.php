@@ -89,7 +89,7 @@ trait Audit
             'audit_user_agent' => $this->user_agent,
             'audit_created_at' => $this->serializeDate($this->created_at),
             'audit_updated_at' => $this->serializeDate($this->updated_at),
-            'user_id'          => $this->user_id,
+            'user_id'          => $this->getAttribute(Config::get('audit.user.foreign_key', 'user_id')),
         ];
 
         if ($this->relationLoaded('user')) {
