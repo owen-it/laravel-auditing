@@ -204,13 +204,15 @@ trait Auditable
 
         $this->{$method}($old, $new);
 
+        $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
+
         return $this->transformAudit([
             'old_values'     => $old,
             'new_values'     => $new,
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            'user_id'        => $this->resolveUserId(),
+            $foreignKey      => $this->resolveUserId(),
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
