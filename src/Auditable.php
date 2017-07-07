@@ -216,7 +216,6 @@ trait Auditable
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
-            'created_at'     => $this->freshTimestamp(),
         ]);
     }
 
