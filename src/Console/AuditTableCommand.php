@@ -62,7 +62,7 @@ class AuditTableCommand extends Command
      */
     public function handle()
     {
-        $source = __DIR__.'/../../database/migrations/audits.php';
+        $source = __DIR__.'/../../database/migrations/audits.stub';
 
         $destination = $this->laravel['migration.creator']->create(
             'create_audits_table',

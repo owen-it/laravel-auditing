@@ -38,7 +38,7 @@ class AuditDriverMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/../../drivers/AuditDriverStub.php';
+        return __DIR__.'/../../drivers/driver.stub';
     }
 
     /**
