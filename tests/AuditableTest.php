@@ -157,6 +157,48 @@ class AuditableTest extends TestCase
     }
 
     /**
+     * Test the toAudit() method to PASS (custom User foreign key).
+     *
+     * @return void
+     */
+    public function testToAuditPassCustomUserForeignKey()
+    {
+        Config::set('audit.user.foreign_key', 'fk_id');
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableStub();
+        $this->setAuditableTestAttributes($model);
+
+        $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('fk_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('user_agent', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(3, $auditData['new_values']);
+
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('content', $auditData['new_values']);
+        $this->assertArrayHasKey('published', $auditData['new_values']);
+    }
+
+    /**
      * Test the toAudit() method to PASS (custom transformAudit()).
      *
      * @return void
