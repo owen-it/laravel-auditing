@@ -29,7 +29,7 @@ use OwenIt\Auditing\Tests\Stubs\AuditableThresholdStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTimestampStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTransformStub;
 use OwenIt\Auditing\Tests\Stubs\AuditStub;
-use OwenIt\Auditing\Tests\Stubs\UserResolverStub;
+use OwenIt\Auditing\Tests\Stubs\UserStub;
 use RuntimeException;
 
 class AuditableTest extends TestCase
@@ -163,7 +163,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassCustomTransformAudit()
     {
-        Config::set('audit.user.resolver', UserResolverStub::class);
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableTransformStub();
 
@@ -242,7 +242,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassExcludeAttributes()
     {
-        Config::set('audit.user.resolver', UserResolverStub::class);
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableExcludeStub();
         $this->setAuditableTestAttributes($model);
@@ -329,7 +329,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassVisibleStrictMode()
     {
-        Config::set('audit.user.resolver', UserResolverStub::class);
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableStrictStub();
         $this->setAuditableTestAttributes($model);
