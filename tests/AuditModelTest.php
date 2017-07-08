@@ -15,10 +15,12 @@
 namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Stubs\AuditableStub;
+use OwenIt\Auditing\Tests\Stubs\UserStub;
 
 class AuditModelTest extends TestCase
 {
@@ -237,5 +239,25 @@ EOF;
 EOF;
 
         $this->assertEquals($expected, $modified);
+    }
+
+    /**
+     * Test Audit user() relation method to PASS.
+     *
+     * @return void
+     */
+    public function testUserPass()
+    {
+        $audit = Mockery::mock(Audit::class)
+            ->makePartial();
+
+        Config::set('audit.user.model', UserStub::class);
+        Config::set('audit.user.primary_key', 'pk_id');
+        Config::set('audit.user.foreign_key', 'fk_id');
+
+        $this->assertInstanceOf(UserStub::class, $audit->user()->getRelated());
+
+        $this->assertEquals('pk_id', $audit->user()->getOwnerKey());
+        $this->assertEquals('fk_id', $audit->user()->getForeignKey());
     }
 }
