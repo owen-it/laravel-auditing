@@ -257,7 +257,16 @@ EOF;
 
         $this->assertInstanceOf(UserStub::class, $audit->user()->getRelated());
 
-        $this->assertEquals('pk_id', $audit->user()->getOwnerKey());
+        // Up to Laravel 5.3, the ownerKey attribute was called otherKey
+        if (method_exists($audit->user(), 'getOtherKey')) {
+            $this->assertEquals('pk_id', $audit->user()->getOtherKey());
+        }
+
+        // From Laravel 5.4 onward, the otherKey attribute was renamed to ownerKey
+        if (method_exists($audit->user(), 'getOwnerKey')) {
+            $this->assertEquals('pk_id', $audit->user()->getOwnerKey());
+        }
+
         $this->assertEquals('fk_id', $audit->user()->getForeignKey());
     }
 }
