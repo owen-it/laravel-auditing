@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Stubs\AuditableDriverStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableExcludeStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableIncludeStub;
@@ -27,6 +28,7 @@ use OwenIt\Auditing\Tests\Stubs\AuditableStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableThresholdStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTimestampStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTransformStub;
+use OwenIt\Auditing\Tests\Stubs\AuditStub;
 use OwenIt\Auditing\Tests\Stubs\UserResolverStub;
 use RuntimeException;
 
@@ -491,5 +493,31 @@ class AuditableTest extends TestCase
         $model = new AuditableThresholdStub();
 
         $this->assertEquals(100, $model->getAuditThreshold());
+    }
+
+    /**
+     * Test Audit implementation to PASS (default).
+     *
+     * @return void
+     */
+    public function testAuditImplementationPassDefault()
+    {
+        $model = new AuditableStub();
+
+        $this->assertInstanceOf(Audit::class, $model->audits()->getRelated());
+    }
+
+    /**
+     * Test Audit implementation to PASS (custom).
+     *
+     * @return void
+     */
+    public function testAuditImplementationPassCustom()
+    {
+        $model = new AuditableStub();
+
+        Config::set('audit.implementation', AuditStub::class);
+
+        $this->assertInstanceOf(AuditStub::class, $model->audits()->getRelated());
     }
 }
