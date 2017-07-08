@@ -35,11 +35,11 @@ class Audited
     public $driver;
 
     /**
-     * The report response.
+     * The Audit model.
      *
-     * @var mixed
+     * @var \OwenIt\Auditing\Contracts\Audit|null
      */
-    public $report;
+    public $audit;
 
     /**
      * Create a new Audited event instance.
@@ -52,6 +52,6 @@ class Audited
     {
         $this->model = $model;
         $this->driver = $driver;
-        $this->report = $audit;
+        $this->audit = $audit;
     }
 }
