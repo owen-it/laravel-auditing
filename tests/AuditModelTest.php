@@ -15,10 +15,12 @@
 namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Stubs\AuditableStub;
+use OwenIt\Auditing\Tests\Stubs\UserStub;
 
 class AuditModelTest extends TestCase
 {
@@ -237,5 +239,34 @@ EOF;
 EOF;
 
         $this->assertEquals($expected, $modified);
+    }
+
+    /**
+     * Test Audit user() relation method to PASS (custom keys).
+     *
+     * @return void
+     */
+    public function testUserPassCustomKeys()
+    {
+        $audit = Mockery::mock(Audit::class)
+            ->makePartial();
+
+        Config::set('audit.user.model', UserStub::class);
+        Config::set('audit.user.primary_key', 'pk_id');
+        Config::set('audit.user.foreign_key', 'fk_id');
+
+        $this->assertInstanceOf(UserStub::class, $audit->user()->getRelated());
+
+        // Up to Laravel 5.3, the ownerKey attribute was called otherKey
+        if (method_exists($audit->user(), 'getOtherKey')) {
+            $this->assertEquals('pk_id', $audit->user()->getOtherKey());
+        }
+
+        // From Laravel 5.4 onward, the otherKey attribute was renamed to ownerKey
+        if (method_exists($audit->user(), 'getOwnerKey')) {
+            $this->assertEquals('pk_id', $audit->user()->getOwnerKey());
+        }
+
+        $this->assertEquals('fk_id', $audit->user()->getForeignKey());
     }
 }

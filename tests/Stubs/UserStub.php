@@ -14,9 +14,10 @@
 
 namespace OwenIt\Auditing\Tests\Stubs;
 
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\UserResolver;
 
-class UserResolverStub implements UserResolver
+class UserStub extends Model implements UserResolver
 {
     /**
      * {@inheritdoc}

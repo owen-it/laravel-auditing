@@ -20,6 +20,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Contracts\AuditDriver;
 use OwenIt\Auditing\Contracts\Auditor as AuditorContract;
 use OwenIt\Auditing\Drivers\Database;
+use OwenIt\Auditing\Events\Audited;
+use OwenIt\Auditing\Events\Auditing;
 use RuntimeException;
 
 class Auditor extends Manager implements AuditorContract
@@ -82,7 +84,7 @@ class Auditor extends Manager implements AuditorContract
         }
 
         $this->app->make('events')->fire(
-            new Events\Audited($model, $driver, $audit)
+            new Audited($model, $driver, $audit)
         );
     }
 
@@ -107,7 +109,7 @@ class Auditor extends Manager implements AuditorContract
     protected function fireAuditingEvent(AuditableContract $model, AuditDriver $driver)
     {
         return $this->app->make('events')->until(
-            new Events\Auditing($model, $driver)
+            new Auditing($model, $driver)
         ) !== false;
     }
 }
