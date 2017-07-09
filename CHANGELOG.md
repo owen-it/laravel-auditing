@@ -1,4 +1,4 @@
-## v4.1.0 (2017-07-??)
+## v4.1.0 (2017-07-09)
 ### Added
 - Implemented Audit contract, enabling classes to extend other model types ([#211](https://github.com/owen-it/laravel-auditing/issues/211))
 - The `updated_at` attribute is now part of the Audit model. Don't forget to update your `audits` table!
