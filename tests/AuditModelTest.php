@@ -242,11 +242,11 @@ EOF;
     }
 
     /**
-     * Test Audit user() relation method to PASS.
+     * Test Audit user() relation method to PASS (custom keys).
      *
      * @return void
      */
-    public function testUserPass()
+    public function testUserPassCustomKeys()
     {
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
