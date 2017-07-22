@@ -1,3 +1,11 @@
+## v4.1.1 (2017-07-22)
+### Changed
+- [Audit] Improve test coverage
+
+### Fixed
+- [composer] stricter dependency version support ([#269](https://github.com/owen-it/laravel-auditing/pull/269))
+- [Audit] Make sure the User relation is set before fetching attributes ([#276](https://github.com/owen-it/laravel-auditing/pull/276))
+
 ## v4.1.0 (2017-07-09)
 ### Added
 - Implemented Audit contract, enabling classes to extend other model types ([#211](https://github.com/owen-it/laravel-auditing/issues/211))
