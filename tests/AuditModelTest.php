@@ -14,7 +14,6 @@
 
 namespace OwenIt\Auditing\Tests;
 
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
