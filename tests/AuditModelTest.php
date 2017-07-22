@@ -181,7 +181,6 @@ class AuditModelTest extends TestCase
             'user_email'       => 'bob@example.com',
             'user_name'        => 'Bob',
         ], $metadata);
-
     }
 
     /**
