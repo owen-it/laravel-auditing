@@ -22,6 +22,15 @@ class UserStub extends Model implements UserResolver
     /**
      * {@inheritdoc}
      */
+    protected $attributes = [
+        'id'    => 123,
+        'email' => 'bob@example.com',
+        'name'  => 'Bob',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
     public static function resolveId()
     {
         return rand(1, 256);

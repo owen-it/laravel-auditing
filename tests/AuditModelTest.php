@@ -28,21 +28,19 @@ class AuditModelTest extends TestCase
      * Set test attributes to an Audit instance.
      *
      * @param Audit $audit
+     * @param bool  $withUser
      *
      * @return void
      */
-    private function setAuditTestAttributes(Audit $audit)
+    private function setAuditTestAttributes(Audit $audit, $withUser = true)
     {
-        $now = Carbon::now();
-
         $audit->id = 1;
         $audit->event = 'created';
         $audit->url = 'http://example.com/create';
         $audit->ip_address = '127.0.0.1';
         $audit->user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0';
-        $audit->created_at = $now;
-        $audit->updated_at = $now;
-        $audit->user_id = 1;
+        $audit->created_at = '2012-06-14 15:03:00';
+        $audit->updated_at = '2012-06-14 15:03:00';
         $audit->new_values = [
             'title'     => 'How To Audit Eloquent Models',
             'content'   => 'First step: install the laravel-auditing package.',
@@ -53,36 +51,74 @@ class AuditModelTest extends TestCase
             'content'   => 'This is a draft.',
             'published' => 0,
         ];
+
+        $audit->setRelation('user', $withUser ? new UserStub() : null);
     }
 
     /**
-     * Test Audit resolveData method to PASS.
+     * Test Audit resolveData method to PASS (with User).
      *
      * @return void
      */
-    public function testResolveDataPass()
+    public function testResolveDataPassWithUser()
     {
         $audit = new Audit();
         $this->setAuditTestAttributes($audit);
 
         $data = $audit->resolveData();
 
+        $this->assertCount(16, $data);
+
+        $this->assertArraySubset([
+            'audit_id'         => 1,
+            'audit_event'      => 'created',
+            'audit_url'        => 'http://example.com/create',
+            'audit_ip_address' => '127.0.0.1',
+            'audit_user_agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0',
+            'audit_created_at' => '2012-06-14 15:03:00',
+            'audit_updated_at' => '2012-06-14 15:03:00',
+            'user_id'          => 123,
+            'user_email'       => 'bob@example.com',
+            'user_name'        => 'Bob',
+            'new_title'        => 'How To Audit Eloquent Models',
+            'new_content'      => 'First step: install the laravel-auditing package.',
+            'new_published'    => 1,
+            'old_title'        => 'How to audit models',
+            'old_content'      => 'This is a draft.',
+            'old_published'    => 0,
+        ], $data);
+    }
+
+    /**
+     * Test Audit resolveData method to PASS (without User).
+     *
+     * @return void
+     */
+    public function testResolveDataPassWithoutUser()
+    {
+        $audit = new Audit();
+        $this->setAuditTestAttributes($audit, false);
+
+        $data = $audit->resolveData();
+
         $this->assertCount(14, $data);
 
-        $this->assertArrayHasKey('audit_id', $data);
-        $this->assertArrayHasKey('audit_event', $data);
-        $this->assertArrayHasKey('audit_url', $data);
-        $this->assertArrayHasKey('audit_ip_address', $data);
-        $this->assertArrayHasKey('audit_user_agent', $data);
-        $this->assertArrayHasKey('audit_created_at', $data);
-        $this->assertArrayHasKey('audit_updated_at', $data);
-        $this->assertArrayHasKey('user_id', $data);
-        $this->assertArrayHasKey('new_title', $data);
-        $this->assertArrayHasKey('new_content', $data);
-        $this->assertArrayHasKey('new_published', $data);
-        $this->assertArrayHasKey('old_title', $data);
-        $this->assertArrayHasKey('old_content', $data);
-        $this->assertArrayHasKey('old_published', $data);
+        $this->assertArraySubset([
+            'audit_id'         => 1,
+            'audit_event'      => 'created',
+            'audit_url'        => 'http://example.com/create',
+            'audit_ip_address' => '127.0.0.1',
+            'audit_user_agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0',
+            'audit_created_at' => '2012-06-14 15:03:00',
+            'audit_updated_at' => '2012-06-14 15:03:00',
+            'user_id'          => null,
+            'new_title'        => 'How To Audit Eloquent Models',
+            'new_content'      => 'First step: install the laravel-auditing package.',
+            'new_published'    => 1,
+            'old_title'        => 'How to audit models',
+            'old_content'      => 'This is a draft.',
+            'old_published'    => 0,
+        ], $data);
     }
 
     /**
@@ -119,11 +155,11 @@ class AuditModelTest extends TestCase
     }
 
     /**
-     * Test Audit getMetadata method to PASS (default).
+     * Test Audit getMetadata method to PASS (default, with User).
      *
      * @return void
      */
-    public function testGetMetadataPassDefault()
+    public function testGetMetadataPassDefaultWithUser()
     {
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
@@ -132,24 +168,57 @@ class AuditModelTest extends TestCase
 
         $metadata = $audit->getMetadata();
 
-        $this->assertCount(8, $metadata);
+        $this->assertCount(10, $metadata);
 
-        $this->assertArrayHasKey('audit_id', $metadata);
-        $this->assertArrayHasKey('audit_event', $metadata);
-        $this->assertArrayHasKey('audit_url', $metadata);
-        $this->assertArrayHasKey('audit_ip_address', $metadata);
-        $this->assertArrayHasKey('audit_ip_address', $metadata);
-        $this->assertArrayHasKey('audit_created_at', $metadata);
-        $this->assertArrayHasKey('audit_updated_at', $metadata);
-        $this->assertArrayHasKey('user_id', $metadata);
+        $this->assertArraySubset([
+            'audit_id'         => 1,
+            'audit_event'      => 'created',
+            'audit_url'        => 'http://example.com/create',
+            'audit_ip_address' => '127.0.0.1',
+            'audit_user_agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0',
+            'audit_created_at' => '2012-06-14 15:03:00',
+            'audit_updated_at' => '2012-06-14 15:03:00',
+            'user_id'          => 123,
+            'user_email'       => 'bob@example.com',
+            'user_name'        => 'Bob',
+        ], $metadata);
+
     }
 
     /**
-     * Test Audit getMetadata method to PASS (JSON).
+     * Test Audit getMetadata method to PASS (default, without User).
      *
      * @return void
      */
-    public function testGetMetadataPassJson()
+    public function testGetMetadataPassDefaultWithoutUser()
+    {
+        $audit = Mockery::mock(Audit::class)
+            ->makePartial();
+
+        $this->setAuditTestAttributes($audit, false);
+
+        $metadata = $audit->getMetadata();
+
+        $this->assertCount(8, $metadata);
+
+        $this->assertArraySubset([
+            'audit_id'         => 1,
+            'audit_event'      => 'created',
+            'audit_url'        => 'http://example.com/create',
+            'audit_ip_address' => '127.0.0.1',
+            'audit_user_agent' => 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0',
+            'audit_created_at' => '2012-06-14 15:03:00',
+            'audit_updated_at' => '2012-06-14 15:03:00',
+            'user_id'          => null,
+        ], $metadata);
+    }
+
+    /**
+     * Test Audit getMetadata method to PASS (JSON, with User).
+     *
+     * @return void
+     */
+    public function testGetMetadataPassJsonWithUser()
     {
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
@@ -158,7 +227,37 @@ class AuditModelTest extends TestCase
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
-        $now = Carbon::now()->toDateTimeString();
+        $expected = <<< EOF
+{
+    "audit_id": 1,
+    "audit_event": "created",
+    "audit_url": "http:\/\/example.com\/create",
+    "audit_ip_address": "127.0.0.1",
+    "audit_user_agent": "Mozilla\/5.0 (X11; Linux x86_64; rv:53.0) Gecko\/20100101 Firefox\/53.0",
+    "audit_created_at": "2012-06-14 15:03:00",
+    "audit_updated_at": "2012-06-14 15:03:00",
+    "user_id": 123,
+    "user_email": "bob@example.com",
+    "user_name": "Bob"
+}
+EOF;
+
+        $this->assertEquals($expected, $metadata);
+    }
+
+    /**
+     * Test Audit getMetadata method to PASS (JSON, without User).
+     *
+     * @return void
+     */
+    public function testGetMetadataPassJsonWithoutUser()
+    {
+        $audit = Mockery::mock(Audit::class)
+            ->makePartial();
+
+        $this->setAuditTestAttributes($audit, false);
+
+        $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
         $expected = <<< EOF
 {
@@ -167,9 +266,9 @@ class AuditModelTest extends TestCase
     "audit_url": "http:\/\/example.com\/create",
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Mozilla\/5.0 (X11; Linux x86_64; rv:53.0) Gecko\/20100101 Firefox\/53.0",
-    "audit_created_at": "$now",
-    "audit_updated_at": "$now",
-    "user_id": 1
+    "audit_created_at": "2012-06-14 15:03:00",
+    "audit_updated_at": "2012-06-14 15:03:00",
+    "user_id": null
 }
 EOF;
 
