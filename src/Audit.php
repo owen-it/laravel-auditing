@@ -92,8 +92,8 @@ trait Audit
             'user_id'          => $this->getAttribute(Config::get('audit.user.foreign_key', 'user_id')),
         ];
 
-        if ($user = $this->getRelation('user')) {
-            foreach ($user->attributesToArray() as $attribute => $value) {
+        if ($this->user) {
+            foreach ($this->user->attributesToArray() as $attribute => $value) {
                 $this->data['user_'.$attribute] = $value;
             }
         }
