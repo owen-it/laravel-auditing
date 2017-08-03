@@ -1,3 +1,10 @@
+## v4.1.2 (2017-08-03)
+### Changed
+- [GitHub] Updated issue template
+
+### Fixed
+- [Audit] Simplify User relation check ([#282](https://github.com/owen-it/laravel-auditing/issues/282))
+
 ## v4.1.1 (2017-07-22)
 ### Changed
 - [Audit] Improve test coverage
