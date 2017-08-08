@@ -16,7 +16,7 @@ Retrieving the audit trail for a piece of data is straightforward, allowing for 
 
 ## Official Documentation
 
-Package documentation can be found on the [Laravel Auditing website](http://laravel-auditing.herokuapp.com) or at the [Documentation Repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/README.md).
+Package documentation can be found on the [Laravel Auditing website](http://www.laravel-auditing.com) or at the [Documentation Repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/README.md).
 
 ## Contributing
 
