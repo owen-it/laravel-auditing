@@ -70,7 +70,6 @@ class AuditTableCommand extends Command
         );
 
         $this->files->copy($source, $destination);
-        $this->files->put($fullPath, $this->files->get(__DIR__.'/stubs/audit_relations.stub'));
 
         $this->info('Migration created successfully!');
 
