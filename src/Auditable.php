@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\UserResolver;
-use OwenIt\Auditing\Models\Audit as AuditModel;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -52,13 +51,14 @@ trait Auditable
     }
 
     /**
-     * Auditable Model audits.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * {@inheritdoc}
      */
     public function audits()
     {
-        return $this->morphMany(AuditModel::class, 'auditable');
+        return $this->morphMany(
+            Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class),
+            'auditable'
+        );
     }
 
     /**
@@ -205,21 +205,22 @@ trait Auditable
 
         $this->{$method}($old, $new);
 
-        return $this->transformAudit(
-            [
-                'old_values'             => $old,
-                'new_values'             => $new,
-                'event'                  => $this->auditEvent,
-                'auditable_id'           => $this->getKey(),
-                'auditable_type'         => $this->getMorphClass(),
-                'user_id'                => $this->resolveUserId(),
-                'url'                    => $this->resolveUrl(),
-                'ip_address'             => $this->resolveIpAddress(),
-                'user_agent'             => $this->resolveUserAgent(),
-                'related_relations_json' => json_encode($related_relations_arr),
-                'created_at'             => $this->freshTimestamp(),
-            ]
-        );
+        $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
+
+        return $this->transformAudit([
+            'old_values'     => $old,
+            'new_values'     => $new,
+            'event'          => $this->auditEvent,
+            'auditable_id'   => $this->getKey(),
+            'auditable_type' => $this->getMorphClass(),
+            'user_id'                => $this->resolveUserId(),
+            $foreignKey      => $this->resolveUserId(),
+            'url'            => $this->resolveUrl(),
+            'ip_address'     => $this->resolveIpAddress(),
+            'user_agent'     => $this->resolveUserAgent(),
+            'related_relations_json' => json_encode($related_relations_arr),
+            'created_at'             => $this->freshTimestamp(),
+        ]);
     }
 
     public function generateRelatedRelations()
@@ -267,7 +268,6 @@ trait Auditable
 
         return $related_relations_arr;
     }
-
     /**
      * {@inheritdoc}
      */

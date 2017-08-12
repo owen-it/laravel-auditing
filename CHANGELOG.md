@@ -1,3 +1,27 @@
+## v4.1.2 (2017-08-03)
+### Changed
+- [GitHub] Updated issue template
+
+### Fixed
+- [Audit] Simplify User relation check ([#282](https://github.com/owen-it/laravel-auditing/issues/282))
+
+## v4.1.1 (2017-07-22)
+### Changed
+- [Audit] Improve test coverage
+
+### Fixed
+- [composer] stricter dependency version support ([#269](https://github.com/owen-it/laravel-auditing/pull/269))
+- [Audit] Make sure the User relation is set before fetching attributes ([#276](https://github.com/owen-it/laravel-auditing/pull/276))
+
+## v4.1.0 (2017-07-09)
+### Added
+- Implemented Audit contract, enabling classes to extend other model types ([#211](https://github.com/owen-it/laravel-auditing/issues/211))
+- The `updated_at` attribute is now part of the Audit model. Don't forget to update your `audits` table!
+- Added Laravel 5.5 Auto-Discovery support
+
+### Fixed
+- Allow the User primary and foreign key to be specified in the configuration ([#251](https://github.com/owen-it/laravel-auditing/issues/251))
+
 ## v4.0.7 (2017-06-04)
 ### Added
 - GitHub issue template file

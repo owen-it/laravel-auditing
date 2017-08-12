@@ -14,15 +14,24 @@
 
 namespace OwenIt\Auditing\Tests\Stubs;
 
-use OwenIt\Auditing\Contracts\UserResolver;
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Audit as AuditTrait;
+use OwenIt\Auditing\Contracts\Audit as AuditContract;
 
-class UserResolverStub implements UserResolver
+class AuditStub extends Model implements AuditContract
 {
+    use AuditTrait;
+
     /**
      * {@inheritdoc}
      */
-    public static function resolveId()
-    {
-        return rand(1, 256);
-    }
+    protected $guarded = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $casts = [
+        'old_values' => 'json',
+        'new_values' => 'json',
+    ];
 }

@@ -14,9 +14,9 @@
 
 namespace OwenIt\Auditing\Events;
 
+use OwenIt\Auditing\Contracts\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
-use OwenIt\Auditing\Models\Audit;
 
 class Audited
 {
@@ -35,23 +35,23 @@ class Audited
     public $driver;
 
     /**
-     * The report response.
+     * The Audit model.
      *
-     * @var mixed
+     * @var \OwenIt\Auditing\Contracts\Audit|null
      */
-    public $report;
+    public $audit;
 
     /**
      * Create a new Audited event instance.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable   $model
      * @param \OwenIt\Auditing\Contracts\AuditDriver $driver
-     * @param \OwenIt\Auditing\Models\Audit          $audit
+     * @param \OwenIt\Auditing\Contracts\Audit       $audit
      */
     public function __construct(Auditable $model, AuditDriver $driver, Audit $audit = null)
     {
         $this->model = $model;
         $this->driver = $driver;
-        $this->report = $audit;
+        $this->audit = $audit;
     }
 }

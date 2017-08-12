@@ -35,7 +35,7 @@ class InstallCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $this->info('Publishing the config files');
         Artisan::call('vendor:publish', [

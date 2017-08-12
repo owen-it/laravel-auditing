@@ -60,29 +60,20 @@ class AuditTableCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
-        $fullPath = $this->createBaseMigration();
+        $source = __DIR__.'/../../database/migrations/audits.stub';
 
-        $this->files->put($fullPath, $this->files->get(__DIR__.'/stubs/audits.stub'));
+        $destination = $this->laravel['migration.creator']->create(
+            'create_audits_table',
+            $this->laravel->databasePath().'/migrations'
+        );
+
+        $this->files->copy($source, $destination);
         $this->files->put($fullPath, $this->files->get(__DIR__.'/stubs/audit_relations.stub'));
 
         $this->info('Migration created successfully!');
 
         $this->composer->dumpAutoloads();
-    }
-
-    /**
-     * Create a base migration file for the audits.
-     *
-     * @return string
-     */
-    protected function createBaseMigration()
-    {
-        $name = 'create_audits_table';
-
-        $path = $this->laravel->databasePath().'/migrations';
-
-        return $this->laravel['migration.creator']->create($name, $path);
     }
 }

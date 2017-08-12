@@ -2,10 +2,10 @@
     "name": "owen-it/laravel-auditing",
     "description": "Audit changes of your Eloquent models in Laravel/Lumen",
     "keywords": [
-        "activity",
+        "accountability",
         "audit",
         "auditing",
-        "change",
+        "changes",
         "eloquent",
         "history",
         "log",
@@ -14,7 +14,8 @@
         "laravel",
         "lumen",
         "record",
-        "track"
+        "revision",
+        "tracking"
     ],
     "homepage": "https://laravel-auditing.com",
     "type": "package",
@@ -39,9 +40,9 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/console": "~5.2",
-        "illuminate/database": "~5.2",
-        "illuminate/filesystem": "~5.2"
+        "illuminate/console": "5.2.* || 5.3.* || 5.4.* || 5.5.*",
+        "illuminate/database": "5.2.* || 5.3.* || 5.4.* || 5.5.*",
+        "illuminate/filesystem": "5.2.* || 5.3.* || 5.4.* || 5.5.*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0",
@@ -63,7 +64,12 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "4.0-dev"
+            "dev-master": "4.1-dev"
+        },
+        "laravel": {
+            "providers": [
+                "OwenIt\\Auditing\\AuditingServiceProvider"
+            ]
         }
     }
 }

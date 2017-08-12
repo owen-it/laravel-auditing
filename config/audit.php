@@ -16,16 +16,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Model & Resolver
+    | Audit implementation
     |--------------------------------------------------------------------------
     |
-    | Define the User model class and how to resolve a logged User ID.
+    | Define which Audit model implementation should be used.
+    |
+    */
+
+    'implementation' => OwenIt\Auditing\Models\Audit::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Keys, Model & Resolver
+    |--------------------------------------------------------------------------
+    |
+    | Define the User primary and foreign keys, Eloquent model and ID resolver
+    | class.
     |
     */
 
     'user' => [
-        'model'    => App\User::class,
-        'resolver' => function () {
+        'primary_key' => 'id',
+        'foreign_key' => 'user_id',
+        'model'       => App\User::class,
+        'resolver'    => function () {
             return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
         },
     ],

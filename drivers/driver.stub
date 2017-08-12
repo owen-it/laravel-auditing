@@ -29,7 +29,7 @@ class DummyClass implements AuditDriver
      */
     public function audit(Auditable $model)
     {
-        //
+        // TODO: Change the auto-generated stub
     }
 
     /**
@@ -41,6 +41,6 @@ class DummyClass implements AuditDriver
      */
     public function prune(Auditable $model)
     {
-        //
+        // TODO: Change the auto-generated stub
     }
 }

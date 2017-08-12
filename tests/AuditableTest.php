@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Stubs\AuditableDriverStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableExcludeStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableIncludeStub;
@@ -27,7 +28,8 @@ use OwenIt\Auditing\Tests\Stubs\AuditableStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableThresholdStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTimestampStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableTransformStub;
-use OwenIt\Auditing\Tests\Stubs\UserResolverStub;
+use OwenIt\Auditing\Tests\Stubs\AuditStub;
+use OwenIt\Auditing\Tests\Stubs\UserStub;
 use RuntimeException;
 
 class AuditableTest extends TestCase
@@ -145,8 +147,49 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+
+        // Modified Auditable attributes
+        $this->assertCount(3, $auditData['new_values']);
+
         $this->assertArrayHasKey('related_relations_json', $auditData);
-        $this->assertArrayHasKey('created_at', $auditData);
+        $this->assertArrayHasKey('title', $auditData['new_values']);
+        $this->assertArrayHasKey('content', $auditData['new_values']);
+        $this->assertArrayHasKey('published', $auditData['new_values']);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (custom User foreign key).
+     *
+     * @return void
+     */
+    public function testToAuditPassCustomUserForeignKey()
+    {
+        Config::set('audit.user.foreign_key', 'fk_id');
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = new AuditableStub();
+        $this->setAuditableTestAttributes($model);
+
+        $model->setAuditEvent('created');
+
+        $this->assertTrue($model->readyForAuditing());
+
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('fk_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('user_agent', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(3, $auditData['new_values']);
@@ -163,7 +206,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassCustomTransformAudit()
     {
-        Config::set('audit.user.resolver', UserResolverStub::class);
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableTransformStub();
 
@@ -246,7 +289,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassExcludeAttributes()
     {
-        Config::set('audit.user.resolver', UserResolverStub::class);
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableExcludeStub();
         $this->setAuditableTestAttributes($model);
@@ -337,7 +380,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassVisibleStrictMode()
     {
-        Config::set('audit.user.resolver', UserResolverStub::class);
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableStrictStub();
         $this->setAuditableTestAttributes($model);
@@ -505,5 +548,31 @@ class AuditableTest extends TestCase
         $model = new AuditableThresholdStub();
 
         $this->assertEquals(100, $model->getAuditThreshold());
+    }
+
+    /**
+     * Test Audit implementation to PASS (default).
+     *
+     * @return void
+     */
+    public function testAuditImplementationPassDefault()
+    {
+        $model = new AuditableStub();
+
+        $this->assertInstanceOf(Audit::class, $model->audits()->getRelated());
+    }
+
+    /**
+     * Test Audit implementation to PASS (custom).
+     *
+     * @return void
+     */
+    public function testAuditImplementationPassCustom()
+    {
+        $model = new AuditableStub();
+
+        Config::set('audit.implementation', AuditStub::class);
+
+        $this->assertInstanceOf(AuditStub::class, $model->audits()->getRelated());
     }
 }
