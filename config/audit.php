@@ -80,4 +80,29 @@ return [
     */
 
     'console' => false,
+
+    'relation_hierarchy' => [
+        \App\Waypoint\Models\Property::class => [
+            'hasMany'       =>
+                [
+                    \App\Waypoint\Models\AccessListProperty::class,
+
+                ],
+            'belongsTo'     => [],
+            'belongsToMany' => \App\Waypoint\Models\AccessList::class,
+
+        ],
+        \App\Waypoint\Models\User::class => [
+            'hasMany'       =>
+                [
+                    \App\Waypoint\Models\AccessListUser::class,
+                    \App\Waypoint\Models\AdvancedVariance::class,
+
+                ],
+            'belongsTo'     => [],
+            'belongsToMany' => \App\Waypoint\Models\AccessList::class,
+
+        ],
+    ]
+
 ];

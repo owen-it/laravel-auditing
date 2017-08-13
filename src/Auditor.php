@@ -86,6 +86,15 @@ class Auditor extends Manager implements AuditorContract
         $this->app->make('events')->fire(
             new Audited($model, $driver, $audit)
         );
+
+        /**
+         * access relation_hierarchy.
+         * If get_class($model) is a leaf
+         *      foreach instance(s) of parent(s)
+         *          parent->audit
+         *          parent->related_audit_id = $audit->id
+         *
+         */
     }
 
     /**
@@ -112,4 +121,14 @@ class Auditor extends Manager implements AuditorContract
             new Auditing($model, $driver)
         ) !== false;
     }
+
+    protected function get_inverted_relation_hierarchy($relation_hierarchy_arr = null)
+    {
+        if($relation_hierarchy_arr === null)
+        {
+            // feed me
+            return [];
+        }
+    }
+
 }
