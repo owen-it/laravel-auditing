@@ -81,28 +81,56 @@ return [
 
     'console' => false,
 
-    'relation_hierarchy' => [
-        \App\Waypoint\Models\Property::class => [
-            'hasMany'       =>
-                [
-                    \App\Waypoint\Models\AccessListProperty::class,
-
-                ],
-            'belongsTo'     => [],
-            'belongsToMany' => \App\Waypoint\Models\AccessList::class,
-
-        ],
-        \App\Waypoint\Models\User::class => [
-            'hasMany'       =>
-                [
-                    \App\Waypoint\Models\AccessListUser::class,
-                    \App\Waypoint\Models\AdvancedVariance::class,
-
-                ],
-            'belongsTo'     => [],
-            'belongsToMany' => \App\Waypoint\Models\AccessList::class,
-
-        ],
-    ]
+    //'relation_hierarchy' => [
+    //    \App\Waypoint\Models\Property::class => [
+    //        [
+    //            'property' => 'accessLists',
+    //            'method' => null,
+    //            'yields' => \App\Waypoint\Models\AccessList::class,
+    //            'relater' => 'properyy'
+    //        ],
+    //        [
+    //            'property' => 'bomaClientMappingGroups',
+    //            'method' => null,
+    //            'yields' => \App\Waypoint\Models\AccessList::class,
+    //            'relater' => 'property'
+    //
+    //        ]
+    //    ],
+    //    \App\Waypoint\Models\User::class     => [
+    //        [
+    //            'property' => 'propertyDetails',
+    //            'method' => null,
+    //            'yields' => \App\Waypoint\Models\Property::class,
+    //            'relater' => 'user'
+    //        ],
+    //        [
+    //            'property' => 'propertyGroups',
+    //            'method' => null,
+    //            'yields' => \App\Waypoint\Models\PropertyGroup::class,
+    //            'relater' => 'user'
+    //        ],
+    //        [
+    //            'property' => 'relatedUsers',
+    //            'method' => null,
+    //            'yields' => \App\Waypoint\Models\RelatedUser::class,
+    //            'relater' => 'user'
+    //        ],
+    //    ],
+    //    \App\Waypoint\Models\BomaClientCategory::class     => [
+    //        [
+    //            'property' => 'client',
+    //            'method' => null,
+    //            'yields' => \App\Waypoint\Models\Client::class,
+    //            'relater' => 'bomaClientCategories'
+    //        ],
+    //        [
+    //            'property' => 'opportunities',
+    //            'method' => null,
+    //            'yields' => \App\Waypoint\Models\Opportunity::class,
+    //            'relater' => 'bomaClientCategory'
+    //        ],
+    //    ],
+    //]
 
 ];

@@ -46,7 +46,7 @@ interface Auditable
      *
      * @return array
      */
-    public function toAudit();
+    public function toAudit($uuid=null, $is_a_related_object=false);
 
     /**
      * Get the (Auditable) attributes included in audit.

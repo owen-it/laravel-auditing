@@ -23,9 +23,9 @@ class Database implements AuditDriver
     /**
      * {@inheritdoc}
      */
-    public function audit(Auditable $model)
+    public function audit(Auditable $model, $uuid = null, $is_a_related_object = false)
     {
-        return Audit::create($model->toAudit());
+        return Audit::create($model->toAudit($uuid, $is_a_related_object));
     }
 
     /**
