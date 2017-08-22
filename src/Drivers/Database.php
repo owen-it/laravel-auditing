@@ -14,9 +14,9 @@
 
 namespace OwenIt\Auditing\Drivers;
 
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
-use Illuminate\Support\Facades\Config;
 
 class Database implements AuditDriver
 {
@@ -29,7 +29,7 @@ class Database implements AuditDriver
         
         return $class::create($model->toAudit());
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -37,19 +37,19 @@ class Database implements AuditDriver
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
             $total = $model->audits()->count();
-            
+
             $forRemoval = ($total - $threshold);
-            
+
             if ($forRemoval > 0) {
                 $model->audits()
                     ->orderBy('created_at', 'asc')
                     ->limit($forRemoval)
                     ->delete();
-                
+
                 return true;
             }
         }
-        
+
         return false;
     }
 }
