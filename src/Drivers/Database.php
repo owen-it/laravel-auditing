@@ -26,9 +26,10 @@ class Database implements AuditDriver
     public function audit(Auditable $model)
     {
         $class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
+        
         return $class::create($model->toAudit());
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -36,19 +37,19 @@ class Database implements AuditDriver
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
             $total = $model->audits()->count();
-
+            
             $forRemoval = ($total - $threshold);
-
+            
             if ($forRemoval > 0) {
                 $model->audits()
                     ->orderBy('created_at', 'asc')
                     ->limit($forRemoval)
                     ->delete();
-
+                
                 return true;
             }
         }
-
+        
         return false;
     }
 }
