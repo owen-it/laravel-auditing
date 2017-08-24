@@ -14,6 +14,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
@@ -91,16 +92,6 @@ trait Auditable
                 $this->auditableExclusions[] = static::DELETED_AT;
             }
         }
-
-        // Valid attributes are all those that made it out of the exclusion array
-        $attributes = array_except($this->attributes, $this->auditableExclusions);
-
-        foreach ($attributes as $attribute => $value) {
-            // Apart from null, non scalar values will be excluded
-            if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
-                $this->auditableExclusions[] = $attribute;
-            }
-        }
     }
 
     /**
@@ -132,15 +123,22 @@ trait Auditable
     {
         foreach ($this->getDirty() as $attribute => $value) {
             if (is_array($value)) {
-                foreach ($value as $attr => $val) {
-                    $old[$attribute][$attr] = array_get($this->original[$attribute], $attr);
-                    $new[$attribute][$attr] = array_get($this->attributes[$attribute], $attr);
-                }
+                $this->recursiveUpdatedAttributes($value, $attribute, $old, $new);
             } else {
                 if ($this->isAttributeAuditable($attribute)) {
                     $old[$attribute] = array_get($this->original, $attribute);
                     $new[$attribute] = array_get($this->attributes, $attribute);
                 }
+            }
+        }
+    }
+
+    function recursiveUpdatedAttributes(array $value, $attribute, &$old, &$new)
+    {
+        foreach ($value as $attr => $val) {
+            if ($this->isAttributeAuditable($attribute)) {
+                $old[$attribute][$attr] = isset($this->original[$attribute][$attr]) ? array_get($this->original[$attribute], $attr) : null;
+                $new[$attribute][$attr] = array_get($this->attributes[$attribute], $attr);
             }
         }
     }
@@ -194,7 +192,7 @@ trait Auditable
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+        $method = 'audit' . Str::studly($this->auditEvent) . 'Attributes';
 
         if (!method_exists($this, $method)) {
             throw new RuntimeException(sprintf(
@@ -214,15 +212,15 @@ trait Auditable
         $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
 
         return $this->transformAudit([
-            'old_values'     => $old,
-            'new_values'     => $new,
-            'event'          => $this->auditEvent,
-            'auditable_id'   => $this->getKey(),
+            'old_values' => $old,
+            'new_values' => $new,
+            'event' => $this->auditEvent,
+            'auditable_id' => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            $foreignKey      => $this->resolveUserId(),
-            'url'            => $this->resolveUrl(),
-            'ip_address'     => $this->resolveIpAddress(),
-            'user_agent'     => $this->resolveUserAgent(),
+            $foreignKey => $this->resolveUserId(),
+            'url' => $this->resolveUrl(),
+            'ip_address' => $this->resolveIpAddress(),
+            'user_agent' => $this->resolveUserAgent(),
         ]);
     }
 
@@ -360,7 +358,7 @@ trait Auditable
     public static function isAuditingEnabled()
     {
         if (App::runningInConsole()) {
-            return (bool) Config::get('audit.console', false);
+            return (bool)Config::get('audit.console', false);
         }
 
         return true;
@@ -371,7 +369,7 @@ trait Auditable
      */
     public function getAuditInclude()
     {
-        return isset($this->auditInclude) ? (array) $this->auditInclude : [];
+        return isset($this->auditInclude) ? (array)$this->auditInclude : [];
     }
 
     /**
@@ -379,7 +377,7 @@ trait Auditable
      */
     public function getAuditExclude()
     {
-        return isset($this->auditExclude) ? (array) $this->auditExclude : [];
+        return isset($this->auditExclude) ? (array)$this->auditExclude : [];
     }
 
     /**
@@ -387,7 +385,7 @@ trait Auditable
      */
     public function getAuditStrict()
     {
-        return isset($this->auditStrict) ? (bool) $this->auditStrict : false;
+        return isset($this->auditStrict) ? (bool)$this->auditStrict : false;
     }
 
     /**
@@ -395,7 +393,7 @@ trait Auditable
      */
     public function getAuditTimestamps()
     {
-        return isset($this->auditTimestamps) ? (bool) $this->auditTimestamps : false;
+        return isset($this->auditTimestamps) ? (bool)$this->auditTimestamps : false;
     }
 
     /**
