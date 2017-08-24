@@ -191,7 +191,7 @@ trait Auditable
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $method = 'audit' . Str::studly($this->auditEvent) . 'Attributes';
+        $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
 
         if (!method_exists($this, $method)) {
             throw new RuntimeException(sprintf(
