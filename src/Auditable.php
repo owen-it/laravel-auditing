@@ -91,16 +91,6 @@ trait Auditable
                 $this->auditableExclusions[] = static::DELETED_AT;
             }
         }
-
-        // Valid attributes are all those that made it out of the exclusion array
-        $attributes = array_except($this->attributes, $this->auditableExclusions);
-
-        foreach ($attributes as $attribute => $value) {
-            // Apart from null, non scalar values will be excluded
-            if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
-                $this->auditableExclusions[] = $attribute;
-            }
-        }
     }
 
     /**
@@ -131,9 +121,23 @@ trait Auditable
     protected function auditUpdatedAttributes(array &$old, array &$new)
     {
         foreach ($this->getDirty() as $attribute => $value) {
+            if (is_array($value)) {
+                $this->recursiveUpdatedAttributes($value, $attribute, $old, $new);
+            } else {
+                if ($this->isAttributeAuditable($attribute)) {
+                    $old[$attribute] = array_get($this->original, $attribute);
+                    $new[$attribute] = array_get($this->attributes, $attribute);
+                }
+            }
+        }
+    }
+
+    public function recursiveUpdatedAttributes(array $value, $attribute, &$old, &$new)
+    {
+        foreach ($value as $attr => $val) {
             if ($this->isAttributeAuditable($attribute)) {
-                $old[$attribute] = array_get($this->original, $attribute);
-                $new[$attribute] = array_get($this->attributes, $attribute);
+                $old[$attribute][$attr] = isset($this->original[$attribute][$attr]) ? array_get($this->original[$attribute], $attr) : null;
+                $new[$attribute][$attr] = array_get($this->attributes[$attribute], $attr);
             }
         }
     }
@@ -207,15 +211,15 @@ trait Auditable
         $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
 
         return $this->transformAudit([
-            'old_values'     => $old,
-            'new_values'     => $new,
-            'event'          => $this->auditEvent,
-            'auditable_id'   => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $foreignKey      => $this->resolveUserId(),
-            'url'            => $this->resolveUrl(),
-            'ip_address'     => $this->resolveIpAddress(),
-            'user_agent'     => $this->resolveUserAgent(),
+            'old_values'        => $old,
+            'new_values'        => $new,
+            'event'             => $this->auditEvent,
+            'auditable_id'      => $this->getKey(),
+            'auditable_type'    => $this->getMorphClass(),
+            $foreignKey         => $this->resolveUserId(),
+            'url'               => $this->resolveUrl(),
+            'ip_address'        => $this->resolveIpAddress(),
+            'user_agent'        => $this->resolveUserAgent(),
         ]);
     }
 
