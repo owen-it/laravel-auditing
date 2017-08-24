@@ -133,8 +133,8 @@ trait Auditable
         foreach ($this->getDirty() as $attribute => $value) {
             if (is_array($value)) {
                 foreach ($value as $attr => $val) {
-                    $old[$attribute][$attr] = array_get($this->original['settings'], $attr);
-                    $new[$attribute][$attr] = array_get($this->attributes['settings'], $attr);
+                    $old[$attribute][$attr] = array_get($this->original[$attribute], $attr);
+                    $new[$attribute][$attr] = array_get($this->attributes[$attribute], $attr);
                 }
             } else {
                 if ($this->isAttributeAuditable($attribute)) {
