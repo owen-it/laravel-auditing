@@ -131,9 +131,16 @@ trait Auditable
     protected function auditUpdatedAttributes(array &$old, array &$new)
     {
         foreach ($this->getDirty() as $attribute => $value) {
-            if ($this->isAttributeAuditable($attribute)) {
-                $old[$attribute] = array_get($this->original, $attribute);
-                $new[$attribute] = array_get($this->attributes, $attribute);
+            if (is_array($value)) {
+                foreach ($value as $attr => $val) {
+                    $old[$attribute][$attr] = array_get($this->original['settings'], $attr);
+                    $new[$attribute][$attr] = array_get($this->attributes['settings'], $attr);
+                }
+            } else {
+                if ($this->isAttributeAuditable($attribute)) {
+                    $old[$attribute] = array_get($this->original, $attribute);
+                    $new[$attribute] = array_get($this->attributes, $attribute);
+                }
             }
         }
     }
