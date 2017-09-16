@@ -39,9 +39,7 @@ return [
         'primary_key' => 'id',
         'foreign_key' => 'user_id',
         'model'       => App\User::class,
-        'resolver'    => function () {
-            return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
-        },
+        'resolver'    => App\User::class,
     ],
 
     /*
