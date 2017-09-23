@@ -82,28 +82,35 @@ class Auditor extends Manager implements AuditorContract
         }
 
         $uuid = null;
-        $list_of_methods = [];
+        $list_of_properties = [];
         foreach (config('audit.relation_hierarchy', []) as $class_type_to_audit => $local_list_of_methods )
         {
-            if ($model instanceof $class_type_to_audit)
+            foreach ($local_list_of_methods as $local_method)
             {
-                $uuid = rand();
-                $list_of_methods = $local_list_of_methods;
-                break;
+                if ($model instanceof $class_type_to_audit)
+                {
+                    $list_of_properties[] = $local_method['property'];
+                        $uuid = (string) Uuid::generate();
+
+                }
+                elseif ($model instanceof $class_type_to_audit)
+                {
+                    if ($model instanceof $local_method['yields'])
+                    {
+                        $list_of_properties[] = $local_method['relator'];
+                        $uuid = (string) Uuid::generate();
+                    }
+                }
             }
         }
 
-        /**
-         * add code here to access inverted config('audit.relation_hierarchy', [])
-         * to see if this is a related object with respect to some relater obj
-         */
         if ($audit = $driver->audit($model, $uuid, false)) {
             $driver->prune($model);
         }
 
         if ($uuid)
         {
-            foreach ($list_of_methods as $method_name)
+            foreach ($list_of_properties as $method_name)
             {
                 $x = $model->$method_name;
                 if ($x instanceof Collection)
@@ -111,29 +118,28 @@ class Auditor extends Manager implements AuditorContract
                     foreach ($x as $related_model)
                     {
                         $xx = $related_model;
-                        if ( ! $related_audit = $driver->audit($related_model, $uuid,true))
+                        if ( ! $related_audit = $driver->audit($related_model, $uuid, true))
                         {
                             throw new RuntimeException(
-                                'related audit failed. Check config and ensure that class ' . get_class($related_model) . ' (which is related to  ' . get_class(
-                                    $model
-                                ) . ')has the auditable trait.'
+                                'related audit failed. Check config and ensure that class ' . get_class($related_model) .
+                                ' (which is related to  ' . get_class($model) . ') has the auditable trait.'
                             );
                         }
                     }
                 }
                 elseif ($x)
                 {
-                    if ( ! $related_audit = $driver->audit($related_model, $uuid, true))
+                    if ( ! $related_audit = $driver->audit($x, $uuid, true))
                     {
                         throw new RuntimeException(
-                            'related audit failed. Check config and ensure that class ' . get_class($related_model) . ' (which is related to  ' . get_class(
-                                $model
-                            ) . ')has the auditable trait.'
+                            'related audit failed. Check config and ensure that class ' . get_class($x) .
+                            ' (which is related to  ' . get_class($model) . ') has the auditable trait.'
                         );
                     }
                 }
             }
         }
+
         /**
          * Add code to deal of this is a relatee to some other obj
          *

@@ -62,6 +62,19 @@ trait Auditable
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function relatedAudits()
+    {
+        $xxxx=  $this->morphMany(
+            Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class),
+            'auditable'
+        );
+
+        return $xxxx;
+    }
+
+    /**
      * Update excluded audit attributes.
      *
      * @return void
