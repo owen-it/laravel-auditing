@@ -26,13 +26,6 @@ class RelatedAudits extends Migration
      */
     public function up()
     {
-        Schema::connection(Config::get('audit.drivers.database.connection'))
-            ->table(
-                Config::get('audit.drivers.database.table'),
-                function (Blueprint $table) {
-                    $table->timestamp('updated_at')->nullable();
-                }
-            );
         Schema::connection(
             Config::get('audit.drivers.database.connection'))
                 ->table(
@@ -56,13 +49,6 @@ class RelatedAudits extends Migration
                 Config::get('audit.drivers.database.table'),
                 function (Blueprint $table) {
                     $table->dropColumn('relation_id');
-                }
-            );
-       Schema::connection(Config::get('audit.drivers.database.connection'))
-            ->table(
-                Config::get('audit.drivers.database.table'),
-                function (Blueprint $table) {
-                    $table->dropColumn('updated_at');
                 }
             );
     }

@@ -90,7 +90,7 @@ class Auditor extends Manager implements AuditorContract
                 if ($model instanceof $class_type_to_audit)
                 {
                     $list_of_properties[] = $local_method['property'];
-                        $uuid = (string) Uuid::generate();
+                    $uuid = (string) Uuid::generate();
 
                 }
                 elseif ($model instanceof $class_type_to_audit)
@@ -112,12 +112,11 @@ class Auditor extends Manager implements AuditorContract
         {
             foreach ($list_of_properties as $method_name)
             {
-                $x = $model->$method_name;
-                if ($x instanceof Collection)
+                $method_result = $model->$method_name;
+                if ($method_result instanceof Collection)
                 {
-                    foreach ($x as $related_model)
+                    foreach ($method_result as $related_model)
                     {
-                        $xx = $related_model;
                         if ( ! $related_audit = $driver->audit($related_model, $uuid, true))
                         {
                             throw new RuntimeException(
@@ -127,9 +126,9 @@ class Auditor extends Manager implements AuditorContract
                         }
                     }
                 }
-                elseif ($x)
+                elseif ($method_result)
                 {
-                    if ( ! $related_audit = $driver->audit($x, $uuid, true))
+                    if ( ! $related_audit = $driver->audit($method_result, $uuid, true))
                     {
                         throw new RuntimeException(
                             'related audit failed. Check config and ensure that class ' . get_class($x) .
@@ -139,16 +138,6 @@ class Auditor extends Manager implements AuditorContract
                 }
             }
         }
-
-        /**
-         * Add code to deal of this is a relatee to some other obj
-         *
-         * access relation_hierarchy.
-         * If get_class($model) is a leaf
-         *      foreach instance(s) of parent(s)
-         *          parent->audit
-         *          parent->related_audit_id = $audit->id
-         */
 
         $this->app->make('events')->fire(
             new Audited($model, $driver, $audit)
@@ -180,6 +169,10 @@ class Auditor extends Manager implements AuditorContract
         ) !== false;
     }
 
+    /**
+     * @param null $relation_hierarchy_arr
+     * @return array
+     */
     protected function get_inverted_relation_hierarchy($relation_hierarchy_arr = null)
     {
         if($relation_hierarchy_arr === null)

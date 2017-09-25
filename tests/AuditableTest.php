@@ -136,7 +136,7 @@ class AuditableTest extends TestCase
         $auditData = $model->toAudit();
 
         // Audit attributes
-        $this->assertCount(11, $auditData);
+        $this->assertCount(9, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -151,7 +151,6 @@ class AuditableTest extends TestCase
         // Modified Auditable attributes
         $this->assertCount(3, $auditData['new_values']);
 
-        $this->assertArrayHasKey('related_relations_json', $auditData);
         $this->assertArrayHasKey('title', $auditData['new_values']);
         $this->assertArrayHasKey('content', $auditData['new_values']);
         $this->assertArrayHasKey('published', $auditData['new_values']);
@@ -219,7 +218,7 @@ class AuditableTest extends TestCase
         $auditData = $model->toAudit();
 
         // Audit attributes
-        $this->assertCount(12, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -230,8 +229,6 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
-        $this->assertArrayHasKey('related_relations_json', $auditData);
-        $this->assertArrayHasKey('created_at', $auditData);
         $this->assertArrayHasKey('foo', $auditData);
     }
 
@@ -261,7 +258,7 @@ class AuditableTest extends TestCase
         ], $model->getAuditInclude());
 
         // Audit attributes
-        $this->assertCount(11, $auditData);
+        $this->assertCount(9, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -272,8 +269,6 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
-        $this->assertArrayHasKey('related_relations_json', $auditData);
-        $this->assertArrayHasKey('created_at', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);
@@ -305,7 +300,7 @@ class AuditableTest extends TestCase
         ], $model->getAuditExclude());
 
         // Audit attributes
-        $this->assertCount(11, $auditData);
+        $this->assertCount(9, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -316,8 +311,6 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
-        $this->assertArrayHasKey('related_relations_json', $auditData);
-        $this->assertArrayHasKey('created_at', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);
@@ -349,7 +342,7 @@ class AuditableTest extends TestCase
         $this->assertTrue($model->getAuditTimestamps());
 
         // Audit attributes
-        $this->assertCount(11, $auditData);
+        $this->assertCount(9, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -360,8 +353,6 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
-        $this->assertArrayHasKey('related_relations_json', $auditData);
-        $this->assertArrayHasKey('created_at', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(5, $auditData['new_values']);
@@ -400,7 +391,7 @@ class AuditableTest extends TestCase
         $this->assertTrue($model->getAuditStrict());
 
         // Audit attributes
-        $this->assertCount(11, $auditData);
+        $this->assertCount(9, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -411,8 +402,6 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
-        $this->assertArrayHasKey('related_relations_json', $auditData);
-        $this->assertArrayHasKey('created_at', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);
@@ -449,7 +438,7 @@ class AuditableTest extends TestCase
         $this->assertTrue($model->getAuditStrict());
 
         // Audit attributes
-        $this->assertCount(11, $auditData);
+        $this->assertCount(9, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -460,8 +449,6 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
-        $this->assertArrayHasKey('related_relations_json', $auditData);
-        $this->assertArrayHasKey('created_at', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);

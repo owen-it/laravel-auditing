@@ -14,7 +14,6 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 
 trait Audit
@@ -190,13 +189,6 @@ trait Audit
         {
             return null;
         }
-        //$allRealtedAudits = $this->morphMany(
-        //    Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class),
-        //    'auditable',
-        //    null,
-        //    'relation_id',
-        //    $this->relation_id
-        //)->get();
         $audit_class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
         $RelatedAuditObjArr = $audit_class::where('relation_id', '=', $this->relation_id)
                                            ->where('event', '=', 'related')->get();
@@ -221,38 +213,7 @@ trait Audit
         $RelatingAuditObj->setIsRelating(true);
         return $RelatingAuditObj;
     }
-    //public function getOtherRelatedAudits()
-    //{
-    //    $audit_class      = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
-    //    //$allRealtedAudits = $this->morphMany(
-    //    //    $audit_class,
-    //    //    'auditable',
-    //    //    null,
-    //    //    'auditable_id',
-    //    //    $this->auditable_id
-    //    //);   ModelName::where('slug', '=', $slug)->first();
-    //    $allRealtedAudits = $audit_class::where('auditable_id', '=', $this->auditable_id)
-    //                                    ->where('event', '=', 'related')
-    //                                    ->where('auditable_type', '=', $this->auditable_type)
-    //                                    ->get();
-    //
-    //    $SlimmedRealtedAuditsObjArr = new Collection();
-    //
-    //    foreach ($allRealtedAudits as $RelatedAuditObj)
-    //    {
-    //        $x =
-    //            $audit_class::where('relation_id', '=', $RelatedAuditObj->relation_id)
-    //                        ->where('event', '!=', 'related')
-    //                        ->where('auditable_type', '=', $RelatedAuditObj->auditable_type)
-    //                        ->get();
-    //        if ($x->count())
-    //        {
-    //            $SlimmedRealtedAuditsObjArr[] = $x;
-    //        }
-    //
-    //    }
-    //    return $SlimmedRealtedAuditsObjArr;
-    //}
+
     public   $is_relating = false;
 
     /**
@@ -266,10 +227,14 @@ trait Audit
     /**
      * @param bool $is_relating
      */
-    public function setIsRelating(bool $is_relating)
+    public function setIsRelating($is_relating)
     {
         $this->is_relating = $is_relating;
     }
+
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [
