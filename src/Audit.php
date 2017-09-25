@@ -179,4 +179,80 @@ trait Audit
 
         return $json ? json_encode($modified, $options, $depth) : $modified;
     }
+
+    /**
+     * @return return all audits that were related to $this
+     */
+    public function getRelatedAudits()
+    {
+        if($this->event == 'related')
+        {
+            return null;
+        }
+        $audit_class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
+        $RelatedAuditObjArr = $audit_class::where('relation_id', '=', $this->relation_id)
+                                           ->where('event', '=', 'related')->get();
+        return $RelatedAuditObjArr;
+    }
+
+    /**
+     * Get the relating Audit
+     *
+     * @return mixed
+     */
+    public function getRelatingAudit()
+    {
+        $audit_class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
+        if($this->event !== 'related')
+        {
+            return null;
+        }
+        /** @var \OwenIt\Auditing\Models\Audit $RelatingAuditObj */
+        $RelatingAuditObj = $audit_class::where('relation_id', '=', $this->relation_id)
+                                           ->where('event', '!=', 'related')->get()->first();
+        $RelatingAuditObj->setIsRelating(true);
+        return $RelatingAuditObj;
+    }
+
+    public   $is_relating = false;
+
+    /**
+     * @return bool
+     */
+    public function isRelating(): bool
+    {
+        return $this->is_relating;
+    }
+
+    /**
+     * @param bool $is_relating
+     */
+    public function setIsRelating($is_relating)
+    {
+        $this->is_relating = $is_relating;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'auditable_id' => $this->auditable_id,
+            'auditable_type' => $this->auditable_type,
+            'created_at' => $this->created_at,
+            'event' => $this->event,
+            'id' => $this->id,
+            'ip_address' => $this->ip_address,
+            'new_values' => $this->new_values,
+            'old_values' => $this->old_values,
+            'relation_id' => $this->relation_id,
+            'updated_at' => $this->updated_at,
+            'url' => $this->url,
+            'user_agent' => $this->user_agent,
+            'user_id' => $this->user_id,
+           'related_audits' => $this->event !== 'related' && ! $this->isRelating() && $this->getRelatedAudits() ? $this->getRelatedAudits()->toArray() : null,
+            'relating_audit' => $this->event == 'related' && ! $this->isRelating() && $this->getRelatingAudit() ? $this->getRelatingAudit()->toArray() : null,
+        ];
+    }
 }

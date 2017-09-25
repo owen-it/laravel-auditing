@@ -61,6 +61,20 @@ interface Audit
     public function getDataValue($key);
 
     /**
+     * Get the related Audit
+     *
+     * @return mixed
+     */
+    public function getRelatedAudits();
+
+    /**
+     * Get the relating Audit
+     *
+     * @return mixed
+     */
+    public function getRelatingAudit();
+
+    /**
      * Get the Audit metadata.
      *
      * @param bool $json

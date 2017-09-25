@@ -14,6 +14,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -23,6 +24,7 @@ use OwenIt\Auditing\Drivers\Database;
 use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
 use RuntimeException;
+use Webpatser\Uuid\Uuid;
 
 class Auditor extends Manager implements AuditorContract
 {
@@ -79,8 +81,62 @@ class Auditor extends Manager implements AuditorContract
             return;
         }
 
-        if ($audit = $driver->audit($model)) {
+        $uuid = null;
+        $list_of_properties = [];
+        foreach (config('audit.relation_hierarchy', []) as $class_type_to_audit => $local_list_of_methods )
+        {
+            foreach ($local_list_of_methods as $local_method)
+            {
+                if ($model instanceof $class_type_to_audit)
+                {
+                    $list_of_properties[] = $local_method['property'];
+                    $uuid = (string) Uuid::generate();
+
+                }
+                elseif ($model instanceof $class_type_to_audit)
+                {
+                    if ($model instanceof $local_method['yields'])
+                    {
+                        $list_of_properties[] = $local_method['relator'];
+                        $uuid = (string) Uuid::generate();
+                    }
+                }
+            }
+        }
+
+        if ($audit = $driver->audit($model, $uuid, false)) {
             $driver->prune($model);
+        }
+
+        if ($uuid)
+        {
+            foreach ($list_of_properties as $method_name)
+            {
+                $method_result = $model->$method_name;
+                if ($method_result instanceof Collection)
+                {
+                    foreach ($method_result as $related_model)
+                    {
+                        if ( ! $related_audit = $driver->audit($related_model, $uuid, true))
+                        {
+                            throw new RuntimeException(
+                                'related audit failed. Check config and ensure that class ' . get_class($related_model) .
+                                ' (which is related to  ' . get_class($model) . ') has the auditable trait.'
+                            );
+                        }
+                    }
+                }
+                elseif ($method_result)
+                {
+                    if ( ! $related_audit = $driver->audit($method_result, $uuid, true))
+                    {
+                        throw new RuntimeException(
+                            'related audit failed. Check config and ensure that class ' . get_class($x) .
+                            ' (which is related to  ' . get_class($model) . ') has the auditable trait.'
+                        );
+                    }
+                }
+            }
         }
 
         $this->app->make('events')->fire(

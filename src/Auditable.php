@@ -181,20 +181,31 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function toAudit()
+    public function toAudit($uuid = null, $is_a_related_object = false)
     {
-        if (!$this->readyForAuditing()) {
+        if ( ! $uuid && ! $this->readyForAuditing())
+        {
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+        if ($uuid && $is_a_related_object)
+        {
+            $method = 'auditUpdatedAttributes';
+        }
+        else
+        {
+            $method = 'audit' . Str::studly($this->auditEvent) . 'Attributes';
+        }
 
-        if (!method_exists($this, $method)) {
-            throw new RuntimeException(sprintf(
-                'Unable to handle "%s" event, %s() method missing',
-                $this->auditEvent,
-                $method
-            ));
+        if ( ! method_exists($this, $method))
+        {
+            throw new RuntimeException(
+                sprintf(
+                    'Unable to handle "%s" event, %s() method missing',
+                    $this->auditEvent,
+                    $method
+                )
+            );
         }
 
         $this->updateAuditExclusions();
@@ -207,15 +218,19 @@ trait Auditable
         $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
 
         return $this->transformAudit([
-            'old_values'     => $old,
-            'new_values'     => $new,
-            'event'          => $this->auditEvent,
-            'auditable_id'   => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $foreignKey      => $this->resolveUserId(),
-            'url'            => $this->resolveUrl(),
-            'ip_address'     => $this->resolveIpAddress(),
-            'user_agent'     => $this->resolveUserAgent(),
+                'old_values'     => $old,
+                'new_values'     => $new,
+                'event'          => $is_a_related_object ? 'related' : $this->auditEvent,
+                'auditable_id'   => $this->getKey(),
+                'auditable_type' => $this->getMorphClass(),
+                'user_id'        => $this->resolveUserId(),
+                $foreignKey      => $this->resolveUserId(),
+                'url'            => $this->resolveUrl(),
+                'ip_address'     => $this->resolveIpAddress(),
+                'user_agent'     => $this->resolveUserAgent(),
+                'relation_id'    => $uuid,
+                'is_related'     => $is_a_related_object,
+                'created_at'     => $this->freshTimestamp(),
         ]);
     }
 
