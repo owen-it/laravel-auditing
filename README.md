@@ -1,5 +1,5 @@
 <p align="center">
-<a href="http://www.laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png"></a>
+<a href="http://www.laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
 </p>
 
 <p align="center">
