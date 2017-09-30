@@ -78,4 +78,49 @@ return [
     */
 
     'console' => false,
+
+    /*
+     | Indicate the models (relating model) that you want to retain related relations for. For each,
+     | indicate the 'property' of that relating model that returns returns related objects. 'Yields' is the
+     | type of object returned.
+     |
+     | This results in $AuditObj's with a type of 'related' and a call to $AuditObj->getRelatingAudit.
+     |
+     */
+    'relation_hierarchy' => [
+        //\App\Models\Property::class => [
+        //    [
+        //        'property' => 'accessListProperties',
+        //        'yields' => \App\Models\AccessListProperty::class,
+        //    ],
+        //    [
+        //        'property' => 'client',
+        //        'yields' => \App\Models\Client::class,
+        //    ]
+        //],
+        //\App\Models\User::class => [
+        //    [
+        //        'property' => 'accessListUsers',
+        //        'yields' => \App\Models\AccessListUser::class,
+        //    ]
+        //],
+        //\App\Models\AccessList::class => [
+        //    [
+        //        'property' => 'accessListUsers',
+        //        'yields' => \App\Models\AccessListUser::class,
+        //    ],
+        //    [
+        //        'property' => 'accessListProperties',
+        //        'yields' => \App\Models\AccessListProperty::class,
+        //        'relator'=> 'property'
+        //    ],
+        //],
+        //\App\\Models\PropertyGroup::class => [
+        //    [
+        //        'property' => 'propertyGroupProperty',
+        //        'yields' => \App\Models\PropertyGroupProperty::class,
+        //        'relator'=> 'propertyGroup'
+        //    ],
+        //]
+    ]
 ];
