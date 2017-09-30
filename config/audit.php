@@ -87,6 +87,8 @@ return [
      | This results in $AuditObj's with a 'event' of 'related' and (with a call to $AuditObj->getRelatingAudit), the
      | audit object of that is related.
      |
+     | BE CAREFUL. TEST CAREFULLY. This can have a very negative effect on performance.
+     |
      */
     'relation_hierarchy' => [
         //\App\Models\Property::class => [
@@ -112,5 +114,5 @@ return [
         //        'relator'=> 'property'
         //    ],
         //]
-    ]
+    ],
 ];

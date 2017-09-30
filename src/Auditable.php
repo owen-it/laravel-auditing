@@ -183,22 +183,17 @@ trait Auditable
      */
     public function toAudit($uuid = null, $is_a_related_object = false)
     {
-        if ( ! $uuid && ! $this->readyForAuditing())
-        {
+        if (!$uuid && !$this->readyForAuditing()) {
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        if ($uuid && $is_a_related_object)
-        {
+        if ($uuid && $is_a_related_object) {
             $method = 'auditUpdatedAttributes';
-        }
-        else
-        {
-            $method = 'audit' . Str::studly($this->auditEvent) . 'Attributes';
+        } else {
+            $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
         }
 
-        if ( ! method_exists($this, $method))
-        {
+        if (!method_exists($this, $method)) {
             throw new RuntimeException(
                 sprintf(
                     'Unable to handle "%s" event, %s() method missing',

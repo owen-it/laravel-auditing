@@ -61,14 +61,14 @@ interface Audit
     public function getDataValue($key);
 
     /**
-     * Get the related Audit
+     * Get the related Audit.
      *
      * @return mixed
      */
     public function getRelatedAudits();
 
     /**
-     * Get the relating Audit
+     * Get the relating Audit.
      *
      * @return mixed
      */
