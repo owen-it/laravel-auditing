@@ -84,7 +84,8 @@ return [
      | indicate the 'property' of that relating model that returns returns related objects. 'Yields' is the
      | type of object returned.
      |
-     | This results in $AuditObj's with a type of 'related' and a call to $AuditObj->getRelatingAudit.
+     | This results in $AuditObj's with a 'event' of 'related' and (with a call to $AuditObj->getRelatingAudit), the
+     | audit object of that is related.
      |
      */
     'relation_hierarchy' => [
@@ -92,10 +93,6 @@ return [
         //    [
         //        'property' => 'accessListProperties',
         //        'yields' => \App\Models\AccessListProperty::class,
-        //    ],
-        //    [
-        //        'property' => 'client',
-        //        'yields' => \App\Models\Client::class,
         //    ]
         //],
         //\App\Models\User::class => [
@@ -113,13 +110,6 @@ return [
         //        'property' => 'accessListProperties',
         //        'yields' => \App\Models\AccessListProperty::class,
         //        'relator'=> 'property'
-        //    ],
-        //],
-        //\App\\Models\PropertyGroup::class => [
-        //    [
-        //        'property' => 'propertyGroupProperty',
-        //        'yields' => \App\Models\PropertyGroupProperty::class,
-        //        'relator'=> 'propertyGroup'
         //    ],
         //]
     ]
