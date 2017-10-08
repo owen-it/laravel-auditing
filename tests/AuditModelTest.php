@@ -102,7 +102,7 @@ class AuditModelTest extends TestCase
 
         $data = $audit->resolveData();
 
-        $this->assertCount(14, $data);
+        $this->assertCount(15, $data);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -170,7 +170,7 @@ class AuditModelTest extends TestCase
 
         $metadata = $audit->getMetadata();
 
-        $this->assertCount(10, $metadata);
+        $this->assertCount(11, $metadata);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -201,7 +201,7 @@ class AuditModelTest extends TestCase
 
         $metadata = $audit->getMetadata();
 
-        $this->assertCount(10, $metadata);
+        $this->assertCount(9, $metadata);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
