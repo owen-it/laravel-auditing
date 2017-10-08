@@ -86,7 +86,7 @@ class AuditModelTest extends TestCase
             'old_title'        => 'How to audit models',
             'old_content'      => 'This is a draft.',
             'old_published'    => 0,
-            'relation_id'      => 0,
+            'relation_id'      => null,
         ], $data);
     }
 
@@ -119,7 +119,7 @@ class AuditModelTest extends TestCase
             'old_title'        => 'How to audit models',
             'old_content'      => 'This is a draft.',
             'old_published'    => 0,
-            'relation_id'      => 0,
+            'relation_id'      => null,
         ], $data);
     }
 
@@ -183,7 +183,7 @@ class AuditModelTest extends TestCase
             'user_id'          => 123,
             'user_email'       => 'bob@example.com',
             'user_name'        => 'Bob',
-            'relation_id'      => 0,
+            'relation_id'      => null,
         ], $metadata);
     }
 
@@ -212,7 +212,7 @@ class AuditModelTest extends TestCase
             'audit_created_at' => '2012-06-14 15:03:00',
             'audit_updated_at' => '2012-06-14 15:03:00',
             'user_id'          => null,
-            'relation_id'      => 0,
+            'relation_id'      => null,
         ], $metadata);
     }
 
