@@ -67,7 +67,7 @@ class AuditModelTest extends TestCase
 
         $data = $audit->resolveData();
 
-        $this->assertCount(16, $data);
+        $this->assertCount(17, $data);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
