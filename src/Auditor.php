@@ -85,22 +85,17 @@ class Auditor extends Manager implements AuditorContract
             $driver->prune($model);
         }
 
-        if($model->getAuditRelatedProperties())
-        {
+        if ($model->getAuditRelatedProperties()) {
             $audit->relation_id = $audit->id;
             $audit->save();
         }
         foreach ($model->getAuditRelatedProperties() as $methodOrPropertyName) {
-            if(property_exists ($model , $methodOrPropertyName ))
-            {
+            if (property_exists($model, $methodOrPropertyName)) {
                 $methodResult = $model->$methodOrPropertyName;
-            }
-            elseif(method_exists ($model , $methodOrPropertyName ))
-            {
+            } elseif (method_exists($model, $methodOrPropertyName)) {
                 $methodResult = $model->$methodOrPropertyName();
-            }
-            else{
-                throw new RuntimeException('Related audit failed. Check model (of class '.get_class($model).') and ensure that method or property '.$methodOrPropertyName.' is defined'                       );
+            } else {
+                throw new RuntimeException('Related audit failed. Check model (of class '.get_class($model).') and ensure that method or property '.$methodOrPropertyName.' is defined');
             }
             if ($methodResult instanceof Relation) {
                 $methodResult = $methodResult->get();
@@ -121,7 +116,7 @@ class Auditor extends Manager implements AuditorContract
                         ' (which is related to  '.get_class($model).') has the auditable trait.'
                     );
                 }
-            } else{
+            } else {
                 throw new RuntimeException(
                         'Related audit failed. Check model and ensure that class '.get_class($model).
                         ' does not have a method named '.$methodOrPropertyName.'. See model->auditRelatedProperties'
