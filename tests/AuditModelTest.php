@@ -240,9 +240,9 @@ class AuditModelTest extends TestCase
     "audit_created_at": "2012-06-14 15:03:00",
     "audit_updated_at": "2012-06-14 15:03:00",
     "user_id": 123,
+    "relation_id": null,
     "user_email": "bob@example.com",
     "user_name": "Bob"
-    "relation_id": null
 }
 EOF;
 
