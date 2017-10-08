@@ -181,20 +181,26 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function toAudit()
+    public function toAudit($relation_id = null)
     {
-        if (!$this->readyForAuditing()) {
+        if (!$relation_id && !$this->readyForAuditing()) {
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+        if ($relation_id) {
+            $method = 'auditUpdatedAttributes';
+        } else {
+            $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+        }
 
         if (!method_exists($this, $method)) {
-            throw new RuntimeException(sprintf(
-                'Unable to handle "%s" event, %s() method missing',
-                $this->auditEvent,
-                $method
-            ));
+            throw new RuntimeException(
+                sprintf(
+                    'Unable to handle "%s" event, %s() method missing',
+                    $this->auditEvent,
+                    $method
+                )
+            );
         }
 
         $this->updateAuditExclusions();
@@ -207,15 +213,18 @@ trait Auditable
         $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
 
         return $this->transformAudit([
-            'old_values'     => $old,
-            'new_values'     => $new,
-            'event'          => $this->auditEvent,
-            'auditable_id'   => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $foreignKey      => $this->resolveUserId(),
-            'url'            => $this->resolveUrl(),
-            'ip_address'     => $this->resolveIpAddress(),
-            'user_agent'     => $this->resolveUserAgent(),
+                'old_values'     => $old,
+                'new_values'     => $new,
+                'event'          => $relation_id ? 'related' : $this->auditEvent,
+                'auditable_id'   => $this->getKey(),
+                'auditable_type' => $this->getMorphClass(),
+                'user_id'        => $this->resolveUserId(),
+                $foreignKey      => $this->resolveUserId(),
+                'url'            => $this->resolveUrl(),
+                'ip_address'     => $this->resolveIpAddress(),
+                'user_agent'     => $this->resolveUserAgent(),
+                'relation_id'    => $relation_id,
+                'created_at'     => $this->freshTimestamp(),
         ]);
     }
 
@@ -405,5 +414,21 @@ trait Auditable
     public function getAuditThreshold()
     {
         return isset($this->auditThreshold) ? $this->auditThreshold : 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAuditRelatedProperties()
+    {
+        return isset($this->auditRelatedProperties) ? $this->auditRelatedProperties : [];
+    }
+
+    /**
+     * @param array $auditRelatedProperties
+     */
+    public function setAuditRelatedProperties(array $auditRelatedProperties)
+    {
+        $this->auditRelatedProperties = $auditRelatedProperties;
     }
 }

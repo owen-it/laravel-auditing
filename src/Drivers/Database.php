@@ -23,11 +23,11 @@ class Database implements AuditDriver
     /**
      * {@inheritdoc}
      */
-    public function audit(Auditable $model)
+    public function audit(Auditable $model, $relation_id = null)
     {
         $class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
 
-        return $class::create($model->toAudit());
+        return $class::create($model->toAudit($relation_id));
     }
 
     /**

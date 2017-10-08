@@ -14,6 +14,8 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -79,8 +81,47 @@ class Auditor extends Manager implements AuditorContract
             return;
         }
 
-        if ($audit = $driver->audit($model)) {
+        if ($audit = $driver->audit($model, null)) {
             $driver->prune($model);
+        }
+
+        if ($model->getAuditRelatedProperties()) {
+            $audit->relation_id = $audit->id;
+            $audit->save();
+        }
+        foreach ($model->getAuditRelatedProperties() as $methodOrPropertyName) {
+            if (property_exists($model, $methodOrPropertyName)) {
+                $methodResult = $model->$methodOrPropertyName;
+            } elseif (method_exists($model, $methodOrPropertyName)) {
+                $methodResult = $model->$methodOrPropertyName();
+            } else {
+                throw new RuntimeException('Related audit failed. Check model (of class '.get_class($model).') and ensure that method or property '.$methodOrPropertyName.' is defined');
+            }
+            if ($methodResult instanceof Relation) {
+                $methodResult = $methodResult->get();
+            }
+            if ($methodResult instanceof Collection) {
+                foreach ($methodResult as $relatedModel) {
+                    if (!$relatedAudit = $driver->audit($relatedModel, $audit->id)) {
+                        throw new RuntimeException(
+                            'Related audit failed. Check model and ensure that class '.get_class($relatedModel).
+                            ' (which is related to  '.get_class($model).') has the auditable trait.'
+                        );
+                    }
+                }
+            } elseif ($methodResult) {
+                if (!$relatedAudit = $driver->audit($methodResult, $audit->id)) {
+                    throw new RuntimeException(
+                        'Related audit failed. Check model and ensure that class '.get_class($methodResult).
+                        ' (which is related to  '.get_class($model).') has the auditable trait.'
+                    );
+                }
+            } else {
+                throw new RuntimeException(
+                    'Related audit failed. Check model and ensure that class '.get_class($model).
+                    ' does not have a method named '.$methodOrPropertyName.'. See model->auditRelatedProperties'
+                );
+            }
         }
 
         $this->app->make('events')->fire(

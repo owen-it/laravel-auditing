@@ -40,6 +40,7 @@ class AuditModelTest extends TestCase
         $audit->user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0';
         $audit->created_at = '2012-06-14 15:03:00';
         $audit->updated_at = '2012-06-14 15:03:00';
+        $audit->relation_id = null;
         $audit->new_values = [
             'title'     => 'How To Audit Eloquent Models',
             'content'   => 'First step: install the laravel-auditing package.',
@@ -66,7 +67,7 @@ class AuditModelTest extends TestCase
 
         $data = $audit->resolveData();
 
-        $this->assertCount(16, $data);
+        $this->assertCount(17, $data);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -85,6 +86,7 @@ class AuditModelTest extends TestCase
             'old_title'        => 'How to audit models',
             'old_content'      => 'This is a draft.',
             'old_published'    => 0,
+            'relation_id'      => null,
         ], $data);
     }
 
@@ -100,7 +102,7 @@ class AuditModelTest extends TestCase
 
         $data = $audit->resolveData();
 
-        $this->assertCount(14, $data);
+        $this->assertCount(15, $data);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -117,6 +119,7 @@ class AuditModelTest extends TestCase
             'old_title'        => 'How to audit models',
             'old_content'      => 'This is a draft.',
             'old_published'    => 0,
+            'relation_id'      => null,
         ], $data);
     }
 
@@ -167,7 +170,7 @@ class AuditModelTest extends TestCase
 
         $metadata = $audit->getMetadata();
 
-        $this->assertCount(10, $metadata);
+        $this->assertCount(11, $metadata);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -180,6 +183,7 @@ class AuditModelTest extends TestCase
             'user_id'          => 123,
             'user_email'       => 'bob@example.com',
             'user_name'        => 'Bob',
+            'relation_id'      => null,
         ], $metadata);
     }
 
@@ -197,7 +201,7 @@ class AuditModelTest extends TestCase
 
         $metadata = $audit->getMetadata();
 
-        $this->assertCount(8, $metadata);
+        $this->assertCount(9, $metadata);
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -208,6 +212,7 @@ class AuditModelTest extends TestCase
             'audit_created_at' => '2012-06-14 15:03:00',
             'audit_updated_at' => '2012-06-14 15:03:00',
             'user_id'          => null,
+            'relation_id'      => null,
         ], $metadata);
     }
 
@@ -235,6 +240,7 @@ class AuditModelTest extends TestCase
     "audit_created_at": "2012-06-14 15:03:00",
     "audit_updated_at": "2012-06-14 15:03:00",
     "user_id": 123,
+    "relation_id": null,
     "user_email": "bob@example.com",
     "user_name": "Bob"
 }
@@ -266,7 +272,8 @@ EOF;
     "audit_user_agent": "Mozilla\/5.0 (X11; Linux x86_64; rv:53.0) Gecko\/20100101 Firefox\/53.0",
     "audit_created_at": "2012-06-14 15:03:00",
     "audit_updated_at": "2012-06-14 15:03:00",
-    "user_id": null
+    "user_id": null,
+    "relation_id": null
 }
 EOF;
 
