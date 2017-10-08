@@ -220,7 +220,7 @@ class AuditableTest extends TestCase
         $auditData = $model->toAudit();
 
         // Audit attributes
-        $this->assertCount(10, $auditData);
+        $this->assertCount(12, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
