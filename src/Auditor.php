@@ -118,9 +118,9 @@ class Auditor extends Manager implements AuditorContract
                 }
             } else {
                 throw new RuntimeException(
-                        'Related audit failed. Check model and ensure that class '.get_class($model).
-                        ' does not have a method named '.$methodOrPropertyName.'. See model->auditRelatedProperties'
-                    );
+                    'Related audit failed. Check model and ensure that class '.get_class($model).
+                    ' does not have a method named '.$methodOrPropertyName.'. See model->auditRelatedProperties'
+                );
             }
         }
 
