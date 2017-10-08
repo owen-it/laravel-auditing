@@ -78,41 +78,4 @@ return [
     */
 
     'console' => false,
-
-    /*
-     | Indicate the models (relating model) that you want to retain related relations for. For each,
-     | indicate the 'property' of that relating model that returns returns related objects. 'Yields' is the
-     | type of object returned.
-     |
-     | This results in $AuditObj's with a 'event' of 'related' and (with a call to $AuditObj->getRelatingAudit), the
-     | audit object of that is related.
-     |
-     | BE CAREFUL. TEST CAREFULLY. This can have a very negative effect on performance.
-     |
-     */
-    'relation_hierarchy' => [
-        //\App\Models\Property::class => [
-        //    [
-        //        'property' => 'accessListProperties',
-        //        'yields' => \App\Models\AccessListProperty::class,
-        //    ]
-        //],
-        //\App\Models\User::class => [
-        //    [
-        //        'property' => 'accessListUsers',
-        //        'yields' => \App\Models\AccessListUser::class,
-        //    ]
-        //],
-        //\App\Models\AccessList::class => [
-        //    [
-        //        'property' => 'accessListUsers',
-        //        'yields' => \App\Models\AccessListUser::class,
-        //    ],
-        //    [
-        //        'property' => 'accessListProperties',
-        //        'yields' => \App\Models\AccessListProperty::class,
-        //        'relator'=> 'property'
-        //    ],
-        //]
-    ],
 ];

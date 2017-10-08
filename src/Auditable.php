@@ -181,13 +181,13 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function toAudit($uuid = null, $is_a_related_object = false)
+    public function toAudit($relation_id = null)
     {
-        if (!$uuid && !$this->readyForAuditing()) {
+        if (!$relation_id && !$this->readyForAuditing()) {
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        if ($uuid && $is_a_related_object) {
+        if ($relation_id) {
             $method = 'auditUpdatedAttributes';
         } else {
             $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
@@ -215,7 +215,7 @@ trait Auditable
         return $this->transformAudit([
                 'old_values'     => $old,
                 'new_values'     => $new,
-                'event'          => $is_a_related_object ? 'related' : $this->auditEvent,
+                'event'          => $relation_id ? 'related' : $this->auditEvent,
                 'auditable_id'   => $this->getKey(),
                 'auditable_type' => $this->getMorphClass(),
                 'user_id'        => $this->resolveUserId(),
@@ -223,8 +223,7 @@ trait Auditable
                 'url'            => $this->resolveUrl(),
                 'ip_address'     => $this->resolveIpAddress(),
                 'user_agent'     => $this->resolveUserAgent(),
-                'relation_id'    => $uuid,
-                'is_related'     => $is_a_related_object,
+                'relation_id'    => $relation_id,
                 'created_at'     => $this->freshTimestamp(),
         ]);
     }
@@ -415,5 +414,21 @@ trait Auditable
     public function getAuditThreshold()
     {
         return isset($this->auditThreshold) ? $this->auditThreshold : 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAuditRelatedProperties()
+    {
+        return isset($this->auditRelatedProperties) ? $this->auditRelatedProperties : [];
+    }
+
+    /**
+     * @param array $auditRelatedProperties
+     */
+    public function setAuditRelatedProperties(array $auditRelatedProperties)
+    {
+        $this->auditRelatedProperties = $auditRelatedProperties;
     }
 }

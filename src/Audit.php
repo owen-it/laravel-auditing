@@ -14,6 +14,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Config;
 
 trait Audit
@@ -38,6 +39,13 @@ trait Audit
      * @var array
      */
     protected $modified = [];
+
+    /**
+     * Indication that this is not a generic aubit but rather, a related audit.
+     *
+     * @var boolean
+     */
+    protected $is_relating = false;
 
     /**
      * {@inheritdoc}
@@ -181,55 +189,39 @@ trait Audit
     }
 
     /**
-     * @return return all audits that were related to $this
+     * @return Collection
+     *
+     * all audits that were related to $this
      */
     public function getRelatedAudits()
     {
-        if ($this->event == 'related') {
-            return;
+        if ($this->event == 'related')
+        {
+            $auditClass        = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
+            $relatedAuditObj = $auditClass::where('relation_id', '=', $this->relation_id)
+                                              ->where('event', '!=', 'related')->get()->first();
+            return $relatedAuditObj;
         }
-        $audit_class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
-        $RelatedAuditObjArr = $audit_class::where('relation_id', '=', $this->relation_id)
-                                           ->where('event', '=', 'related')->get();
-
-        return $RelatedAuditObjArr;
+        return null;
     }
 
     /**
-     * Get the relating Audit.
+     * Get the relating Audit. Think of this as the oppisite of getRelatedAudits()
      *
      * @return mixed
      */
     public function getRelatingAudit()
     {
-        $audit_class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
+        $auditClass = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
         if ($this->event !== 'related') {
             return;
         }
-        /** @var \OwenIt\Auditing\Models\Audit $RelatingAuditObj */
-        $RelatingAuditObj = $audit_class::where('relation_id', '=', $this->relation_id)
+        /** @var \OwenIt\Auditing\Models\Audit $relatingAuditObj */
+        $relatingAuditObj = $auditClass::where('relation_id', '=', $this->relation_id)
                                            ->where('event', '!=', 'related')->get()->first();
-        $RelatingAuditObj->setIsRelating(true);
+        $relatingAuditObj->setIsRelating(true);
 
-        return $RelatingAuditObj;
-    }
-
-    public $is_relating = false;
-
-    /**
-     * @return bool
-     */
-    public function isRelating(): bool
-    {
-        return $this->is_relating;
-    }
-
-    /**
-     * @param bool $is_relating
-     */
-    public function setIsRelating($is_relating)
-    {
-        $this->is_relating = $is_relating;
+        return $relatingAuditObj;
     }
 
     /**
@@ -251,8 +243,23 @@ trait Audit
             'url'            => $this->url,
             'user_agent'     => $this->user_agent,
             'user_id'        => $this->user_id,
-           'related_audits'  => $this->event !== 'related' && !$this->isRelating() && $this->getRelatedAudits() ? $this->getRelatedAudits()->toArray() : null,
-            'relating_audit' => $this->event == 'related' && !$this->isRelating() && $this->getRelatingAudit() ? $this->getRelatingAudit()->toArray() : null,
+            'related_audits'  => !$this->isRelating() && $this->getRelatedAudits() ? $this->getRelatedAudits()->toArray() : [],
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRelating()
+    {
+        return $this->is_relating;
+    }
+
+    /**
+     * @param bool $is_relating
+     */
+    public function setIsRelating($is_relating)
+    {
+        $this->is_relating = $is_relating;
     }
 }

@@ -42,8 +42,7 @@
         "php": ">=5.5.9",
         "illuminate/console": "5.2.* || 5.3.* || 5.4.* || 5.5.*",
         "illuminate/database": "5.2.* || 5.3.* || 5.4.* || 5.5.*",
-        "illuminate/filesystem": "5.2.* || 5.3.* || 5.4.* || 5.5.*",
-        "webpatser/laravel-uuid": "2.0.*"
+        "illuminate/filesystem": "5.2.* || 5.3.* || 5.4.* || 5.5.*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0",

@@ -23,7 +23,7 @@ interface AuditDriver
      *
      * @return \OwenIt\Auditing\Contracts\Audit
      */
-    public function audit(Auditable $model, $uuid = null, $is_a_related_object = false);
+    public function audit(Auditable $model, $relation_id = null);
 
     /**
      * Remove older audits that go over the threshold.
