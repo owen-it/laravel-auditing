@@ -20,6 +20,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Contracts\AuditDriver;
 use OwenIt\Auditing\Contracts\Auditor as AuditorContract;
 use OwenIt\Auditing\Drivers\Database;
+use OwenIt\Auditing\Drivers\FileSystem;
 use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
 use RuntimeException;
@@ -96,6 +97,16 @@ class Auditor extends Manager implements AuditorContract
     protected function createDatabaseDriver()
     {
         return $this->app->make(Database::class);
+    }
+
+    /**
+     * Create an instance of the FileSystem audit driver.
+     *
+     * @return \OwenIt\Auditing\Drivers\FileSystem
+     */
+    protected function createFilesystemDriver()
+    {
+        return $this->app->make(FileSystem::class);
     }
 
     /**
