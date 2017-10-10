@@ -106,9 +106,10 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Determine if a disk is a local or a remote disk
+     * Determine if a disk is a local or a remote disk.
      *
      * @param $disk
+     *
      * @return bool
      */
     protected function diskIsRemote(FilesystemAdapter $disk)
@@ -132,7 +133,7 @@ class FileSystem implements AuditDriver
         $writer->insertOne($this->headerRow($auditArray));
         $writer->insertOne($auditArray);
 
-        $baseContents = 'data://text/csv,'.(string)$writer;
+        $baseContents = 'data://text/csv,'.(string) $writer;
 
         return @fopen($baseContents, 'r');
     }
@@ -151,7 +152,7 @@ class FileSystem implements AuditDriver
 
         $writer->insertOne($this->sanitize($this->getAuditFromModel($model)));
 
-        $baseContents = 'data://text/csv,'.(string)$writer;
+        $baseContents = 'data://text/csv,'.(string )$writer;
 
         return @fopen($baseContents, 'r');
     }
@@ -259,9 +260,10 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Generate a header row from an audit array, based on the key strings
+     * Generate a header row from an audit array, based on the key strings.
      *
      * @param $audit
+     *
      * @return array
      */
     protected function headerRow(array $audit)
