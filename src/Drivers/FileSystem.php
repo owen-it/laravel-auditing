@@ -18,10 +18,10 @@ use DateTime;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
-use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Contracts\AuditDriver;
 use League\Csv\Writer;
 use League\Flysystem\Adapter\Local as LocalAdapter;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\AuditDriver;
 
 class FileSystem implements AuditDriver
 {
@@ -70,7 +70,7 @@ class FileSystem implements AuditDriver
         $this->filename = Config::get('audit.drivers.filesystem.filename', 'audit.csv');
         $this->fileLoggingType = Config::get('audit.drivers.filesystem.logging_type', 'single');
         $this->auditFilepath = $this->auditFilepath();
-        $this->temporaryLocalDisk = Storage::createLocalDriver(['root' => storage_path("app/")]);
+        $this->temporaryLocalDisk = Storage::createLocalDriver(['root' => storage_path('app/')]);
     }
 
     /**
@@ -113,13 +113,14 @@ class FileSystem implements AuditDriver
      */
     protected function diskIsRemote(FilesystemAdapter $disk)
     {
-        return ! ($disk->getDriver()->getAdapter() instanceof LocalAdapter);
+        return !($disk->getDriver()->getAdapter() instanceof LocalAdapter);
     }
 
     /**
-     * Get a new csv file as a resource from an Auditable model
+     * Get a new csv file as a resource from an Auditable model.
      *
      * @param Auditable $model
+     *
      * @return resource
      */
     protected function auditFileFromModel(Auditable $model)
@@ -131,16 +132,17 @@ class FileSystem implements AuditDriver
         $writer->insertOne($this->headerRow($auditArray));
         $writer->insertOne($auditArray);
 
-        $baseContents = 'data://text/csv,' . (string)$writer;
+        $baseContents = 'data://text/csv,'.(string)$writer;
 
         return @fopen($baseContents, 'r');
     }
 
     /**
-     * Append a record to an existing csv file on the local filesystem
+     * Append a record to an existing csv file on the local filesystem.
      *
      * @param $auditFilepath
      * @param $model
+     *
      * @return resource
      */
     protected function appendToFile($auditFilepath, Auditable $model)
@@ -149,13 +151,13 @@ class FileSystem implements AuditDriver
 
         $writer->insertOne($this->sanitize($this->getAuditFromModel($model)));
 
-        $baseContents = 'data://text/csv,' . (string)$writer;
+        $baseContents = 'data://text/csv,'.(string)$writer;
 
         return @fopen($baseContents, 'r');
     }
 
     /**
-     * Return a randomized csv filename
+     * Return a randomized csv filename.
      *
      * @return string
      */
@@ -165,10 +167,11 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Sanitize audit data before inserting it as a row in a csv file
-     * Currently serializes the old and new values
+     * Sanitize audit data before inserting it as a row in a csv file.
+     * Currently serializes the old and new values.
      *
      * @param array $audit
+     *
      * @return array
      */
     protected function sanitize(array $audit)
@@ -180,7 +183,7 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Dynamically determine the current audit filepath based on the logging type config setting
+     * Dynamically determine the current audit filepath based on the logging type config setting.
      *
      * @return string
      */
@@ -204,7 +207,7 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Cleans temporary files
+     * Cleans temporary files.
      */
     protected function cleanUp()
     {
@@ -212,9 +215,10 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Move a file from the main audit disk to the local filesystem in the temp dir
+     * Move a file from the main audit disk to the local filesystem in the temp dir.
      *
      * @param $auditFilepath
+     *
      * @return string
      */
     protected function fileToTemporary($auditFilepath)
@@ -231,9 +235,10 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Transform an Auditable model into an audit array
+     * Transform an Auditable model into an audit array.
      *
      * @param Auditable $model
+     *
      * @return array
      */
     protected function getAuditFromModel(Auditable $model)
@@ -242,9 +247,10 @@ class FileSystem implements AuditDriver
     }
 
     /**
-     * Append a created_at key to the audit array
+     * Append a created_at key to the audit array.
      *
      * @param array $audit
+     *
      * @return array
      */
     protected function appendCreatedAt(array $audit)
@@ -261,7 +267,7 @@ class FileSystem implements AuditDriver
     protected function headerRow(array $audit)
     {
         return array_map(function ($key) {
-            return ucwords(str_replace("_", " ", $key));
+            return ucwords(str_replace('_', ' ', $key));
         }, array_keys($audit));
     }
 }

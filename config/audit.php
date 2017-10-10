@@ -75,8 +75,8 @@ return [
             'disk'         => 'local',
             'dir'          => 'audit/',
             'filename'     => 'audit.csv',
-            'logging_type' => 'single'
-        ]
+            'logging_type' => 'single',
+        ],
     ],
 
     /*
