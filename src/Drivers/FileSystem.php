@@ -63,7 +63,8 @@ class FileSystem implements AuditDriver
     /**
      * FileSystem constructor.
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->disk = Storage::disk(Config::get('audit.drivers.filesystem.disk', 'local'));
         $this->dir = Config::get('audit.drivers.filesystem.dir', '/');
         $this->filename = Config::get('audit.drivers.filesystem.filename', 'audit.csv');
@@ -77,18 +78,18 @@ class FileSystem implements AuditDriver
      */
     public function audit(Auditable $model)
     {
-        if(!$this->disk->exists($this->auditFilepath)){
+        if (!$this->disk->exists($this->auditFilepath)) {
             $file = $this->auditFileFromModel($model);
 
             $this->disk->put($this->auditFilepath, $file);
-        }else{
-            if($this->diskIsRemote($this->disk)) {
+        } else {
+            if ($this->diskIsRemote($this->disk)) {
                 $temporaryFilepath = $this->fileToTemporary($this->auditFilepath);
 
                 $updatedAuditContents = $this->appendToFile($this->temporaryLocalDisk->path($temporaryFilepath), $model);
 
                 $this->disk->put($this->auditFilepath, $updatedAuditContents);
-            }else{
+            } else {
                 $this->appendToFile($this->disk->path($this->auditFilepath), $model);
             }
         }
@@ -110,7 +111,8 @@ class FileSystem implements AuditDriver
      * @param $disk
      * @return bool
      */
-    protected function diskIsRemote(FilesystemAdapter $disk){
+    protected function diskIsRemote(FilesystemAdapter $disk)
+    {
         return ! ($disk->getDriver()->getAdapter() instanceof LocalAdapter);
     }
 
@@ -129,7 +131,9 @@ class FileSystem implements AuditDriver
         $writer->insertOne($this->headerRow($auditArray));
         $writer->insertOne($auditArray);
 
-        return @fopen('data://text/csv,' . (string)$writer,'r');;
+        $baseContents = 'data://text/csv,' . (string)$writer;
+
+        return @fopen($baseContents, 'r');;
     }
 
     /**
@@ -145,7 +149,9 @@ class FileSystem implements AuditDriver
 
         $writer->insertOne($this->sanitize($this->getAuditFromModel($model)));
 
-        return @fopen('data://text/csv,' . (string)$writer,'r');;
+        $baseContents = 'data://text/csv,' . (string)$writer;
+
+        return @fopen($baseContents,'r');;
     }
 
     /**
@@ -180,7 +186,7 @@ class FileSystem implements AuditDriver
      */
     protected function auditFilepath()
     {
-        switch($this->fileLoggingType){
+        switch ($this->fileLoggingType) {
             case 'single':
                 return $this->dir.$this->filename;
 
@@ -254,7 +260,7 @@ class FileSystem implements AuditDriver
      */
     protected function headerRow(array $audit)
     {
-        return array_map(function($key){
+        return array_map(function ($key) {
             return ucwords(str_replace("_", " ", $key));
         }, array_keys($audit));
     }
