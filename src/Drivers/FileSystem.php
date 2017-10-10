@@ -133,7 +133,7 @@ class FileSystem implements AuditDriver
 
         $baseContents = 'data://text/csv,' . (string)$writer;
 
-        return @fopen($baseContents, 'r');;
+        return @fopen($baseContents, 'r');
     }
 
     /**
@@ -151,7 +151,7 @@ class FileSystem implements AuditDriver
 
         $baseContents = 'data://text/csv,' . (string)$writer;
 
-        return @fopen($baseContents,'r');;
+        return @fopen($baseContents,'r');
     }
 
     /**
