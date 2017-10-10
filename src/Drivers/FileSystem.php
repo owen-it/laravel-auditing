@@ -152,7 +152,7 @@ class FileSystem implements AuditDriver
 
         $writer->insertOne($this->sanitize($this->getAuditFromModel($model)));
 
-        $baseContents = 'data://text/csv,'.(string )$writer;
+        $baseContents = 'data://text/csv,'.(string) $writer;
 
         return @fopen($baseContents, 'r');
     }
