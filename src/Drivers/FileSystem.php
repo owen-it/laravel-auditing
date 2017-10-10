@@ -196,10 +196,12 @@ class FileSystem implements AuditDriver
 
             case 'daily':
                 $date = (new \DateTime('now'))->format('Y-m-d');
+
                 return $this->dir."audit-$date.csv";
 
             case 'hourly':
                 $dateTime = (new \DateTime('now'))->format('Y-m-d-H');
+
                 return $this->dir."audit-$dateTime-00-00.csv";
 
             default:
