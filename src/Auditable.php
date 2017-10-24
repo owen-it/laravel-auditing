@@ -187,7 +187,12 @@ trait Auditable
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+        $method = $this->getEventAttributesMethodName($this->auditEvent);
+
+        if (!is_string($method)) {
+            // this means the event is auditable but has no defined attributes method, so we define it here
+            $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+        }
 
         if (!method_exists($this, $method)) {
             throw new RuntimeException(sprintf(
@@ -313,7 +318,28 @@ trait Auditable
      */
     protected function isEventAuditable($event)
     {
-        return in_array($event, $this->getAuditableEvents());
+        return $this->getEventAttributesMethodName($event) !== null;
+    }
+
+    /**
+     * Get Event Attributes Method Name.
+     *
+     * @param string $event
+     *
+     * @return mixed The event's custom attribute method name if it has one, false it has none or null if the event is
+     *               not auditable.
+     */
+    private function getEventAttributesMethodName($event)
+    {
+        foreach ($this->getAuditableEvents() as $key => $value) {
+            $auditableEventName = is_int($key) ? $value : $key;
+
+            $auditableEventNameRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEventName));
+
+            if (preg_match($auditableEventNameRegex, $event) === 1) {
+                return is_int($key) ? false : $value;
+            }
+        }
     }
 
     /**
