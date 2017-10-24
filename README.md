@@ -1,13 +1,11 @@
 <p align="center">
-<a href="https://www.laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png"></a>
+<a href="http://www.laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
 </p>
 
 <p align="center">
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/stable.svg" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg" alt="Unstable Version"></a>
-<a href="http://laravel.com"><img src="https://img.shields.io/badge/Laravel-5.2.x-brightgreen.svg?style=flat-square" alt="Laravel 5.2.x"></a>
-<a href="http://laravel.com"><img src="https://img.shields.io/badge/Laravel-5.3.x-brightgreen.svg?style=flat-square" alt="Laravel 5.3.x"></a>
-<a href="http://laravel.com"><img src="https://img.shields.io/badge/Laravel-5.4.x-brightgreen.svg?style=flat-square" alt="Laravel 5.4.x"></a>
+<a href="http://laravel.com"><img src="https://img.shields.io/badge/Laravel-5.x-brightgreen.svg?style=flat-square" alt="Laravel 5.x"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
 

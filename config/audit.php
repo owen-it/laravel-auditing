@@ -60,11 +60,22 @@ return [
     |
     | Available audit drivers and respective configurations.
     |
+    | Config options for the filesystem driver:
+    | disk (string) - The name of any filesystem disk in the app. Usage of remote disks (AWS, Rackspace, etc) is discouraged, as it introduces substantial additional http request overheads to the remote disk
+    | dir (string) - The directory on the disk where the audit csv files will be saved
+    | filename (string) - The filename of the audit file. If logging_type is different from 'single', this filename is ignored as it's being dynamically generated
+    | logging_type (string) - Defines how the audit files are being separated. One of 'single', 'daily' or 'hourly'.
     */
     'drivers' => [
         'database' => [
             'table'      => 'audits',
             'connection' => null,
+        ],
+        'filesystem' => [
+            'disk'         => 'local',
+            'dir'          => 'audit/',
+            'filename'     => 'audit.csv',
+            'logging_type' => 'single',
         ],
     ],
 
