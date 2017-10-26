@@ -56,4 +56,12 @@ class AuditableStub extends Model implements AuditableContract
     {
         return strtoupper($value);
     }
+
+    protected function auditCustomAttributes(array &$old, array &$new)
+    {
+    }
+
+    protected function myAttributesMethod(array &$old, array &$new)
+    {
+    }
 }
