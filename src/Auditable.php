@@ -340,6 +340,7 @@ trait Auditable
      * Get the event handler method name.
      *
      * @param string $event
+     *
      * @return string
      */
     protected function getEventHandlerMethod($event)
