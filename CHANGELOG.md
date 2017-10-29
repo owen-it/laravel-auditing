@@ -1,3 +1,7 @@
+## v4.1.4 (2017-10-29)
+### Added
+- Ability to define custom methods to handle events ([#324](https://github.com/owen-it/laravel-auditing/pull/324))
+
 ## v4.1.3 (2017-09-17)
 ### Added
 - CONTRIBUTING document
