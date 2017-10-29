@@ -14,7 +14,7 @@
 
 namespace OwenIt\Auditing;
 
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Facades\Auditor;
 
 class AuditableObserver
@@ -33,7 +33,7 @@ class AuditableObserver
      *
      * @return void
      */
-    public function created(AuditableContract $model)
+    public function created(Auditable $model)
     {
         Auditor::execute($model->setAuditEvent('created'));
     }
@@ -45,7 +45,7 @@ class AuditableObserver
      *
      * @return void
      */
-    public function updated(AuditableContract $model)
+    public function updated(Auditable $model)
     {
         // Ignore the updated event when restoring
         if (!static::$restoring) {
@@ -60,7 +60,7 @@ class AuditableObserver
      *
      * @return void
      */
-    public function deleted(AuditableContract $model)
+    public function deleted(Auditable $model)
     {
         Auditor::execute($model->setAuditEvent('deleted'));
     }
@@ -72,7 +72,7 @@ class AuditableObserver
      *
      * @return void
      */
-    public function restoring(AuditableContract $model)
+    public function restoring(Auditable $model)
     {
         // When restoring a model, an updated event is also fired.
         // By keeping track of the main event that took place,
@@ -87,7 +87,7 @@ class AuditableObserver
      *
      * @return void
      */
-    public function restored(AuditableContract $model)
+    public function restored(Auditable $model)
     {
         Auditor::execute($model->setAuditEvent('restored'));
 
