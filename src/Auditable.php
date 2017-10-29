@@ -346,7 +346,7 @@ trait Auditable
      */
     protected function getEventHandlerMethod(string $event): string
     {
-        return 'audit'.Str::studly($event).'Attributes';
+        return sprintf('audit%sAttributes', Str::studly($event));
     }
 
     /**
