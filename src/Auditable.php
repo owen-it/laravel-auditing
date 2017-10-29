@@ -187,18 +187,18 @@ trait Auditable
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $method = $this->getEventAttributesMethodName($this->auditEvent);
+        $eventHandler = $this->resolveEventHandler($this->auditEvent);
 
-        if (!is_string($method)) {
+        if (!is_string($eventHandler)) {
             // this means the event is auditable but has no defined attributes method, so we define it here
-            $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+            $eventHandler = 'audit'.Str::studly($this->auditEvent).'Attributes';
         }
 
-        if (!method_exists($this, $method)) {
+        if (!method_exists($this, $eventHandler)) {
             throw new RuntimeException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
-                $method
+                $eventHandler
             ));
         }
 
@@ -207,7 +207,7 @@ trait Auditable
         $old = [];
         $new = [];
 
-        $this->{$method}($old, $new);
+        $this->{$eventHandler}($old, $new);
 
         $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
 
@@ -318,25 +318,25 @@ trait Auditable
      */
     protected function isEventAuditable($event)
     {
-        return $this->getEventAttributesMethodName($event) !== null;
+        return $this->resolveEventHandler($event) !== null;
     }
 
     /**
-     * Get Event Attributes Method Name.
+     * Event handler method resolver.
      *
-     * @param string $event
+     * @param string $currentEvent
      *
      * @return mixed The event's custom attribute method name if it has one, false it has none or null if the event is
      *               not auditable.
      */
-    private function getEventAttributesMethodName($event)
+    protected function resolveEventHandler($currentEvent)
     {
         foreach ($this->getAuditableEvents() as $key => $value) {
-            $auditableEventName = is_int($key) ? $value : $key;
+            $auditableEvent = is_int($key) ? $value : $key;
 
-            $auditableEventNameRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEventName));
+            $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
 
-            if (preg_match($auditableEventNameRegex, $event) === 1) {
+            if (preg_match($auditableEventRegex, $currentEvent)) {
                 return is_int($key) ? false : $value;
             }
         }
