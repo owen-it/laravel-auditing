@@ -71,18 +71,23 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the toAudit() method to FAIL (Audit event method missing).
+     * Test the toAudit() method to FAIL (Custom attributes method missing).
      *
      * @expectedException        RuntimeException
-     * @expectedExceptionMessage Unable to handle "foo" event, auditFooAttributes() method missing
+     * @expectedExceptionMessage Unable to handle "foo" event, customMethod() method missing
      *
      * @return void
      */
-    public function testToAuditFailAuditEventMethodMissing()
+    public function testToAuditFailAuditEventMethodMissingCustom()
     {
         $model = Mockery::mock(AuditableStub::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
+
+        $model->shouldReceive('getAuditableEvents')
+            ->andReturn([
+                'foo' => 'customMethod',
+            ]);
 
         $model->shouldReceive('isEventAuditable')
             ->andReturn(true);
@@ -154,6 +159,70 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('title', $auditData['new_values']);
         $this->assertArrayHasKey('content', $auditData['new_values']);
         $this->assertArrayHasKey('published', $auditData['new_values']);
+    }
+
+    /**
+     * Test the toAudit() method to PASS (custom event).
+     *
+     * @dataProvider providerTestToAuditPassCustomEvent
+     *
+     * @param string $event
+     * @param array  $getAuditableEventsStub
+     * @param string $expectedAttributesMethodName
+     *
+     * @return void
+     */
+    public function testToAuditPassCustomEvent($event, $getAuditableEventsStub, $expectedAttributesMethodName)
+    {
+        Config::set('audit.user.resolver', function () {
+            return rand(1, 256);
+        });
+
+        $model = Mockery::mock(AuditableStub::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $this->setAuditableTestAttributes($model);
+
+        $model->shouldReceive('getAuditableEvents')
+            ->andReturn($getAuditableEventsStub);
+
+        $model->shouldReceive($expectedAttributesMethodName)
+            ->once();
+
+        $model->setAuditEvent($event);
+
+        $this->assertTrue($model->readyForAuditing());
+
+        $auditData = $model->toAudit();
+
+        // Audit attributes
+        $this->assertCount(9, $auditData);
+
+        $this->assertArrayHasKey('old_values', $auditData);
+        $this->assertArrayHasKey('new_values', $auditData);
+        $this->assertArrayHasKey('event', $auditData);
+        $this->assertArrayHasKey('auditable_id', $auditData);
+        $this->assertArrayHasKey('auditable_type', $auditData);
+        $this->assertArrayHasKey('user_id', $auditData);
+        $this->assertArrayHasKey('url', $auditData);
+        $this->assertArrayHasKey('ip_address', $auditData);
+        $this->assertArrayHasKey('user_agent', $auditData);
+    }
+
+    /**
+     * Data provider for toAudit() test to PASS (custom event).
+     *
+     * @return array
+     */
+    public function providerTestToAuditPassCustomEvent()
+    {
+        return [
+            'Custom event'                                            => ['custom', ['custom'], 'auditCustomAttributes'],
+            'Custom attributes method'                                => ['foo', ['foo' => 'myAttributesMethod'], 'myAttributesMethod'],
+            'Custom event with wildcard'                              => ['custom', ['cus*'], 'auditCustomAttributes'],
+            'Custom event with wildcard and custom attributes method' => ['foo', ['f*' => 'myAttributesMethod'], 'myAttributesMethod'],
+        ];
     }
 
     /**
@@ -561,5 +630,53 @@ class AuditableTest extends TestCase
         Config::set('audit.implementation', AuditStub::class);
 
         $this->assertInstanceOf(AuditStub::class, $model->audits()->getRelated());
+    }
+
+    /**
+     * Test the isEventAuditable() method to PASS (default).
+     *
+     * @dataProvider providerTestToAuditPassCustomAttributesMethod
+     *
+     * @param string $event
+     * @param bool   $expected
+     * @param array  $getAuditableEventsStub
+     *
+     * @return void
+     */
+    public function testIsEventAuditableDefault($event, $expected, $getAuditableEventsStub = null)
+    {
+        $model = Mockery::mock(AuditableStub::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $this->setAuditableTestAttributes($model);
+
+        if (isset($getAuditableEventsStub)) {
+            $model->shouldReceive('getAuditableEvents')
+                ->andReturn($getAuditableEventsStub);
+        }
+
+        $this->assertSame($expected, $model->isEventAuditable($event));
+    }
+
+    /**
+     * Data provider for isEventAuditable() test to PASS (default).
+     *
+     * @return array
+     */
+    public function providerTestToAuditPassCustomAttributesMethod()
+    {
+        return [
+            'Default created event'                               => ['created', true],
+            'Default updated event'                               => ['updated', true],
+            'Default deleted event'                               => ['deleted', true],
+            'Custom event'                                        => ['custom', true, ['created', 'custom']],
+            'Custom event with custom attributes method'          => ['custom2', true, ['custom2' => 'myMethod']],
+            'Custom event with * in name'                         => ['myCustomEvent', true, ['myCustom*']],
+            'Custom event with * in name and custom attributes'   => ['customEvent', true, ['custom*' => 'method']],
+            'Created event but not present in getAuditableEvents' => ['created', false, ['updated', 'deleted']],
+            'Unknown event'                                       => ['other', false],
+            'Other unknown event'                                 => ['really', false, ['reallyCreated*']],
+        ];
     }
 }

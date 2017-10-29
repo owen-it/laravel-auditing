@@ -187,13 +187,13 @@ trait Auditable
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $method = 'audit'.Str::studly($this->auditEvent).'Attributes';
+        $eventHandler = $this->resolveEventHandlerMethod($this->auditEvent);
 
-        if (!method_exists($this, $method)) {
+        if (!method_exists($this, $eventHandler)) {
             throw new RuntimeException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
-                $method
+                $eventHandler
             ));
         }
 
@@ -202,7 +202,7 @@ trait Auditable
         $old = [];
         $new = [];
 
-        $this->{$method}($old, $new);
+        $this->{$eventHandler}($old, $new);
 
         $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
 
@@ -313,7 +313,39 @@ trait Auditable
      */
     protected function isEventAuditable($event)
     {
-        return in_array($event, $this->getAuditableEvents());
+        return is_string($this->resolveEventHandlerMethod($event));
+    }
+
+    /**
+     * Event handler method resolver.
+     *
+     * @param string $event
+     *
+     * @return string|null
+     */
+    protected function resolveEventHandlerMethod($event)
+    {
+        foreach ($this->getAuditableEvents() as $key => $value) {
+            $auditableEvent = is_int($key) ? $value : $key;
+
+            $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
+
+            if (preg_match($auditableEventRegex, $event)) {
+                return is_int($key) ? $this->getEventHandlerMethod($event) : $value;
+            }
+        }
+    }
+
+    /**
+     * Get the event handler method name.
+     *
+     * @param string $event
+     *
+     * @return string
+     */
+    protected function getEventHandlerMethod($event)
+    {
+        return 'audit'.Str::studly($event).'Attributes';
     }
 
     /**
