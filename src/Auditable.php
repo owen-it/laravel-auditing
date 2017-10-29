@@ -187,7 +187,7 @@ trait Auditable
             throw new RuntimeException('A valid audit event has not been set');
         }
 
-        $eventHandler = $this->resolveEventHandler($this->auditEvent);
+        $eventHandler = $this->resolveEventHandlerMethod($this->auditEvent);
 
         if (!is_string($eventHandler)) {
             // this means the event is auditable but has no defined attributes method, so we define it here
@@ -318,28 +318,38 @@ trait Auditable
      */
     protected function isEventAuditable($event)
     {
-        return $this->resolveEventHandler($event) !== null;
+        return is_string($this->resolveEventHandlerMethod($event));
     }
 
     /**
      * Event handler method resolver.
      *
-     * @param string $currentEvent
+     * @param string $event
      *
-     * @return mixed The event's custom attribute method name if it has one, false it has none or null if the event is
-     *               not auditable.
+     * @return string|null
      */
-    protected function resolveEventHandler($currentEvent)
+    protected function resolveEventHandlerMethod($event)
     {
         foreach ($this->getAuditableEvents() as $key => $value) {
             $auditableEvent = is_int($key) ? $value : $key;
 
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
 
-            if (preg_match($auditableEventRegex, $currentEvent)) {
-                return is_int($key) ? false : $value;
+            if (preg_match($auditableEventRegex, $event)) {
+                return is_int($key) ? $this->getEventHandlerMethod($event) : $value;
             }
         }
+    }
+
+    /**
+     * Get the event handler method name.
+     *
+     * @param string $event
+     * @return string
+     */
+    protected function getEventHandlerMethod($event)
+    {
+        return 'audit'.Str::studly($event).'Attributes';
     }
 
     /**
