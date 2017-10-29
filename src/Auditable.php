@@ -189,11 +189,6 @@ trait Auditable
 
         $eventHandler = $this->resolveEventHandlerMethod($this->auditEvent);
 
-        if (!is_string($eventHandler)) {
-            // this means the event is auditable but has no defined attributes method, so we define it here
-            $eventHandler = 'audit'.Str::studly($this->auditEvent).'Attributes';
-        }
-
         if (!method_exists($this, $eventHandler)) {
             throw new RuntimeException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
