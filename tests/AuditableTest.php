@@ -71,30 +71,6 @@ class AuditableTest extends TestCase
     }
 
     /**
-     * Test the toAudit() method to FAIL (Audit event method missing).
-     *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Unable to handle "foo" event, auditFooAttributes() method missing
-     *
-     * @return void
-     */
-    public function testToAuditFailAuditEventMethodMissing()
-    {
-        $model = Mockery::mock(AuditableStub::class)
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-
-        $model->shouldReceive('isEventAuditable')
-            ->andReturn(true);
-
-        $model->setAuditEvent('foo');
-
-        $this->assertTrue($model->readyForAuditing());
-
-        $model->toAudit();
-    }
-
-    /**
      * Test the toAudit() method to FAIL (Custom attributes method missing).
      *
      * @expectedException        RuntimeException
