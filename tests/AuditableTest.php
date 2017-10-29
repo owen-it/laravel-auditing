@@ -85,7 +85,9 @@ class AuditableTest extends TestCase
             ->shouldAllowMockingProtectedMethods();
 
         $model->shouldReceive('getAuditableEvents')
-            ->andReturn(['foo' => 'customMethod']);
+            ->andReturn([
+                'foo' => 'customMethod',
+            ]);
 
         $model->shouldReceive('isEventAuditable')
             ->andReturn(true);
@@ -164,6 +166,10 @@ class AuditableTest extends TestCase
      *
      * @dataProvider providerTestToAuditPassCustomEvent
      *
+     * @param string $event
+     * @param array  $getAuditableEventsStub
+     * @param string $expectedAttributesMethodName
+     *
      * @return void
      */
     public function testToAuditPassCustomEvent($event, $getAuditableEventsStub, $expectedAttributesMethodName)
@@ -204,6 +210,11 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('user_agent', $auditData);
     }
 
+    /**
+     * Data provider for toAudit() test to PASS (custom event).
+     *
+     * @return array
+     */
     public function providerTestToAuditPassCustomEvent()
     {
         return [
@@ -626,6 +637,10 @@ class AuditableTest extends TestCase
      *
      * @dataProvider providerTestToAuditPassCustomAttributesMethod
      *
+     * @param string $event
+     * @param bool   $expected
+     * @param array  $getAuditableEventsStub
+     *
      * @return void
      */
     public function testIsEventAuditableDefault($event, $expected, $getAuditableEventsStub = null)
@@ -644,6 +659,11 @@ class AuditableTest extends TestCase
         $this->assertSame($expected, $model->isEventAuditable($event));
     }
 
+    /**
+     * Data provider for isEventAuditable() test to PASS (default).
+     *
+     * @return array
+     */
     public function providerTestToAuditPassCustomAttributesMethod()
     {
         return [
