@@ -14,6 +14,8 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
 
 trait Audit
@@ -50,7 +52,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getTable()
+    public function getTable(): string
     {
         return Config::get('audit.drivers.database.table', parent::getTable());
     }
@@ -58,7 +60,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function auditable()
+    public function auditable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -66,7 +68,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(
             Config::get('audit.user.model'),
@@ -78,7 +80,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function resolveData()
+    public function resolveData(): array
     {
         // Metadata
         $this->data = [
@@ -117,7 +119,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getDataValue($key)
+    public function getDataValue(string $key)
     {
         if (!array_key_exists($key, $this->data)) {
             return;
@@ -144,7 +146,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getMetadata($json = false, $options = 0, $depth = 512)
+    public function getMetadata(bool $json = false, int $options = 0, int $depth = 512)
     {
         if (empty($this->data)) {
             $this->resolveData();
@@ -162,7 +164,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getModified($json = false, $options = 0, $depth = 512)
+    public function getModified(bool $json = false, int $options = 0, int $depth = 512)
     {
         if (empty($this->data)) {
             $this->resolveData();

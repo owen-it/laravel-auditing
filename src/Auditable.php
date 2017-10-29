@@ -14,6 +14,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
@@ -53,10 +54,10 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function audits()
+    public function audits(): MorphMany
     {
         return $this->morphMany(
-            Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class),
+            Config::get('audit.implementation', Models\Audit::class),
             'auditable'
         );
     }
@@ -173,7 +174,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function readyForAuditing()
+    public function readyForAuditing(): bool
     {
         return $this->isEventAuditable($this->auditEvent);
     }
@@ -181,7 +182,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function toAudit()
+    public function toAudit(): array
     {
         if (!$this->readyForAuditing()) {
             throw new RuntimeException('A valid audit event has not been set');
@@ -222,7 +223,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function transformAudit(array $data)
+    public function transformAudit(array $data): array
     {
         return $data;
     }
@@ -254,7 +255,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function resolveUrl()
+    protected function resolveUrl(): string
     {
         if (App::runningInConsole()) {
             return 'console';
@@ -268,7 +269,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function resolveIpAddress()
+    protected function resolveIpAddress(): string
     {
         return Request::ip();
     }
@@ -278,7 +279,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function resolveUserAgent()
+    protected function resolveUserAgent(): string
     {
         return Request::header('User-Agent');
     }
@@ -290,7 +291,7 @@ trait Auditable
      *
      * @return bool
      */
-    protected function isAttributeAuditable($attribute)
+    protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
         if (in_array($attribute, $this->auditableExclusions)) {
@@ -311,7 +312,7 @@ trait Auditable
      *
      * @return bool
      */
-    protected function isEventAuditable($event)
+    protected function isEventAuditable($event): bool
     {
         return is_string($this->resolveEventHandlerMethod($event));
     }
@@ -343,7 +344,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function getEventHandlerMethod($event)
+    protected function getEventHandlerMethod(string $event): string
     {
         return 'audit'.Str::studly($event).'Attributes';
     }
@@ -351,7 +352,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function setAuditEvent($event)
+    public function setAuditEvent(string $event): Contracts\Auditable
     {
         $this->auditEvent = $this->isEventAuditable($event) ? $event : null;
 
@@ -363,7 +364,7 @@ trait Auditable
      *
      * @return array
      */
-    public function getAuditableEvents()
+    public function getAuditableEvents(): array
     {
         if (isset($this->auditableEvents)) {
             return $this->auditableEvents;
@@ -382,10 +383,10 @@ trait Auditable
      *
      * @return bool
      */
-    public static function isAuditingEnabled()
+    public static function isAuditingEnabled(): bool
     {
         if (App::runningInConsole()) {
-            return (bool) Config::get('audit.console', false);
+            return Config::get('audit.console', false);
         }
 
         return true;
@@ -394,33 +395,33 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getAuditInclude()
+    public function getAuditInclude(): array
     {
-        return isset($this->auditInclude) ? (array) $this->auditInclude : [];
+        return isset($this->auditInclude) ? $this->auditInclude : [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAuditExclude()
+    public function getAuditExclude(): array
     {
-        return isset($this->auditExclude) ? (array) $this->auditExclude : [];
+        return isset($this->auditExclude) ? $this->auditExclude : [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAuditStrict()
+    public function getAuditStrict(): bool
     {
-        return isset($this->auditStrict) ? (bool) $this->auditStrict : false;
+        return isset($this->auditStrict) ? $this->auditStrict : false;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAuditTimestamps()
+    public function getAuditTimestamps(): bool
     {
-        return isset($this->auditTimestamps) ? (bool) $this->auditTimestamps : false;
+        return isset($this->auditTimestamps) ? $this->auditTimestamps : false;
     }
 
     /**
@@ -434,7 +435,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getAuditThreshold()
+    public function getAuditThreshold(): int
     {
         return isset($this->auditThreshold) ? $this->auditThreshold : 0;
     }

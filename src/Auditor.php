@@ -18,13 +18,12 @@ use Illuminate\Support\Manager;
 use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
-use OwenIt\Auditing\Contracts\Auditor as AuditorContract;
 use OwenIt\Auditing\Drivers\Database;
 use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
 use RuntimeException;
 
-class Auditor extends Manager implements AuditorContract
+class Auditor extends Manager implements Contracts\Auditor
 {
     /**
      * {@inheritdoc}
@@ -93,7 +92,7 @@ class Auditor extends Manager implements AuditorContract
      *
      * @return \OwenIt\Auditing\Drivers\Database
      */
-    protected function createDatabaseDriver()
+    protected function createDatabaseDriver(): Database
     {
         return $this->app->make(Database::class);
     }
@@ -106,7 +105,7 @@ class Auditor extends Manager implements AuditorContract
      *
      * @return bool
      */
-    protected function fireAuditingEvent(Auditable $model, AuditDriver $driver)
+    protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
         return $this->app->make('events')->until(
             new Auditing($model, $driver)

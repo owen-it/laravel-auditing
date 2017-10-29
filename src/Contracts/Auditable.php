@@ -14,6 +14,8 @@
 
 namespace OwenIt\Auditing\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
 interface Auditable
 {
     /**
@@ -21,7 +23,7 @@ interface Auditable
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function audits();
+    public function audits(): MorphMany;
 
     /**
      * Set the Audit event.
@@ -30,14 +32,14 @@ interface Auditable
      *
      * @return Auditable
      */
-    public function setAuditEvent($event);
+    public function setAuditEvent(string $event): Auditable;
 
     /**
      * Is the model ready for auditing?
      *
      * @return bool
      */
-    public function readyForAuditing();
+    public function readyForAuditing(): bool;
 
     /**
      * Return data for an Audit.
@@ -46,40 +48,40 @@ interface Auditable
      *
      * @return array
      */
-    public function toAudit();
+    public function toAudit(): array;
 
     /**
      * Get the (Auditable) attributes included in audit.
      *
      * @return array
      */
-    public function getAuditInclude();
+    public function getAuditInclude(): array;
 
     /**
      * Get the (Auditable) attributes excluded from audit.
      *
      * @return array
      */
-    public function getAuditExclude();
+    public function getAuditExclude(): array;
 
     /**
      * Get the strict audit status.
      *
      * @return bool
      */
-    public function getAuditStrict();
+    public function getAuditStrict(): bool;
 
     /**
      * Get the audit (Auditable) timestamps status.
      *
      * @return bool
      */
-    public function getAuditTimestamps();
+    public function getAuditTimestamps(): bool;
 
     /**
      * Get the Audit Driver.
      *
-     * @return string
+     * @return string|null
      */
     public function getAuditDriver();
 
@@ -88,7 +90,7 @@ interface Auditable
      *
      * @return int
      */
-    public function getAuditThreshold();
+    public function getAuditThreshold(): int;
 
     /**
      * Transform the data before performing an audit.
@@ -97,5 +99,5 @@ interface Auditable
      *
      * @return array
      */
-    public function transformAudit(array $data);
+    public function transformAudit(array $data): array;
 }
