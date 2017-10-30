@@ -19,11 +19,11 @@ use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Stubs\AuditableStub;
 use OwenIt\Auditing\Tests\Stubs\AuditStub;
 use OwenIt\Auditing\Tests\Stubs\UserStub;
-use RuntimeException;
 
 class AuditableTest extends TestCase
 {
@@ -50,7 +50,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditFailInvalidAuditEvent()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('A valid audit event has not been set');
 
         $model = new AuditableStub();
@@ -70,7 +70,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditFailAuditEventMethodMissingCustom()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Unable to handle "foo" event, customMethod() method missing');
 
         $model = Mockery::mock(AuditableStub::class)
@@ -99,7 +99,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditFailInvalidUserIdResolver()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid User resolver, UserResolver FQCN expected');
 
         Config::set('audit.user.resolver', null);
