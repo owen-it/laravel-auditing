@@ -19,7 +19,7 @@ class AuditableTransformStub extends AuditableStub
     /**
      * {@inheritdoc}
      */
-    public function transformAudit(array $data)
+    public function transformAudit(array $data): array
     {
         $data['foo'] = 'bar';
 
