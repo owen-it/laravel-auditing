@@ -239,15 +239,11 @@ trait Auditable
     {
         $userResolver = Config::get('audit.user.resolver');
 
-        if (is_callable($userResolver)) {
-            return $userResolver();
-        }
-
         if (is_subclass_of($userResolver, UserResolver::class)) {
             return call_user_func([$userResolver, 'resolveId']);
         }
 
-        throw new UnexpectedValueException('Invalid User resolver, callable or UserResolver FQCN expected');
+        throw new UnexpectedValueException('Invalid User resolver, UserResolver FQCN expected');
     }
 
     /**
