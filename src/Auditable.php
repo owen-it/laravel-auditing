@@ -328,21 +328,9 @@ trait Auditable
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
 
             if (preg_match($auditableEventRegex, $event)) {
-                return is_int($key) ? $this->getEventHandlerMethod($event) : $value;
+                return is_int($key) ? sprintf('audit%sAttributes', Str::studly($event)) : $value;
             }
         }
-    }
-
-    /**
-     * Get the event handler method name.
-     *
-     * @param string $event
-     *
-     * @return string
-     */
-    protected function getEventHandlerMethod(string $event): string
-    {
-        return sprintf('audit%sAttributes', Str::studly($event));
     }
 
     /**
