@@ -217,7 +217,7 @@ trait Auditable
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
-            'tags'           => implode(',', $this->getTags()),
+            'tags'           => implode(',', $this->generateTags()),
         ]);
     }
 
@@ -428,7 +428,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getTags(): array
+    public function generateTags(): array
     {
         return [];
     }

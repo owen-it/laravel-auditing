@@ -102,11 +102,11 @@ interface Auditable
     public function transformAudit(array $data): array;
 
     /**
-     * Get an array with the model tags.
+     * Generate an array with the model tags.
      *
      * @return array
      */
-    public function getTags(): array;
+    public function generateTags(): array;
 
     /**
      * Transition the model state through an Audit.
