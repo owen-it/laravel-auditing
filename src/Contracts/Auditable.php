@@ -100,4 +100,11 @@ interface Auditable
      * @return array
      */
     public function transformAudit(array $data): array;
+
+    /**
+     * Get an array with the model tags.
+     *
+     * @return array
+     */
+    public function getTags(): array;
 }

@@ -217,6 +217,7 @@ trait Auditable
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
+            'tags'           => implode(',', $this->getTags()),
         ]);
     }
 
@@ -422,5 +423,13 @@ trait Auditable
     public function getAuditThreshold(): int
     {
         return isset($this->auditThreshold) ? $this->auditThreshold : 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTags(): array
+    {
+        return [];
     }
 }

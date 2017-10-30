@@ -89,6 +89,7 @@ trait Audit
             'audit_url'        => $this->url,
             'audit_ip_address' => $this->ip_address,
             'audit_user_agent' => $this->user_agent,
+            'audit_tags'       => $this->tags,
             'audit_created_at' => $this->serializeDate($this->created_at),
             'audit_updated_at' => $this->serializeDate($this->updated_at),
             'user_id'          => $this->getAttribute(Config::get('audit.user.foreign_key', 'user_id')),
@@ -180,5 +181,15 @@ trait Audit
         }
 
         return $json ? json_encode($modified, $options, $depth) : $modified;
+    }
+
+    /**
+     * Get the Audit tags as an array.
+     *
+     * @return array
+     */
+    public function getTagsAttribute(): array
+    {
+        return explode(',', $this->attributes['tags']);
     }
 }
