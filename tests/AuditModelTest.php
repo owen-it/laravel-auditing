@@ -33,12 +33,12 @@ class AuditModelTest extends TestCase
      */
     private function setAuditTestAttributes(Audit $audit, bool $withUser = true)
     {
-        $audit->id         = 1;
-        $audit->event      = 'created';
-        $audit->url        = 'http://example.com/create';
+        $audit->id = 1;
+        $audit->event = 'created';
+        $audit->url = 'http://example.com/create';
         $audit->ip_address = '127.0.0.1';
         $audit->user_agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0';
-        $audit->tags       = 'foo,bar';
+        $audit->tags = 'foo,bar';
         $audit->created_at = '2012-06-14 15:03:00';
         $audit->updated_at = '2012-06-14 15:03:00';
         $audit->new_values = [

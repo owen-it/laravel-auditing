@@ -58,7 +58,7 @@ class AuditableStub extends Model implements AuditableContract
     }
 
     /**
-     * Custom event handler #1
+     * Custom event handler #1.
      *
      * @param array $old
      * @param array $new
@@ -70,7 +70,7 @@ class AuditableStub extends Model implements AuditableContract
     }
 
     /**
-     * Custom event handler #2
+     * Custom event handler #2.
      *
      * @param array $old
      * @param array $new

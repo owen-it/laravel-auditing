@@ -266,7 +266,7 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             public function transformAudit(array $data): array
             {
                 $data['foo'] = 'bar';
@@ -308,7 +308,7 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             protected $auditInclude = [
                 'title',
                 'content',
@@ -358,7 +358,7 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             protected $auditExclude = [
                 'content',
             ];
@@ -406,7 +406,7 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             protected $auditTimestamps = true;
         };
 
@@ -453,7 +453,7 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             protected $auditStrict = true;
         };
 
@@ -503,7 +503,7 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             protected $auditStrict = true;
         };
 
@@ -594,7 +594,7 @@ class AuditableTest extends TestCase
      */
     public function testGetAuditDriverPassCustom()
     {
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             protected $auditDriver = 'database';
         };
 
@@ -620,7 +620,7 @@ class AuditableTest extends TestCase
      */
     public function testGetAuditThresholdPassCustom()
     {
-        $model = new class extends AuditableStub {
+        $model = new class() extends AuditableStub {
             protected $auditThreshold = 100;
         };
 
