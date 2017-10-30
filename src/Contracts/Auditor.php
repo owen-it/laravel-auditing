@@ -23,7 +23,7 @@ interface Auditor
      *
      * @return AuditDriver
      */
-    public function auditDriver(Auditable $model);
+    public function auditDriver(Auditable $model): AuditDriver;
 
     /**
      * Perform an audit.

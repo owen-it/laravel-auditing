@@ -19,18 +19,11 @@ use Illuminate\Support\Facades\Config;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
-use OwenIt\Auditing\Tests\Stubs\AuditableDriverStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableExcludeStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableIncludeStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableStrictStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableThresholdStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableTimestampStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableTransformStub;
 use OwenIt\Auditing\Tests\Stubs\AuditStub;
 use OwenIt\Auditing\Tests\Stubs\UserStub;
-use RuntimeException;
 
 class AuditableTest extends TestCase
 {
@@ -53,13 +46,13 @@ class AuditableTest extends TestCase
     /**
      * Test the toAudit() method to FAIL (Invalid audit event).
      *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A valid audit event has not been set
-     *
      * @return void
      */
     public function testToAuditFailInvalidAuditEvent()
     {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('A valid audit event has not been set');
+
         $model = new AuditableStub();
 
         // Invalid auditable event
@@ -73,13 +66,13 @@ class AuditableTest extends TestCase
     /**
      * Test the toAudit() method to FAIL (Custom attributes method missing).
      *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Unable to handle "foo" event, customMethod() method missing
-     *
      * @return void
      */
     public function testToAuditFailAuditEventMethodMissingCustom()
     {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Unable to handle "foo" event, customMethod() method missing');
+
         $model = Mockery::mock(AuditableStub::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -102,13 +95,13 @@ class AuditableTest extends TestCase
     /**
      * Test the toAudit() method to FAIL (Invalid User id resolver).
      *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Invalid User resolver, callable or UserResolver FQCN expected
-     *
      * @return void
      */
     public function testToAuditFailInvalidUserIdResolver()
     {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Invalid User resolver, UserResolver FQCN expected');
+
         Config::set('audit.user.resolver', null);
 
         $model = new AuditableStub();
@@ -127,9 +120,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassDefault()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableStub();
         $this->setAuditableTestAttributes($model);
@@ -141,7 +132,7 @@ class AuditableTest extends TestCase
         $auditData = $model->toAudit();
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -152,6 +143,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(3, $auditData['new_values']);
@@ -174,9 +166,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassCustomEvent($event, $getAuditableEventsStub, $expectedAttributesMethodName)
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = Mockery::mock(AuditableStub::class)
             ->makePartial()
@@ -197,7 +187,7 @@ class AuditableTest extends TestCase
         $auditData = $model->toAudit();
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -208,6 +198,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
     }
 
     /**
@@ -233,9 +224,7 @@ class AuditableTest extends TestCase
     public function testToAuditPassCustomUserForeignKey()
     {
         Config::set('audit.user.foreign_key', 'fk_id');
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableStub();
         $this->setAuditableTestAttributes($model);
@@ -247,7 +236,7 @@ class AuditableTest extends TestCase
         $auditData = $model->toAudit();
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -258,6 +247,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(3, $auditData['new_values']);
@@ -276,7 +266,14 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableTransformStub();
+        $model = new class() extends AuditableStub {
+            public function transformAudit(array $data): array
+            {
+                $data['foo'] = 'bar';
+
+                return $data;
+            }
+        };
 
         $this->setAuditableTestAttributes($model);
 
@@ -287,7 +284,7 @@ class AuditableTest extends TestCase
         $auditData = $model->toAudit();
 
         // Audit attributes
-        $this->assertCount(10, $auditData);
+        $this->assertCount(11, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -298,6 +295,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
         $this->assertArrayHasKey('foo', $auditData);
     }
 
@@ -308,11 +306,15 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassIncludeAttributes()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableIncludeStub();
+        $model = new class() extends AuditableStub {
+            protected $auditInclude = [
+                'title',
+                'content',
+            ];
+        };
+
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
@@ -327,7 +329,7 @@ class AuditableTest extends TestCase
         ], $model->getAuditInclude());
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -338,6 +340,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);
@@ -355,7 +358,12 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableExcludeStub();
+        $model = new class() extends AuditableStub {
+            protected $auditExclude = [
+                'content',
+            ];
+        };
+
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
@@ -369,7 +377,7 @@ class AuditableTest extends TestCase
         ], $model->getAuditExclude());
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -380,6 +388,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);
@@ -395,11 +404,12 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassWithAuditableTimestamps()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableTimestampStub();
+        $model = new class() extends AuditableStub {
+            protected $auditTimestamps = true;
+        };
+
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
@@ -411,7 +421,7 @@ class AuditableTest extends TestCase
         $this->assertTrue($model->getAuditTimestamps());
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -422,6 +432,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(5, $auditData['new_values']);
@@ -442,7 +453,10 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableStrictStub();
+        $model = new class() extends AuditableStub {
+            protected $auditStrict = true;
+        };
+
         $this->setAuditableTestAttributes($model);
 
         // Set visible
@@ -460,7 +474,7 @@ class AuditableTest extends TestCase
         $this->assertTrue($model->getAuditStrict());
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -471,6 +485,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);
@@ -486,11 +501,12 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassHiddenStrictMode()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableStrictStub();
+        $model = new class() extends AuditableStub {
+            protected $auditStrict = true;
+        };
+
         $this->setAuditableTestAttributes($model);
 
         // Set hidden
@@ -507,7 +523,7 @@ class AuditableTest extends TestCase
         $this->assertTrue($model->getAuditStrict());
 
         // Audit attributes
-        $this->assertCount(9, $auditData);
+        $this->assertCount(10, $auditData);
 
         $this->assertArrayHasKey('old_values', $auditData);
         $this->assertArrayHasKey('new_values', $auditData);
@@ -518,6 +534,7 @@ class AuditableTest extends TestCase
         $this->assertArrayHasKey('url', $auditData);
         $this->assertArrayHasKey('ip_address', $auditData);
         $this->assertArrayHasKey('user_agent', $auditData);
+        $this->assertArrayHasKey('tags', $auditData);
 
         // Modified Auditable attributes
         $this->assertCount(2, $auditData['new_values']);
@@ -577,7 +594,9 @@ class AuditableTest extends TestCase
      */
     public function testGetAuditDriverPassCustom()
     {
-        $model = new AuditableDriverStub();
+        $model = new class() extends AuditableStub {
+            protected $auditDriver = 'database';
+        };
 
         $this->assertEquals('database', $model->getAuditDriver());
     }
@@ -601,7 +620,9 @@ class AuditableTest extends TestCase
      */
     public function testGetAuditThresholdPassCustom()
     {
-        $model = new AuditableThresholdStub();
+        $model = new class() extends AuditableStub {
+            protected $auditThreshold = 100;
+        };
 
         $this->assertEquals(100, $model->getAuditThreshold());
     }

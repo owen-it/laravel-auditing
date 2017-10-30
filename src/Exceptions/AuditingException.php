@@ -12,14 +12,10 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Tests\Stubs;
+namespace OwenIt\Auditing\Exceptions;
 
-class AuditableStrictStub extends AuditableStub
+use Exception;
+
+class AuditingException extends Exception
 {
-    /**
-     * Should the audit be strict?
-     *
-     * @var bool
-     */
-    protected $auditStrict = true;
 }

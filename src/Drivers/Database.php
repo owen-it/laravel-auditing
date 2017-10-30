@@ -15,6 +15,7 @@
 namespace OwenIt\Auditing\Drivers;
 
 use Illuminate\Support\Facades\Config;
+use OwenIt\Auditing\Contracts\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
 
@@ -23,7 +24,7 @@ class Database implements AuditDriver
     /**
      * {@inheritdoc}
      */
-    public function audit(Auditable $model)
+    public function audit(Auditable $model): Audit
     {
         $class = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
 
@@ -33,7 +34,7 @@ class Database implements AuditDriver
     /**
      * {@inheritdoc}
      */
-    public function prune(Auditable $model)
+    public function prune(Auditable $model): bool
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
             $total = $model->audits()->count();
