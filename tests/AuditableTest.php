@@ -20,14 +20,7 @@ use Mockery;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Models\Audit;
-use OwenIt\Auditing\Tests\Stubs\AuditableDriverStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableExcludeStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableIncludeStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableStrictStub;
 use OwenIt\Auditing\Tests\Stubs\AuditableStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableThresholdStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableTimestampStub;
-use OwenIt\Auditing\Tests\Stubs\AuditableTransformStub;
 use OwenIt\Auditing\Tests\Stubs\AuditStub;
 use OwenIt\Auditing\Tests\Stubs\UserStub;
 use RuntimeException;
@@ -270,7 +263,14 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableTransformStub();
+        $model = new class extends AuditableStub {
+            public function transformAudit(array $data): array
+            {
+                $data['foo'] = 'bar';
+
+                return $data;
+            }
+        };
 
         $this->setAuditableTestAttributes($model);
 
@@ -304,7 +304,13 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableIncludeStub();
+        $model = new class extends AuditableStub {
+            protected $auditInclude = [
+                'title',
+                'content',
+            ];
+        };
+
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
@@ -347,7 +353,12 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableExcludeStub();
+        $model = new class extends AuditableStub {
+            protected $auditExclude = [
+                'content',
+            ];
+        };
+
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
@@ -389,7 +400,10 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableTimestampStub();
+        $model = new class extends AuditableStub {
+            protected $auditTimestamps = true;
+        };
+
         $this->setAuditableTestAttributes($model);
 
         $model->setAuditEvent('created');
@@ -432,7 +446,10 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableStrictStub();
+        $model = new class extends AuditableStub {
+            protected $auditStrict = true;
+        };
+
         $this->setAuditableTestAttributes($model);
 
         // Set visible
@@ -478,7 +495,10 @@ class AuditableTest extends TestCase
     {
         Config::set('audit.user.resolver', UserStub::class);
 
-        $model = new AuditableStrictStub();
+        $model = new class extends AuditableStub {
+            protected $auditStrict = true;
+        };
+
         $this->setAuditableTestAttributes($model);
 
         // Set hidden
@@ -565,7 +585,9 @@ class AuditableTest extends TestCase
      */
     public function testGetAuditDriverPassCustom()
     {
-        $model = new AuditableDriverStub();
+        $model = new class extends AuditableStub {
+            protected $auditDriver = 'database';
+        };
 
         $this->assertEquals('database', $model->getAuditDriver());
     }
@@ -589,7 +611,9 @@ class AuditableTest extends TestCase
      */
     public function testGetAuditThresholdPassCustom()
     {
-        $model = new AuditableThresholdStub();
+        $model = new class extends AuditableStub {
+            protected $auditThreshold = 100;
+        };
 
         $this->assertEquals(100, $model->getAuditThreshold());
     }
