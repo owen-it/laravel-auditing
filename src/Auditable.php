@@ -432,4 +432,50 @@ trait Auditable
     {
         return [];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transitionThrough(Contracts\Audit $audit, array $exclude = []): bool
+    {
+        // The Audit must be for this Auditable model of this type
+        if (!$this instanceof $audit->auditable_type) {
+            throw new RuntimeException(sprintf(
+                'Expected Audit for %s, got Audit for %s instead',
+                get_class($this),
+                $audit->auditable_type
+            ));
+        }
+
+        // The Audit must be for this specific Auditable model
+        if ($this->getKey() !== $audit->auditable_id) {
+            throw new RuntimeException(sprintf(
+                'Expected Auditable id %s, got %s instead',
+                $this->getKey(),
+                $audit->auditable_id
+            ));
+        }
+
+        // Exclude unwanted attributes
+        $modified = array_filter($audit->getModified(), function ($value, $key) use ($exclude) {
+            return !in_array($key, $exclude);
+        }, ARRAY_FILTER_USE_BOTH);
+
+        // The attribute compatibility between the Audit and the Auditable model must be met
+        if ($missing = array_diff_key($modified, $this->getAttributes())) {
+            throw new RuntimeException(sprintf(
+                'Incompatibility between %s [id:%s] and Audit [id:%s]. Missing attributes: [%s]',
+                get_class($this),
+                $this->getKey(),
+                $audit->getKey(),
+                implode(', ', array_keys($missing))
+            ));
+        }
+
+        foreach ($modified as $attribute => $value) {
+            $this->setAttribute($attribute, $value['new']);
+        }
+
+        return $this->save();
+    }
 }
