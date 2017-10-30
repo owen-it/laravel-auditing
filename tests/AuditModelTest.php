@@ -31,7 +31,7 @@ class AuditModelTest extends TestCase
      *
      * @return void
      */
-    private function setAuditTestAttributes(Audit $audit, $withUser = true)
+    private function setAuditTestAttributes(Audit $audit, bool $withUser = true)
     {
         $audit->id = 1;
         $audit->event = 'created';

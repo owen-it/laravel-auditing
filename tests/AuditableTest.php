@@ -53,13 +53,13 @@ class AuditableTest extends TestCase
     /**
      * Test the toAudit() method to FAIL (Invalid audit event).
      *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage A valid audit event has not been set
-     *
      * @return void
      */
     public function testToAuditFailInvalidAuditEvent()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A valid audit event has not been set');
+
         $model = new AuditableStub();
 
         // Invalid auditable event
@@ -73,13 +73,13 @@ class AuditableTest extends TestCase
     /**
      * Test the toAudit() method to FAIL (Custom attributes method missing).
      *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Unable to handle "foo" event, customMethod() method missing
-     *
      * @return void
      */
     public function testToAuditFailAuditEventMethodMissingCustom()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to handle "foo" event, customMethod() method missing');
+
         $model = Mockery::mock(AuditableStub::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -102,13 +102,13 @@ class AuditableTest extends TestCase
     /**
      * Test the toAudit() method to FAIL (Invalid User id resolver).
      *
-     * @expectedException        RuntimeException
-     * @expectedExceptionMessage Invalid User resolver, callable or UserResolver FQCN expected
-     *
      * @return void
      */
     public function testToAuditFailInvalidUserIdResolver()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid User resolver, UserResolver FQCN expected');
+
         Config::set('audit.user.resolver', null);
 
         $model = new AuditableStub();
@@ -127,9 +127,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassDefault()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableStub();
         $this->setAuditableTestAttributes($model);
@@ -174,9 +172,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassCustomEvent($event, $getAuditableEventsStub, $expectedAttributesMethodName)
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = Mockery::mock(AuditableStub::class)
             ->makePartial()
@@ -233,9 +229,7 @@ class AuditableTest extends TestCase
     public function testToAuditPassCustomUserForeignKey()
     {
         Config::set('audit.user.foreign_key', 'fk_id');
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableStub();
         $this->setAuditableTestAttributes($model);
@@ -308,9 +302,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassIncludeAttributes()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableIncludeStub();
         $this->setAuditableTestAttributes($model);
@@ -395,9 +387,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassWithAuditableTimestamps()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableTimestampStub();
         $this->setAuditableTestAttributes($model);
@@ -486,9 +476,7 @@ class AuditableTest extends TestCase
      */
     public function testToAuditPassHiddenStrictMode()
     {
-        Config::set('audit.user.resolver', function () {
-            return rand(1, 256);
-        });
+        Config::set('audit.user.resolver', UserStub::class);
 
         $model = new AuditableStrictStub();
         $this->setAuditableTestAttributes($model);

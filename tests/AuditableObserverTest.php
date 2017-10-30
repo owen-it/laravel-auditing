@@ -38,7 +38,7 @@ class AuditableObserverTest extends TestCase
      *
      * @return AuditableObserver
      */
-    public function testAuditableObserverInstantiation()
+    public function testAuditableObserverInstantiation(): AuditableObserver
     {
         $observer = new AuditableObserver();
 
@@ -52,7 +52,7 @@ class AuditableObserverTest extends TestCase
      *
      * @return Auditable
      */
-    public function testAuditableMock()
+    public function testAuditableMock(): Auditable
     {
         $model = Mockery::mock(Auditable::class);
 
