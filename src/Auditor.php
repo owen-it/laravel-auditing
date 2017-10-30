@@ -21,7 +21,7 @@ use OwenIt\Auditing\Contracts\AuditDriver;
 use OwenIt\Auditing\Drivers\Database;
 use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
-use RuntimeException;
+use OwenIt\Auditing\Exceptions\AuditingException;
 
 class Auditor extends Manager implements Contracts\Auditor
 {
@@ -57,7 +57,7 @@ class Auditor extends Manager implements Contracts\Auditor
         $driver = $this->driver($model->getAuditDriver());
 
         if (!$driver instanceof AuditDriver) {
-            throw new RuntimeException('The driver must implement the AuditDriver contract');
+            throw new AuditingException('The driver must implement the AuditDriver contract');
         }
 
         return $driver;

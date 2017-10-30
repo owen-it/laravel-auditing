@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\UserResolver;
-use RuntimeException;
-use UnexpectedValueException;
+use OwenIt\Auditing\Exceptions\AuditableTransitionException;
+use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait Auditable
 {
@@ -185,13 +185,13 @@ trait Auditable
     public function toAudit(): array
     {
         if (!$this->readyForAuditing()) {
-            throw new RuntimeException('A valid audit event has not been set');
+            throw new AuditingException('A valid audit event has not been set');
         }
 
         $eventHandler = $this->resolveEventHandlerMethod($this->auditEvent);
 
         if (!method_exists($this, $eventHandler)) {
-            throw new RuntimeException(sprintf(
+            throw new AuditingException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
                 $eventHandler
@@ -232,7 +232,7 @@ trait Auditable
     /**
      * Resolve the ID of the logged User.
      *
-     * @throws UnexpectedValueException
+     * @throws AuditingException
      *
      * @return mixed|null
      */
@@ -244,7 +244,7 @@ trait Auditable
             return call_user_func([$userResolver, 'resolveId']);
         }
 
-        throw new UnexpectedValueException('Invalid User resolver, UserResolver FQCN expected');
+        throw new AuditingException('Invalid User resolver, UserResolver FQCN expected');
     }
 
     /**
@@ -440,7 +440,7 @@ trait Auditable
     {
         // The Audit must be for this Auditable model of this type
         if (!$this instanceof $audit->auditable_type) {
-            throw new RuntimeException(sprintf(
+            throw new AuditableTransitionException(sprintf(
                 'Expected Audit for %s, got Audit for %s instead',
                 get_class($this),
                 $audit->auditable_type
@@ -449,7 +449,7 @@ trait Auditable
 
         // The Audit must be for this specific Auditable model
         if ($this->getKey() !== $audit->auditable_id) {
-            throw new RuntimeException(sprintf(
+            throw new AuditableTransitionException(sprintf(
                 'Expected Auditable id %s, got %s instead',
                 $this->getKey(),
                 $audit->auditable_id
@@ -463,7 +463,7 @@ trait Auditable
 
         // The attribute compatibility between the Audit and the Auditable model must be met
         if ($missing = array_diff_key($modified, $this->getAttributes())) {
-            throw new RuntimeException(sprintf(
+            throw new AuditableTransitionException(sprintf(
                 'Incompatibility between %s [id:%s] and Audit [id:%s]. Missing attributes: [%s]',
                 get_class($this),
                 $this->getKey(),

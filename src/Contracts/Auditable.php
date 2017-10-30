@@ -44,7 +44,7 @@ interface Auditable
     /**
      * Return data for an Audit.
      *
-     * @throws \RuntimeException
+     * @throws \OwenIt\Auditing\Exceptions\AuditingException
      *
      * @return array
      */
@@ -113,6 +113,8 @@ interface Auditable
      *
      * @param Audit $audit
      * @param array $exclude
+     *
+     * @throws \OwenIt\Auditing\Exceptions\AuditableTransitionException
      *
      * @return bool
      */
