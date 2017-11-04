@@ -24,7 +24,7 @@ class AuditingTest extends AuditingTestCase
     /**
      * @test
      */
-    public function it_will_ignore_audit_events_when_running_from_the_console()
+    public function it_will_not_audit_models_when_running_from_the_console()
     {
         $this->app['config']->set('audit.console', false);
 
@@ -37,7 +37,7 @@ class AuditingTest extends AuditingTestCase
     /**
      * @test
      */
-    public function it_will_not_ignore_audit_events_when_running_from_the_console()
+    public function it_will_audit_models_when_running_from_the_console()
     {
         $this->app['config']->set('audit.console', true);
 
@@ -50,7 +50,7 @@ class AuditingTest extends AuditingTestCase
     /**
      * @test
      */
-    public function it_will_not_ignore_audit_events_when_not_running_from_the_console()
+    public function it_will_always_audit_models_when_not_running_from_the_console()
     {
         App::shouldReceive('runningInConsole')
             ->andReturn(false);
