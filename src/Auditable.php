@@ -436,7 +436,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function transitionThrough(Contracts\Audit $audit, array $exclude = []): bool
+    public function transitionTo(Contracts\Audit $audit, array $exclude = []): bool
     {
         // The Audit must be for this Auditable model of this type
         if (!$this instanceof $audit->auditable_type) {
