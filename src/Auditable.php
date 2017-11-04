@@ -244,7 +244,7 @@ trait Auditable
             return call_user_func([$userResolver, 'resolveId']);
         }
 
-        throw new AuditingException('Invalid User resolver, UserResolver FQCN expected');
+        throw new AuditingException('Invalid UserResolver implementation');
     }
 
     /**
