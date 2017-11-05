@@ -37,6 +37,7 @@ class AuditingTestCase extends TestCase
         // Auditing
         $app['config']->set('audit.user.model', User::class);
         $app['config']->set('audit.user.resolver', User::class);
+        $app['config']->set('audit.console', true);
     }
 
     /**
