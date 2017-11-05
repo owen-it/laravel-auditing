@@ -15,21 +15,11 @@
 namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
+class Article extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Audit;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $guarded = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $casts = [
-        'old_values' => 'json',
-        'new_values' => 'json',
-    ];
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 }
