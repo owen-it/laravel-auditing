@@ -464,9 +464,10 @@ trait Auditable
         // The attribute compatibility between the Audit and the Auditable model must be met
         if ($missing = array_diff_key($modified, $this->getAttributes())) {
             throw new AuditableTransitionException(sprintf(
-                'Incompatibility between %s [id:%s] and Audit [id:%s]. Missing attributes: [%s]',
+                'Incompatibility between %s [id:%s] and %s [id:%s]. Missing attributes: [%s]',
                 get_class($this),
                 $this->getKey(),
+                get_class($audit),
                 $audit->getKey(),
                 implode(', ', array_keys($missing))
             ));
