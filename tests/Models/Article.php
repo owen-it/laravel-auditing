@@ -22,4 +22,21 @@ class Article extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $casts = [
+        'published' => 'bool',
+    ];
+
+    /**
+     * Uppercase Title accessor.
+     *
+     * @return string
+     */
+    public function getTitleAttribute(): string
+    {
+        return strtoupper($this->attributes['title']);
+    }
 }
