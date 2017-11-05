@@ -26,7 +26,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::isAuditingEnabled
      * @test
      */
-    public function it_will_not_audit_models_when_running_from_the_console()
+    public function itWillNotAuditModelsWhenRunningFromTheConsole()
     {
         $this->app['config']->set('audit.console', false);
 
@@ -37,7 +37,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::isAuditingEnabled
      * @test
      */
-    public function it_will_audit_models_when_running_from_the_console()
+    public function itWillAuditModelsWhenRunningFromTheConsole()
     {
         $this->app['config']->set('audit.console', true);
 
@@ -48,7 +48,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::isAuditingEnabled
      * @test
      */
-    public function it_will_always_audit_models_when_not_running_from_the_console()
+    public function itWillAlwaysAuditModelsWhenNotRunningFromTheConsole()
     {
         App::shouldReceive('runningInConsole')
             ->andReturn(false);
@@ -62,7 +62,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditableEvents
      * @test
      */
-    public function it_returns_default_auditable_events()
+    public function itReturnsTheDefaultAuditableEvents()
     {
         $model = new Article();
 
@@ -80,7 +80,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditableEvents
      * @test
      */
-    public function it_returns_custom_auditable_events()
+    public function itReturnsTheCustomAuditableEvents()
     {
         $model = new Article();
 
@@ -102,7 +102,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::readyForAuditing
      * @test
      */
-    public function it_is_not_ready_for_auditing_with_a_custom_event()
+    public function itIsNotReadyForAuditingWithCustomEvent()
     {
         $model = new Article();
 
@@ -115,7 +115,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::readyForAuditing
      * @test
      */
-    public function it_is_ready_for_auditing_with_custom_events()
+    public function itIsReadyForAuditingWithCustomEvents()
     {
         $model = new Article();
 
@@ -136,7 +136,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::readyForAuditing
      * @test
      */
-    public function it_is_ready_for_auditing_with_regular_events()
+    public function itIsReadyForAuditingWithRegularEvents()
     {
         $model = new Article();
 
@@ -158,7 +158,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function it_fails_when_an_invalid_audit_event_is_set()
+    public function itFailsWhenAnInvalidAuditEventIsSet()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('A valid audit event has not been set');
@@ -175,7 +175,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function it_fails_when_a_passed_custom_event_handler_is_missing()
+    public function itFailsWhenThePassedCustomEventHandlerIsMissing()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Unable to handle "published" event, publishedHandler() method missing');
@@ -196,7 +196,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function it_fails_when_a_resolved_custom_event_handler_is_missing()
+    public function itFailsWhenTheResolvedCustomEventHandlerIsMissing()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Unable to handle "archived" event, auditArchivedAttributes() method missing');
@@ -217,7 +217,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function it_fails_when_the_user_resolver_implementation_is_invalid()
+    public function itFailsWhenTheUserResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserResolver implementation');
@@ -236,7 +236,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function it_returns_audit_data_without_a_resolved_user()
+    public function itReturnsTheAuditDataWithoutResolvedUser()
     {
         $this->app['config']->set('audit.user.resolver', User::class);
 
@@ -265,7 +265,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function it_returns_audit_data_with_a_resolved_user()
+    public function itReturnsTheAuditDataWithResolvedUser()
     {
         $this->app['config']->set('audit.user.resolver', User::class);
 
@@ -297,7 +297,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function it_returns_transformed_audit_data()
+    public function itReturnsTheTransformedAuditData()
     {
         $this->markTestIncomplete();
     }
@@ -306,7 +306,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditInclude
      * @test
      */
-    public function it_returns_the_default_attributes_included_in_the_audit()
+    public function itReturnsTheDefaultAttributesToBeIncludedInTheAudit()
     {
         $model = new Article();
 
@@ -317,7 +317,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditInclude
      * @test
      */
-    public function it_returns_the_custom_attributes_included_in_the_audit()
+    public function itReturnsTheCustomAttributesToBeIncludedInTheAudit()
     {
         $model = new Article();
 
@@ -336,7 +336,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditExclude
      * @test
      */
-    public function it_returns_the_default_attributes_excluded_from_the_audit()
+    public function itReturnsTheDefaultAttributesToBeExcludedFromTheAudit()
     {
         $model = new Article();
 
@@ -347,7 +347,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditExclude
      * @test
      */
-    public function it_returns_the_custom_attributes_excluded_from_the_audit()
+    public function itReturnsTheCustomAttributesToBeExcludedFromTheAudit()
     {
         $model = new Article();
 
@@ -364,7 +364,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditStrict
      * @test
      */
-    public function it_returns_the_default_audit_strict_value()
+    public function itReturnsTheDefaultAuditStrictValue()
     {
         $model = new Article();
 
@@ -375,7 +375,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditStrict
      * @test
      */
-    public function it_returns_the_custom_audit_strict_value()
+    public function itReturnsTheCustomAuditStrictValue()
     {
         $model = new Article();
 
@@ -388,7 +388,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditTimestamps
      * @test
      */
-    public function it_returns_the_default_audit_timestamps_value()
+    public function itReturnsTheDefaultAuditTimestampsValue()
     {
         $model = new Article();
 
@@ -399,7 +399,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditTimestamps
      * @test
      */
-    public function it_returns_the_custom_audit_timestamps_value()
+    public function itReturnsTheCustomAuditTimestampsValue()
     {
         $model = new Article();
 
@@ -412,7 +412,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditDriver
      * @test
      */
-    public function it_returns_the_default_audit_driver_value()
+    public function itReturnsTheDefaultAuditDriverValue()
     {
         $model = new Article();
 
@@ -423,7 +423,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditDriver
      * @test
      */
-    public function it_returns_the_custom_audit_driver_value()
+    public function itReturnsTheCustomAuditDriverValue()
     {
         $model = new Article();
 
@@ -436,7 +436,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditThreshold
      * @test
      */
-    public function it_returns_the_default_audit_threshold_value()
+    public function itReturnsTheDefaultAuditThresholdValue()
     {
         $model = new Article();
 
@@ -447,7 +447,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditThreshold
      * @test
      */
-    public function it_returns_the_custom_audit_threshold_value()
+    public function itReturnsTheCustomAuditThresholdValue()
     {
         $model = new Article();
 
@@ -460,7 +460,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::generateTags
      * @test
      */
-    public function it_returns_the_default_audit_tags()
+    public function itReturnsTheDefaultGeneratedAuditTags()
     {
         $model = new Article();
 
@@ -471,7 +471,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::generateTags
      * @test
      */
-    public function it_returns_the_custom_audit_tags()
+    public function itReturnsTheCustomGeneratedAuditTags()
     {
         $model = new class() extends Article {
             public function generateTags(): array
@@ -493,7 +493,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
-    public function it_fails_to_transition_when_the_auditable_type_of_the_audit_does_not_match_the_model()
+    public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheModelType()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Expected Audit for OwenIt\Auditing\Tests\Models\Article, got Audit for OwenIt\Auditing\Tests\Models\User instead');
@@ -511,7 +511,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
-    public function it_fails_to_transition_when_the_auditable_id_of_the_audit_does_not_match_the_model()
+    public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Expected Auditable id 2, got 1 instead');
@@ -526,7 +526,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
-    public function it_fails_to_transition_when_the_auditable_attribute_compatibility_is_not_met()
+    public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Incompatibility between OwenIt\Auditing\Tests\Models\Article [id:1] and OwenIt\Auditing\Models\Audit [id:3]. Missing attributes: [subject, text]');
@@ -550,7 +550,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
-    public function it_transitions_to_a_new_model_state()
+    public function itTransitionsToAnotherModelStateSuccessfully()
     {
         $model = factory(Article::class)->create([
             'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
