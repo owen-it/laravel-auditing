@@ -8,3 +8,4 @@ enabled:
 
 disabled:
   - self_accessor
+  - no_blank_lines_between_imports
