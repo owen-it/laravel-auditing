@@ -38,15 +38,15 @@ class AuditTest extends AuditingTestCase
 
         // Up to Laravel 5.3, the ownerKey attribute was called otherKey
         if (method_exists($audit->user(), 'getOtherKey')) {
-            $this->assertEquals('pk_id', $audit->user()->getOtherKey());
+            $this->assertSame('pk_id', $audit->user()->getOtherKey());
         }
 
         // From Laravel 5.4 onward, the otherKey attribute was renamed to ownerKey
         if (method_exists($audit->user(), 'getOwnerKey')) {
-            $this->assertEquals('pk_id', $audit->user()->getOwnerKey());
+            $this->assertSame('pk_id', $audit->user()->getOwnerKey());
         }
 
-        $this->assertEquals('fk_id', $audit->user()->getForeignKey());
+        $this->assertSame('fk_id', $audit->user()->getForeignKey());
     }
 
     /**
@@ -126,13 +126,13 @@ class AuditTest extends AuditingTestCase
         $this->assertCount(13, $audit->resolveData());
 
         // Mutate value
-        $this->assertEquals('HOW TO AUDIT ELOQUENT MODELS', $audit->getDataValue('new_title'));
+        $this->assertSame('HOW TO AUDIT ELOQUENT MODELS', $audit->getDataValue('new_title'));
 
         // Cast value
         $this->assertTrue($audit->getDataValue('new_published'));
 
         // Original value
-        $this->assertEquals('First step: install the laravel-auditing package.', $audit->getDataValue('new_content'));
+        $this->assertSame('First step: install the laravel-auditing package.', $audit->getDataValue('new_content'));
 
         // Invalid value
         $this->assertNull($audit->getDataValue('invalid_key'));
@@ -149,15 +149,15 @@ class AuditTest extends AuditingTestCase
         $this->assertCount(9, $metadata = $audit->getMetadata());
 
         $this->assertArraySubset([
-            'audit_id' => 1,
-            'audit_event' => 'created',
-            'audit_url' => 'console',
+            'audit_id'         => 1,
+            'audit_event'      => 'created',
+            'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags' => [],
+            'audit_tags'       => [],
             'audit_created_at' => $audit->created_at,
             'audit_updated_at' => $audit->updated_at,
-            'user_id' => null,
+            'user_id'          => null,
         ], $metadata);
     }
 
@@ -169,28 +169,28 @@ class AuditTest extends AuditingTestCase
     {
         $user = factory(User::class)->create([
             'first_name' => 'Rick',
-            'last_name' => 'Sanchez',
-            'email' => 'rick@wubba-lubba-dub.dub',
+            'last_name'  => 'Sanchez',
+            'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
         $audit = factory(Article::class)->create()->audits()->first();
 
         $this->assertCount(14, $metadata = $audit->getMetadata());
 
         $this->assertArraySubset([
-            'audit_id' => 2,
-            'audit_event' => 'created',
-            'audit_url' => 'console',
+            'audit_id'         => 2,
+            'audit_event'      => 'created',
+            'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags' => [],
+            'audit_tags'       => [],
             'audit_created_at' => $audit->created_at,
             'audit_updated_at' => $audit->updated_at,
-            'user_id' => 1,
-            'user_first_name' => 'Rick',
-            'user_last_name' => 'Sanchez',
-            'user_email' => 'rick@wubba-lubba-dub.dub',
-            'user_created_at' => $user->created_at,
-            'user_updated_at' => $user->updated_at,
+            'user_id'          => 1,
+            'user_first_name'  => 'Rick',
+            'user_last_name'   => 'Sanchez',
+            'user_email'       => 'rick@wubba-lubba-dub.dub',
+            'user_created_at'  => $user->created_at,
+            'user_updated_at'  => $user->updated_at,
         ], $metadata);
     }
 
@@ -218,7 +218,7 @@ class AuditTest extends AuditingTestCase
 }
 EOF;
 
-        $this->assertEquals($expected, $metadata);
+        $this->assertSame($expected, $metadata);
     }
 
     /**
@@ -229,8 +229,8 @@ EOF;
     {
         $user = factory(User::class)->create([
             'first_name' => 'Rick',
-            'last_name' => 'Sanchez',
-            'email' => 'rick@wubba-lubba-dub.dub',
+            'last_name'  => 'Sanchez',
+            'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
         $audit = factory(Article::class)->create()->audits()->first();
 
@@ -255,7 +255,7 @@ EOF;
 }
 EOF;
 
-        $this->assertEquals($expected, $metadata);
+        $this->assertSame($expected, $metadata);
     }
 
     /**
@@ -265,8 +265,8 @@ EOF;
     public function itReturnsAuditableModifiedAttributesAsArray()
     {
         $audit = factory(Article::class)->create([
-            'title' => 'How To Audit Eloquent Models',
-            'content' => 'First step: install the laravel-auditing package.',
+            'title'     => 'How To Audit Eloquent Models',
+            'content'   => 'First step: install the laravel-auditing package.',
             'published' => 1,
         ])->audits()->first();
 
@@ -295,8 +295,8 @@ EOF;
     public function itReturnsAuditableModifiedAttributesAsJsonString()
     {
         $audit = factory(Article::class)->create([
-            'title' => 'How To Audit Eloquent Models',
-            'content' => 'First step: install the laravel-auditing package.',
+            'title'     => 'How To Audit Eloquent Models',
+            'content'   => 'First step: install the laravel-auditing package.',
             'published' => 1,
         ])->audits()->first();
 
@@ -319,6 +319,6 @@ EOF;
 }
 EOF;
 
-        $this->assertEquals($expected, $modified);
+        $this->assertSame($expected, $modified);
     }
 }

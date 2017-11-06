@@ -38,11 +38,11 @@ class AuditableObserverTest extends AuditingTestCase
         $observer = new AuditableObserver();
         $model = factory(Article::class)->create();
 
-        $this->assertEquals($expectedBefore, $observer::$restoring);
+        $this->assertSame($expectedBefore, $observer::$restoring);
 
         call_user_func([$observer, $eventMethod], $model);
 
-        $this->assertEquals($expectedAfter, $observer::$restoring);
+        $this->assertSame($expectedAfter, $observer::$restoring);
     }
 
     /**

@@ -29,9 +29,9 @@ class AuditingTestCase extends TestCase
         // Database
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
 
         // Auditing
@@ -47,8 +47,8 @@ class AuditingTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-        $this->withFactories(__DIR__ . '/database/factories');
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+        $this->withFactories(__DIR__.'/database/factories');
     }
 
     /**
@@ -58,7 +58,7 @@ class AuditingTestCase extends TestCase
     {
         return [
             AuditingServiceProvider::class,
-            ConsoleServiceProvider::class
+            ConsoleServiceProvider::class,
         ];
     }
 }

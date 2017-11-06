@@ -30,8 +30,8 @@ class AuditingTest extends AuditingTestCase
 
         factory(User::class)->create();
 
-        $this->assertEquals(1, User::query()->count());
-        $this->assertEquals(0, Audit::query()->count());
+        $this->assertSame(1, User::query()->count());
+        $this->assertSame(0, Audit::query()->count());
     }
 
     /**
@@ -43,8 +43,8 @@ class AuditingTest extends AuditingTestCase
 
         factory(User::class)->create();
 
-        $this->assertEquals(1, User::query()->count());
-        $this->assertEquals(1, Audit::query()->count());
+        $this->assertSame(1, User::query()->count());
+        $this->assertSame(1, Audit::query()->count());
     }
 
     /**
@@ -59,7 +59,7 @@ class AuditingTest extends AuditingTestCase
 
         factory(User::class)->create();
 
-        $this->assertEquals(1, User::query()->count());
-        $this->assertEquals(1, Audit::query()->count());
+        $this->assertSame(1, User::query()->count());
+        $this->assertSame(1, Audit::query()->count());
     }
 }

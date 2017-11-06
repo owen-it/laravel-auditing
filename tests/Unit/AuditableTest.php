@@ -121,8 +121,8 @@ class AuditableTest extends AuditingTestCase
 
         $model->auditableEvents = [
             'published' => 'publishedHandler',
+            '*ted'      => 'multiEventHandler',
             'archived',
-            '*ted' => 'multiEventHandler',
         ];
 
         $model->setAuditEvent('published');
@@ -268,8 +268,8 @@ class AuditableTest extends AuditingTestCase
         $this->app['config']->set('audit.user.resolver', User::class);
 
         $model = factory(Article::class)->make([
-            'title' => 'How To Audit Eloquent Models',
-            'content' => 'First step: install the laravel-auditing package.',
+            'title'     => 'How To Audit Eloquent Models',
+            'content'   => 'First step: install the laravel-auditing package.',
             'published' => 1,
         ]);
 
@@ -280,8 +280,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
-                'title' => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'title'     => 'How To Audit Eloquent Models',
+                'content'   => 'First step: install the laravel-auditing package.',
                 'published' => 1,
             ],
             'event'          => 'created',
@@ -307,8 +307,8 @@ class AuditableTest extends AuditingTestCase
         factory(User::class)->create();
 
         $model = factory(Article::class)->make([
-            'title' => 'How To Audit Eloquent Models',
-            'content' => 'First step: install the laravel-auditing package.',
+            'title'     => 'How To Audit Eloquent Models',
+            'content'   => 'First step: install the laravel-auditing package.',
             'published' => 1,
         ]);
 
@@ -319,8 +319,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
-                'title' => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'title'     => 'How To Audit Eloquent Models',
+                'content'   => 'First step: install the laravel-auditing package.',
                 'published' => 1,
             ],
             'event'          => 'created',
@@ -344,8 +344,8 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new class() extends Article {
             protected $attributes = [
-                'title' => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'title'     => 'How To Audit Eloquent Models',
+                'content'   => 'First step: install the laravel-auditing package.',
                 'published' => 1,
             ];
 
@@ -363,10 +363,10 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertArraySubset([
             'new_values'     => [
-                'title' => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'title'     => 'How To Audit Eloquent Models',
+                'content'   => 'First step: install the laravel-auditing package.',
                 'published' => 1,
-                'slug' => 'how-to-audit-eloquent-models',
+                'slug'      => 'how-to-audit-eloquent-models',
             ],
         ], $auditData);
     }
@@ -498,7 +498,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->auditDriver = 'RedisDriver';
 
-        $this->assertEquals('RedisDriver', $model->getAuditDriver());
+        $this->assertSame('RedisDriver', $model->getAuditDriver());
     }
 
     /**
@@ -509,7 +509,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertEquals(0, $model->getAuditThreshold());
+        $this->assertSame(0, $model->getAuditThreshold());
     }
 
     /**
@@ -522,7 +522,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->auditThreshold = 10;
 
-        $this->assertEquals(10, $model->getAuditThreshold());
+        $this->assertSame(10, $model->getAuditThreshold());
     }
 
     /**
