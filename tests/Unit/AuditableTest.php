@@ -278,8 +278,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(10, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
-            'old_values'     => [],
-            'new_values'     => [
+            'old_values' => [],
+            'new_values' => [
                 'title'     => 'How To Audit Eloquent Models',
                 'content'   => 'First step: install the laravel-auditing package.',
                 'published' => 1,
@@ -317,8 +317,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(10, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
-            'old_values'     => [],
-            'new_values'     => [
+            'old_values' => [],
+            'new_values' => [
                 'title'     => 'How To Audit Eloquent Models',
                 'content'   => 'First step: install the laravel-auditing package.',
                 'published' => 1,
@@ -362,7 +362,7 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(10, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
-            'new_values'     => [
+            'new_values' => [
                 'title'     => 'How To Audit Eloquent Models',
                 'content'   => 'First step: install the laravel-auditing package.',
                 'published' => 1,
@@ -606,7 +606,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_id'   => $model->getKey(),
             'auditable_type' => Article::class,
             'old_values'     => [],
-            'new_values'     => [
+            'new_values' => [
                 'subject' => 'Culpa qui rerum excepturi quisquam quia officiis.',
                 'text'    => 'Magnam enim suscipit officiis tempore ut quis harum.',
             ],
@@ -634,7 +634,7 @@ class AuditableTest extends AuditingTestCase
                 'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
                 'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
             ],
-            'new_values'     => [
+            'new_values' => [
                 'title'   => 'Culpa qui rerum excepturi quisquam quia officiis.',
                 'content' => 'Magnam enim suscipit officiis tempore ut quis harum.',
             ],
