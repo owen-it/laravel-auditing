@@ -606,7 +606,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_id'   => $model->getKey(),
             'auditable_type' => Article::class,
             'old_values'     => [],
-            'new_values' => [
+            'new_values'     => [
                 'subject' => 'Culpa qui rerum excepturi quisquam quia officiis.',
                 'text'    => 'Magnam enim suscipit officiis tempore ut quis harum.',
             ],
