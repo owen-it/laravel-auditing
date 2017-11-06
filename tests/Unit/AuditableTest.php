@@ -15,6 +15,7 @@
 namespace OwenIt\Auditing\Tests;
 
 use Illuminate\Support\Facades\App;
+use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Models\Article;
@@ -618,8 +619,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::transitionTo
      * @test
+     *
+     * @dataProvider auditableTransitionTestProvider
+     *
+     * @param bool  $useOldValues
+     * @param array $expectations
      */
-    public function itTransitionsToAnotherModelStateSuccessfully()
+    public function itTransitionsToAnotherModelState(bool $useOldValues, array $expectations)
     {
         $model = factory(Article::class)->create([
             'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
@@ -631,15 +637,40 @@ class AuditableTest extends AuditingTestCase
             'auditable_id'   => $model->getKey(),
             'auditable_type' => Article::class,
             'old_values'     => [
-                'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
-                'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
+                'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
+                'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
             ],
             'new_values' => [
-                'title'   => 'Culpa qui rerum excepturi quisquam quia officiis.',
-                'content' => 'Magnam enim suscipit officiis tempore ut quis harum.',
+                'title'   => 'Nullam egestas interdum eleifend.',
+                'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
             ],
         ]);
 
-        $this->assertTrue($model->transitionTo($audit));
+        $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit, $useOldValues));
+
+        $this->assertSame($expectations, $model->getDirty());
+    }
+
+    /**
+     * @return array
+     */
+    public function auditableTransitionTestProvider()
+    {
+        return [
+            [
+                true,
+                [
+                    'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
+                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                ],
+            ],
+            [
+                false,
+                [
+                    'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
+                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                ],
+            ],
+        ];
     }
 }
