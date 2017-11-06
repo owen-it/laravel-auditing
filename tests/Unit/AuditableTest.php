@@ -240,15 +240,23 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.user.resolver', User::class);
 
-        $model = factory(Article::class)->make();
+        $model = factory(Article::class)->make([
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'First step: install the laravel-auditing package.',
+            'published' => 1,
+        ]);
 
         $model->setAuditEvent('created');
 
         $this->assertCount(10, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
-            'old_values'     => $model->old_values,
-            'new_values'     => $model->toArray(),
+            'old_values'     => [],
+            'new_values'     => [
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'published' => 1,
+            ],
             'event'          => 'created',
             'auditable_id'   => null,
             'auditable_type' => Article::class,
@@ -271,15 +279,23 @@ class AuditableTest extends AuditingTestCase
 
         factory(User::class)->create();
 
-        $model = factory(Article::class)->make();
+        $model = factory(Article::class)->make([
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'First step: install the laravel-auditing package.',
+            'published' => 1,
+        ]);
 
         $model->setAuditEvent('created');
 
         $this->assertCount(10, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
-            'old_values'     => $model->old_values,
-            'new_values'     => $model->toArray(),
+            'old_values'     => [],
+            'new_values'     => [
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'published' => 1,
+            ],
             'event'          => 'created',
             'auditable_id'   => null,
             'auditable_type' => Article::class,
