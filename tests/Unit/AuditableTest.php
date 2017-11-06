@@ -297,9 +297,35 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function itReturnsTheTransformedAuditData()
+    public function itTransformsTheAuditData()
     {
-        $this->markTestIncomplete();
+        $model = new class() extends Article {
+            protected $attributes = [
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'published' => 1,
+            ];
+
+            public function transformAudit(array $data): array
+            {
+                $data['new_values']['slug'] = str_slug($data['new_values']['title']);
+
+                return $data;
+            }
+        };
+
+        $model->setAuditEvent('created');
+
+        $this->assertCount(10, $auditData = $model->toAudit());
+
+        $this->assertArraySubset([
+            'new_values'     => [
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'published' => 1,
+                'slug' => 'how-to-audit-eloquent-models',
+            ],
+        ], $auditData);
     }
 
     /**
