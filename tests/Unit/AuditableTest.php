@@ -122,12 +122,16 @@ class AuditableTest extends AuditingTestCase
         $model->auditableEvents = [
             'published' => 'publishedHandler',
             'archived',
+            '*ted' => 'multiEventHandler',
         ];
 
         $model->setAuditEvent('published');
         $this->assertTrue($model->readyForAuditing());
 
         $model->setAuditEvent('archived');
+        $this->assertTrue($model->readyForAuditing());
+
+        $model->setAuditEvent('redacted');
         $this->assertTrue($model->readyForAuditing());
     }
 
@@ -174,42 +178,65 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider auditableCustomEventHandlerFailTestProvider
+     *
+     * @param string $event
+     * @param array  $auditableEvents
+     * @param string $exceptionMessage
      */
-    public function itFailsWhenThePassedCustomEventHandlerIsMissing()
-    {
+    public function itFailsWhenTheCustomEventHandlersAreMissing(
+        string $event,
+        array $auditableEvents,
+        string $exceptionMessage
+    ) {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Unable to handle "published" event, publishedHandler() method missing');
+        $this->expectExceptionMessage($exceptionMessage);
 
         $model = new Article();
 
-        $model->auditableEvents = [
-            'published' => 'publishedHandler',
-        ];
+        $model->auditableEvents = $auditableEvents;
 
-        $model->setAuditEvent('published');
+        $model->setAuditEvent($event);
 
         $model->toAudit();
     }
 
     /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     * @test
+     * @return array
      */
-    public function itFailsWhenTheResolvedCustomEventHandlerIsMissing()
+    public function auditableCustomEventHandlerFailTestProvider()
     {
-        $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Unable to handle "archived" event, auditArchivedAttributes() method missing');
-
-        $model = new Article();
-
-        $model->auditableEvents = [
-            'archived',
+        return [
+            [
+                'published',
+                [
+                    'published' => 'publishedHandler',
+                ],
+                'Unable to handle "published" event, publishedHandler() method missing',
+            ],
+            [
+                'archived',
+                [
+                    'archived',
+                ],
+                'Unable to handle "archived" event, auditArchivedAttributes() method missing',
+            ],
+            [
+                'redacted',
+                [
+                    '*ed',
+                ],
+                'Unable to handle "redacted" event, auditRedactedAttributes() method missing',
+            ],
+            [
+                'redacted',
+                [
+                    '*ed' => 'multiEventHandler',
+                ],
+                'Unable to handle "redacted" event, multiEventHandler() method missing',
+            ],
         ];
-
-        $model->setAuditEvent('archived');
-
-        $model->toAudit();
     }
 
     /**
@@ -236,7 +263,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function itReturnsTheAuditDataWithoutResolvedUser()
+    public function itReturnsTheAuditData()
     {
         $this->app['config']->set('audit.user.resolver', User::class);
 
@@ -273,7 +300,7 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function itReturnsTheAuditDataWithResolvedUser()
+    public function itReturnsTheAuditDataIncludingUserAttributes()
     {
         $this->app['config']->set('audit.user.resolver', User::class);
 
