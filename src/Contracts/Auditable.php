@@ -112,11 +112,11 @@ interface Auditable
      * Transition to another model state from an Audit.
      *
      * @param Audit $audit
-     * @param array $exclude
+     * @param bool  $old
      *
      * @throws \OwenIt\Auditing\Exceptions\AuditableTransitionException
      *
-     * @return bool
+     * @return Auditable
      */
-    public function transitionTo(Audit $audit, array $exclude = []): bool;
+    public function transitionTo(Audit $audit, bool $old = false): Auditable;
 }
