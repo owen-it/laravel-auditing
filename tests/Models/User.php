@@ -12,26 +12,23 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Tests\Stubs;
+namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Audit as AuditTrait;
-use OwenIt\Auditing\Contracts\Audit as AuditContract;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\UserResolver;
 
-class AuditStub extends Model implements AuditContract
+class User extends Model implements Auditable, UserResolver
 {
-    use AuditTrait;
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * {@inheritdoc}
      */
-    protected $guarded = [];
+    public static function resolveId()
+    {
+        $user = static::query()->first();
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $casts = [
-        'old_values' => 'json',
-        'new_values' => 'json',
-    ];
+        return $user ? $user->getKey() : null;
+    }
 }

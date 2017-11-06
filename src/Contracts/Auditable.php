@@ -109,7 +109,7 @@ interface Auditable
     public function generateTags(): array;
 
     /**
-     * Transition the model state through an Audit.
+     * Transition to another model state from an Audit.
      *
      * @param Audit $audit
      * @param array $exclude
@@ -118,5 +118,5 @@ interface Auditable
      *
      * @return bool
      */
-    public function transitionThrough(Audit $audit, array $exclude = []): bool;
+    public function transitionTo(Audit $audit, array $exclude = []): bool;
 }

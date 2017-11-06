@@ -190,6 +190,6 @@ trait Audit
      */
     public function getTagsAttribute(): array
     {
-        return explode(',', $this->attributes['tags']);
+        return preg_split('/,/', $this->attributes['tags'], null, PREG_SPLIT_NO_EMPTY);
     }
 }

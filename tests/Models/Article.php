@@ -12,27 +12,31 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Tests\Stubs;
+namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\UserResolver;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class UserStub extends Model implements UserResolver
+class Article extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
+
     /**
      * {@inheritdoc}
      */
-    protected $attributes = [
-        'id'    => 123,
-        'email' => 'bob@example.com',
-        'name'  => 'Bob',
+    protected $casts = [
+        'published' => 'bool',
     ];
 
     /**
-     * {@inheritdoc}
+     * Uppercase Title accessor.
+     *
+     * @return string
      */
-    public static function resolveId()
+    public function getTitleAttribute(): string
     {
-        return rand(1, 256);
+        return strtoupper($this->attributes['title']);
     }
 }

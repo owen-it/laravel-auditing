@@ -12,15 +12,13 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Tests\Stubs;
+namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class AuditableStub extends Model implements AuditableContract
+class Auditable extends Model implements \OwenIt\Auditing\Contracts\Auditable
 {
-    use Auditable;
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * {@inheritdoc}
