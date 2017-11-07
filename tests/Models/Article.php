@@ -33,10 +33,12 @@ class Article extends Model implements Auditable
     /**
      * Uppercase Title accessor.
      *
+     * @param string $value
+     *
      * @return string
      */
-    public function getTitleAttribute(): string
+    public function getTitleAttribute(string $value): string
     {
-        return strtoupper($this->attributes['title']);
+        return strtoupper($value);
     }
 }

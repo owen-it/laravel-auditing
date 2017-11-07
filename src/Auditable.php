@@ -436,7 +436,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function transitionTo(Contracts\Audit $audit, array $exclude = []): bool
+    public function transitionTo(Contracts\Audit $audit, bool $old = false): Contracts\Auditable
     {
         // The Audit must be for this Auditable model of this type
         if (!$this instanceof $audit->auditable_type) {
@@ -456,13 +456,8 @@ trait Auditable
             ));
         }
 
-        // Exclude unwanted attributes
-        $modified = array_filter($audit->getModified(), function ($value, $key) use ($exclude) {
-            return !in_array($key, $exclude);
-        }, ARRAY_FILTER_USE_BOTH);
-
         // The attribute compatibility between the Audit and the Auditable model must be met
-        if ($missing = array_diff_key($modified, $this->getAttributes())) {
+        if ($missing = array_diff_key($modified = $audit->getModified(), $this->getAttributes())) {
             throw new AuditableTransitionException(sprintf(
                 'Incompatibility between %s [id:%s] and %s [id:%s]. Missing attributes: [%s]',
                 get_class($this),
@@ -474,9 +469,9 @@ trait Auditable
         }
 
         foreach ($modified as $attribute => $value) {
-            $this->setAttribute($attribute, $value['new']);
+            $this->setAttribute($attribute, $value[$old ? 'old' : 'new']);
         }
 
-        return $this->save();
+        return $this;
     }
 }
