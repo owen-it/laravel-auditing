@@ -23,8 +23,9 @@ use OwenIt\Auditing\Tests\Models\Article;
 
 $factory->define(Article::class, function (Faker $faker) {
     return [
-        'title'     => $faker->unique()->sentence,
-        'content'   => $faker->unique()->paragraph(6),
-        'published' => $faker->boolean(),
+        'title'        => $faker->unique()->sentence,
+        'content'      => $faker->unique()->paragraph(6),
+        'published_at' => $faker->dateTime,
+        'reviewed'     => $faker->randomElement([0, 1]),
     ];
 });
