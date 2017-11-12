@@ -14,6 +14,8 @@
 
 namespace OwenIt\Auditing;
 
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
@@ -118,6 +120,35 @@ trait Audit
     }
 
     /**
+     * Get the formatted value of an Eloquent model.
+     *
+     * @param Model  $model
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    protected function getFormattedValue(Model $model, string $key, $value)
+    {
+        // Apply defined get mutator
+        if ($model->hasGetMutator($key)) {
+            return $model->mutateAttribute($key, $value);
+        }
+
+        // Cast to native PHP type
+        if ($model->hasCast($key)) {
+            return $model->castAttribute($key, $value);
+        }
+
+        // Honour DateTime attribute
+        if (in_array($key, $model->getDates()) && $value !== null) {
+            return $this->asDateTime($value);
+        }
+
+        return $value;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getDataValue(string $key)
@@ -128,17 +159,14 @@ trait Audit
 
         $value = $this->data[$key];
 
-        // Apply a mutator or a cast the Auditable model may have defined
-        if ($this->auditable && starts_with($key, ['new_', 'old_'])) {
-            $originalKey = substr($key, 4);
+        // User value
+        if (starts_with($key, 'user_') && $this->user) {
+            return $this->getFormattedValue($this->user, substr($key, 5), $value);
+        }
 
-            if ($this->auditable->hasGetMutator($originalKey)) {
-                return $this->auditable->mutateAttribute($originalKey, $value);
-            }
-
-            if ($this->auditable->hasCast($originalKey)) {
-                return $this->auditable->castAttribute($originalKey, $value);
-            }
+        // Auditable value
+        if (starts_with($key, ['new_', 'old_']) && $this->auditable) {
+            return $this->getFormattedValue($this->auditable, substr($key, 4), $value);
         }
 
         return $value;
@@ -156,7 +184,11 @@ trait Audit
         $metadata = [];
 
         foreach ($this->metadata as $key) {
-            $metadata[$key] = $this->getDataValue($key);
+            $value = $this->getDataValue($key);
+
+            $metadata[$key] = $value instanceof DateTimeInterface
+                ? $this->serializeDate($value)
+                : $value;
         }
 
         return $json ? json_encode($metadata, $options, $depth) : $metadata;
@@ -177,7 +209,11 @@ trait Audit
             $attribute = substr($key, 4);
             $state = substr($key, 0, 3);
 
-            $modified[$attribute][$state] = $this->getDataValue($key);
+            $value = $this->getDataValue($key);
+
+            $modified[$attribute][$state] = $value instanceof DateTimeInterface
+                ? $this->serializeDate($value)
+                : $value;
         }
 
         return $json ? json_encode($modified, $options, $depth) : $modified;
