@@ -98,7 +98,7 @@ trait Audit
         ];
 
         if ($this->user) {
-            foreach ($this->user->attributesToArray() as $attribute => $value) {
+            foreach ($this->user->getArrayableAttributes() as $attribute => $value) {
                 $this->data['user_'.$attribute] = $value;
             }
         }
