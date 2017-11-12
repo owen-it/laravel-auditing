@@ -25,10 +25,29 @@ class User extends Model implements Auditable, UserResolver
     /**
      * {@inheritdoc}
      */
+    protected $casts = [
+        'is_admin' => 'bool',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
     public static function resolveId()
     {
         $user = static::query()->first();
 
         return $user ? $user->getKey() : null;
+    }
+
+    /**
+     * Uppercase first name character accessor.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getFirstNameAttribute(string $value): string
+    {
+        return ucfirst($value);
     }
 }
