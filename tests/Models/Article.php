@@ -27,7 +27,14 @@ class Article extends Model implements Auditable
      * {@inheritdoc}
      */
     protected $casts = [
-        'published' => 'bool',
+        'reviewed' => 'bool',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $dates = [
+        'published_at',
     ];
 
     /**

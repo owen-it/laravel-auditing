@@ -7,6 +7,7 @@
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg" alt="Unstable Version"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
+</p>
 
 This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities. 
 
@@ -16,7 +17,7 @@ Laravel Auditing allows you to keep a history of model changes by simply using a
 
 The package documentation can be found on the [official website](http://www.laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
 
-## Version Compatibility
+## Version Information
 
  Version   | Illuminate    | Status     | PHP Version
 :----------|:--------------|:-----------|:------------
@@ -38,4 +39,4 @@ Please see the [contributing](http://www.laravel-auditing.com/docs/master/contri
 
 ## License
 
-The **Laravel Auditing** package is open source software licensed under the [MIT LICENSE](LICENSE.md)
+The **Laravel Auditing** package is open source software licensed under the [MIT LICENSE](LICENSE.md).

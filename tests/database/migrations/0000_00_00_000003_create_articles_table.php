@@ -28,7 +28,8 @@ class CreateArticlesTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('content');
-            $table->boolean('published');
+            $table->boolean('reviewed');
+            $table->timestamp('published_at');
             $table->timestamps();
             $table->softDeletes();
         });
