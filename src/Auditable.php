@@ -351,11 +351,7 @@ trait Auditable
      */
     public function getAuditableEvents(): array
     {
-        if (isset($this->auditableEvents)) {
-            return $this->auditableEvents;
-        }
-
-        return [
+        return $this->auditableEvents ?? [
             'created',
             'updated',
             'deleted',
@@ -382,7 +378,7 @@ trait Auditable
      */
     public function getAuditInclude(): array
     {
-        return isset($this->auditInclude) ? $this->auditInclude : [];
+        return $this->auditInclude ?? [];
     }
 
     /**
@@ -390,7 +386,7 @@ trait Auditable
      */
     public function getAuditExclude(): array
     {
-        return isset($this->auditExclude) ? $this->auditExclude : [];
+        return $this->auditExclude ?? [];
     }
 
     /**
@@ -398,7 +394,7 @@ trait Auditable
      */
     public function getAuditStrict(): bool
     {
-        return isset($this->auditStrict) ? $this->auditStrict : false;
+        return $this->auditStrict ?? false;
     }
 
     /**
@@ -406,7 +402,7 @@ trait Auditable
      */
     public function getAuditTimestamps(): bool
     {
-        return isset($this->auditTimestamps) ? $this->auditTimestamps : false;
+        return $this->auditTimestamps ?? false;
     }
 
     /**
@@ -414,7 +410,7 @@ trait Auditable
      */
     public function getAuditDriver()
     {
-        return isset($this->auditDriver) ? $this->auditDriver : null;
+        return $this->auditDriver ?? null;
     }
 
     /**
@@ -422,7 +418,7 @@ trait Auditable
      */
     public function getAuditThreshold(): int
     {
-        return isset($this->auditThreshold) ? $this->auditThreshold : 0;
+        return $this->auditThreshold ?? 0;
     }
 
     /**
