@@ -41,7 +41,7 @@ return [
         'model'       => App\User::class,
         'resolver'    => App\User::class,
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Default Auditable Events
@@ -50,7 +50,7 @@ return [
     | The default auditable events.
     |
     */
-    
+
     'events' => [
         'created',
         'updated',
@@ -94,5 +94,5 @@ return [
     */
 
     'console' => false,   
-    
+
 ];
