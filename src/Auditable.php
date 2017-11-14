@@ -351,12 +351,16 @@ trait Auditable
      */
     public function getAuditableEvents(): array
     {
-        return $this->auditableEvents ?? [
-            'created',
-            'updated',
-            'deleted',
-            'restored',
-        ];
+        if (isset($this->auditableEvents)) {
+            return $this->auditableEvents;
+        }
+
+        return Config::get('audit.events', [
+                'created',
+                'updated',
+                'deleted',
+                'restored',
+        ]);
     }
 
     /**
