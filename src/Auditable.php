@@ -355,12 +355,12 @@ trait Auditable
             return $this->auditableEvents;
         }
 
-        return [
-            'created',
-            'updated',
-            'deleted',
-            'restored',
-        ];
+        return Config::get('audit.events', [
+        'created',
+        'updated',
+        'deleted',
+        'restored',
+        ]);
     }
 
     /**
