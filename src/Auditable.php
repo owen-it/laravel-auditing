@@ -356,10 +356,10 @@ trait Auditable
         }
 
         return Config::get('audit.events', [
-        'created',
-        'updated',
-        'deleted',
-        'restored',
+                'created',
+                'updated',
+                'deleted',
+                'restored',
         ]);
     }
 
