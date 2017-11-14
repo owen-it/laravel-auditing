@@ -14,13 +14,14 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\UserResolver;
-use RuntimeException;
-use UnexpectedValueException;
+use OwenIt\Auditing\Exceptions\AuditableTransitionException;
+use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait Auditable
 {
@@ -53,10 +54,10 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function audits()
+    public function audits(): MorphMany
     {
         return $this->morphMany(
-            Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class),
+            Config::get('audit.implementation', Models\Audit::class),
             'auditable'
         );
     }
@@ -173,7 +174,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function readyForAuditing()
+    public function readyForAuditing(): bool
     {
         return $this->isEventAuditable($this->auditEvent);
     }
@@ -181,16 +182,16 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function toAudit()
+    public function toAudit(): array
     {
         if (!$this->readyForAuditing()) {
-            throw new RuntimeException('A valid audit event has not been set');
+            throw new AuditingException('A valid audit event has not been set');
         }
 
         $eventHandler = $this->resolveEventHandlerMethod($this->auditEvent);
 
         if (!method_exists($this, $eventHandler)) {
-            throw new RuntimeException(sprintf(
+            throw new AuditingException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
                 $eventHandler
@@ -216,13 +217,14 @@ trait Auditable
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
+            'tags'           => implode(',', $this->generateTags()),
         ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function transformAudit(array $data)
+    public function transformAudit(array $data): array
     {
         return $data;
     }
@@ -230,7 +232,7 @@ trait Auditable
     /**
      * Resolve the ID of the logged User.
      *
-     * @throws UnexpectedValueException
+     * @throws AuditingException
      *
      * @return mixed|null
      */
@@ -238,15 +240,11 @@ trait Auditable
     {
         $userResolver = Config::get('audit.user.resolver');
 
-        if (is_callable($userResolver)) {
-            return $userResolver();
-        }
-
         if (is_subclass_of($userResolver, UserResolver::class)) {
             return call_user_func([$userResolver, 'resolveId']);
         }
 
-        throw new UnexpectedValueException('Invalid User resolver, callable or UserResolver FQCN expected');
+        throw new AuditingException('Invalid UserResolver implementation');
     }
 
     /**
@@ -254,7 +252,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function resolveUrl()
+    protected function resolveUrl(): string
     {
         if (App::runningInConsole()) {
             return 'console';
@@ -268,7 +266,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function resolveIpAddress()
+    protected function resolveIpAddress(): string
     {
         return Request::ip();
     }
@@ -278,7 +276,7 @@ trait Auditable
      *
      * @return string
      */
-    protected function resolveUserAgent()
+    protected function resolveUserAgent(): string
     {
         return Request::header('User-Agent');
     }
@@ -290,7 +288,7 @@ trait Auditable
      *
      * @return bool
      */
-    protected function isAttributeAuditable($attribute)
+    protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
         if (in_array($attribute, $this->auditableExclusions)) {
@@ -311,7 +309,7 @@ trait Auditable
      *
      * @return bool
      */
-    protected function isEventAuditable($event)
+    protected function isEventAuditable($event): bool
     {
         return is_string($this->resolveEventHandlerMethod($event));
     }
@@ -331,27 +329,15 @@ trait Auditable
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
 
             if (preg_match($auditableEventRegex, $event)) {
-                return is_int($key) ? $this->getEventHandlerMethod($event) : $value;
+                return is_int($key) ? sprintf('audit%sAttributes', Str::studly($event)) : $value;
             }
         }
     }
 
     /**
-     * Get the event handler method name.
-     *
-     * @param string $event
-     *
-     * @return string
-     */
-    protected function getEventHandlerMethod($event)
-    {
-        return 'audit'.Str::studly($event).'Attributes';
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function setAuditEvent($event)
+    public function setAuditEvent(string $event): Contracts\Auditable
     {
         $this->auditEvent = $this->isEventAuditable($event) ? $event : null;
 
@@ -363,18 +349,18 @@ trait Auditable
      *
      * @return array
      */
-    public function getAuditableEvents()
+    public function getAuditableEvents(): array
     {
         if (isset($this->auditableEvents)) {
             return $this->auditableEvents;
         }
 
-        return [
-            'created',
-            'updated',
-            'deleted',
-            'restored',
-        ];
+        return Config::get('audit.events', [
+                'created',
+                'updated',
+                'deleted',
+                'restored',
+        ]);
     }
 
     /**
@@ -382,10 +368,10 @@ trait Auditable
      *
      * @return bool
      */
-    public static function isAuditingEnabled()
+    public static function isAuditingEnabled(): bool
     {
         if (App::runningInConsole()) {
-            return (bool) Config::get('audit.console', false);
+            return Config::get('audit.console', false);
         }
 
         return true;
@@ -394,33 +380,33 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getAuditInclude()
+    public function getAuditInclude(): array
     {
-        return isset($this->auditInclude) ? (array) $this->auditInclude : [];
+        return isset($this->auditInclude) ? $this->auditInclude : [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAuditExclude()
+    public function getAuditExclude(): array
     {
-        return isset($this->auditExclude) ? (array) $this->auditExclude : [];
+        return isset($this->auditExclude) ? $this->auditExclude : [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAuditStrict()
+    public function getAuditStrict(): bool
     {
-        return isset($this->auditStrict) ? (bool) $this->auditStrict : false;
+        return isset($this->auditStrict) ? $this->auditStrict : false;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAuditTimestamps()
+    public function getAuditTimestamps(): bool
     {
-        return isset($this->auditTimestamps) ? (bool) $this->auditTimestamps : false;
+        return isset($this->auditTimestamps) ? $this->auditTimestamps : false;
     }
 
     /**
@@ -434,8 +420,58 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getAuditThreshold()
+    public function getAuditThreshold(): int
     {
         return isset($this->auditThreshold) ? $this->auditThreshold : 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateTags(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transitionTo(Contracts\Audit $audit, bool $old = false): Contracts\Auditable
+    {
+        // The Audit must be for this Auditable model of this type
+        if (!$this instanceof $audit->auditable_type) {
+            throw new AuditableTransitionException(sprintf(
+                'Expected Audit for %s, got Audit for %s instead',
+                get_class($this),
+                $audit->auditable_type
+            ));
+        }
+
+        // The Audit must be for this specific Auditable model
+        if ($this->getKey() !== $audit->auditable_id) {
+            throw new AuditableTransitionException(sprintf(
+                'Expected Auditable id %s, got %s instead',
+                $this->getKey(),
+                $audit->auditable_id
+            ));
+        }
+
+        // The attribute compatibility between the Audit and the Auditable model must be met
+        if ($missing = array_diff_key($modified = $audit->getModified(), $this->getAttributes())) {
+            throw new AuditableTransitionException(sprintf(
+                'Incompatibility between %s [id:%s] and %s [id:%s]. Missing attributes: [%s]',
+                get_class($this),
+                $this->getKey(),
+                get_class($audit),
+                $audit->getKey(),
+                implode(', ', array_keys($missing))
+            ));
+        }
+
+        foreach ($modified as $attribute => $value) {
+            $this->setAttribute($attribute, $value[$old ? 'old' : 'new']);
+        }
+
+        return $this;
     }
 }

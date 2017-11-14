@@ -12,38 +12,30 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Tests\Stubs;
+namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class AuditableStub extends Model implements AuditableContract
+class Article extends Model implements Auditable
 {
-    use Auditable;
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 
     /**
      * {@inheritdoc}
      */
     protected $casts = [
-        'published' => 'bool',
+        'reviewed' => 'bool',
     ];
 
     /**
      * {@inheritdoc}
      */
-    public function resolveIpAddress()
-    {
-        return '127.0.0.1';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveUserAgent()
-    {
-        return 'Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0';
-    }
+    protected $dates = [
+        'published_at',
+    ];
 
     /**
      * Uppercase Title accessor.
@@ -52,16 +44,8 @@ class AuditableStub extends Model implements AuditableContract
      *
      * @return string
      */
-    public function getTitleAttribute($value)
+    public function getTitleAttribute(string $value): string
     {
         return strtoupper($value);
-    }
-
-    protected function auditCustomAttributes(array &$old, array &$new)
-    {
-    }
-
-    protected function myAttributesMethod(array &$old, array &$new)
-    {
     }
 }

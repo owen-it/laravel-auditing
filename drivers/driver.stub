@@ -27,7 +27,7 @@ class DummyClass implements AuditDriver
      *
      * @return \OwenIt\Auditing\Models\Audit
      */
-    public function audit(Auditable $model)
+    public function audit(Auditable $model): Audit
     {
         // TODO: Change the auto-generated stub
     }
@@ -39,7 +39,7 @@ class DummyClass implements AuditDriver
      *
      * @return bool
      */
-    public function prune(Auditable $model)
+    public function prune(Auditable $model): bool
     {
         // TODO: Change the auto-generated stub
     }

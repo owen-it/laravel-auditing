@@ -12,14 +12,8 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Tests\Stubs;
+namespace OwenIt\Auditing\Exceptions;
 
-class AuditableDriverStub extends AuditableStub
+class AuditableTransitionException extends AuditingException
 {
-    /**
-     * Audit driver.
-     *
-     * @var string
-     */
-    protected $auditDriver = 'database';
 }

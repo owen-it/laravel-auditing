@@ -12,20 +12,21 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Tests\Stubs;
+namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\UserResolver;
 
-class UserStub extends Model implements UserResolver
+class User extends Model implements Auditable, UserResolver
 {
+    use \OwenIt\Auditing\Auditable;
+
     /**
      * {@inheritdoc}
      */
-    protected $attributes = [
-        'id'    => 123,
-        'email' => 'bob@example.com',
-        'name'  => 'Bob',
+    protected $casts = [
+        'is_admin' => 'bool',
     ];
 
     /**
@@ -33,6 +34,20 @@ class UserStub extends Model implements UserResolver
      */
     public static function resolveId()
     {
-        return rand(1, 256);
+        $user = static::query()->first();
+
+        return $user ? $user->getKey() : null;
+    }
+
+    /**
+     * Uppercase first name character accessor.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function getFirstNameAttribute(string $value): string
+    {
+        return ucfirst($value);
     }
 }

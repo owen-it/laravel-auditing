@@ -14,6 +14,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditDriverMakeCommand;
 use OwenIt\Auditing\Console\AuditTableCommand;
@@ -40,11 +41,11 @@ class AuditingServiceProvider extends ServiceProvider
     /**
      * Setup the config.
      *
-     * @param $app
+     * @param Application $app
      *
      * @return void
      */
-    protected function setupConfig($app)
+    protected function setupConfig(Application $app)
     {
         $config = realpath(__DIR__.'/../config/audit.php');
 

@@ -11,12 +11,11 @@
  * please view the LICENSE.md file that was distributed
  * with this source code.
  */
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAuditsTable extends Migration
+class CreateArticlesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -25,18 +24,14 @@ class CreateAuditsTable extends Migration
      */
     public function up()
     {
-        Schema::create('audits'', function (Blueprint $table) {
+        Schema::create('articles', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id')->nullable();
-            $table->string('event');
-            $table->morphs('auditable');
-            $table->text('old_values')->nullable();
-            $table->text('new_values')->nullable();
-            $table->text('url')->nullable();
-            $table->ipAddress('ip_address')->nullable();
-            $table->string('user_agent')->nullable();
-            $table->string('tags')->nullable();
+            $table->string('title');
+            $table->text('content');
+            $table->boolean('reviewed');
+            $table->timestamp('published_at');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -47,6 +42,6 @@ class CreateAuditsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('audits');
+        Schema::drop('articles');
     }
 }
