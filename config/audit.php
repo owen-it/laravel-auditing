@@ -93,6 +93,6 @@ return [
     |
     */
 
-    'console' => false,   
+    'console' => false,
 
 ];
