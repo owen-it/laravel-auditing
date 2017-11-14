@@ -78,4 +78,20 @@ return [
     */
 
     'console' => false,
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Default Auditable Events
+    |--------------------------------------------------------------------------
+    |
+    | The default auditable events.
+    |
+    */
+
+    'events' => [
+        'created',
+        'updated',
+        'deleted',
+        'restored',         
+    ],
 ];
