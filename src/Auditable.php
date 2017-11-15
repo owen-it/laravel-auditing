@@ -323,7 +323,7 @@ trait Auditable
      */
     protected function resolveEventHandlerMethod($event)
     {
-        foreach ($this->getAuditableEvents() as $key => $value) {
+        foreach ($this->getAuditEvents() as $key => $value) {
             $auditableEvent = is_int($key) ? $value : $key;
 
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
@@ -345,13 +345,13 @@ trait Auditable
     }
 
     /**
-     * Get the auditable events.
+     * Get the events that trigger an Audit.
      *
      * @return array
      */
-    public function getAuditableEvents(): array
+    public function getAuditEvents(): array
     {
-        return $this->auditableEvents ?? Config::get('audit.events', [
+        return $this->auditEvents ?? Config::get('audit.events', [
             'created',
             'updated',
             'deleted',
@@ -394,7 +394,7 @@ trait Auditable
      */
     public function getAuditStrict(): bool
     {
-        return $this->auditStrict ?? false;
+        return $this->auditStrict ?? Config::get('audit.strict', false);
     }
 
     /**
@@ -402,7 +402,7 @@ trait Auditable
      */
     public function getAuditTimestamps(): bool
     {
-        return $this->auditTimestamps ?? false;
+        return $this->auditTimestamps ?? Config::get('audit.timestamps', false);
     }
 
     /**
@@ -410,7 +410,7 @@ trait Auditable
      */
     public function getAuditDriver()
     {
-        return $this->auditDriver ?? null;
+        return $this->auditDriver ?? Config::get('audit.driver', 'database');
     }
 
     /**
@@ -418,7 +418,7 @@ trait Auditable
      */
     public function getAuditThreshold(): int
     {
-        return $this->auditThreshold ?? 0;
+        return $this->auditThreshold ?? Config::get('audit.threshold', 0);
     }
 
     /**
