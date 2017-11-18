@@ -34,9 +34,7 @@ class User extends Model implements Auditable, UserResolver
      */
     public static function resolveId()
     {
-        $user = static::query()->first();
-
-        return $user ? $user->getKey() : null;
+        return static::count() > 0 ? 1 : null;
     }
 
     /**
