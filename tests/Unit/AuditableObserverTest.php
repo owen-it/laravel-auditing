@@ -20,6 +20,7 @@ use OwenIt\Auditing\Tests\Models\Article;
 class AuditableObserverTest extends AuditingTestCase
 {
     /**
+     * @group AuditableObserver::retrieved
      * @group AuditableObserver::created
      * @group AuditableObserver::updated
      * @group AuditableObserver::deleted
@@ -51,6 +52,11 @@ class AuditableObserverTest extends AuditingTestCase
     public function auditableObserverTestProvider()
     {
         return [
+            [
+                'retrieved',
+                false,
+                false,
+            ],
             [
                 'created',
                 false,
