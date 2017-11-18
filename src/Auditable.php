@@ -105,6 +105,20 @@ trait Auditable
     }
 
     /**
+     * Set the old/new attributes corresponding to a retrieved event.
+     *
+     * @param array $old
+     * @param array $new
+     *
+     * @return void
+     */
+    protected function auditRetrievedAttributes(array &$old, array &$new)
+    {
+        // This is a read event with no attribute changes,
+        // only metadata is stored in the Audit
+    }
+
+    /**
      * Set the old/new attributes corresponding to a created event.
      *
      * @param array $old
