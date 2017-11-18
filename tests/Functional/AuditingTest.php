@@ -62,4 +62,44 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
     }
+
+    /**
+     * @test
+     */
+    public function itWillNotAuditTheRetrievingEvent()
+    {
+        $this->app['config']->set('audit.console', true);
+
+        factory(User::class)->create();
+
+        $this->assertSame(1, User::query()->count());
+        $this->assertSame(1, Audit::query()->count());
+
+        User::first();
+
+        $this->assertSame(1, Audit::query()->count());
+        $this->assertSame(1, User::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditTheRetrievingEvent()
+    {
+        $this->app['config']->set('audit.console', true);
+        $this->app['config']->set('audit.events', [
+            'created',
+            'retrieved',
+        ]);
+
+        factory(User::class)->create();
+
+        $this->assertSame(1, User::query()->count());
+        $this->assertSame(1, Audit::query()->count());
+
+        User::first();
+
+        $this->assertSame(1, User::query()->count());
+        $this->assertSame(2, Audit::query()->count());
+    }
 }
