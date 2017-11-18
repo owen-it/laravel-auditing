@@ -60,10 +60,10 @@ class AuditableTest extends AuditingTestCase
     }
 
     /**
-     * @group Auditable::getAuditableEvents
+     * @group Auditable::getAuditEvents
      * @test
      */
-    public function itReturnsTheDefaultAuditableEvents()
+    public function itReturnsTheDefaultAuditEvents()
     {
         $model = new Article();
 
@@ -73,15 +73,13 @@ class AuditableTest extends AuditingTestCase
             'deleted',
             'restored',
         ], $model->getAuditEvents());
-
-        $this->assertFalse($model->readyForAuditing());
     }
 
     /**
-     * @group Auditable::getAuditableEvents
+     * @group Auditable::getAuditEvents
      * @test
      */
-    public function itReturnsTheCustomAuditableEvents()
+    public function itReturnsTheCustomAuditEventsFromAttribute()
     {
         $model = new Article();
 
@@ -94,8 +92,25 @@ class AuditableTest extends AuditingTestCase
             'published' => 'publishedHandler',
             'archived',
         ], $model->getAuditEvents());
+    }
 
-        $this->assertFalse($model->readyForAuditing());
+    /**
+     * @group Auditable::getAuditEvents
+     * @test
+     */
+    public function itReturnsTheCustomAuditEventsFromConfig()
+    {
+        $this->app['config']->set('audit.events', [
+            'published' => 'publishedHandler',
+            'archived',
+        ]);
+
+        $model = new Article();
+
+        $this->assertArraySubset([
+            'published' => 'publishedHandler',
+            'archived',
+        ], $model->getAuditEvents());
     }
 
     /**
