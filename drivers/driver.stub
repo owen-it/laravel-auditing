@@ -14,9 +14,9 @@
 
 namespace DummyNamespace;
 
+use OwenIt\Auditing\Contracts\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
-use OwenIt\Auditing\Models\Audit;
 
 class DummyClass implements AuditDriver
 {
@@ -25,11 +25,11 @@ class DummyClass implements AuditDriver
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
-     * @return \OwenIt\Auditing\Models\Audit
+     * @return \OwenIt\Auditing\Contracts\Audit
      */
     public function audit(Auditable $model): Audit
     {
-        // TODO: Change the auto-generated stub
+        // TODO: Implement the audit logic
     }
 
     /**
@@ -41,6 +41,6 @@ class DummyClass implements AuditDriver
      */
     public function prune(Auditable $model): bool
     {
-        // TODO: Change the auto-generated stub
+        // TODO: Implement the pruning logic
     }
 }
