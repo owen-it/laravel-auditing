@@ -221,6 +221,8 @@ trait Auditable
 
         $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
 
+        $tags = implode(',', $this->generateTags());
+
         return $this->transformAudit([
             'old_values'     => $old,
             'new_values'     => $new,
@@ -231,7 +233,7 @@ trait Auditable
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
-            'tags'           => implode(',', $this->generateTags()),
+            'tags'           => empty($tags) ? null : $tags,
         ]);
     }
 
