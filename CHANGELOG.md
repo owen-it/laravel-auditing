@@ -10,7 +10,7 @@
 - Improved testing
 - Honour `DateTime` attributes, when resolving `Audit` data
 - Rename `getAuditableEvents()` to `getAuditEvents()`
-- Allow setting global `Audit` strict, threshold, timestamps, events and driver values in the configuration file
+- Allow setting global `Audit` events ([#342](https://github.com/owen-it/laravel-auditing/pull/342)), strict, threshold and timestamps in the configuration file
 
 ### Removed
 - PHP 5.x support
