@@ -359,9 +359,15 @@ trait Auditable
     }
 
     /**
-     * Get the events that trigger an Audit.
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function getAuditEvent()
+    {
+        return $this->auditEvent;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getAuditEvents(): array
     {

@@ -60,6 +60,29 @@ class AuditableTest extends AuditingTestCase
     }
 
     /**
+     * @group Auditable::getAuditEvent
+     * @test
+     */
+    public function itReturnsNullWhenTheAuditEventIsNotSet()
+    {
+        $model = new Article();
+
+        $this->assertNull($model->getAuditEvent());
+    }
+
+    /**
+     * @group Auditable::getAuditEvent
+     * @test
+     */
+    public function itReturnsTheAuditEventThatHasBeenSet()
+    {
+        $model = new Article();
+        $model->setAuditEvent('created');
+
+        $this->assertSame('created', $model->getAuditEvent());
+    }
+
+    /**
      * @group Auditable::getAuditEvents
      * @test
      */
