@@ -95,7 +95,7 @@ class AuditableTest extends AuditingTestCase
             'updated',
             'deleted',
             'restored',
-        ], $model->getAuditEvents());
+        ], $model->getAuditEvents(), true);
     }
 
     /**
@@ -114,7 +114,7 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'published' => 'publishedHandler',
             'archived',
-        ], $model->getAuditEvents());
+        ], $model->getAuditEvents(), true);
     }
 
     /**
@@ -133,7 +133,7 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'published' => 'publishedHandler',
             'archived',
-        ], $model->getAuditEvents());
+        ], $model->getAuditEvents(), true);
     }
 
     /**
@@ -330,8 +330,8 @@ class AuditableTest extends AuditingTestCase
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
             'user_agent'     => 'Symfony/3.X',
-            'tags'           => '',
-        ], $auditData);
+            'tags'           => null,
+        ], $auditData, true);
     }
 
     /**
@@ -369,8 +369,8 @@ class AuditableTest extends AuditingTestCase
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
             'user_agent'     => 'Symfony/3.X',
-            'tags'           => '',
-        ], $auditData);
+            'tags'           => null,
+        ], $auditData, true);
     }
 
     /**
@@ -407,7 +407,7 @@ class AuditableTest extends AuditingTestCase
                 'published' => 1,
                 'slug'      => 'how-to-audit-eloquent-models',
             ],
-        ], $auditData);
+        ], $auditData, true);
     }
 
     /**
@@ -418,7 +418,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertArraySubset([], $model->getAuditInclude());
+        $this->assertArraySubset([], $model->getAuditInclude(), true);
     }
 
     /**
@@ -437,7 +437,7 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'title',
             'content',
-        ], $model->getAuditInclude());
+        ], $model->getAuditInclude(), true);
     }
 
     /**
@@ -448,7 +448,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertArraySubset([], $model->getAuditExclude());
+        $this->assertArraySubset([], $model->getAuditExclude(), true);
     }
 
     /**
@@ -465,7 +465,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertArraySubset([
             'published',
-        ], $model->getAuditExclude());
+        ], $model->getAuditExclude(), true);
     }
 
     /**
@@ -624,7 +624,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertArraySubset([], $model->generateTags());
+        $this->assertArraySubset([], $model->generateTags(), true);
     }
 
     /**
@@ -646,7 +646,7 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'foo',
             'bar',
-        ], $model->generateTags());
+        ], $model->generateTags(), true);
     }
 
     /**
