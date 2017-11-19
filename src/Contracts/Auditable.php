@@ -35,6 +35,20 @@ interface Auditable
     public function setAuditEvent(string $event): Auditable;
 
     /**
+     * Get the Audit event that is set.
+     *
+     * @return string|null
+     */
+    public function getAuditEvent();
+
+    /**
+     * Get the events that trigger an Audit.
+     *
+     * @return array
+     */
+    public function getAuditEvents(): array;
+
+    /**
      * Is the model ready for auditing?
      *
      * @return bool

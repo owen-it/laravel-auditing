@@ -19,12 +19,12 @@ The package documentation can be found on the [official website](http://www.lara
 
 ## Version Information
 
- Version   | Illuminate    | Status     | PHP Version
-:----------|:--------------|:-----------|:------------
- 2.x       | 5.1.x - 5.3.x | EOL        | >= 5.5.9
- 3.x       | 5.2.x - 5.4.x | EOL        | >= 5.5.9
- 4.x       | 5.2.x - 5.5.x | Maintained | >= 5.5.9
- 5.x       | 5.2.x - 5.5.x | Latest     | >= 7.0.0
+ Version   | Illuminate    | Status              | PHP Version
+:----------|:--------------|:--------------------|:------------
+ 2.x       | 5.1.x - 5.3.x | End of life         | >= 5.5.9
+ 3.x       | 5.2.x - 5.4.x | End of life         | >= 5.5.9
+ 4.x       | 5.2.x - 5.5.x | Security fixes only | >= 5.5.9
+ 5.x       | 5.2.x - 5.5.x | Active support      | >= 7.0.0
 
 ## Contributing
 

@@ -105,6 +105,20 @@ trait Auditable
     }
 
     /**
+     * Set the old/new attributes corresponding to a retrieved event.
+     *
+     * @param array $old
+     * @param array $new
+     *
+     * @return void
+     */
+    protected function auditRetrievedAttributes(array &$old, array &$new)
+    {
+        // This is a read event with no attribute changes,
+        // only metadata is stored in the Audit
+    }
+
+    /**
      * Set the old/new attributes corresponding to a created event.
      *
      * @param array $old
@@ -323,7 +337,7 @@ trait Auditable
      */
     protected function resolveEventHandlerMethod($event)
     {
-        foreach ($this->getAuditableEvents() as $key => $value) {
+        foreach ($this->getAuditEvents() as $key => $value) {
             $auditableEvent = is_int($key) ? $value : $key;
 
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
@@ -345,21 +359,23 @@ trait Auditable
     }
 
     /**
-     * Get the auditable events.
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getAuditableEvents(): array
+    public function getAuditEvent()
     {
-        if (isset($this->auditableEvents)) {
-            return $this->auditableEvents;
-        }
+        return $this->auditEvent;
+    }
 
-        return Config::get('audit.events', [
-                'created',
-                'updated',
-                'deleted',
-                'restored',
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditEvents(): array
+    {
+        return $this->auditEvents ?? Config::get('audit.events', [
+            'created',
+            'updated',
+            'deleted',
+            'restored',
         ]);
     }
 
@@ -382,7 +398,7 @@ trait Auditable
      */
     public function getAuditInclude(): array
     {
-        return isset($this->auditInclude) ? $this->auditInclude : [];
+        return $this->auditInclude ?? [];
     }
 
     /**
@@ -390,7 +406,7 @@ trait Auditable
      */
     public function getAuditExclude(): array
     {
-        return isset($this->auditExclude) ? $this->auditExclude : [];
+        return $this->auditExclude ?? [];
     }
 
     /**
@@ -398,7 +414,7 @@ trait Auditable
      */
     public function getAuditStrict(): bool
     {
-        return isset($this->auditStrict) ? $this->auditStrict : false;
+        return $this->auditStrict ?? Config::get('audit.strict', false);
     }
 
     /**
@@ -406,7 +422,7 @@ trait Auditable
      */
     public function getAuditTimestamps(): bool
     {
-        return isset($this->auditTimestamps) ? $this->auditTimestamps : false;
+        return $this->auditTimestamps ?? Config::get('audit.timestamps', false);
     }
 
     /**
@@ -414,7 +430,7 @@ trait Auditable
      */
     public function getAuditDriver()
     {
-        return isset($this->auditDriver) ? $this->auditDriver : null;
+        return $this->auditDriver ?? Config::get('audit.driver', 'database');
     }
 
     /**
@@ -422,7 +438,7 @@ trait Auditable
      */
     public function getAuditThreshold(): int
     {
-        return isset($this->auditThreshold) ? $this->auditThreshold : 0;
+        return $this->auditThreshold ?? Config::get('audit.threshold', 0);
     }
 
     /**

@@ -27,7 +27,19 @@ class AuditableObserver
     public static $restoring = false;
 
     /**
-     * Handle the created event for the model.
+     * Handle the retrieved event.
+     *
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
+     *
+     * @return void
+     */
+    public function retrieved(Auditable $model)
+    {
+        Auditor::execute($model->setAuditEvent('retrieved'));
+    }
+
+    /**
+     * Handle the created event.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
@@ -39,7 +51,7 @@ class AuditableObserver
     }
 
     /**
-     * Handle the updated event for the model.
+     * Handle the updated event.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
@@ -54,7 +66,7 @@ class AuditableObserver
     }
 
     /**
-     * Handle the deleted event for the model.
+     * Handle the deleted event.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
@@ -66,7 +78,7 @@ class AuditableObserver
     }
 
     /**
-     * Handle the restoring event for the model.
+     * Handle the restoring event.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
@@ -81,7 +93,7 @@ class AuditableObserver
     }
 
     /**
-     * Handle the restored event for the model.
+     * Handle the restored event.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
      *

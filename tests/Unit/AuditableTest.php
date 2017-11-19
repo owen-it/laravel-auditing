@@ -60,10 +60,33 @@ class AuditableTest extends AuditingTestCase
     }
 
     /**
-     * @group Auditable::getAuditableEvents
+     * @group Auditable::getAuditEvent
      * @test
      */
-    public function itReturnsTheDefaultAuditableEvents()
+    public function itReturnsNullWhenTheAuditEventIsNotSet()
+    {
+        $model = new Article();
+
+        $this->assertNull($model->getAuditEvent());
+    }
+
+    /**
+     * @group Auditable::getAuditEvent
+     * @test
+     */
+    public function itReturnsTheAuditEventThatHasBeenSet()
+    {
+        $model = new Article();
+        $model->setAuditEvent('created');
+
+        $this->assertSame('created', $model->getAuditEvent());
+    }
+
+    /**
+     * @group Auditable::getAuditEvents
+     * @test
+     */
+    public function itReturnsTheDefaultAuditEvents()
     {
         $model = new Article();
 
@@ -72,20 +95,18 @@ class AuditableTest extends AuditingTestCase
             'updated',
             'deleted',
             'restored',
-        ], $model->getAuditableEvents());
-
-        $this->assertFalse($model->readyForAuditing());
+        ], $model->getAuditEvents());
     }
 
     /**
-     * @group Auditable::getAuditableEvents
+     * @group Auditable::getAuditEvents
      * @test
      */
-    public function itReturnsTheCustomAuditableEvents()
+    public function itReturnsTheCustomAuditEventsFromAttribute()
     {
         $model = new Article();
 
-        $model->auditableEvents = [
+        $model->auditEvents = [
             'published' => 'publishedHandler',
             'archived',
         ];
@@ -93,9 +114,26 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'published' => 'publishedHandler',
             'archived',
-        ], $model->getAuditableEvents());
+        ], $model->getAuditEvents());
+    }
 
-        $this->assertFalse($model->readyForAuditing());
+    /**
+     * @group Auditable::getAuditEvents
+     * @test
+     */
+    public function itReturnsTheCustomAuditEventsFromConfig()
+    {
+        $this->app['config']->set('audit.events', [
+            'published' => 'publishedHandler',
+            'archived',
+        ]);
+
+        $model = new Article();
+
+        $this->assertArraySubset([
+            'published' => 'publishedHandler',
+            'archived',
+        ], $model->getAuditEvents());
     }
 
     /**
@@ -120,7 +158,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $model->auditableEvents = [
+        $model->auditEvents = [
             'published' => 'publishedHandler',
             '*ted'      => 'multiEventHandler',
             'archived',
@@ -180,15 +218,15 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      *
-     * @dataProvider auditableCustomEventHandlerFailTestProvider
+     * @dataProvider auditCustomEventHandlerFailTestProvider
      *
      * @param string $event
-     * @param array  $auditableEvents
+     * @param array  $auditEvents
      * @param string $exceptionMessage
      */
     public function itFailsWhenTheCustomEventHandlersAreMissing(
         string $event,
-        array $auditableEvents,
+        array $auditEvents,
         string $exceptionMessage
     ) {
         $this->expectException(AuditingException::class);
@@ -196,7 +234,7 @@ class AuditableTest extends AuditingTestCase
 
         $model = new Article();
 
-        $model->auditableEvents = $auditableEvents;
+        $model->auditEvents = $auditEvents;
 
         $model->setAuditEvent($event);
 
@@ -206,7 +244,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableCustomEventHandlerFailTestProvider()
+    public function auditCustomEventHandlerFailTestProvider()
     {
         return [
             [
@@ -445,11 +483,24 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditStrict
      * @test
      */
-    public function itReturnsTheCustomAuditStrictValue()
+    public function itReturnsTheCustomAuditStrictValueFromAttribute()
     {
         $model = new Article();
 
         $model->auditStrict = true;
+
+        $this->assertTrue($model->getAuditStrict());
+    }
+
+    /**
+     * @group Auditable::getAuditStrict
+     * @test
+     */
+    public function itReturnsTheCustomAuditStrictValueFromConfig()
+    {
+        $this->app['config']->set('audit.strict', true);
+
+        $model = new Article();
 
         $this->assertTrue($model->getAuditStrict());
     }
@@ -469,11 +520,24 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditTimestamps
      * @test
      */
-    public function itReturnsTheCustomAuditTimestampsValue()
+    public function itReturnsTheCustomAuditTimestampsValueFromAttribute()
     {
         $model = new Article();
 
         $model->auditTimestamps = true;
+
+        $this->assertTrue($model->getAuditTimestamps());
+    }
+
+    /**
+     * @group Auditable::getAuditTimestamps
+     * @test
+     */
+    public function itReturnsTheCustomAuditTimestampsValueFromConfig()
+    {
+        $this->app['config']->set('audit.timestamps', true);
+
+        $model = new Article();
 
         $this->assertTrue($model->getAuditTimestamps());
     }
@@ -486,18 +550,31 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertNull($model->getAuditDriver());
+        $this->assertSame('database', $model->getAuditDriver());
     }
 
     /**
      * @group Auditable::getAuditDriver
      * @test
      */
-    public function itReturnsTheCustomAuditDriverValue()
+    public function itReturnsTheCustomAuditDriverValueFromAttribute()
     {
         $model = new Article();
 
         $model->auditDriver = 'RedisDriver';
+
+        $this->assertSame('RedisDriver', $model->getAuditDriver());
+    }
+
+    /**
+     * @group Auditable::getAuditDriver
+     * @test
+     */
+    public function itReturnsTheCustomAuditDriverValueFromConfig()
+    {
+        $this->app['config']->set('audit.driver', 'RedisDriver');
+
+        $model = new Article();
 
         $this->assertSame('RedisDriver', $model->getAuditDriver());
     }
@@ -517,13 +594,26 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::getAuditThreshold
      * @test
      */
-    public function itReturnsTheCustomAuditThresholdValue()
+    public function itReturnsTheCustomAuditThresholdValueFromAttribute()
     {
         $model = new Article();
 
         $model->auditThreshold = 10;
 
         $this->assertSame(10, $model->getAuditThreshold());
+    }
+
+    /**
+     * @group Auditable::getAuditThreshold
+     * @test
+     */
+    public function itReturnsTheCustomAuditThresholdValueFromConfig()
+    {
+        $this->app['config']->set('audit.threshold', 200);
+
+        $model = new Article();
+
+        $this->assertSame(200, $model->getAuditThreshold());
     }
 
     /**

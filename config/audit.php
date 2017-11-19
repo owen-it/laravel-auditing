@@ -44,10 +44,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Auditable Events
+    | Audit Events
     |--------------------------------------------------------------------------
     |
-    | The default auditable events.
+    | The Eloquent events that trigger an Audit.
     |
     */
 
@@ -60,14 +60,48 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Driver
+    | Strict mode
+    |--------------------------------------------------------------------------
+    |
+    | Enable the strict mode when auditing?
+    |
+    */
+
+    'strict' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit timestamps
+    |--------------------------------------------------------------------------
+    |
+    | Should the created_at, updated_at and deleted_at timestamps be audited?
+    |
+    */
+
+    'timestamps' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit threshold
+    |--------------------------------------------------------------------------
+    |
+    | Specify a threshold for the amount of Audit records a model can have.
+    | Zero means no limit.
+    |
+    */
+
+    'threshold' => 0,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Driver
     |--------------------------------------------------------------------------
     |
     | The default audit driver used to keep track of changes.
     |
     */
 
-    'default' => 'database',
+    'driver' => 'database',
 
     /*
     |--------------------------------------------------------------------------
@@ -77,6 +111,7 @@ return [
     | Available audit drivers and respective configurations.
     |
     */
+
     'drivers' => [
         'database' => [
             'table'      => 'audits',
@@ -94,5 +129,4 @@ return [
     */
 
     'console' => false,
-
 ];
