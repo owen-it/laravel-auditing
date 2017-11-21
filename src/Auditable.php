@@ -77,7 +77,7 @@ trait Auditable
             $this->excludedAttributes = array_merge($this->excludedAttributes, $this->hidden);
 
             // Non visible attributes
-            if (!empty($this->visible)) {
+            if ($this->visible) {
                 $invisible = array_diff(array_keys($this->attributes), $this->visible);
 
                 $this->excludedAttributes = array_merge($this->excludedAttributes, $invisible);
