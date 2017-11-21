@@ -250,30 +250,30 @@ class AuditableTest extends AuditingTestCase
             [
                 'published',
                 [
-                    'published' => 'publishedHandler',
+                    'published' => 'getPublishedEventAttributes',
                 ],
-                'Unable to handle "published" event, publishedHandler() method missing',
+                'Unable to handle "published" event, getPublishedEventAttributes() method missing',
             ],
             [
                 'archived',
                 [
                     'archived',
                 ],
-                'Unable to handle "archived" event, auditArchivedAttributes() method missing',
+                'Unable to handle "archived" event, getArchivedEventAttributes() method missing',
             ],
             [
                 'redacted',
                 [
                     '*ed',
                 ],
-                'Unable to handle "redacted" event, auditRedactedAttributes() method missing',
+                'Unable to handle "redacted" event, getRedactedEventAttributes() method missing',
             ],
             [
                 'redacted',
                 [
-                    '*ed' => 'multiEventHandler',
+                    '*ed' => 'getMultiEventAttributes',
                 ],
-                'Unable to handle "redacted" event, multiEventHandler() method missing',
+                'Unable to handle "redacted" event, getMultiEventAttributes() method missing',
             ],
         ];
     }

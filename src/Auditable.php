@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
@@ -109,7 +108,7 @@ trait Auditable
      *
      * @return array
      */
-    protected function auditRetrievedAttributes(): array
+    protected function getRetrievedEventAttributes(): array
     {
         // This is a read event with no attribute changes,
         // only metadata will be stored in the Audit
@@ -125,7 +124,7 @@ trait Auditable
      *
      * @return array
      */
-    protected function auditCreatedAttributes(): array
+    protected function getCreatedEventAttributes(): array
     {
         $new = [];
 
@@ -146,7 +145,7 @@ trait Auditable
      *
      * @return array
      */
-    protected function auditUpdatedAttributes(): array
+    protected function getUpdatedEventAttributes(): array
     {
         $old = [];
         $new = [];
@@ -169,7 +168,7 @@ trait Auditable
      *
      * @return array
      */
-    protected function auditDeletedAttributes(): array
+    protected function getDeletedEventAttributes(): array
     {
         $old = [];
 
@@ -190,10 +189,10 @@ trait Auditable
      *
      * @return array
      */
-    protected function auditRestoredAttributes(): array
+    protected function getRestoredEventAttributes(): array
     {
         // A restored event is just a deleted event in reverse
-        return array_reverse($this->auditDeletedAttributes());
+        return array_reverse($this->getDeletedEventAttributes());
     }
 
     /**
@@ -213,19 +212,19 @@ trait Auditable
             throw new AuditingException('A valid audit event has not been set');
         }
 
-        $eventHandler = $this->resolveEventHandlerMethod($this->auditEvent);
+        $attributeGetter = $this->resolveAttributeGetter($this->auditEvent);
 
-        if (!method_exists($this, $eventHandler)) {
+        if (!method_exists($this, $attributeGetter)) {
             throw new AuditingException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
-                $eventHandler
+                $attributeGetter
             ));
         }
 
         $this->resolveAuditExclusions();
 
-        list($old, $new) = call_user_func([$this, $eventHandler]);
+        list($old, $new) = call_user_func([$this, $attributeGetter]);
 
         $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
 
@@ -335,17 +334,17 @@ trait Auditable
      */
     protected function isEventAuditable($event): bool
     {
-        return is_string($this->resolveEventHandlerMethod($event));
+        return is_string($this->resolveAttributeGetter($event));
     }
 
     /**
-     * Event handler method resolver.
+     * Attribute getter method resolver.
      *
      * @param string $event
      *
      * @return string|null
      */
-    protected function resolveEventHandlerMethod($event)
+    protected function resolveAttributeGetter($event)
     {
         foreach ($this->getAuditEvents() as $key => $value) {
             $auditableEvent = is_int($key) ? $value : $key;
@@ -353,7 +352,7 @@ trait Auditable
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
 
             if (preg_match($auditableEventRegex, $event)) {
-                return is_int($key) ? sprintf('audit%sAttributes', Str::studly($event)) : $value;
+                return is_int($key) ? sprintf('get%sEventAttributes', ucfirst($event)) : $value;
             }
         }
     }
