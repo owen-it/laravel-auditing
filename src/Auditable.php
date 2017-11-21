@@ -219,7 +219,7 @@ trait Auditable
 
         $this->{$eventHandler}($old, $new);
 
-        $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
+        $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
 
         $tags = implode(',', $this->generateTags());
 
@@ -229,7 +229,7 @@ trait Auditable
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            $foreignKey      => $this->resolveUserId(),
+            $userForeignKey  => $this->resolveUserId(),
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
