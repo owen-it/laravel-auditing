@@ -105,84 +105,95 @@ trait Auditable
     }
 
     /**
-     * Set the old/new attributes corresponding to a retrieved event.
+     * Get the old/new attributes of a retrieved event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditRetrievedAttributes(array &$old, array &$new)
+    protected function auditRetrievedAttributes(): array
     {
         // This is a read event with no attribute changes,
-        // only metadata is stored in the Audit
+        // only metadata will be stored in the Audit
+
+        return [
+            [],
+            [],
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to a created event.
+     * Get the old/new attributes of a created event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditCreatedAttributes(array &$old, array &$new)
+    protected function auditCreatedAttributes(): array
     {
+        $new = [];
+
         foreach ($this->attributes as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute)) {
                 $new[$attribute] = $value;
             }
         }
+
+        return [
+            [],
+            $new,
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to an updated event.
+     * Get the old/new attributes of an updated event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditUpdatedAttributes(array &$old, array &$new)
+    protected function auditUpdatedAttributes(): array
     {
+        $old = [];
+        $new = [];
+
         foreach ($this->getDirty() as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute)) {
                 $old[$attribute] = array_get($this->original, $attribute);
                 $new[$attribute] = array_get($this->attributes, $attribute);
             }
         }
+
+        return [
+            $old,
+            $new,
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to a deleted event.
+     * Get the old/new attributes of a deleted event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditDeletedAttributes(array &$old, array &$new)
+    protected function auditDeletedAttributes(): array
     {
+        $old = [];
+
         foreach ($this->attributes as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute)) {
                 $old[$attribute] = $value;
             }
         }
+
+        return [
+            $old,
+            [],
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to a restored event.
+     * Get the old/new attributes of a restored event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditRestoredAttributes(array &$old, array &$new)
+    protected function auditRestoredAttributes(): array
     {
-        // Apply the same logic as the deleted event,
-        // but with the old/new arguments swapped
-        $this->auditDeletedAttributes($new, $old);
+        // A restored event is just a deleted event in reverse
+        return array_reverse($this->auditDeletedAttributes());
     }
 
     /**
@@ -214,10 +225,7 @@ trait Auditable
 
         $this->resolveAuditExclusions();
 
-        $old = [];
-        $new = [];
-
-        $this->{$eventHandler}($old, $new);
+        list($old, $new) = call_user_func([$this, $eventHandler]);
 
         $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
 
