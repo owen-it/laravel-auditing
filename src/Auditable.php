@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
@@ -26,11 +25,11 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 trait Auditable
 {
     /**
-     *  Auditable attribute exclusions.
+     * Auditable attributes excluded from the Audit.
      *
      * @var array
      */
-    protected $auditableExclusions = [];
+    protected $excludedAttributes = [];
 
     /**
      * Audit event name.
@@ -63,126 +62,137 @@ trait Auditable
     }
 
     /**
-     * Update excluded audit attributes.
+     * Resolve the Auditable attributes to exclude from the Audit.
      *
      * @return void
      */
-    protected function updateAuditExclusions()
+    protected function resolveAuditExclusions()
     {
-        $this->auditableExclusions = $this->getAuditExclude();
+        $this->excludedAttributes = $this->getAuditExclude();
 
         // When in strict mode, hidden and non visible attributes are excluded
         if ($this->getAuditStrict()) {
             // Hidden attributes
-            $this->auditableExclusions = array_merge($this->auditableExclusions, $this->hidden);
+            $this->excludedAttributes = array_merge($this->excludedAttributes, $this->hidden);
 
             // Non visible attributes
-            if (!empty($this->visible)) {
+            if ($this->visible) {
                 $invisible = array_diff(array_keys($this->attributes), $this->visible);
 
-                $this->auditableExclusions = array_merge($this->auditableExclusions, $invisible);
+                $this->excludedAttributes = array_merge($this->excludedAttributes, $invisible);
             }
         }
 
         // Exclude Timestamps
         if (!$this->getAuditTimestamps()) {
-            array_push($this->auditableExclusions, static::CREATED_AT, static::UPDATED_AT);
+            array_push($this->excludedAttributes, static::CREATED_AT, static::UPDATED_AT);
 
             if (defined('static::DELETED_AT')) {
-                $this->auditableExclusions[] = static::DELETED_AT;
+                $this->excludedAttributes[] = static::DELETED_AT;
             }
         }
 
         // Valid attributes are all those that made it out of the exclusion array
-        $attributes = array_except($this->attributes, $this->auditableExclusions);
+        $attributes = array_except($this->attributes, $this->excludedAttributes);
 
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
-                $this->auditableExclusions[] = $attribute;
+                $this->excludedAttributes[] = $attribute;
             }
         }
     }
 
     /**
-     * Set the old/new attributes corresponding to a retrieved event.
+     * Get the old/new attributes of a retrieved event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditRetrievedAttributes(array &$old, array &$new)
+    protected function getRetrievedEventAttributes(): array
     {
         // This is a read event with no attribute changes,
-        // only metadata is stored in the Audit
+        // only metadata will be stored in the Audit
+
+        return [
+            [],
+            [],
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to a created event.
+     * Get the old/new attributes of a created event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditCreatedAttributes(array &$old, array &$new)
+    protected function getCreatedEventAttributes(): array
     {
+        $new = [];
+
         foreach ($this->attributes as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute)) {
                 $new[$attribute] = $value;
             }
         }
+
+        return [
+            [],
+            $new,
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to an updated event.
+     * Get the old/new attributes of an updated event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditUpdatedAttributes(array &$old, array &$new)
+    protected function getUpdatedEventAttributes(): array
     {
+        $old = [];
+        $new = [];
+
         foreach ($this->getDirty() as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute)) {
                 $old[$attribute] = array_get($this->original, $attribute);
                 $new[$attribute] = array_get($this->attributes, $attribute);
             }
         }
+
+        return [
+            $old,
+            $new,
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to a deleted event.
+     * Get the old/new attributes of a deleted event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditDeletedAttributes(array &$old, array &$new)
+    protected function getDeletedEventAttributes(): array
     {
+        $old = [];
+
         foreach ($this->attributes as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute)) {
                 $old[$attribute] = $value;
             }
         }
+
+        return [
+            $old,
+            [],
+        ];
     }
 
     /**
-     * Set the old/new attributes corresponding to a restored event.
+     * Get the old/new attributes of a restored event.
      *
-     * @param array $old
-     * @param array $new
-     *
-     * @return void
+     * @return array
      */
-    protected function auditRestoredAttributes(array &$old, array &$new)
+    protected function getRestoredEventAttributes(): array
     {
-        // Apply the same logic as the deleted event,
-        // but with the old/new arguments swapped
-        $this->auditDeletedAttributes($new, $old);
+        // A restored event is just a deleted event in reverse
+        return array_reverse($this->getDeletedEventAttributes());
     }
 
     /**
@@ -202,24 +212,21 @@ trait Auditable
             throw new AuditingException('A valid audit event has not been set');
         }
 
-        $eventHandler = $this->resolveEventHandlerMethod($this->auditEvent);
+        $attributeGetter = $this->resolveAttributeGetter($this->auditEvent);
 
-        if (!method_exists($this, $eventHandler)) {
+        if (!method_exists($this, $attributeGetter)) {
             throw new AuditingException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
-                $eventHandler
+                $attributeGetter
             ));
         }
 
-        $this->updateAuditExclusions();
+        $this->resolveAuditExclusions();
 
-        $old = [];
-        $new = [];
+        list($old, $new) = call_user_func([$this, $attributeGetter]);
 
-        $this->{$eventHandler}($old, $new);
-
-        $foreignKey = Config::get('audit.user.foreign_key', 'user_id');
+        $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
 
         $tags = implode(',', $this->generateTags());
 
@@ -229,7 +236,7 @@ trait Auditable
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            $foreignKey      => $this->resolveUserId(),
+            $userForeignKey  => $this->resolveUserId(),
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
@@ -307,7 +314,7 @@ trait Auditable
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->auditableExclusions)) {
+        if (in_array($attribute, $this->excludedAttributes)) {
             return false;
         }
 
@@ -327,17 +334,17 @@ trait Auditable
      */
     protected function isEventAuditable($event): bool
     {
-        return is_string($this->resolveEventHandlerMethod($event));
+        return is_string($this->resolveAttributeGetter($event));
     }
 
     /**
-     * Event handler method resolver.
+     * Attribute getter method resolver.
      *
      * @param string $event
      *
      * @return string|null
      */
-    protected function resolveEventHandlerMethod($event)
+    protected function resolveAttributeGetter($event)
     {
         foreach ($this->getAuditEvents() as $key => $value) {
             $auditableEvent = is_int($key) ? $value : $key;
@@ -345,7 +352,7 @@ trait Auditable
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
 
             if (preg_match($auditableEventRegex, $event)) {
-                return is_int($key) ? sprintf('audit%sAttributes', Str::studly($event)) : $value;
+                return is_int($key) ? sprintf('get%sEventAttributes', ucfirst($event)) : $value;
             }
         }
     }

@@ -14,6 +14,7 @@
 
 namespace OwenIt\Auditing\Tests;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Exceptions\AuditingException;
@@ -107,12 +108,12 @@ class AuditableTest extends AuditingTestCase
         $model = new Article();
 
         $model->auditEvents = [
-            'published' => 'publishedHandler',
+            'published' => 'getPublishedEventAttributes',
             'archived',
         ];
 
         $this->assertArraySubset([
-            'published' => 'publishedHandler',
+            'published' => 'getPublishedEventAttributes',
             'archived',
         ], $model->getAuditEvents(), true);
     }
@@ -124,14 +125,14 @@ class AuditableTest extends AuditingTestCase
     public function itReturnsTheCustomAuditEventsFromConfig()
     {
         $this->app['config']->set('audit.events', [
-            'published' => 'publishedHandler',
+            'published' => 'getPublishedEventAttributes',
             'archived',
         ]);
 
         $model = new Article();
 
         $this->assertArraySubset([
-            'published' => 'publishedHandler',
+            'published' => 'getPublishedEventAttributes',
             'archived',
         ], $model->getAuditEvents(), true);
     }
@@ -159,8 +160,8 @@ class AuditableTest extends AuditingTestCase
         $model = new Article();
 
         $model->auditEvents = [
-            'published' => 'publishedHandler',
-            '*ted'      => 'multiEventHandler',
+            'published' => 'getPublishedEventAttributes',
+            '*ted'      => 'getMultiEventAttributes',
             'archived',
         ];
 
@@ -218,13 +219,13 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      *
-     * @dataProvider auditCustomEventHandlerFailTestProvider
+     * @dataProvider auditCustomAttributeGetterFailTestProvider
      *
      * @param string $event
      * @param array  $auditEvents
      * @param string $exceptionMessage
      */
-    public function itFailsWhenTheCustomEventHandlersAreMissing(
+    public function itFailsWhenTheCustomAttributeGettersAreMissing(
         string $event,
         array $auditEvents,
         string $exceptionMessage
@@ -244,36 +245,36 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditCustomEventHandlerFailTestProvider()
+    public function auditCustomAttributeGetterFailTestProvider()
     {
         return [
             [
                 'published',
                 [
-                    'published' => 'publishedHandler',
+                    'published' => 'getPublishedEventAttributes',
                 ],
-                'Unable to handle "published" event, publishedHandler() method missing',
+                'Unable to handle "published" event, getPublishedEventAttributes() method missing',
             ],
             [
                 'archived',
                 [
                     'archived',
                 ],
-                'Unable to handle "archived" event, auditArchivedAttributes() method missing',
+                'Unable to handle "archived" event, getArchivedEventAttributes() method missing',
             ],
             [
                 'redacted',
                 [
                     '*ed',
                 ],
-                'Unable to handle "redacted" event, auditRedactedAttributes() method missing',
+                'Unable to handle "redacted" event, getRedactedEventAttributes() method missing',
             ],
             [
                 'redacted',
                 [
-                    '*ed' => 'multiEventHandler',
+                    '*ed' => 'getMultiEventAttributes',
                 ],
-                'Unable to handle "redacted" event, multiEventHandler() method missing',
+                'Unable to handle "redacted" event, getMultiEventAttributes() method missing',
             ],
         ];
     }
@@ -306,10 +307,13 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.user.resolver', User::class);
 
+        $now = Carbon::now();
+
         $model = factory(Article::class)->make([
-            'title'     => 'How To Audit Eloquent Models',
-            'content'   => 'First step: install the laravel-auditing package.',
-            'published' => 1,
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => $now,
         ]);
 
         $model->setAuditEvent('created');
@@ -319,9 +323,11 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'old_values' => [],
             'new_values' => [
-                'title'     => 'How To Audit Eloquent Models',
-                'content'   => 'First step: install the laravel-auditing package.',
-                'published' => 1,
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => 'First step: install the laravel-auditing package.',
+                'reviewed'     => 1,
+                'published_at' => $now->format('Y-m-d H:i:s')
+
             ],
             'event'          => 'created',
             'auditable_id'   => null,
@@ -345,10 +351,13 @@ class AuditableTest extends AuditingTestCase
 
         factory(User::class)->create();
 
+        $now = Carbon::now();
+
         $model = factory(Article::class)->make([
-            'title'     => 'How To Audit Eloquent Models',
-            'content'   => 'First step: install the laravel-auditing package.',
-            'published' => 1,
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => $now,
         ]);
 
         $model->setAuditEvent('created');
@@ -358,9 +367,10 @@ class AuditableTest extends AuditingTestCase
         $this->assertArraySubset([
             'old_values' => [],
             'new_values' => [
-                'title'     => 'How To Audit Eloquent Models',
-                'content'   => 'First step: install the laravel-auditing package.',
-                'published' => 1,
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => 'First step: install the laravel-auditing package.',
+                'reviewed'     => 1,
+                'published_at' => $now->format('Y-m-d H:i:s')
             ],
             'event'          => 'created',
             'auditable_id'   => null,
@@ -383,9 +393,10 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new class() extends Article {
             protected $attributes = [
-                'title'     => 'How To Audit Eloquent Models',
-                'content'   => 'First step: install the laravel-auditing package.',
-                'published' => 1,
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => 'First step: install the laravel-auditing package.',
+                'reviewed'     => 1,
+                'published_at' => '2012-06-14 15:03:00',
             ];
 
             public function transformAudit(array $data): array
@@ -402,10 +413,11 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertArraySubset([
             'new_values' => [
-                'title'     => 'How To Audit Eloquent Models',
-                'content'   => 'First step: install the laravel-auditing package.',
-                'published' => 1,
-                'slug'      => 'how-to-audit-eloquent-models',
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => 'First step: install the laravel-auditing package.',
+                'reviewed'     => 1,
+                'published_at' => '2012-06-14 15:03:00',
+                'slug'         => 'how-to-audit-eloquent-models',
             ],
         ], $auditData, true);
     }
@@ -460,11 +472,11 @@ class AuditableTest extends AuditingTestCase
         $model = new Article();
 
         $model->auditExclude = [
-            'published',
+            'published_at',
         ];
 
         $this->assertArraySubset([
-            'published',
+            'published_at',
         ], $model->getAuditExclude(), true);
     }
 
@@ -692,8 +704,9 @@ class AuditableTest extends AuditingTestCase
         $this->expectExceptionMessage('Incompatibility between OwenIt\Auditing\Tests\Models\Article [id:1] and OwenIt\Auditing\Models\Audit [id:3]. Missing attributes: [subject, text]');
 
         $model = factory(Article::class)->create();
+
         $incompatibleAudit = factory(Audit::class)->create([
-            'event'          => 'updated',
+            'event'          => 'created',
             'auditable_id'   => $model->getKey(),
             'auditable_type' => Article::class,
             'old_values'     => [],
