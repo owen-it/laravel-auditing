@@ -472,11 +472,11 @@ class AuditableTest extends AuditingTestCase
         $model = new Article();
 
         $model->auditExclude = [
-            'published',
+            'published_at',
         ];
 
         $this->assertArraySubset([
-            'published',
+            'published_at',
         ], $model->getAuditExclude(), true);
     }
 
@@ -704,8 +704,9 @@ class AuditableTest extends AuditingTestCase
         $this->expectExceptionMessage('Incompatibility between OwenIt\Auditing\Tests\Models\Article [id:1] and OwenIt\Auditing\Models\Audit [id:3]. Missing attributes: [subject, text]');
 
         $model = factory(Article::class)->create();
+
         $incompatibleAudit = factory(Audit::class)->create([
-            'event'          => 'updated',
+            'event'          => 'created',
             'auditable_id'   => $model->getKey(),
             'auditable_type' => Article::class,
             'old_values'     => [],
