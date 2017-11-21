@@ -26,11 +26,11 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 trait Auditable
 {
     /**
-     *  Auditable attribute exclusions.
+     * Auditable attributes excluded from the Audit.
      *
      * @var array
      */
-    protected $auditableExclusions = [];
+    protected $excludedAttributes = [];
 
     /**
      * Audit event name.
@@ -63,43 +63,43 @@ trait Auditable
     }
 
     /**
-     * Update excluded audit attributes.
+     * Resolve the Auditable attributes to exclude from the Audit.
      *
      * @return void
      */
-    protected function updateAuditExclusions()
+    protected function resolveAuditExclusions()
     {
-        $this->auditableExclusions = $this->getAuditExclude();
+        $this->excludedAttributes = $this->getAuditExclude();
 
         // When in strict mode, hidden and non visible attributes are excluded
         if ($this->getAuditStrict()) {
             // Hidden attributes
-            $this->auditableExclusions = array_merge($this->auditableExclusions, $this->hidden);
+            $this->excludedAttributes = array_merge($this->excludedAttributes, $this->hidden);
 
             // Non visible attributes
             if (!empty($this->visible)) {
                 $invisible = array_diff(array_keys($this->attributes), $this->visible);
 
-                $this->auditableExclusions = array_merge($this->auditableExclusions, $invisible);
+                $this->excludedAttributes = array_merge($this->excludedAttributes, $invisible);
             }
         }
 
         // Exclude Timestamps
         if (!$this->getAuditTimestamps()) {
-            array_push($this->auditableExclusions, static::CREATED_AT, static::UPDATED_AT);
+            array_push($this->excludedAttributes, static::CREATED_AT, static::UPDATED_AT);
 
             if (defined('static::DELETED_AT')) {
-                $this->auditableExclusions[] = static::DELETED_AT;
+                $this->excludedAttributes[] = static::DELETED_AT;
             }
         }
 
         // Valid attributes are all those that made it out of the exclusion array
-        $attributes = array_except($this->attributes, $this->auditableExclusions);
+        $attributes = array_except($this->attributes, $this->excludedAttributes);
 
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
-                $this->auditableExclusions[] = $attribute;
+                $this->excludedAttributes[] = $attribute;
             }
         }
     }
@@ -212,7 +212,7 @@ trait Auditable
             ));
         }
 
-        $this->updateAuditExclusions();
+        $this->resolveAuditExclusions();
 
         $old = [];
         $new = [];
@@ -307,7 +307,7 @@ trait Auditable
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->auditableExclusions)) {
+        if (in_array($attribute, $this->excludedAttributes)) {
             return false;
         }
 
