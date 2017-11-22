@@ -16,22 +16,21 @@ namespace OwenIt\Auditing;
 
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
-use OwenIt\Auditing\Contracts\Auditor as AuditorContract;
 use OwenIt\Auditing\Drivers\Database;
 use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
-use RuntimeException;
+use OwenIt\Auditing\Exceptions\AuditingException;
 
-class Auditor extends Manager implements AuditorContract
+class Auditor extends Manager implements Contracts\Auditor
 {
     /**
      * {@inheritdoc}
      */
     public function getDefaultDriver()
     {
-        return $this->app['config']['audit.default'];
+        return $this->app['config']['audit.driver'];
     }
 
     /**
@@ -53,12 +52,12 @@ class Auditor extends Manager implements AuditorContract
     /**
      * {@inheritdoc}
      */
-    public function auditDriver(AuditableContract $model)
+    public function auditDriver(Auditable $model): AuditDriver
     {
         $driver = $this->driver($model->getAuditDriver());
 
         if (!$driver instanceof AuditDriver) {
-            throw new RuntimeException('The driver must implement the AuditDriver contract');
+            throw new AuditingException('The driver must implement the AuditDriver contract');
         }
 
         return $driver;
@@ -67,7 +66,7 @@ class Auditor extends Manager implements AuditorContract
     /**
      * {@inheritdoc}
      */
-    public function execute(AuditableContract $model)
+    public function execute(Auditable $model)
     {
         if (!$model->readyForAuditing()) {
             return;
@@ -93,7 +92,7 @@ class Auditor extends Manager implements AuditorContract
      *
      * @return \OwenIt\Auditing\Drivers\Database
      */
-    protected function createDatabaseDriver()
+    protected function createDatabaseDriver(): Database
     {
         return $this->app->make(Database::class);
     }
@@ -106,7 +105,7 @@ class Auditor extends Manager implements AuditorContract
      *
      * @return bool
      */
-    protected function fireAuditingEvent(AuditableContract $model, AuditDriver $driver)
+    protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
         return $this->app->make('events')->until(
             new Auditing($model, $driver)

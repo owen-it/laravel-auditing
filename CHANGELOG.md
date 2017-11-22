@@ -1,3 +1,21 @@
+## v5.0.0 (2017-11-28)
+### Added
+- Custom exceptions
+- Ability to tag audits ([#283](https://github.com/owen-it/laravel-auditing/issues/283))
+- New `transitionTo()` and `getAuditEvent()` methods to the `Auditable` contract
+- Support for the `retrieved` Eloquent event, added in v5.5 ([#343](https://github.com/owen-it/laravel-auditing/issues/343))
+
+### Changed
+- Use PHP 7 features (scalar type/return type declarations, null coalescing operator)
+- Improved testing
+- Honour `DateTime` attributes, when resolving `Audit` data
+- Rename `getAuditableEvents()` to `getAuditEvents()`
+- Allow setting global `Audit` events ([#342](https://github.com/owen-it/laravel-auditing/pull/342)), strict, threshold and timestamps in the configuration file
+
+### Removed
+- PHP 5.x support
+- `Closure` / `callable` support for User id resolver
+
 ## v4.1.4 (2017-10-29)
 ### Added
 - Ability to define custom methods to handle events ([#324](https://github.com/owen-it/laravel-auditing/pull/324))
