@@ -327,8 +327,7 @@ class AuditableTest extends AuditingTestCase
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => 'First step: install the laravel-auditing package.',
                 'reviewed'     => 1,
-                'published_at' => $now->format('Y-m-d H:i:s')
-
+                'published_at' => $now->format('Y-m-d H:i:s'),
             ],
             'event'          => 'created',
             'auditable_id'   => null,
