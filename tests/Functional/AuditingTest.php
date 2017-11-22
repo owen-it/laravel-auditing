@@ -14,9 +14,11 @@
 
 namespace OwenIt\Auditing\Tests\Functional;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
+use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditingTest extends AuditingTestCase
@@ -101,5 +103,161 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(2, Audit::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditTheRetrievedEvent()
+    {
+        $this->app['config']->set('audit.events', [
+            'retrieved',
+        ]);
+
+        factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        Article::first();
+
+        $audit = Audit::first();
+
+        $this->assertEmpty($audit->old_values);
+
+        $this->assertEmpty($audit->new_values);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditTheCreatedEvent()
+    {
+        $this->app['config']->set('audit.events', [
+            'created',
+        ]);
+
+        factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        $audit = Audit::first();
+
+        $this->assertEmpty($audit->old_values);
+
+        $this->assertArraySubset([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+            'id'           => 1,
+        ], $audit->new_values, true);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditTheUpdatedEvent()
+    {
+        $this->app['config']->set('audit.events', [
+            'updated',
+        ]);
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        $now = Carbon::now();
+
+        $article->update([
+            'content'      => 'First step: install the laravel-auditing package.',
+            'published_at' => $now,
+            'reviewed'     => 1,
+        ]);
+
+        $audit = Audit::first();
+
+        $this->assertArraySubset([
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ], $audit->old_values, true);
+
+        $this->assertArraySubset([
+            'content'      => 'First step: install the laravel-auditing package.',
+            'published_at' => $now->format('Y-m-d H:i:s'),
+            'reviewed'     => 1,
+        ], $audit->new_values, true);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditTheDeletedEvent()
+    {
+        $this->app['config']->set('audit.events', [
+            'deleted',
+        ]);
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        $article->delete();
+
+        $audit = Audit::first();
+
+        $this->assertArraySubset([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+            'id'           => 1,
+        ], $audit->old_values, true);
+
+        $this->assertEmpty($audit->new_values);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditTheRestoredEvent()
+    {
+        $this->app['config']->set('audit.events', [
+            'restored',
+        ]);
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        $article->delete();
+        $article->restore();
+
+        $audit = Audit::first();
+
+        $this->assertEmpty($audit->old_values);
+
+        $this->assertArraySubset([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+            'id'           => 1,
+        ], $audit->new_values, true);
     }
 }

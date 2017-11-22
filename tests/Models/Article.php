@@ -38,6 +38,16 @@ class Article extends Model implements Auditable
     ];
 
     /**
+     * {@inheritdoc}
+     */
+    protected $fillable = [
+        'title',
+        'content',
+        'published_at',
+        'reviewed',
+    ];
+
+    /**
      * Uppercase Title accessor.
      *
      * @param string $value
