@@ -466,7 +466,7 @@ trait Auditable
         // The Audit must be for this Auditable model of this type
         if (!$this instanceof $audit->auditable_type) {
             throw new AuditableTransitionException(sprintf(
-                'Expected Audit for %s, got Audit for %s instead',
+                'Expected Auditable type %s, got %s instead',
                 get_class($this),
                 $audit->auditable_type
             ));
@@ -482,15 +482,16 @@ trait Auditable
         }
 
         // The attribute compatibility between the Audit and the Auditable model must be met
-        if ($missing = array_diff_key($modified = $audit->getModified(), $this->getAttributes())) {
+        $modified = $audit->getModified();
+
+        if ($incompatibilities = array_diff_key($modified, $this->getAttributes())) {
             throw new AuditableTransitionException(sprintf(
-                'Incompatibility between %s [id:%s] and %s [id:%s]. Missing attributes: [%s]',
+                'Incompatibility between [%s:%s] and [%s:%s]',
                 get_class($this),
                 $this->getKey(),
                 get_class($audit),
-                $audit->getKey(),
-                implode(', ', array_keys($missing))
-            ));
+                $audit->getKey()
+            ), array_keys($incompatibilities));
         }
 
         foreach ($modified as $attribute => $value) {

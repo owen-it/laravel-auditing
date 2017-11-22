@@ -17,6 +17,7 @@ namespace OwenIt\Auditing\Tests;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Models\Article;
@@ -667,8 +668,8 @@ class AuditableTest extends AuditingTestCase
      */
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheModelType()
     {
-        $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Expected Audit for OwenIt\Auditing\Tests\Models\Article, got Audit for OwenIt\Auditing\Tests\Models\User instead');
+        $this->expectException(AuditableTransitionException::class);
+        $this->expectExceptionMessage('Expected Auditable type OwenIt\Auditing\Tests\Models\Article, got OwenIt\Auditing\Tests\Models\User instead');
 
         $audit = factory(Audit::class)->make([
             'auditable_type' => User::class,
@@ -685,7 +686,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId()
     {
-        $this->expectException(AuditingException::class);
+        $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id 2, got 1 instead');
 
         $firstAudit = factory(Article::class)->create()->audits()->first();
@@ -700,9 +701,6 @@ class AuditableTest extends AuditingTestCase
      */
     public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet()
     {
-        $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Incompatibility between OwenIt\Auditing\Tests\Models\Article [id:1] and OwenIt\Auditing\Models\Audit [id:3]. Missing attributes: [subject, text]');
-
         $model = factory(Article::class)->create();
 
         $incompatibleAudit = factory(Audit::class)->create([
@@ -716,7 +714,19 @@ class AuditableTest extends AuditingTestCase
             ],
         ]);
 
-        $model->transitionTo($incompatibleAudit);
+        try {
+            $model->transitionTo($incompatibleAudit);
+        } catch (AuditableTransitionException $e) {
+            $this->assertSame(
+                'Incompatibility between [OwenIt\Auditing\Tests\Models\Article:1] and [OwenIt\Auditing\Models\Audit:3]',
+                $e->getMessage()
+            );
+
+            $this->assertArraySubset([
+                'subject',
+                'text',
+            ], $e->getIncompatibilities(), true);
+        }
     }
 
     /**
