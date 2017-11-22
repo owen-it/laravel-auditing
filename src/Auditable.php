@@ -494,8 +494,12 @@ trait Auditable
             ), array_keys($incompatibilities));
         }
 
+        $key = $old ? 'old' : 'new';
+
         foreach ($modified as $attribute => $value) {
-            $this->setAttribute($attribute, $value[$old ? 'old' : 'new']);
+            if (array_key_exists($key, $value)) {
+                $this->setAttribute($attribute, $value[$key]);
+            }
         }
 
         return $this;
