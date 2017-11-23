@@ -734,33 +734,38 @@ class AuditableTest extends AuditingTestCase
      *
      * @dataProvider auditableTransitionTestProvider
      *
-     * @param bool  $useOldValues
-     * @param array $expectations
+     * @param array $oldValues
+     * @param array $newValues
+     * @param array $oldExpectation
+     * @param array $newExpectation
      */
-    public function itTransitionsToAnotherModelState(bool $useOldValues, array $expectations)
-    {
-        $model = factory(Article::class)->create([
+    public function itTransitionsToAnotherModelState(
+        array $oldValues,
+        array $newValues,
+        array $oldExpectation,
+        array $newExpectation
+    ) {
+        $models = factory(Article::class, 2)->create([
             'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
             'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
         ]);
 
-        $audit = factory(Audit::class)->create([
-            'event'          => 'updated',
-            'auditable_id'   => $model->getKey(),
-            'auditable_type' => Article::class,
-            'old_values'     => [
-                'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
-                'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
-            ],
-            'new_values' => [
-                'title'   => 'Nullam egestas interdum eleifend.',
-                'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
-            ],
-        ]);
+        $audits = $models->map(function (Article $model) use ($oldValues, $newValues) {
+            return factory(Audit::class)->create([
+                'auditable_id'   => $model->getKey(),
+                'auditable_type' => get_class($model),
+                'old_values'     => $oldValues,
+                'new_values'     => $newValues,
+            ]);
+        });
 
-        $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit, $useOldValues));
+        // Transition with old values
+        $this->assertInstanceOf(Auditable::class, $models[0]->transitionTo($audits[0], true));
+        $this->assertSame($oldExpectation, $models[0]->getDirty());
 
-        $this->assertSame($expectations, $model->getDirty());
+        // Transition with new values
+        $this->assertInstanceOf(Auditable::class, $models[1]->transitionTo($audits[1]));
+        $this->assertSame($newExpectation, $models[1]->getDirty());
     }
 
     /**
@@ -769,19 +774,96 @@ class AuditableTest extends AuditingTestCase
     public function auditableTransitionTestProvider()
     {
         return [
+            //
+            // Audit data and expectations for retrieved event
+            //
             [
-                true,
-                [
-                    'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
-                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
-                ],
+                // Old values
+                [],
+
+                // New values
+                [],
+
+                // Expectation when transitioning with old values
+                [],
+
+                // Expectation when transitioning with new values
+                [],
             ],
+
+            //
+            // Audit data and expectations for created/restored event
+            //
             [
-                false,
+                // Old values
+                [],
+
+                // New values
+                [
+                    'title'   => 'Nullam egestas interdum eleifend.',
+                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                ],
+
+                // Expectation when transitioning with old values
+                [],
+
+                // Expectation when transitioning with new values
                 [
                     'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
                     'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
                 ],
+            ],
+
+            //
+            // Audit data and expectations for updated event
+            //
+            [
+                // Old values
+                [
+                    'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
+                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                ],
+
+                // New values
+                [
+                    'title'   => 'Nullam egestas interdum eleifend.',
+                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                ],
+
+                // Expectation when transitioning with old values
+                [
+                    'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
+                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                ],
+
+                // Expectation when transitioning with new values
+                [
+                    'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
+                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                ],
+            ],
+
+            //
+            // Audit data and expectations for deleted event
+            //
+            [
+                // Old values
+                [
+                    'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
+                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                ],
+
+                // New values
+                [],
+
+                // Expectation when transitioning with old values
+                [
+                    'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
+                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                ],
+
+                // Expectation when transitioning with new values
+                [],
             ],
         ];
     }
