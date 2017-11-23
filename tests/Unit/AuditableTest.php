@@ -792,7 +792,7 @@ class AuditableTest extends AuditingTestCase
             ],
 
             //
-            // Audit data and expectations for created event
+            // Audit data and expectations for created/restored event
             //
             [
                 // Old values
@@ -864,29 +864,6 @@ class AuditableTest extends AuditingTestCase
 
                 // Expectation when transitioning with new values
                 [],
-            ],
-
-            //
-            // Audit data and expectations for restored event
-            //
-            [
-                // Old values
-                [],
-
-                // New values
-                [
-                    'title'   => 'Nullam egestas interdum eleifend.',
-                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
-                ],
-
-                // Expectation when transitioning with old values
-                [],
-
-                // Expectation when transitioning with new values
-                [
-                    'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
-                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
-                ],
             ],
         ];
     }
