@@ -1,3 +1,7 @@
+## v5.0.1 (2017-11-30)
+### Fixed
+- Typo in the migration stub ([#356](https://github.com/owen-it/laravel-auditing/pull/356))
+
 ## v5.0.0 (2017-11-28)
 ### Added
 - Custom exceptions
