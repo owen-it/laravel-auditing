@@ -17,7 +17,7 @@
         "revision",
         "tracking"
     ],
-    "homepage": "https://laravel-auditing.com",
+    "homepage": "http://laravel-auditing.com",
     "type": "package",
     "license": "MIT",
     "support": {
@@ -39,7 +39,7 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.0.13",
         "illuminate/console": "5.2.* || 5.3.* || 5.4.* || 5.5.*",
         "illuminate/database": "5.2.* || 5.3.* || 5.4.* || 5.5.*",
         "illuminate/filesystem": "5.2.* || 5.3.* || 5.4.* || 5.5.*"

@@ -14,29 +14,24 @@ This package will help you understand changes in your Eloquent models, by provid
 Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
 
 ## Official Documentation
-
 The package documentation can be found on the [official website](http://www.laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
 
 ## Version Information
-
  Version   | Illuminate    | Status              | PHP Version
 :----------|:--------------|:--------------------|:------------
  2.x       | 5.1.x - 5.3.x | End of life         | >= 5.5.9
  3.x       | 5.2.x - 5.4.x | End of life         | >= 5.5.9
  4.x       | 5.2.x - 5.5.x | Security fixes only | >= 5.5.9
- 5.x       | 5.2.x - 5.5.x | Active support      | >= 7.0.0
+ 5.x       | 5.2.x - 5.5.x | Active support      | >= 7.0.13
 
 ## Contributing
-
 Please see the [contributing](http://www.laravel-auditing.com/docs/master/contributing) entry for more details.
 
 ## Credits
-
 - [Antério Vieira](https://github.com/anteriovieira)
 - [Quetzy Garcia](https://github.com/quetzyg)
 - [Raphael França](https://github.com/raphaelfranca)
 - [All Contributors](https://github.com/owen-it/laravel-auditing/graphs/contributors)
 
 ## License
-
 The **Laravel Auditing** package is open source software licensed under the [MIT LICENSE](LICENSE.md).
