@@ -1,5 +1,5 @@
 <p align="center">
-<a href="http://www.laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
+<a href="http://laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
 </p>
 
 <p align="center">
@@ -14,7 +14,7 @@ This package will help you understand changes in your Eloquent models, by provid
 Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
 
 ## Official Documentation
-The package documentation can be found on the [official website](http://www.laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
+The package documentation can be found on the [official website](http://laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
 
 ## Version Information
  Version   | Illuminate    | Status              | PHP Version
@@ -25,7 +25,7 @@ The package documentation can be found on the [official website](http://www.lara
  5.x       | 5.2.x - 5.5.x | Active support      | >= 7.0.13
 
 ## Contributing
-Please see the [contributing](http://www.laravel-auditing.com/docs/master/contributing) entry for more details.
+Please see the [contributing](http://laravel-auditing.com/docs/master/contributing) entry for more details.
 
 ## Credits
 - [Antério Vieira](https://github.com/anteriovieira)
