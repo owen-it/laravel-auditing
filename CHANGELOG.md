@@ -1,3 +1,8 @@
+## v5.0.2 (2017-12-09)
+### Fixed
+- Bump the minimum PHP version required to 7.0.13 ([#354](https://github.com/owen-it/laravel-auditing/issues/354))
+- Take MorphMap into account ([#357](https://github.com/owen-it/laravel-auditing/issues/357))
+
 ## v5.0.1 (2017-11-30)
 ### Fixed
 - Typo in the migration stub ([#356](https://github.com/owen-it/laravel-auditing/pull/356))

@@ -463,11 +463,11 @@ trait Auditable
      */
     public function transitionTo(Contracts\Audit $audit, bool $old = false): Contracts\Auditable
     {
-        // The Audit must be for this Auditable model of this type
-        if (!$this instanceof $audit->auditable_type) {
+        // The Audit must be for an Auditable model of this type
+        if ($this->getMorphClass() !== $audit->auditable_type) {
             throw new AuditableTransitionException(sprintf(
                 'Expected Auditable type %s, got %s instead',
-                get_class($this),
+                $this->getMorphClass(),
                 $audit->auditable_type
             ));
         }
@@ -487,7 +487,7 @@ trait Auditable
         if ($incompatibilities = array_diff_key($modified, $this->getAttributes())) {
             throw new AuditableTransitionException(sprintf(
                 'Incompatibility between [%s:%s] and [%s:%s]',
-                get_class($this),
+                $this->getMorphClass(),
                 $this->getKey(),
                 get_class($audit),
                 $audit->getKey()

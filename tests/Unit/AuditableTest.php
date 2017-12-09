@@ -15,6 +15,7 @@
 namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\App;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
@@ -25,6 +26,17 @@ use OwenIt\Auditing\Tests\Models\User;
 
 class AuditableTest extends AuditingTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        // Clear morph maps
+        Relation::morphMap([], false);
+    }
+
     /**
      * @group Auditable::isAuditingEnabled
      * @test
@@ -683,6 +695,28 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
+    public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheMorphMapValue()
+    {
+        $this->expectException(AuditableTransitionException::class);
+        $this->expectExceptionMessage('Expected Auditable type articles, got users instead');
+
+        Relation::morphMap([
+            'articles' => Article::class,
+        ]);
+
+        $audit = factory(Audit::class)->make([
+            'auditable_type' => 'users',
+        ]);
+
+        $model = new Article();
+
+        $model->transitionTo($audit);
+    }
+
+    /**
+     * @group Auditable::transitionTo
+     * @test
+     */
     public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId()
     {
         $this->expectException(AuditableTransitionException::class);
@@ -734,12 +768,14 @@ class AuditableTest extends AuditingTestCase
      *
      * @dataProvider auditableTransitionTestProvider
      *
+     * @param bool  $morphMap
      * @param array $oldValues
      * @param array $newValues
      * @param array $oldExpectation
      * @param array $newExpectation
      */
     public function itTransitionsToAnotherModelState(
+        bool $morphMap,
         array $oldValues,
         array $newValues,
         array $oldExpectation,
@@ -750,10 +786,18 @@ class AuditableTest extends AuditingTestCase
             'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
         ]);
 
-        $audits = $models->map(function (Article $model) use ($oldValues, $newValues) {
+        if ($morphMap) {
+            Relation::morphMap([
+                'articles' => Article::class,
+            ]);
+        }
+
+        $auditableType = $morphMap ? 'articles' : Article::class;
+
+        $audits = $models->map(function (Article $model) use ($auditableType, $oldValues, $newValues) {
             return factory(Audit::class)->create([
                 'auditable_id'   => $model->getKey(),
-                'auditable_type' => get_class($model),
+                'auditable_type' => $auditableType,
                 'old_values'     => $oldValues,
                 'new_values'     => $newValues,
             ]);
@@ -778,6 +822,9 @@ class AuditableTest extends AuditingTestCase
             // Audit data and expectations for retrieved event
             //
             [
+                // Morph Map
+                false,
+
                 // Old values
                 [],
 
@@ -795,6 +842,9 @@ class AuditableTest extends AuditingTestCase
             // Audit data and expectations for created/restored event
             //
             [
+                // Morph Map
+                true,
+
                 // Old values
                 [],
 
@@ -818,6 +868,9 @@ class AuditableTest extends AuditingTestCase
             // Audit data and expectations for updated event
             //
             [
+                // Morph Map
+                false,
+
                 // Old values
                 [
                     'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
@@ -847,6 +900,9 @@ class AuditableTest extends AuditingTestCase
             // Audit data and expectations for deleted event
             //
             [
+                // Morph Map
+                true,
+
                 // Old values
                 [
                     'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
