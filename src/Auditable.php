@@ -487,7 +487,7 @@ trait Auditable
         if ($incompatibilities = array_diff_key($modified, $this->getAttributes())) {
             throw new AuditableTransitionException(sprintf(
                 'Incompatibility between [%s:%s] and [%s:%s]',
-                get_class($this),
+                $this->getMorphClass(),
                 $this->getKey(),
                 get_class($audit),
                 $audit->getKey()
