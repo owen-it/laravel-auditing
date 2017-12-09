@@ -463,7 +463,7 @@ trait Auditable
      */
     public function transitionTo(Contracts\Audit $audit, bool $old = false): Contracts\Auditable
     {
-        // The Audit must be for this Auditable model of this type
+        // The Audit must be for an Auditable model of this type
         if ($this->getMorphClass() !== $audit->auditable_type) {
             throw new AuditableTransitionException(sprintf(
                 'Expected Auditable type %s, got %s instead',
