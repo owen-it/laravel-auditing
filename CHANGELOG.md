@@ -1,3 +1,7 @@
+## v5.0.3 (2017-12-28)
+### Fixed
+- Lumen installation issue ([#364](https://github.com/owen-it/laravel-auditing/issues/364))
+
 ## v5.0.2 (2017-12-09)
 ### Fixed
 - Bump the minimum PHP version required to 7.0.13 ([#354](https://github.com/owen-it/laravel-auditing/issues/354))
