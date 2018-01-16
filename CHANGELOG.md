@@ -1,3 +1,55 @@
+## v5.0.3 (2017-12-28)
+### Fixed
+- Lumen installation issue ([#364](https://github.com/owen-it/laravel-auditing/issues/364))
+
+## v5.0.2 (2017-12-09)
+### Fixed
+- Bump the minimum PHP version required to 7.0.13 ([#354](https://github.com/owen-it/laravel-auditing/issues/354))
+- Take MorphMap into account ([#357](https://github.com/owen-it/laravel-auditing/issues/357))
+
+## v5.0.1 (2017-11-30)
+### Fixed
+- Typo in the migration stub ([#356](https://github.com/owen-it/laravel-auditing/pull/356))
+
+## v5.0.0 (2017-11-28)
+### Added
+- Custom exceptions
+- Ability to tag audits ([#283](https://github.com/owen-it/laravel-auditing/issues/283))
+- New `transitionTo()` and `getAuditEvent()` methods to the `Auditable` contract
+- Support for the `retrieved` Eloquent event, added in v5.5 ([#343](https://github.com/owen-it/laravel-auditing/issues/343))
+
+### Changed
+- Use PHP 7 features (scalar type/return type declarations, null coalescing operator)
+- Improved testing
+- Honour `DateTime` attributes, when resolving `Audit` data
+- Rename `getAuditableEvents()` to `getAuditEvents()`
+- Allow setting global `Audit` events ([#342](https://github.com/owen-it/laravel-auditing/pull/342)), strict, threshold and timestamps in the configuration file
+
+### Removed
+- PHP 5.x support
+- `Closure` / `callable` support for User id resolver
+
+## v4.1.4 (2017-10-29)
+### Added
+- Ability to define custom methods to handle events ([#324](https://github.com/owen-it/laravel-auditing/pull/324))
+
+## v4.1.3 (2017-09-17)
+### Added
+- CONTRIBUTING document
+
+### Changed
+- Updated the URL column type from VARCHAR to TEXT in the migration stub
+
+### Fixed
+- Set the default value of the resolver to a FQCN, instead of a Closure ([#290](https://github.com/owen-it/laravel-auditing/issues/290))
+
+## v4.1.2 (2017-08-03)
+### Changed
+- [GitHub] Updated issue template
+
+### Fixed
+- [Audit] Simplify User relation check ([#282](https://github.com/owen-it/laravel-auditing/issues/282))
+
 ## v4.1.1 (2017-07-22)
 ### Changed
 - [Audit] Improve test coverage

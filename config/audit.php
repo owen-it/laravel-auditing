@@ -39,21 +39,69 @@ return [
         'primary_key' => 'id',
         'foreign_key' => 'user_id',
         'model'       => App\User::class,
-        'resolver'    => function () {
-            return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
-        },
+        'resolver'    => App\User::class,
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Default Driver
+    | Audit Events
+    |--------------------------------------------------------------------------
+    |
+    | The Eloquent events that trigger an Audit.
+    |
+    */
+
+    'events' => [
+        'created',
+        'updated',
+        'deleted',
+        'restored',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Strict mode
+    |--------------------------------------------------------------------------
+    |
+    | Enable the strict mode when auditing?
+    |
+    */
+
+    'strict' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit timestamps
+    |--------------------------------------------------------------------------
+    |
+    | Should the created_at, updated_at and deleted_at timestamps be audited?
+    |
+    */
+
+    'timestamps' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit threshold
+    |--------------------------------------------------------------------------
+    |
+    | Specify a threshold for the amount of Audit records a model can have.
+    | Zero means no limit.
+    |
+    */
+
+    'threshold' => 0,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Driver
     |--------------------------------------------------------------------------
     |
     | The default audit driver used to keep track of changes.
     |
     */
 
-    'default' => 'database',
+    'driver' => 'database',
 
     /*
     |--------------------------------------------------------------------------
@@ -63,6 +111,7 @@ return [
     | Available audit drivers and respective configurations.
     |
     */
+
     'drivers' => [
         'database' => [
             'table'      => 'audits',

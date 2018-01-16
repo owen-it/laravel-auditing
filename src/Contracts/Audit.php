@@ -14,6 +14,9 @@
 
 namespace OwenIt\Auditing\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
 interface Audit
 {
     /**
@@ -28,28 +31,28 @@ interface Audit
      *
      * @return string
      */
-    public function getTable();
+    public function getTable(): string;
 
     /**
      * Get the auditable model to which this Audit belongs.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function auditable();
+    public function auditable(): MorphTo;
 
     /**
      * User responsible for the changes.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user();
+    public function user(): BelongsTo;
 
     /**
      * Audit data resolver.
      *
      * @return array
      */
-    public function resolveData();
+    public function resolveData(): array;
 
     /**
      * Get an Audit data value.
@@ -58,7 +61,7 @@ interface Audit
      *
      * @return mixed
      */
-    public function getDataValue($key);
+    public function getDataValue(string $key);
 
     /**
      * Get the Audit metadata.
@@ -69,7 +72,7 @@ interface Audit
      *
      * @return array|string
      */
-    public function getMetadata($json = false, $options = 0, $depth = 512);
+    public function getMetadata(bool $json = false, int $options = 0, int $depth = 512);
 
     /**
      * Get the Auditable modified attributes.
@@ -80,5 +83,5 @@ interface Audit
      *
      * @return array|string
      */
-    public function getModified($json = false, $options = 0, $depth = 512);
+    public function getModified(bool $json = false, int $options = 0, int $depth = 512);
 }

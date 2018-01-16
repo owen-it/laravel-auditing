@@ -14,6 +14,10 @@
 
 namespace OwenIt\Auditing;
 
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
 
 trait Audit
@@ -50,7 +54,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getTable()
+    public function getTable(): string
     {
         return Config::get('audit.drivers.database.table', parent::getTable());
     }
@@ -58,7 +62,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function auditable()
+    public function auditable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -66,7 +70,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(
             Config::get('audit.user.model'),
@@ -78,7 +82,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function resolveData()
+    public function resolveData(): array
     {
         // Metadata
         $this->data = [
@@ -87,13 +91,14 @@ trait Audit
             'audit_url'        => $this->url,
             'audit_ip_address' => $this->ip_address,
             'audit_user_agent' => $this->user_agent,
+            'audit_tags'       => $this->tags,
             'audit_created_at' => $this->serializeDate($this->created_at),
             'audit_updated_at' => $this->serializeDate($this->updated_at),
             'user_id'          => $this->getAttribute(Config::get('audit.user.foreign_key', 'user_id')),
         ];
 
-        if ($user = $this->getRelation('user')) {
-            foreach ($user->attributesToArray() as $attribute => $value) {
+        if ($this->user) {
+            foreach ($this->user->getArrayableAttributes() as $attribute => $value) {
                 $this->data['user_'.$attribute] = $value;
             }
         }
@@ -115,27 +120,29 @@ trait Audit
     }
 
     /**
-     * {@inheritdoc}
+     * Get the formatted value of an Eloquent model.
+     *
+     * @param Model  $model
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return mixed
      */
-    public function getDataValue($key)
+    protected function getFormattedValue(Model $model, string $key, $value)
     {
-        if (!array_key_exists($key, $this->data)) {
-            return;
+        // Apply defined get mutator
+        if ($model->hasGetMutator($key)) {
+            return $model->mutateAttribute($key, $value);
         }
 
-        $value = $this->data[$key];
+        // Cast to native PHP type
+        if ($model->hasCast($key)) {
+            return $model->castAttribute($key, $value);
+        }
 
-        // Apply a mutator or a cast the Auditable model may have defined
-        if ($this->auditable && starts_with($key, ['new_', 'old_'])) {
-            $originalKey = substr($key, 4);
-
-            if ($this->auditable->hasGetMutator($originalKey)) {
-                return $this->auditable->mutateAttribute($originalKey, $value);
-            }
-
-            if ($this->auditable->hasCast($originalKey)) {
-                return $this->auditable->castAttribute($originalKey, $value);
-            }
+        // Honour DateTime attribute
+        if (in_array($key, $model->getDates()) && $value !== null) {
+            return $this->asDateTime($value);
         }
 
         return $value;
@@ -144,7 +151,31 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getMetadata($json = false, $options = 0, $depth = 512)
+    public function getDataValue(string $key)
+    {
+        if (!array_key_exists($key, $this->data)) {
+            return;
+        }
+
+        $value = $this->data[$key];
+
+        // User value
+        if (starts_with($key, 'user_') && $this->user) {
+            return $this->getFormattedValue($this->user, substr($key, 5), $value);
+        }
+
+        // Auditable value
+        if (starts_with($key, ['new_', 'old_']) && $this->auditable) {
+            return $this->getFormattedValue($this->auditable, substr($key, 4), $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetadata(bool $json = false, int $options = 0, int $depth = 512)
     {
         if (empty($this->data)) {
             $this->resolveData();
@@ -153,7 +184,11 @@ trait Audit
         $metadata = [];
 
         foreach ($this->metadata as $key) {
-            $metadata[$key] = $this->getDataValue($key);
+            $value = $this->getDataValue($key);
+
+            $metadata[$key] = $value instanceof DateTimeInterface
+                ? $this->serializeDate($value)
+                : $value;
         }
 
         return $json ? json_encode($metadata, $options, $depth) : $metadata;
@@ -162,7 +197,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getModified($json = false, $options = 0, $depth = 512)
+    public function getModified(bool $json = false, int $options = 0, int $depth = 512)
     {
         if (empty($this->data)) {
             $this->resolveData();
@@ -174,9 +209,23 @@ trait Audit
             $attribute = substr($key, 4);
             $state = substr($key, 0, 3);
 
-            $modified[$attribute][$state] = $this->getDataValue($key);
+            $value = $this->getDataValue($key);
+
+            $modified[$attribute][$state] = $value instanceof DateTimeInterface
+                ? $this->serializeDate($value)
+                : $value;
         }
 
         return $json ? json_encode($modified, $options, $depth) : $modified;
+    }
+
+    /**
+     * Get the Audit tags as an array.
+     *
+     * @return array
+     */
+    public function getTagsAttribute(): array
+    {
+        return preg_split('/,/', $this->attributes['tags'], null, PREG_SPLIT_NO_EMPTY);
     }
 }
