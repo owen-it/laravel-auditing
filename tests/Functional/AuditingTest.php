@@ -260,4 +260,56 @@ class AuditingTest extends AuditingTestCase
             'id'           => 1,
         ], $audit->new_values, true);
     }
+
+    /**
+     * @test
+     */
+    public function itWillKeepAllAudits()
+    {
+        $this->app['config']->set('audit.threshold', 0);
+        $this->app['config']->set('audit.events', [
+            'updated',
+        ]);
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Keep All Audit Records',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        foreach (range(0, 100) as $count) {
+            $article->update([
+                'reviewed' => ($count % 2),
+            ]);
+        }
+
+        $this->assertEquals(100, $article->audits()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillRemoveOlderAuditsAboveTheThreshold()
+    {
+        $this->app['config']->set('audit.threshold', 10);
+        $this->app['config']->set('audit.events', [
+            'updated',
+        ]);
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Keep The Most Recent Audit Records',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        foreach (range(0, 100) as $count) {
+            $article->update([
+                'reviewed' => ($count % 2),
+            ]);
+        }
+
+        $this->assertEquals(10, $article->audits()->count());
+    }
 }
