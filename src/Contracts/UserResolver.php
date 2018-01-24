@@ -21,5 +21,5 @@ interface UserResolver
      *
      * @return mixed|null
      */
-    public static function resolveId();
+    public static function resolve();
 }
