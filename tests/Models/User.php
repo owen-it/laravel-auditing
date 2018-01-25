@@ -16,9 +16,8 @@ namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Contracts\UserResolver;
 
-class User extends Model implements Auditable, UserResolver
+class User extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
@@ -28,14 +27,6 @@ class User extends Model implements Auditable, UserResolver
     protected $casts = [
         'is_admin' => 'bool',
     ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function resolveId()
-    {
-        return static::count() > 0 ? 1 : null;
-    }
 
     /**
      * Uppercase first name character accessor.
