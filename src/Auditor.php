@@ -30,7 +30,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     public function getDefaultDriver()
     {
-        return $this->app['config']['audit.driver'];
+        return 'database';
     }
 
     /**
