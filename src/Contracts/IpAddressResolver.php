@@ -14,12 +14,12 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-interface UserResolver
+interface IpAddressResolver
 {
     /**
-     * Resolve the User.
+     * Resolve the IP Address.
      *
-     * @return mixed|null
+     * @return string
      */
-    public static function resolve();
+    public static function resolve(): string;
 }

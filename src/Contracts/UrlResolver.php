@@ -14,12 +14,12 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-interface UserResolver
+interface UrlResolver
 {
     /**
-     * Resolve the User.
+     * Resolve the URL.
      *
-     * @return mixed|null
+     * @return string
      */
-    public static function resolve();
+    public static function resolve(): string;
 }
