@@ -16,7 +16,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit implementation
+    | Audit Implementation
     |--------------------------------------------------------------------------
     |
     | Define which Audit model implementation should be used.
@@ -27,11 +27,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Keys, Model & Resolver
+    | User Keys, Model
     |--------------------------------------------------------------------------
     |
-    | Define the User primary and foreign keys, Eloquent model and ID resolver
-    | class.
+    | Define the User primary key, foreign key and Eloquent model.
     |
     */
 
@@ -39,7 +38,21 @@ return [
         'primary_key' => 'id',
         'foreign_key' => 'user_id',
         'model'       => App\User::class,
-        'resolver'    => App\User::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Resolvers
+    |--------------------------------------------------------------------------
+    |
+    | Define the User, IP Address, User Agent and URL resolver implementations.
+    |
+    */
+    'resolver' => [
+        'user'       => OwenIt\Auditing\Resolvers\UserResolver::class,
+        'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
+        'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
+        'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
     ],
 
     /*
@@ -60,7 +73,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Strict mode
+    | Strict Mode
     |--------------------------------------------------------------------------
     |
     | Enable the strict mode when auditing?
@@ -71,7 +84,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit timestamps
+    | Audit Timestamps
     |--------------------------------------------------------------------------
     |
     | Should the created_at, updated_at and deleted_at timestamps be audited?
@@ -82,7 +95,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit threshold
+    | Audit Threshold
     |--------------------------------------------------------------------------
     |
     | Specify a threshold for the amount of Audit records a model can have.
@@ -105,7 +118,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit Drivers
+    | Audit Driver Configurations
     |--------------------------------------------------------------------------
     |
     | Available audit drivers and respective configurations.
@@ -121,10 +134,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit Console?
+    | Audit Console
     |--------------------------------------------------------------------------
     |
-    | Whether we should audit console events (eg. php artisan db:seed).
+    | Whether console events should be audited (eg. php artisan db:seed).
     |
     */
 
