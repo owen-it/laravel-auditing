@@ -17,7 +17,9 @@ namespace OwenIt\Auditing;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
+use OwenIt\Auditing\Contracts\IpAddressResolver;
+use OwenIt\Auditing\Contracts\UrlResolver;
+use OwenIt\Auditing\Contracts\UserAgentResolver;
 use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
@@ -236,7 +238,7 @@ trait Auditable
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            $userForeignKey  => $this->resolveUserId(),
+            $userForeignKey  => $this->resolveUser(),
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
@@ -253,55 +255,75 @@ trait Auditable
     }
 
     /**
-     * Resolve the ID of the logged User.
+     * Resolve the User.
      *
      * @throws AuditingException
      *
      * @return mixed|null
      */
-    protected function resolveUserId()
+    protected function resolveUser()
     {
-        $userResolver = Config::get('audit.user.resolver');
+        $userResolver = Config::get('audit.resolver.user');
 
         if (is_subclass_of($userResolver, UserResolver::class)) {
-            return call_user_func([$userResolver, 'resolveId']);
+            return call_user_func([$userResolver, 'resolve']);
         }
 
         throw new AuditingException('Invalid UserResolver implementation');
     }
 
     /**
-     * Resolve the current request URL if available.
+     * Resolve the URL.
+     *
+     * @throws AuditingException
      *
      * @return string
      */
     protected function resolveUrl(): string
     {
-        if (App::runningInConsole()) {
-            return 'console';
+        $urlResolver = Config::get('audit.resolver.url');
+
+        if (is_subclass_of($urlResolver, UrlResolver::class)) {
+            return call_user_func([$urlResolver, 'resolve']);
         }
 
-        return Request::fullUrl();
+        throw new AuditingException('Invalid UrlResolver implementation');
     }
 
     /**
-     * Resolve the current IP address.
+     * Resolve the IP Address.
+     *
+     * @throws AuditingException
      *
      * @return string
      */
     protected function resolveIpAddress(): string
     {
-        return Request::ip();
+        $ipAddressResolver = Config::get('audit.resolver.ip_address');
+
+        if (is_subclass_of($ipAddressResolver, IpAddressResolver::class)) {
+            return call_user_func([$ipAddressResolver, 'resolve']);
+        }
+
+        throw new AuditingException('Invalid IpAddressResolver implementation');
     }
 
     /**
-     * Resolve the current User Agent.
+     * Resolve the User Agent.
      *
-     * @return string
+     * @throws AuditingException
+     *
+     * @return mixed|null
      */
-    protected function resolveUserAgent(): string
+    protected function resolveUserAgent()
     {
-        return Request::header('User-Agent');
+        $userAgentResolver = Config::get('audit.resolver.user_agent');
+
+        if (is_subclass_of($userAgentResolver, UserAgentResolver::class)) {
+            return call_user_func([$userAgentResolver, 'resolve']);
+        }
+
+        throw new AuditingException('Invalid UserAgentResolver implementation');
     }
 
     /**
