@@ -16,10 +16,13 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
+use InvalidArgumentException;
+use OwenIt\Auditing\Tests\Resolvers\UserResolver;
 
 class AuditingTest extends AuditingTestCase
 {
@@ -311,5 +314,69 @@ class AuditingTest extends AuditingTestCase
         }
 
         $this->assertEquals(10, $article->audits()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillNotAuditDueToUnsupportedDriver()
+    {
+        $this->app['config']->set('audit.driver', 'foo');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Driver [foo] not supported.');
+
+        factory(Article::class)->create([
+            'title'        => 'How To Fail At Auditing: 101',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillNotAuditDueToContractlessDriver()
+    {
+        // We just pass a FQCN that does not implement the AuditDriver interface
+        $this->app['config']->set('audit.driver', UserResolver::class);
+
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('The driver must implement the AuditDriver contract');
+
+        factory(Article::class)->create([
+            'title'        => 'How To Fail At Auditing: 101',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditUsingTheDefaultDriver()
+    {
+        $this->app['config']->set('audit.driver', null);
+
+        factory(Article::class)->create([
+            'title'        => 'How To Audit Using The Fallback Driver',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        $audit = Audit::first();
+
+        $this->assertEmpty($audit->old_values);
+
+        $this->assertArraySubset([
+            'title'        => 'How To Audit Using The Fallback Driver',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+            'id'           => 1,
+        ], $audit->new_values, true);
     }
 }
