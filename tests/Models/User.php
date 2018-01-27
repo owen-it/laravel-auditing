@@ -14,11 +14,13 @@
 
 namespace OwenIt\Auditing\Tests\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class User extends Model implements Auditable
+class User extends Model implements Auditable, Authenticatable
 {
+    use \Illuminate\Auth\Authenticatable;
     use \OwenIt\Auditing\Auditable;
 
     /**
