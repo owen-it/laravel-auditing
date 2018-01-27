@@ -103,6 +103,8 @@ class AuditTest extends AuditingTestCase
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
 
+        $this->actingAs($user);
+
         $article = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
@@ -145,12 +147,14 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTheAppropriateAuditableDataValues()
     {
-        factory(User::class)->create([
+        $user = factory(User::class)->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
+
+        $this->actingAs($user);
 
         $audit = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
@@ -217,6 +221,9 @@ class AuditTest extends AuditingTestCase
             'last_name'  => 'Sanchez',
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
+
+        $this->actingAs($user);
+
         $audit = factory(Article::class)->create()->audits()->first();
 
         $this->assertCount(15, $metadata = $audit->getMetadata());
@@ -279,6 +286,8 @@ EOF;
             'last_name'  => 'Sanchez',
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
+
+        $this->actingAs($user);
 
         $audit = factory(Article::class)->create()->audits()->first();
 

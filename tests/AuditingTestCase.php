@@ -20,8 +20,8 @@ use OwenIt\Auditing\AuditingServiceProvider;
 use OwenIt\Auditing\Resolvers\IpAddressResolver;
 use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Resolvers\UserAgentResolver;
+use OwenIt\Auditing\Resolvers\UserResolver;
 use OwenIt\Auditing\Tests\Models\User;
-use OwenIt\Auditing\Tests\Resolvers\UserResolver;
 
 class AuditingTestCase extends TestCase
 {

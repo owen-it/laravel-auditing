@@ -22,7 +22,6 @@ use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 use InvalidArgumentException;
-use OwenIt\Auditing\Tests\Resolvers\UserResolver;
 
 class AuditingTest extends AuditingTestCase
 {
@@ -340,7 +339,7 @@ class AuditingTest extends AuditingTestCase
     public function itWillNotAuditDueToContractlessDriver()
     {
         // We just pass a FQCN that does not implement the AuditDriver interface
-        $this->app['config']->set('audit.driver', UserResolver::class);
+        $this->app['config']->set('audit.driver', self::class);
 
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('The driver must implement the AuditDriver contract');
