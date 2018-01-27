@@ -16,6 +16,8 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Event;
+use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
@@ -377,5 +379,24 @@ class AuditingTest extends AuditingTestCase
             'reviewed'     => 0,
             'id'           => 1,
         ], $audit->new_values, true);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillCancelTheAuditFromAnEventListener()
+    {
+        Event::listen(Auditing::class, function () {
+            return false;
+        });
+
+        factory(Article::class)->create([
+            'title'        => 'How Cancel An Audit From A Listener',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        $this->assertNull(Audit::first());
     }
 }
