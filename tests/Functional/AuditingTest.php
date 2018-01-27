@@ -336,7 +336,7 @@ class AuditingTest extends AuditingTestCase
     /**
      * @test
      */
-    public function itWillNotAuditDueToContractlessDriver()
+    public function itWillNotAuditDueToClassWithoutDriverInterface()
     {
         // We just pass a FQCN that does not implement the AuditDriver interface
         $this->app['config']->set('audit.driver', self::class);
