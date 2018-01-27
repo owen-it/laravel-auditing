@@ -276,13 +276,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = factory(Article::class)->create([
-            'title'        => 'How To Keep All Audit Records',
-            'content'      => 'N/A',
-            'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 1,
         ]);
 
-        foreach (range(0, 100) as $count) {
+        foreach (range(0, 99) as $count) {
             $article->update([
                 'reviewed' => ($count % 2),
             ]);
@@ -302,13 +299,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = factory(Article::class)->create([
-            'title'        => 'How To Keep The Most Recent Audit Records',
-            'content'      => 'N/A',
-            'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 1,
         ]);
 
-        foreach (range(0, 100) as $count) {
+        foreach (range(0, 99) as $count) {
             $article->update([
                 'reviewed' => ($count % 2),
             ]);
@@ -327,12 +321,7 @@ class AuditingTest extends AuditingTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Driver [foo] not supported.');
 
-        factory(Article::class)->create([
-            'title'        => 'How To Fail At Auditing: 101',
-            'content'      => 'N/A',
-            'published_at' => null,
-            'reviewed'     => 0,
-        ]);
+        factory(Article::class)->create();
     }
 
     /**
@@ -346,12 +335,7 @@ class AuditingTest extends AuditingTestCase
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('The driver must implement the AuditDriver contract');
 
-        factory(Article::class)->create([
-            'title'        => 'How To Fail At Auditing: 101',
-            'content'      => 'N/A',
-            'published_at' => null,
-            'reviewed'     => 0,
-        ]);
+        factory(Article::class)->create();
     }
 
     /**
@@ -390,12 +374,7 @@ class AuditingTest extends AuditingTestCase
             return false;
         });
 
-        factory(Article::class)->create([
-            'title'        => 'How Cancel An Audit From A Listener',
-            'content'      => 'N/A',
-            'published_at' => null,
-            'reviewed'     => 0,
-        ]);
+        factory(Article::class)->create();
 
         $this->assertNull(Audit::first());
     }
