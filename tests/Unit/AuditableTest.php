@@ -21,7 +21,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
-use OwenIt\Auditing\Resolvers\UserResolver;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -376,8 +375,6 @@ class AuditableTest extends AuditingTestCase
      */
     public function itReturnsTheAuditData()
     {
-        $this->app['config']->set('audit.resolver.user', UserResolver::class);
-
         $now = Carbon::now();
 
         $model = factory(Article::class)->make([
@@ -417,8 +414,6 @@ class AuditableTest extends AuditingTestCase
      */
     public function itReturnsTheAuditDataIncludingUserAttributes()
     {
-        $this->app['config']->set('audit.user.resolver', User::class);
-
         $user = factory(User::class)->create();
 
         $this->actingAs($user);
