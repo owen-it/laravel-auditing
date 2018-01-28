@@ -17,13 +17,13 @@ namespace OwenIt\Auditing\Tests\Functional;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
+use InvalidArgumentException;
 use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
-use InvalidArgumentException;
 
 class AuditingTest extends AuditingTestCase
 {
@@ -285,7 +285,7 @@ class AuditingTest extends AuditingTestCase
             ]);
         }
 
-        $this->assertEquals(100, $article->audits()->count());
+        $this->assertSame(100, $article->audits()->count());
     }
 
     /**
@@ -308,7 +308,7 @@ class AuditingTest extends AuditingTestCase
             ]);
         }
 
-        $this->assertEquals(10, $article->audits()->count());
+        $this->assertSame(10, $article->audits()->count());
     }
 
     /**
