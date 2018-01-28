@@ -313,7 +313,7 @@ trait Auditable
      *
      * @throws AuditingException
      *
-     * @return mixed|null
+     * @return string|null
      */
     protected function resolveUserAgent()
     {

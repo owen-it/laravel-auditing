@@ -19,7 +19,7 @@ interface UserAgentResolver
     /**
      * Resolve the User Agent.
      *
-     * @return mixed|null
+     * @return string|null
      */
     public static function resolve();
 }
