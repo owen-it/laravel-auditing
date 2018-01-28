@@ -4,7 +4,7 @@
 | New Feature?      | no|yes
 | Framework         | Laravel|Lumen
 | Framework version | 5.x.y
-| Package version   | 5.x.y
+| Package version   | 6.x.y
 | PHP version       | 7.x.y
 
 #### Actual Behaviour
