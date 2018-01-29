@@ -301,7 +301,7 @@ trait Auditable
      */
     protected function resolveUserAgent(): string
     {
-        return Request::header('User-Agent');
+        return Request::header('User-Agent') ?? '';
     }
 
     /**
