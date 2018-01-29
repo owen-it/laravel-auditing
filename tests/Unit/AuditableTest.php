@@ -5,7 +5,7 @@
  * @author     Antério Vieira <anteriovieira@gmail.com>
  * @author     Quetzy Garcia  <quetzyg@altek.org>
  * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
+ * @copyright  2015-2018
  *
  * For the full copyright and license information,
  * please view the LICENSE.md file that was distributed
@@ -297,12 +297,69 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
+    public function itFailsWhenTheIpAddressResolverImplementationIsInvalid()
+    {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Invalid IpAddressResolver implementation');
+
+        $this->app['config']->set('audit.resolver.ip_address', null);
+
+        $model = new Article();
+
+        $model->setAuditEvent('created');
+
+        $model->toAudit();
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itFailsWhenTheUrlResolverImplementationIsInvalid()
+    {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Invalid UrlResolver implementation');
+
+        $this->app['config']->set('audit.resolver.url', null);
+
+        $model = new Article();
+
+        $model->setAuditEvent('created');
+
+        $model->toAudit();
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itFailsWhenTheUserAgentResolverImplementationIsInvalid()
+    {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Invalid UserAgentResolver implementation');
+
+        $this->app['config']->set('audit.resolver.user_agent', null);
+
+        $model = new Article();
+
+        $model->setAuditEvent('created');
+
+        $model->toAudit();
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
     public function itFailsWhenTheUserResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserResolver implementation');
 
-        $this->app['config']->set('audit.user.resolver', null);
+        $this->app['config']->set('audit.resolver.user', null);
 
         $model = new Article();
 
@@ -318,8 +375,6 @@ class AuditableTest extends AuditingTestCase
      */
     public function itReturnsTheAuditData()
     {
-        $this->app['config']->set('audit.user.resolver', User::class);
-
         $now = Carbon::now();
 
         $model = factory(Article::class)->make([
@@ -359,9 +414,9 @@ class AuditableTest extends AuditingTestCase
      */
     public function itReturnsTheAuditDataIncludingUserAttributes()
     {
-        $this->app['config']->set('audit.user.resolver', User::class);
+        $user = factory(User::class)->create();
 
-        factory(User::class)->create();
+        $this->actingAs($user);
 
         $now = Carbon::now();
 

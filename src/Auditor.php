@@ -5,7 +5,7 @@
  * @author     Antério Vieira <anteriovieira@gmail.com>
  * @author     Quetzy Garcia  <quetzyg@altek.org>
  * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
+ * @copyright  2015-2018
  *
  * For the full copyright and license information,
  * please view the LICENSE.md file that was distributed
@@ -30,7 +30,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     public function getDefaultDriver()
     {
-        return $this->app['config']['audit.driver'];
+        return 'database';
     }
 
     /**

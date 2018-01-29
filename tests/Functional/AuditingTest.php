@@ -5,7 +5,7 @@
  * @author     Antério Vieira <anteriovieira@gmail.com>
  * @author     Quetzy Garcia  <quetzyg@altek.org>
  * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
+ * @copyright  2015-2018
  *
  * For the full copyright and license information,
  * please view the LICENSE.md file that was distributed
@@ -16,6 +16,10 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Event;
+use InvalidArgumentException;
+use OwenIt\Auditing\Events\Auditing;
+use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
@@ -259,5 +263,119 @@ class AuditingTest extends AuditingTestCase
             'reviewed'     => 0,
             'id'           => 1,
         ], $audit->new_values, true);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillKeepAllAudits()
+    {
+        $this->app['config']->set('audit.threshold', 0);
+        $this->app['config']->set('audit.events', [
+            'updated',
+        ]);
+
+        $article = factory(Article::class)->create([
+            'reviewed' => 1,
+        ]);
+
+        foreach (range(0, 99) as $count) {
+            $article->update([
+                'reviewed' => ($count % 2),
+            ]);
+        }
+
+        $this->assertSame(100, $article->audits()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillRemoveOlderAuditsAboveTheThreshold()
+    {
+        $this->app['config']->set('audit.threshold', 10);
+        $this->app['config']->set('audit.events', [
+            'updated',
+        ]);
+
+        $article = factory(Article::class)->create([
+            'reviewed' => 1,
+        ]);
+
+        foreach (range(0, 99) as $count) {
+            $article->update([
+                'reviewed' => ($count % 2),
+            ]);
+        }
+
+        $this->assertSame(10, $article->audits()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillNotAuditDueToUnsupportedDriver()
+    {
+        $this->app['config']->set('audit.driver', 'foo');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Driver [foo] not supported.');
+
+        factory(Article::class)->create();
+    }
+
+    /**
+     * @test
+     */
+    public function itWillNotAuditDueToClassWithoutDriverInterface()
+    {
+        // We just pass a FQCN that does not implement the AuditDriver interface
+        $this->app['config']->set('audit.driver', self::class);
+
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('The driver must implement the AuditDriver contract');
+
+        factory(Article::class)->create();
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditUsingTheDefaultDriver()
+    {
+        $this->app['config']->set('audit.driver', null);
+
+        factory(Article::class)->create([
+            'title'        => 'How To Audit Using The Fallback Driver',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+        ]);
+
+        $audit = Audit::first();
+
+        $this->assertEmpty($audit->old_values);
+
+        $this->assertArraySubset([
+            'title'        => 'How To Audit Using The Fallback Driver',
+            'content'      => 'N/A',
+            'published_at' => null,
+            'reviewed'     => 0,
+            'id'           => 1,
+        ], $audit->new_values, true);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillCancelTheAuditFromAnEventListener()
+    {
+        Event::listen(Auditing::class, function () {
+            return false;
+        });
+
+        factory(Article::class)->create();
+
+        $this->assertNull(Audit::first());
     }
 }

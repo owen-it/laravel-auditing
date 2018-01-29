@@ -5,7 +5,7 @@
  * @author     Antério Vieira <anteriovieira@gmail.com>
  * @author     Quetzy Garcia  <quetzyg@altek.org>
  * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
+ * @copyright  2015-2018
  *
  * For the full copyright and license information,
  * please view the LICENSE.md file that was distributed
@@ -17,6 +17,10 @@ namespace OwenIt\Auditing\Tests;
 use Orchestra\Database\ConsoleServiceProvider;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\AuditingServiceProvider;
+use OwenIt\Auditing\Resolvers\IpAddressResolver;
+use OwenIt\Auditing\Resolvers\UrlResolver;
+use OwenIt\Auditing\Resolvers\UserAgentResolver;
+use OwenIt\Auditing\Resolvers\UserResolver;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditingTestCase extends TestCase
@@ -34,9 +38,12 @@ class AuditingTestCase extends TestCase
             'prefix'   => '',
         ]);
 
-        // Auditing
+        // Audit
         $app['config']->set('audit.user.model', User::class);
-        $app['config']->set('audit.user.resolver', User::class);
+        $app['config']->set('audit.resolver.user', UserResolver::class);
+        $app['config']->set('audit.resolver.url', UrlResolver::class);
+        $app['config']->set('audit.resolver.ip_address', IpAddressResolver::class);
+        $app['config']->set('audit.resolver.user_agent', UserAgentResolver::class);
         $app['config']->set('audit.console', true);
     }
 

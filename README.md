@@ -19,10 +19,11 @@ The package documentation can be found on the [official website](http://laravel-
 ## Version Information
  Version   | Illuminate    | Status                  | PHP Version
 :----------|:--------------|:------------------------|:------------
- 5.x       | 5.2.x - 5.5.x | Active support :rocket: | >= 7.0.13
- 4.x       | 5.2.x - 5.5.x | Security fixes only  | >= 5.5.9
- 3.x       | 5.2.x - 5.4.x | End of life         | >= 5.5.9
- 2.x       | 5.1.x - 5.3.x | End of life         | >= 5.5.9
+ 6.x       | 5.2.x - 5.5.x | Active support :rocket: | >= 7.0.13
+ 5.x       | 5.2.x - 5.5.x | Security fixes only     | >= 7.0.13
+ 4.x       | 5.2.x - 5.5.x | End of life             | >= 5.5.9
+ 3.x       | 5.2.x - 5.4.x | End of life             | >= 5.5.9
+ 2.x       | 5.1.x - 5.3.x | End of life             | >= 5.5.9
 
 ## Contributing
 Please see the [contributing](http://laravel-auditing.com/docs/master/contributing) entry for more details.

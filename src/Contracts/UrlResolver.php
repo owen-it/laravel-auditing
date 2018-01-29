@@ -14,23 +14,12 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-interface Auditor
+interface UrlResolver
 {
     /**
-     * Get an audit driver instance.
+     * Resolve the URL.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
-     * @return AuditDriver
+     * @return string
      */
-    public function auditDriver(Auditable $model): AuditDriver;
-
-    /**
-     * Perform an audit.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
-     * @return void
-     */
-    public function execute(Auditable $model);
+    public static function resolve(): string;
 }

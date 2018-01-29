@@ -12,17 +12,17 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Facades;
+namespace OwenIt\Auditing\Resolvers;
 
-use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\Facades\Request;
 
-class Auditor extends Facade
+class UserAgentResolver implements \OwenIt\Auditing\Contracts\UserAgentResolver
 {
     /**
      * {@inheritdoc}
      */
-    protected static function getFacadeAccessor()
+    public static function resolve()
     {
-        return \OwenIt\Auditing\Contracts\Auditor::class;
+        return Request::userAgent();
     }
 }
