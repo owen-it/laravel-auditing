@@ -297,9 +297,9 @@ trait Auditable
     /**
      * Resolve the current User Agent.
      *
-     * @return string
+     * @return string|null
      */
-    protected function resolveUserAgent(): string
+    protected function resolveUserAgent()
     {
         return Request::header('User-Agent');
     }
