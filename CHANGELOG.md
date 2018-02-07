@@ -1,3 +1,23 @@
+## v6.0.0 (2018-02-09)
+### Added
+- Resolver classes & interfaces for _IP Address_, _URL_, _User Agent_ and _User_ ([#369](https://github.com/owen-it/laravel-auditing/issues/369))
+- Laravel 5.6 support
+- Scrutinizer CI integration
+
+### Changed
+- Rename UserResolver method to `resolve()`
+- Updated the configuration file structure to accommodate the new resolvers
+- Refactor the `prune()` method from the Database driver
+- Increase test coverage
+- Updated dev dependencies
+
+### Fixed
+- Hardcode the default AuditDriver value in the Auditor to avoid chicken/egg situation
+
+## v5.0.4 (2018-02-06)
+### Fixed
+- Issue with Auditable resolveUserAgent() method ([#372](https://github.com/owen-it/laravel-auditing/issues/372))
+
 ## v5.0.3 (2017-12-28)
 ### Fixed
 - Lumen installation issue ([#364](https://github.com/owen-it/laravel-auditing/issues/364))
