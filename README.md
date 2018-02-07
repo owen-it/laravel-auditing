@@ -7,6 +7,7 @@
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg" alt="Unstable Version"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
+ <a href="https://discord.gg/csD9ysg"><img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Chat"></a>
 </p>
 
 This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities. 
