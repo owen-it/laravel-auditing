@@ -1,13 +1,16 @@
 <p align="center">
-<a href="http://laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
+    <a href="http://laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
 </p>
 
 <p align="center">
-<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg" alt="Unstable Version"></a>
-<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
- <a href="https://discord.gg/csD9ysg"><img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Chat"></a>
+    <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/build.png?b=master" alt="Build Status"></a>
+    <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/quality-score.png?b=master" title="Scrutinizer Code Quality"></a>
+    <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/coverage.png?b=master" alt="Code Coverage"></a>
+    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/stable.svg" alt="Latest Stable Version"></a>
+    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg" alt="Unstable Version"></a>
+    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
+    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
+    <a href="https://discord.gg/csD9ysg"><img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Chat"></a>
 </p>
 
 This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities. 
@@ -20,7 +23,7 @@ The package documentation can be found on the [official website](http://laravel-
 ## Version Information
  Version   | Illuminate    | Status                  | PHP Version
 :----------|:--------------|:------------------------|:------------
- 6.x       | 5.2.x - 5.5.x | Active support :rocket: | >= 7.0.13
+ 6.x       | 5.2.x - 5.6.x | Active support :rocket: | >= 7.0.13
  5.x       | 5.2.x - 5.5.x | Security fixes only     | >= 7.0.13
  4.x       | 5.2.x - 5.5.x | End of life             | >= 5.5.9
  3.x       | 5.2.x - 5.4.x | End of life             | >= 5.5.9
