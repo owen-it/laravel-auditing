@@ -7,7 +7,6 @@
     <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/quality-score.png?b=master" title="Scrutinizer Code Quality"></a>
     <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/coverage.png?b=master" alt="Code Coverage"></a>
     <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/stable.svg" alt="Latest Stable Version"></a>
-    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/unstable.svg" alt="Unstable Version"></a>
     <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
     <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
     <a href="https://discord.gg/csD9ysg"><img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Chat"></a>
