@@ -378,4 +378,36 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertNull(Audit::first());
     }
+
+    /**
+     * @test
+     */
+    public function itDisablesAndEnablesAuditingBackAgain()
+    {
+        // Auditing is enabled by default
+        $this->assertFalse(Article::$auditingDisabled);
+
+        factory(Article::class)->create();
+
+        $this->assertSame(1, Article::count());
+        $this->assertSame(1, Audit::count());
+
+        // Disable Auditing
+        Article::disableAuditing();
+        $this->assertTrue(Article::$auditingDisabled);
+
+        factory(Article::class)->create();
+
+        $this->assertSame(2, Article::count());
+        $this->assertSame(1, Audit::count());
+
+        // Re-enable Auditing
+        Article::enableAuditing();
+        $this->assertFalse(Article::$auditingDisabled);
+
+        factory(Article::class)->create();
+
+        $this->assertSame(2, Audit::count());
+        $this->assertSame(3, Article::count());
+    }
 }

@@ -1,3 +1,7 @@
+## v6.0.1 (2018-02-15)
+### Added
+- Ability to quickly enable/disable auditing ([#387](https://github.com/owen-it/laravel-auditing/issues/387))
+
 ## v6.0.0 (2018-02-09)
 ### Added
 - Resolver classes & interfaces for _IP Address_, _URL_, _User Agent_ and _User_ ([#369](https://github.com/owen-it/laravel-auditing/issues/369))
