@@ -41,6 +41,13 @@ trait Auditable
     protected $auditEvent;
 
     /**
+     * Is auditing disabled?
+     *
+     * @var bool
+     */
+    public static $auditingDisabled = false;
+
+    /**
      * Auditable boot logic.
      *
      * @return void
@@ -202,6 +209,10 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
+        if (static::$auditingDisabled) {
+            return false;
+        }
+
         return $this->isEventAuditable($this->auditEvent);
     }
 
@@ -408,6 +419,26 @@ trait Auditable
             'deleted',
             'restored',
         ]);
+    }
+
+    /**
+     * Disable Auditing.
+     *
+     * @return void
+     */
+    public static function disableAuditing()
+    {
+        static::$auditingDisabled = true;
+    }
+
+    /**
+     * Enable Auditing.
+     *
+     * @return void
+     */
+    public static function enableAuditing()
+    {
+        static::$auditingDisabled = false;
     }
 
     /**
