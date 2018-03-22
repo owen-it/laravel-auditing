@@ -23,6 +23,6 @@ class UserAgentResolver implements \OwenIt\Auditing\Contracts\UserAgentResolver
      */
     public static function resolve()
     {
-        return Request::userAgent();
+        return Request::header('User-Agent');
     }
 }
