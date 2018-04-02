@@ -141,7 +141,7 @@ trait Audit
         }
 
         // Honour DateTime attribute
-        if (in_array($key, $model->getDates()) && $value !== null) {
+        if ($value !== null && in_array($key, $model->getDates(), true)) {
             return $this->asDateTime($value);
         }
 
@@ -160,12 +160,12 @@ trait Audit
         $value = $this->data[$key];
 
         // User value
-        if (starts_with($key, 'user_') && $this->user) {
+        if ($this->user && starts_with($key, 'user_')) {
             return $this->getFormattedValue($this->user, substr($key, 5), $value);
         }
 
         // Auditable value
-        if (starts_with($key, ['new_', 'old_']) && $this->auditable) {
+        if ($this->auditable && starts_with($key, ['new_', 'old_'])) {
             return $this->getFormattedValue($this->auditable, substr($key, 4), $value);
         }
 
