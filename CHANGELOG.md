@@ -1,3 +1,10 @@
+## v6.0.2 (2018-04-02)
+### Changed
+- Minor optimisations
+
+### Fixed
+- Illuminate 5.2/5.3 incompatibility issue ([#401](https://github.com/owen-it/laravel-auditing/issues/401))
+
 ## v6.0.1 (2018-02-15)
 ### Added
 - Ability to quickly enable/disable auditing ([#387](https://github.com/owen-it/laravel-auditing/issues/387))
