@@ -106,7 +106,7 @@ trait Auditable
 
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
-            if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
+            if (is_array($value) || (is_object($value) && !method_exists($value, '__toString'))) {
                 $this->excludedAttributes[] = $attribute;
             }
         }
@@ -237,7 +237,7 @@ trait Auditable
 
         $this->resolveAuditExclusions();
 
-        list($old, $new) = call_user_func([$this, $attributeGetter]);
+        list($old, $new) = $this->$attributeGetter();
 
         $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
 
@@ -347,7 +347,7 @@ trait Auditable
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->excludedAttributes)) {
+        if (in_array($attribute, $this->excludedAttributes, true)) {
             return false;
         }
 
@@ -355,7 +355,7 @@ trait Auditable
         // listed or when the include array is empty
         $include = $this->getAuditInclude();
 
-        return in_array($attribute, $include) || empty($include);
+        return empty($include) || in_array($attribute, $include, true);
     }
 
     /**

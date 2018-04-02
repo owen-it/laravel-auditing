@@ -34,7 +34,7 @@ class AuditingServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $config = realpath(__DIR__.'/../config/audit.php');
+        $config = realpath(__DIR__).'/../config/audit.php';
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
