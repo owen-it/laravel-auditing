@@ -581,6 +581,14 @@ trait Auditable
             ));
         }
 
+        // Redacted data should not be used when transitioning states
+        if ($auditRedactors = $this->getAuditRedactors()) {
+            throw new AuditableTransitionException(
+                'Cannot transition states when Audit redactors are set',
+                $auditRedactors
+            );
+        }
+
         // The attribute compatibility between the Audit and the Auditable model must be met
         $modified = $audit->getModified();
 
