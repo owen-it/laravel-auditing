@@ -507,6 +507,14 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
+    public function getAuditRedactors(): array
+    {
+        return $this->auditRedactors ?? [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function generateTags(): array
     {
         return [];
