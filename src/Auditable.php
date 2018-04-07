@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\IpAddressResolver;
+use OwenIt\Auditing\Contracts\AuditRedactor;
 use OwenIt\Auditing\Contracts\UrlResolver;
 use OwenIt\Auditing\Contracts\UserAgentResolver;
 use OwenIt\Auditing\Contracts\UserResolver;
@@ -218,6 +219,33 @@ trait Auditable
     }
 
     /**
+     * Redact attribute value.
+     *
+     * @param string $attribute
+     * @param mixed  $value
+     *
+     * @throws AuditingException
+     *
+     * @return mixed
+     */
+    protected function redactAttributeValue(string $attribute, $value)
+    {
+        $auditRedactors = $this->getAuditRedactors();
+
+        if (!array_key_exists($attribute, $auditRedactors)) {
+            return $value;
+        }
+
+        $auditRedactor = $auditRedactors[$attribute];
+
+        if (is_subclass_of($auditRedactor, AuditRedactor::class)) {
+            return call_user_func([$auditRedactor, 'redact'], $value);
+        }
+
+        throw new AuditingException('Invalid AuditRedactor implementation');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toAudit(): array
@@ -239,6 +267,16 @@ trait Auditable
         $this->resolveAuditExclusions();
 
         list($old, $new) = $this->$attributeGetter();
+
+        if ($this->getAuditRedactors() && Config::get('audit.redact', false)) {
+            foreach ($old as $attribute => $value) {
+                $old[$attribute] = $this->redactAttributeValue($attribute, $value);
+            }
+
+            foreach ($new as $attribute => $value) {
+                $new[$attribute] = $this->redactAttributeValue($attribute, $value);
+            }
+        }
 
         $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
 
