@@ -15,6 +15,7 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\IpAddressResolver;
@@ -96,8 +97,8 @@ trait Auditable
         if (!$this->getAuditTimestamps()) {
             array_push($this->excludedAttributes, static::CREATED_AT, static::UPDATED_AT);
 
-            if (defined('static::DELETED_AT')) {
-                $this->excludedAttributes[] = static::DELETED_AT;
+            if (in_array(SoftDeletes::class, class_uses_recursive($this))) {
+                $this->excludedAttributes[] = $this->getDeletedAtColumn();
             }
         }
 
