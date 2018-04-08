@@ -21,8 +21,8 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
-use OwenIt\Auditing\Redactors\Left;
-use OwenIt\Auditing\Redactors\Right;
+use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Redactors\RightRedactor;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -545,8 +545,8 @@ class AuditableTest extends AuditingTestCase
         $model->setAuditEvent('updated');
 
         $model->auditRedactors = [
-            'title'   => Right::class,
-            'content' => Left::class,
+            'title'   => RightRedactor::class,
+            'content' => LeftRedactor::class,
         ];
 
         $this->assertArraySubset([
@@ -906,7 +906,7 @@ class AuditableTest extends AuditingTestCase
         $model = factory(Article::class)->create();
 
         $model->auditRedactors = [
-            'title' => Right::class,
+            'title' => RightRedactor::class,
         ];
 
         $audit = factory(Audit::class)->create([

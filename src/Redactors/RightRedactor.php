@@ -14,7 +14,7 @@
 
 namespace OwenIt\Auditing\Redactors;
 
-class Left implements \OwenIt\Auditing\Contracts\AuditRedactor
+class RightRedactor implements \OwenIt\Auditing\Contracts\AuditRedactor
 {
     /**
      * {@inheritdoc}
@@ -27,6 +27,6 @@ class Left implements \OwenIt\Auditing\Contracts\AuditRedactor
         // Make sure single character strings get redacted
         $length = ($total > $tenth) ? ($total - $tenth) : 1;
 
-        return str_pad(substr($value, $length), $total, '#', STR_PAD_LEFT);
+        return str_pad(substr($value, 0, -$length), $total, '#', STR_PAD_RIGHT);
     }
 }
