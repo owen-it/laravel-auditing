@@ -15,8 +15,10 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use OwenIt\Auditing\Contracts\AuditRedactor;
 use OwenIt\Auditing\Contracts\IpAddressResolver;
 use OwenIt\Auditing\Contracts\UrlResolver;
 use OwenIt\Auditing\Contracts\UserAgentResolver;
@@ -96,8 +98,8 @@ trait Auditable
         if (!$this->getAuditTimestamps()) {
             array_push($this->excludedAttributes, static::CREATED_AT, static::UPDATED_AT);
 
-            if (defined('static::DELETED_AT')) {
-                $this->excludedAttributes[] = static::DELETED_AT;
+            if (in_array(SoftDeletes::class, class_uses_recursive($this))) {
+                $this->excludedAttributes[] = $this->getDeletedAtColumn();
             }
         }
 
@@ -217,6 +219,33 @@ trait Auditable
     }
 
     /**
+     * Redact attribute value.
+     *
+     * @param string $attribute
+     * @param mixed  $value
+     *
+     * @throws AuditingException
+     *
+     * @return mixed
+     */
+    protected function redactAttributeValue(string $attribute, $value)
+    {
+        $auditRedactors = $this->getAuditRedactors();
+
+        if (!array_key_exists($attribute, $auditRedactors)) {
+            return $value;
+        }
+
+        $auditRedactor = $auditRedactors[$attribute];
+
+        if (is_subclass_of($auditRedactor, AuditRedactor::class)) {
+            return call_user_func([$auditRedactor, 'redact'], $value);
+        }
+
+        throw new AuditingException('Invalid AuditRedactor implementation');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function toAudit(): array
@@ -238,6 +267,16 @@ trait Auditable
         $this->resolveAuditExclusions();
 
         list($old, $new) = $this->$attributeGetter();
+
+        if ($this->getAuditRedactors() && Config::get('audit.redact', false)) {
+            foreach ($old as $attribute => $value) {
+                $old[$attribute] = $this->redactAttributeValue($attribute, $value);
+            }
+
+            foreach ($new as $attribute => $value) {
+                $new[$attribute] = $this->redactAttributeValue($attribute, $value);
+            }
+        }
 
         $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
 
@@ -506,6 +545,14 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
+    public function getAuditRedactors(): array
+    {
+        return $this->auditRedactors ?? [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function generateTags(): array
     {
         return [];
@@ -532,6 +579,14 @@ trait Auditable
                 $this->getKey(),
                 $audit->auditable_id
             ));
+        }
+
+        // Redacted data should not be used when transitioning states
+        if ($auditRedactors = $this->getAuditRedactors()) {
+            throw new AuditableTransitionException(
+                'Cannot transition states when Audit redactors are set',
+                $auditRedactors
+            );
         }
 
         // The attribute compatibility between the Audit and the Auditable model must be met

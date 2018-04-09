@@ -21,6 +21,8 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Redactors\RightRedactor;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -452,6 +454,115 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itExcludesAttributesFromTheAuditDataWhenInStrictMode()
+    {
+        $this->app['config']->set('audit.strict', true);
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => Carbon::now(),
+        ]);
+
+        $model->setHidden([
+            'reviewed',
+        ]);
+
+        $model->setVisible([
+            'title',
+            'content',
+        ]);
+
+        $model->setAuditEvent('created');
+
+        $this->assertCount(10, $auditData = $model->toAudit());
+
+        $this->assertArraySubset([
+            'old_values' => [],
+            'new_values' => [
+                'title'   => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+            ],
+            'event'          => 'created',
+            'auditable_id'   => null,
+            'auditable_type' => Article::class,
+            'user_id'        => null,
+            'url'            => 'console',
+            'ip_address'     => '127.0.0.1',
+            'user_agent'     => 'Symfony/3.X',
+            'tags'           => null,
+        ], $auditData, true);
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itFailsWhenTheAuditRedactorImplementationIsInvalid()
+    {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Invalid AuditRedactor implementation');
+
+        $this->app['config']->set('audit.redact', true);
+
+        $model = factory(Article::class)->make();
+
+        $model->auditRedactors = [
+            'title' => 'invalidAuditRedactor',
+        ];
+
+        $model->setAuditEvent('created');
+
+        $model->toAudit();
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itRedactsTheAuditData()
+    {
+        $this->app['config']->set('audit.redact', true);
+
+        $model = factory(Article::class)->make([
+            'title'    => 'How To Audit Models',
+            'content'  => 'N/A',
+            'reviewed' => 0,
+        ]);
+
+        $model->syncOriginal();
+
+        $model->title = 'How To Audit Eloquent Models';
+        $model->content = 'First step: install the laravel-auditing package.';
+        $model->reviewed = 1;
+
+        $model->setAuditEvent('updated');
+
+        $model->auditRedactors = [
+            'title'   => RightRedactor::class,
+            'content' => LeftRedactor::class,
+        ];
+
+        $this->assertArraySubset([
+            'old_values' => [
+                'title'   => 'Ho#################',
+                'content' => '##A',
+            ],
+            'new_values' => [
+                'title'   => 'How#########################',
+                'content' => '############################################kage.',
+            ],
+        ], $model->toAudit(), true);
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
      * @group Auditable::transformAudit
      * @group Auditable::toAudit
      * @test
@@ -781,6 +892,29 @@ class AuditableTest extends AuditingTestCase
         $secondModel = factory(Article::class)->create();
 
         $secondModel->transitionTo($firstAudit);
+    }
+
+    /**
+     * @group Auditable::transitionTo
+     * @test
+     */
+    public function itFailsToTransitionWhenAuditRedactorsAreSet()
+    {
+        $this->expectException(AuditableTransitionException::class);
+        $this->expectExceptionMessage('Cannot transition states when Audit redactors are set');
+
+        $model = factory(Article::class)->create();
+
+        $model->auditRedactors = [
+            'title' => RightRedactor::class,
+        ];
+
+        $audit = factory(Audit::class)->create([
+            'auditable_id'   => $model->getKey(),
+            'auditable_type' => Article::class,
+        ]);
+
+        $model->transitionTo($audit);
     }
 
     /**
