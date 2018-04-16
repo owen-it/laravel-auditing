@@ -142,7 +142,7 @@ trait Audit
 
         // Honour DateTime attribute
         if ($value !== null && in_array($key, $model->getDates(), true)) {
-            return $this->asDateTime($value);
+            return $model->asDateTime($value);
         }
 
         return $value;
