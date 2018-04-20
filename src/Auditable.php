@@ -96,7 +96,7 @@ trait Auditable
 
         // Exclude Timestamps
         if (!$this->getAuditTimestamps()) {
-            array_push($this->excludedAttributes, static::CREATED_AT, static::UPDATED_AT);
+            array_push($this->excludedAttributes, $this->getCreatedAtColumn(), $this->getUpdatedAtColumn());
 
             if (in_array(SoftDeletes::class, class_uses_recursive($this))) {
                 $this->excludedAttributes[] = $this->getDeletedAtColumn();
