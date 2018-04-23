@@ -1,3 +1,15 @@
+## v6.1.0 (2018-04-23)
+### Added
+- Audit redactor feature ([#395](https://github.com/owen-it/laravel-auditing/issues/395))
+
+### Changed
+- Minor optimisations
+- Increase test coverage to 100%
+
+### Fixed
+- `deleted_at` attribute exclusion from the `Audit`
+- `InvalidArgumentExceptionTrailing` when using a different `$dateFormat` ([#409](https://github.com/owen-it/laravel-auditing/pull/409))
+
 ## v6.0.2 (2018-04-02)
 ### Changed
 - Minor optimisations
