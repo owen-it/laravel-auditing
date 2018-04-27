@@ -224,8 +224,8 @@ trait Audit
      *
      * @return array
      */
-    public function getTagsAttribute(): array
+    public function getTags(): array
     {
-        return preg_split('/,/', $this->attributes['tags'], null, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->tags, null, PREG_SPLIT_NO_EMPTY);
     }
 }

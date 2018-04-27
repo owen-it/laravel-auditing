@@ -76,7 +76,7 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => null,
@@ -122,7 +122,7 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => '1',
@@ -202,7 +202,7 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => null,
@@ -234,7 +234,7 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => 1,
@@ -264,7 +264,7 @@ class AuditTest extends AuditingTestCase
     "audit_url": "console",
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony\/3.X",
-    "audit_tags": [],
+    "audit_tags": null,
     "audit_created_at": "$audit->created_at",
     "audit_updated_at": "$audit->updated_at",
     "user_id": null
@@ -300,7 +300,7 @@ EOF;
     "audit_url": "console",
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony\/3.X",
-    "audit_tags": [],
+    "audit_tags": null,
     "audit_created_at": "$audit->created_at",
     "audit_updated_at": "$audit->updated_at",
     "user_id": 1,
@@ -390,5 +390,37 @@ EOF;
 EOF;
 
         $this->assertSame($expected, $modified);
+    }
+
+    /**
+     * @group Audit::getTags
+     * @test
+     */
+    public function itReturnsTags()
+    {
+        $audit = factory(Audit::class)->create([
+            'tags' => 'foo,bar,baz',
+        ]);
+
+        $this->assertInternalType('array', $audit->getTags());
+        $this->assertArraySubset([
+            'foo',
+            'bar',
+            'baz',
+        ], $audit->getTags(), true);
+    }
+
+    /**
+     * @group Audit::getTags
+     * @test
+     */
+    public function itReturnsEmptyTags()
+    {
+        $audit = factory(Audit::class)->create([
+            'tags' => null,
+        ]);
+
+        $this->assertInternalType('array', $audit->getTags());
+        $this->assertEmpty($audit->getTags());
     }
 }
