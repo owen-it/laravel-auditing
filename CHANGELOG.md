@@ -1,3 +1,8 @@
+## v6.1.1 (2018-04-27)
+
+### Fixed
+- Audit presentation issue when using `trans()` or `@lang()` ([#418](https://github.com/owen-it/laravel-auditing/issues/418))
+
 ## v6.1.0 (2018-04-23)
 ### Added
 - Audit redactor feature ([#395](https://github.com/owen-it/laravel-auditing/issues/395))
