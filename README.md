@@ -1,37 +1,15 @@
-<p align="center">
-    <a href="http://laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
-</p>
+# Morphable Laravel Auditing
+This fork was diverted of the original project to allow for the usecase where a project contains multiple different user models.
 
-<p align="center">
-    <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/build.png?b=master" alt="Build Status"></a>
-    <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/quality-score.png?b=master" title="Scrutinizer Code Quality"></a>
-    <a href="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/build-status/master"><img src="https://scrutinizer-ci.com/g/owen-it/laravel-auditing/badges/coverage.png?b=master" alt="Code Coverage"></a>
-    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/v/stable.svg" alt="Latest Stable Version"></a>
-    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/d/total.svg" alt="Total Downloads"></a>
-    <a href="https://packagist.org/packages/owen-it/laravel-auditing"><img src="https://poser.pugx.org/owen-it/laravel-auditing/license.svg" alt="License"></a>
-    <a href="https://discord.gg/csD9ysg"><img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Chat"></a>
-</p>
-
-This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities. 
-
-Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
+## Changes
+- The config contains a new array for guards. The auditable package looks for the first active guard.
+- The original 'UserSolver' has been renamed to 'UserIdResolve'.
+- A new UserSolver and UserClassResolver have been added.
 
 ## Official Documentation
 The package documentation can be found on the [official website](http://laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
 
-## Version Information
- Version   | Illuminate    | Status                  | PHP Version
-:----------|:--------------|:------------------------|:------------
- 6.x       | 5.2.x - 5.6.x | Active support :rocket: | >= 7.0.13
- 5.x       | 5.2.x - 5.5.x | Security fixes only     | >= 7.0.13
- 4.x       | 5.2.x - 5.5.x | End of life             | >= 5.5.9
- 3.x       | 5.2.x - 5.4.x | End of life             | >= 5.5.9
- 2.x       | 5.1.x - 5.3.x | End of life             | >= 5.5.9
-
-## Contributing
-Please see the [contributing](http://laravel-auditing.com/docs/master/contributing) entry for more details.
-
-## Credits
+## Original Credits
 - [Antério Vieira](https://github.com/anteriovieira)
 - [Quetzy Garcia](https://github.com/quetzyg)
 - [Raphael França](https://github.com/raphaelfranca)
