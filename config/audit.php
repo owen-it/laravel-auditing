@@ -25,7 +25,16 @@ return [
 
     'implementation' => OwenIt\Auditing\Models\Audit::class,
 
-    'morphable' => true,
+    /*
+    |--------------------------------------------------------------------------
+    | Morphable
+    |--------------------------------------------------------------------------
+    |
+    | Set this to true to use a morphable user.
+    |
+    */
+
+    'morphable' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -33,6 +42,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Define the User primary key, foreign key and Eloquent model.
+    | This is used when in 'single mode'.
     |
     */
 
@@ -48,6 +58,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Define the User guards, in the order they should be checked.
+    | This is used when in 'morphable mode'.
     |
     */
 
@@ -65,7 +76,9 @@ return [
     |
     */
     'resolver' => [
-        'user'       => OwenIt\Auditing\Resolvers\UserIdResolver::class,
+        'user_id'    => OwenIt\Auditing\Resolvers\UserIdResolver::class,
+        'user_class' => OwenIt\Auditing\Resolvers\UserClassResolver::class,
+        'user'       => OwenIt\Auditing\Resolvers\UserResolver::class,
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
         'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
