@@ -25,6 +25,8 @@ return [
 
     'implementation' => OwenIt\Auditing\Models\Audit::class,
 
+    'morphable' => true,
+
     /*
     |--------------------------------------------------------------------------
     | User Keys, Model

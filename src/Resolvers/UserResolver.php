@@ -23,7 +23,17 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
      */
     public static function resolve()
     {
-        $guards = \Config::get('audit.guards');
+        return \Config::get('audit.morphable', false) ? static::resolveMorphable() : static::resolveSingle();
+    }
+
+    private static function resolveSingle()
+    {
+        return Auth::check() ? Auth::user() : null;
+    }
+
+    private static function resolveMorphable()
+    {
+        $guards = \Config::get('audit.guards', ['web']);
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
