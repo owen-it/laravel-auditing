@@ -22,7 +22,8 @@ use OwenIt\Auditing\Contracts\AuditRedactor;
 use OwenIt\Auditing\Contracts\IpAddressResolver;
 use OwenIt\Auditing\Contracts\UrlResolver;
 use OwenIt\Auditing\Contracts\UserAgentResolver;
-use OwenIt\Auditing\Contracts\UserResolver;
+use OwenIt\Auditing\Contracts\UserClassResolver;
+use OwenIt\Auditing\Contracts\UserIdResolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
@@ -288,7 +289,8 @@ trait Auditable
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            $userForeignKey  => $this->resolveUser(),
+            $userForeignKey  => $this->resolveUserId(),
+            'user_type'      => $this->resolveUserClass(),
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
@@ -305,21 +307,39 @@ trait Auditable
     }
 
     /**
-     * Resolve the User.
+     * Resolve the User id.
      *
      * @throws AuditingException
      *
      * @return mixed|null
      */
-    protected function resolveUser()
+    protected function resolveUserId()
     {
-        $userResolver = Config::get('audit.resolver.user');
+        $userResolver = Config::get('audit.resolver.user_id');
 
-        if (is_subclass_of($userResolver, UserResolver::class)) {
+        if (is_subclass_of($userResolver, UserIdResolver::class)) {
             return call_user_func([$userResolver, 'resolve']);
         }
 
-        throw new AuditingException('Invalid UserResolver implementation');
+        throw new AuditingException('Invalid UserIdResolver implementation');
+    }
+
+    /**
+     * Resolve the User class.
+     *
+     * @throws AuditingException
+     *
+     * @return mixed|null
+     */
+    protected function resolveUserClass()
+    {
+        $userResolver = Config::get('audit.resolver.user_class');
+
+        if (is_subclass_of($userResolver, UserClassResolver::class)) {
+            return call_user_func([$userResolver, 'resolve']);
+        }
+
+        throw new AuditingException('Invalid UserClassResolver implementation');
     }
 
     /**

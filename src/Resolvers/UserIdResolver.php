@@ -15,22 +15,26 @@
 namespace OwenIt\Auditing\Resolvers;
 
 use Illuminate\Support\Facades\Auth;
+use OwenIt\Auditing\Exceptions\AuditingException;
 
-class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
+class UserIdResolver implements \OwenIt\Auditing\Contracts\UserIdResolver
 {
     /**
      * {@inheritdoc}
      */
     public static function resolve()
     {
-        $guards = \Config::get('audit.guards');
+        return static::resolveUser() ? static::resolveUser()->getAuthIdentifier() : null;
+    }
 
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return Auth::guard($guard)->user();
-            }
+    protected static function resolveUser()
+    {
+        $userResolver = \Config::get('audit.resolver.user');
+
+        if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\UserResolver::class)) {
+            return call_user_func([$userResolver, 'resolve']);
         }
 
-        return null;
+        throw new AuditingException('Invalid UserResolver implementation');
     }
 }

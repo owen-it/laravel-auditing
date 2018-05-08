@@ -43,9 +43,9 @@ interface Audit
     /**
      * User responsible for the changes.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function user(): BelongsTo;
+    public function user(): MorphTo;
 
     /**
      * Audit data resolver.
