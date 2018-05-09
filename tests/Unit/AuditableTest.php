@@ -42,9 +42,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::isAuditingEnabled
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itWillNotAuditModelsWhenRunningFromTheConsole()
+    public function itWillNotAuditModelsWhenRunningFromTheConsole(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.console', false);
 
         $this->assertFalse(Article::isAuditingEnabled());
@@ -53,9 +57,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::isAuditingEnabled
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itWillAuditModelsWhenRunningFromTheConsole()
+    public function itWillAuditModelsWhenRunningFromTheConsole(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.console', true);
 
         $this->assertTrue(Article::isAuditingEnabled());
@@ -64,12 +72,16 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::isAuditingEnabled
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itWillAlwaysAuditModelsWhenNotRunningFromTheConsole()
+    public function itWillAlwaysAuditModelsWhenNotRunningFromTheConsole(bool $morphable)
     {
         App::shouldReceive('runningInConsole')
             ->andReturn(false);
 
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.console', false);
 
         $this->assertTrue(Article::isAuditingEnabled());
@@ -78,9 +90,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditEvent
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsNullWhenTheAuditEventIsNotSet()
+    public function itReturnsNullWhenTheAuditEventIsNotSet(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertNull($model->getAuditEvent());
@@ -89,9 +106,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditEvent
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheAuditEventThatHasBeenSet()
+    public function itReturnsTheAuditEventThatHasBeenSet(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
         $model->setAuditEvent('created');
 
@@ -101,9 +123,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditEvents
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultAuditEvents()
+    public function itReturnsTheDefaultAuditEvents(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertArraySubset([
@@ -117,9 +144,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditEvents
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditEventsFromAttribute()
+    public function itReturnsTheCustomAuditEventsFromAttribute(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditEvents = [
@@ -136,9 +168,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditEvents
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditEventsFromConfig()
+    public function itReturnsTheCustomAuditEventsFromConfig(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.events', [
             'published' => 'getPublishedEventAttributes',
             'archived',
@@ -156,9 +192,14 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::readyForAuditing
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itIsNotReadyForAuditingWithCustomEvent()
+    public function itIsNotReadyForAuditingWithCustomEvent(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->setAuditEvent('published');
@@ -169,9 +210,14 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::readyForAuditing
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itIsReadyForAuditingWithCustomEvents()
+    public function itIsReadyForAuditingWithCustomEvents(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditEvents = [
@@ -194,9 +240,14 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::readyForAuditing
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itIsReadyForAuditingWithRegularEvents()
+    public function itIsReadyForAuditingWithRegularEvents(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->setAuditEvent('created');
@@ -216,9 +267,14 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsWhenAnInvalidAuditEventIsSet()
+    public function itFailsWhenAnInvalidAuditEventIsSet(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('A valid audit event has not been set');
 
@@ -298,12 +354,16 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsWhenTheIpAddressResolverImplementationIsInvalid()
+    public function itFailsWhenTheIpAddressResolverImplementationIsInvalid(bool $morphable)
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid IpAddressResolver implementation');
 
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.resolver.ip_address', null);
 
         $model = new Article();
@@ -317,12 +377,16 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsWhenTheUrlResolverImplementationIsInvalid()
+    public function itFailsWhenTheUrlResolverImplementationIsInvalid(bool $morphable)
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UrlResolver implementation');
 
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.resolver.url', null);
 
         $model = new Article();
@@ -336,12 +400,16 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsWhenTheUserAgentResolverImplementationIsInvalid()
+    public function itFailsWhenTheUserAgentResolverImplementationIsInvalid(bool $morphable)
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserAgentResolver implementation');
 
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.resolver.user_agent', null);
 
         $model = new Article();
@@ -355,12 +423,16 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsWhenTheUserResolverImplementationIsInvalid()
+    public function itFailsWhenTheUserResolverImplementationIsInvalid(bool $morphable)
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserResolver implementation');
 
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.resolver.user', null);
 
         $model = new Article();
@@ -374,12 +446,16 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsWhenTheUserIdResolverImplementationIsInvalid()
+    public function itFailsWhenTheUserIdResolverImplementationIsInvalid(bool $morphable)
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserIdResolver implementation');
 
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.resolver.user_id', null);
 
         $model = new Article();
@@ -393,8 +469,11 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsWhenTheUserClassResolverImplementationIsInvalidWhenMorphing()
+    public function itFailsWhenTheUserClassResolverImplementationIsInvalidWhenMorphing(bool $morphable)
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserClassResolver implementation');
@@ -441,6 +520,94 @@ class AuditableTest extends AuditingTestCase
             'auditable_id'   => null,
             'auditable_type' => Article::class,
             'user_id'        => null,
+            'url'            => 'console',
+            'ip_address'     => '127.0.0.1',
+            'user_agent'     => 'Symfony/3.X',
+            'tags'           => null,
+        ], $auditData, true);
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itReturnsTheAuditDataWhenMorphing()
+    {
+        $this->app['config']->set('audit.morphable', true);
+
+        $now = Carbon::now();
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => $now,
+        ]);
+
+        $model->setAuditEvent('created');
+
+        $this->assertCount(11, $auditData = $model->toAudit());
+
+        $this->assertArraySubset([
+            'old_values' => [],
+            'new_values' => [
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => 'First step: install the laravel-auditing package.',
+                'reviewed'     => 1,
+                'published_at' => $now->format('Y-m-d H:i:s'),
+            ],
+            'event'          => 'created',
+            'auditable_id'   => null,
+            'auditable_type' => Article::class,
+            'user_id'        => null,
+            'user_type'      => null,
+            'url'            => 'console',
+            'ip_address'     => '127.0.0.1',
+            'user_agent'     => 'Symfony/3.X',
+            'tags'           => null,
+        ], $auditData, true);
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itReturnsTheAuditDataWhenMorphingAndAuthenticated()
+    {
+        $this->app['config']->set('audit.morphable', true);
+
+        $user = factory(User::class)->create();
+
+        $this->actingAs($user);
+
+        $now = Carbon::now();
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => $now,
+        ]);
+
+        $model->setAuditEvent('created');
+
+        $this->assertCount(11, $auditData = $model->toAudit());
+
+        $this->assertArraySubset([
+            'old_values' => [],
+            'new_values' => [
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => 'First step: install the laravel-auditing package.',
+                'reviewed'     => 1,
+                'published_at' => $now->format('Y-m-d H:i:s'),
+            ],
+            'event'          => 'created',
+            'auditable_id'   => null,
+            'auditable_type' => Article::class,
+            'user_id'        => 1,
+            'user_type'      => 'OwenIt\Auditing\Tests\Models\User',
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
             'user_agent'     => 'Symfony/3.X',
@@ -588,11 +755,63 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function itFailsWhenTheAuditRedactorImplementationIsInvalid()
+    public function itExcludesAttributesFromTheAuditDataWhenInStrictModeWhenMorphing()
+    {
+        $this->app['config']->set('audit.morphable', true);
+        $this->app['config']->set('audit.strict', true);
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => Carbon::now(),
+        ]);
+
+        $model->setHidden([
+            'reviewed',
+        ]);
+
+        $model->setVisible([
+            'title',
+            'content',
+        ]);
+
+        $model->setAuditEvent('created');
+
+        $this->assertCount(11, $auditData = $model->toAudit());
+
+        $this->assertArraySubset([
+            'old_values' => [],
+            'new_values' => [
+                'title'   => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+            ],
+            'event'          => 'created',
+            'auditable_id'   => null,
+            'auditable_type' => Article::class,
+            'user_id'        => null,
+            'user_type'      => null,
+            'url'            => 'console',
+            'ip_address'     => '127.0.0.1',
+            'user_agent'     => 'Symfony/3.X',
+            'tags'           => null,
+        ], $auditData, true);
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
+     */
+    public function itFailsWhenTheAuditRedactorImplementationIsInvalid(bool $morphable)
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid AuditRedactor implementation');
 
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.redact', true);
 
         $model = factory(Article::class)->make();
@@ -610,9 +829,13 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itRedactsTheAuditData()
+    public function itRedactsTheAuditData(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.redact', true);
 
         $model = factory(Article::class)->make([
@@ -651,9 +874,14 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transformAudit
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itTransformsTheAuditData()
+    public function itTransformsTheAuditData(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new class() extends Article {
             protected $attributes = [
                 'title'        => 'How To Audit Eloquent Models',
@@ -672,7 +900,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->setAuditEvent('created');
 
-        $this->assertCount(10, $auditData = $model->toAudit());
+        $this->assertCount($morphable ? 11 : 10, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
             'new_values' => [
@@ -688,9 +916,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditInclude
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultAttributesToBeIncludedInTheAudit()
+    public function itReturnsTheDefaultAttributesToBeIncludedInTheAudit(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertArraySubset([], $model->getAuditInclude(), true);
@@ -699,9 +932,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditInclude
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAttributesToBeIncludedInTheAudit()
+    public function itReturnsTheCustomAttributesToBeIncludedInTheAudit(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditInclude = [
@@ -718,9 +956,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditExclude
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultAttributesToBeExcludedFromTheAudit()
+    public function itReturnsTheDefaultAttributesToBeExcludedFromTheAudit(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertArraySubset([], $model->getAuditExclude(), true);
@@ -729,9 +972,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditExclude
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAttributesToBeExcludedFromTheAudit()
+    public function itReturnsTheCustomAttributesToBeExcludedFromTheAudit(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditExclude = [
@@ -746,9 +994,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditStrict
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultAuditStrictValue()
+    public function itReturnsTheDefaultAuditStrictValue(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertFalse($model->getAuditStrict());
@@ -757,9 +1010,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditStrict
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditStrictValueFromAttribute()
+    public function itReturnsTheCustomAuditStrictValueFromAttribute(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditStrict = true;
@@ -770,9 +1028,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditStrict
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditStrictValueFromConfig()
+    public function itReturnsTheCustomAuditStrictValueFromConfig(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.strict', true);
 
         $model = new Article();
@@ -783,9 +1045,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditTimestamps
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultAuditTimestampsValue()
+    public function itReturnsTheDefaultAuditTimestampsValue(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertFalse($model->getAuditTimestamps());
@@ -794,9 +1061,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditTimestamps
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditTimestampsValueFromAttribute()
+    public function itReturnsTheCustomAuditTimestampsValueFromAttribute(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditTimestamps = true;
@@ -807,9 +1079,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditTimestamps
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditTimestampsValueFromConfig()
+    public function itReturnsTheCustomAuditTimestampsValueFromConfig(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.timestamps', true);
 
         $model = new Article();
@@ -820,9 +1096,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditDriver
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultAuditDriverValue()
+    public function itReturnsTheDefaultAuditDriverValue(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertSame('database', $model->getAuditDriver());
@@ -831,9 +1112,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditDriver
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditDriverValueFromAttribute()
+    public function itReturnsTheCustomAuditDriverValueFromAttribute(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditDriver = 'RedisDriver';
@@ -844,9 +1130,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditDriver
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditDriverValueFromConfig()
+    public function itReturnsTheCustomAuditDriverValueFromConfig(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.driver', 'RedisDriver');
 
         $model = new Article();
@@ -857,9 +1147,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditThreshold
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultAuditThresholdValue()
+    public function itReturnsTheDefaultAuditThresholdValue(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertSame(0, $model->getAuditThreshold());
@@ -868,9 +1163,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditThreshold
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditThresholdValueFromAttribute()
+    public function itReturnsTheCustomAuditThresholdValueFromAttribute(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $model->auditThreshold = 10;
@@ -881,9 +1181,13 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::getAuditThreshold
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomAuditThresholdValueFromConfig()
+    public function itReturnsTheCustomAuditThresholdValueFromConfig(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
         $this->app['config']->set('audit.threshold', 200);
 
         $model = new Article();
@@ -894,9 +1198,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::generateTags
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheDefaultGeneratedAuditTags()
+    public function itReturnsTheDefaultGeneratedAuditTags(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new Article();
 
         $this->assertArraySubset([], $model->generateTags(), true);
@@ -905,9 +1214,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::generateTags
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itReturnsTheCustomGeneratedAuditTags()
+    public function itReturnsTheCustomGeneratedAuditTags(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = new class() extends Article {
             public function generateTags(): array
             {
@@ -927,9 +1241,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::transitionTo
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheModelType()
+    public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheModelType(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable type OwenIt\Auditing\Tests\Models\Article, got OwenIt\Auditing\Tests\Models\User instead');
 
@@ -945,9 +1264,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::transitionTo
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheMorphMapValue()
+    public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheMorphMapValue(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable type articles, got users instead');
 
@@ -967,9 +1291,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::transitionTo
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId()
+    public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id 2, got 1 instead');
 
@@ -982,9 +1311,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::transitionTo
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsToTransitionWhenAuditRedactorsAreSet()
+    public function itFailsToTransitionWhenAuditRedactorsAreSet(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Cannot transition states when Audit redactors are set');
 
@@ -1005,9 +1339,14 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::transitionTo
      * @test
+     *
+     * @dataProvider morphableProvider
+     * @param bool $morphable
      */
-    public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet()
+    public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet(bool $morphable)
     {
+        $this->app['config']->set('audit.morphable', $morphable);
+
         $model = factory(Article::class)->create();
 
         $incompatibleAudit = factory(Audit::class)->create([
@@ -1084,6 +1423,21 @@ class AuditableTest extends AuditingTestCase
         // Transition with new values
         $this->assertInstanceOf(Auditable::class, $models[1]->transitionTo($audits[1]));
         $this->assertSame($newExpectation, $models[1]->getDirty());
+    }
+
+    /**
+     * @return array
+     */
+    public function morphableProvider()
+    {
+        return [
+            [
+                false
+            ],
+            [
+                true
+            ]
+        ];
     }
 
     /**

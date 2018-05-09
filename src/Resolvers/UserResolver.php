@@ -41,6 +41,10 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
             }
         }
 
+        if (Auth::check()) {
+            return Auth::user();
+        }
+
         return null;
     }
 }

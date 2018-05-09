@@ -24,7 +24,7 @@ class UserClassResolver implements \OwenIt\Auditing\Contracts\UserClassResolver
      */
     public static function resolve()
     {
-        return get_class(static::resolveUser());
+        return static::resolveUser() ? static::resolveUser()->getMorphClass() : null;
     }
 
     protected static function resolveUser()
