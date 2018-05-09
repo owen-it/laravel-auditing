@@ -44,6 +44,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itWillNotAuditModelsWhenRunningFromTheConsole(bool $morphable)
@@ -59,6 +60,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itWillAuditModelsWhenRunningFromTheConsole(bool $morphable)
@@ -74,6 +76,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itWillAlwaysAuditModelsWhenNotRunningFromTheConsole(bool $morphable)
@@ -92,6 +95,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsNullWhenTheAuditEventIsNotSet(bool $morphable)
@@ -108,6 +112,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheAuditEventThatHasBeenSet(bool $morphable)
@@ -125,6 +130,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultAuditEvents(bool $morphable)
@@ -146,6 +152,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditEventsFromAttribute(bool $morphable)
@@ -170,6 +177,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditEventsFromConfig(bool $morphable)
@@ -194,6 +202,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itIsNotReadyForAuditingWithCustomEvent(bool $morphable)
@@ -212,6 +221,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itIsReadyForAuditingWithCustomEvents(bool $morphable)
@@ -242,6 +252,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itIsReadyForAuditingWithRegularEvents(bool $morphable)
@@ -269,6 +280,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenAnInvalidAuditEventIsSet(bool $morphable)
@@ -356,6 +368,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenTheIpAddressResolverImplementationIsInvalid(bool $morphable)
@@ -379,6 +392,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenTheUrlResolverImplementationIsInvalid(bool $morphable)
@@ -402,6 +416,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenTheUserAgentResolverImplementationIsInvalid(bool $morphable)
@@ -425,6 +440,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenTheUserResolverImplementationIsInvalid(bool $morphable)
@@ -448,6 +464,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenTheUserIdResolverImplementationIsInvalid(bool $morphable)
@@ -471,6 +488,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenTheUserClassResolverImplementationIsInvalidWhenMorphing(bool $morphable)
@@ -804,6 +822,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsWhenTheAuditRedactorImplementationIsInvalid(bool $morphable)
@@ -831,6 +850,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itRedactsTheAuditData(bool $morphable)
@@ -876,6 +896,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itTransformsTheAuditData(bool $morphable)
@@ -918,6 +939,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultAttributesToBeIncludedInTheAudit(bool $morphable)
@@ -934,6 +956,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAttributesToBeIncludedInTheAudit(bool $morphable)
@@ -958,6 +981,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultAttributesToBeExcludedFromTheAudit(bool $morphable)
@@ -974,6 +998,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAttributesToBeExcludedFromTheAudit(bool $morphable)
@@ -996,6 +1021,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultAuditStrictValue(bool $morphable)
@@ -1012,6 +1038,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditStrictValueFromAttribute(bool $morphable)
@@ -1030,6 +1057,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditStrictValueFromConfig(bool $morphable)
@@ -1047,6 +1075,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultAuditTimestampsValue(bool $morphable)
@@ -1063,6 +1092,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditTimestampsValueFromAttribute(bool $morphable)
@@ -1081,6 +1111,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditTimestampsValueFromConfig(bool $morphable)
@@ -1098,6 +1129,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultAuditDriverValue(bool $morphable)
@@ -1114,6 +1146,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditDriverValueFromAttribute(bool $morphable)
@@ -1132,6 +1165,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditDriverValueFromConfig(bool $morphable)
@@ -1149,6 +1183,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultAuditThresholdValue(bool $morphable)
@@ -1165,6 +1200,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditThresholdValueFromAttribute(bool $morphable)
@@ -1183,6 +1219,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomAuditThresholdValueFromConfig(bool $morphable)
@@ -1200,6 +1237,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheDefaultGeneratedAuditTags(bool $morphable)
@@ -1216,6 +1254,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheCustomGeneratedAuditTags(bool $morphable)
@@ -1243,6 +1282,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheModelType(bool $morphable)
@@ -1266,6 +1306,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheMorphMapValue(bool $morphable)
@@ -1293,6 +1334,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId(bool $morphable)
@@ -1313,6 +1355,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsToTransitionWhenAuditRedactorsAreSet(bool $morphable)
@@ -1341,6 +1384,7 @@ class AuditableTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet(bool $morphable)
@@ -1432,11 +1476,11 @@ class AuditableTest extends AuditingTestCase
     {
         return [
             [
-                false
+                false,
             ],
             [
-                true
-            ]
+                true,
+            ],
         ];
     }
 

@@ -27,7 +27,7 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
     }
 
     /**
-     * Resolves the user when not morphable
+     * Resolves the user when not morphable.
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
@@ -37,7 +37,7 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
     }
 
     /**
-     * Resolves the user when morphable
+     * Resolves the user when morphable.
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
@@ -54,7 +54,5 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
         if (Auth::check()) {
             return Auth::user();
         }
-
-        return null;
     }
 }

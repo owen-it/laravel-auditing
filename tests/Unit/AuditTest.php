@@ -57,6 +57,7 @@ class AuditTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itResolvesAuditData(bool $morphable)
@@ -99,6 +100,7 @@ class AuditTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itResolvesAuditDataIncludingUserAttributes(bool $morphable)
@@ -157,6 +159,7 @@ class AuditTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTheAppropriateAuditableDataValues(bool $morphable)
@@ -207,6 +210,7 @@ class AuditTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsAuditMetadataAsArray(bool $morphable)
@@ -235,6 +239,7 @@ class AuditTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsArray(bool $morphable)
@@ -278,6 +283,7 @@ class AuditTest extends AuditingTestCase
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsAuditMetadataAsJsonString(bool $morphable)
@@ -310,6 +316,7 @@ EOF;
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsJsonString(bool $morphable)
@@ -357,6 +364,7 @@ EOF;
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsAuditableModifiedAttributesAsArray(bool $morphable)
@@ -398,6 +406,7 @@ EOF;
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsAuditableModifiedAttributesAsJsonString(bool $morphable)
@@ -443,6 +452,7 @@ EOF;
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsTags(bool $morphable)
@@ -466,6 +476,7 @@ EOF;
      * @test
      *
      * @dataProvider morphableProvider
+     *
      * @param bool $morphable
      */
     public function itReturnsEmptyTags(bool $morphable)
@@ -487,11 +498,11 @@ EOF;
     {
         return [
             [
-                false
+                false,
             ],
             [
-                true
-            ]
+                true,
+            ],
         ];
     }
 }

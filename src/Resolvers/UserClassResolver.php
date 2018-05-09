@@ -28,10 +28,11 @@ class UserClassResolver implements \OwenIt\Auditing\Contracts\UserClassResolver
     }
 
     /**
-     * Resolves the user
+     * Resolves the user.
+     *
+     * @throws AuditingException
      *
      * @return mixed
-     * @throws AuditingException
      */
     protected static function resolveUser()
     {

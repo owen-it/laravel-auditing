@@ -64,7 +64,7 @@ return [
 
     'guards' => [
         'web',
-        'api'
+        'api',
     ],
 
     /*

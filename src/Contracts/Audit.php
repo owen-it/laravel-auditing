@@ -14,7 +14,6 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 interface Audit
