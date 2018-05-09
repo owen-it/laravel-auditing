@@ -27,6 +27,12 @@ class UserIdResolver implements \OwenIt\Auditing\Contracts\UserIdResolver
         return static::resolveUser() ? static::resolveUser()->getAuthIdentifier() : null;
     }
 
+    /**
+     * Resolves the user
+     *
+     * @return mixed
+     * @throws AuditingException
+     */
     protected static function resolveUser()
     {
         $userResolver = \Config::get('audit.resolver.user');

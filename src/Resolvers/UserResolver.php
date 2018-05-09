@@ -26,11 +26,21 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
         return \Config::get('audit.morphable', false) ? static::resolveMorphable() : static::resolveSingle();
     }
 
+    /**
+     * Resolves the user when not morphable
+     *
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
     private static function resolveSingle()
     {
         return Auth::check() ? Auth::user() : null;
     }
 
+    /**
+     * Resolves the user when morphable
+     *
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
     private static function resolveMorphable()
     {
         $guards = \Config::get('audit.guards', ['web']);

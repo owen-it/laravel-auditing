@@ -27,6 +27,12 @@ class UserClassResolver implements \OwenIt\Auditing\Contracts\UserClassResolver
         return static::resolveUser() ? static::resolveUser()->getMorphClass() : null;
     }
 
+    /**
+     * Resolves the user
+     *
+     * @return mixed
+     * @throws AuditingException
+     */
     protected static function resolveUser()
     {
         $userResolver = \Config::get('audit.resolver.user');
