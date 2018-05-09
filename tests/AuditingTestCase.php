@@ -20,7 +20,9 @@ use OwenIt\Auditing\AuditingServiceProvider;
 use OwenIt\Auditing\Resolvers\IpAddressResolver;
 use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Resolvers\UserAgentResolver;
+use OwenIt\Auditing\Resolvers\UserClassResolver;
 use OwenIt\Auditing\Resolvers\UserIdResolver;
+use OwenIt\Auditing\Resolvers\UserResolver;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditingTestCase extends TestCase
@@ -39,8 +41,11 @@ class AuditingTestCase extends TestCase
         ]);
 
         // Audit
+        $app['config']->set('audit.morphable', false);
         $app['config']->set('audit.user.model', User::class);
-        $app['config']->set('audit.resolver.user', UserIdResolver::class);
+        $app['config']->set('audit.resolver.user_class', UserClassResolver::class);
+        $app['config']->set('audit.resolver.user_id', UserIdResolver::class);
+        $app['config']->set('audit.resolver.user', UserResolver::class);
         $app['config']->set('audit.resolver.url', UrlResolver::class);
         $app['config']->set('audit.resolver.ip_address', IpAddressResolver::class);
         $app['config']->set('audit.resolver.user_agent', UserAgentResolver::class);

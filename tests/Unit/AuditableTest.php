@@ -375,6 +375,45 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
+    public function itFailsWhenTheUserIdResolverImplementationIsInvalid()
+    {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Invalid UserIdResolver implementation');
+
+        $this->app['config']->set('audit.resolver.user_id', null);
+
+        $model = new Article();
+
+        $model->setAuditEvent('created');
+
+        $model->toAudit();
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itFailsWhenTheUserClassResolverImplementationIsInvalidWhenMorphing()
+    {
+        $this->expectException(AuditingException::class);
+        $this->expectExceptionMessage('Invalid UserClassResolver implementation');
+
+        $this->app['config']->set('audit.morphable', true);
+        $this->app['config']->set('audit.resolver.user_class', null);
+
+        $model = new Article();
+
+        $model->setAuditEvent('created');
+
+        $model->toAudit();
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
     public function itReturnsTheAuditData()
     {
         $now = Carbon::now();
@@ -445,6 +484,52 @@ class AuditableTest extends AuditingTestCase
             'auditable_id'   => null,
             'auditable_type' => Article::class,
             'user_id'        => 1,
+            'url'            => 'console',
+            'ip_address'     => '127.0.0.1',
+            'user_agent'     => 'Symfony/3.X',
+            'tags'           => null,
+        ], $auditData, true);
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function itReturnsTheAuditDataIncludingUserAttributesWhenMorphing()
+    {
+        $this->app['config']->set('audit.morphable', true);
+
+        $user = factory(User::class)->create();
+
+        $this->actingAs($user);
+
+        $now = Carbon::now();
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => $now,
+        ]);
+
+        $model->setAuditEvent('created');
+
+        $this->assertCount(11, $auditData = $model->toAudit());
+
+        $this->assertArraySubset([
+            'old_values' => [],
+            'new_values' => [
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => 'First step: install the laravel-auditing package.',
+                'reviewed'     => 1,
+                'published_at' => $now->format('Y-m-d H:i:s'),
+            ],
+            'event'          => 'created',
+            'auditable_id'   => null,
+            'auditable_type' => Article::class,
+            'user_id'        => 1,
+            'user_type'      => 'OwenIt\Auditing\Tests\Models\User',
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
             'user_agent'     => 'Symfony/3.X',
