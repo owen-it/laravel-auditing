@@ -14,7 +14,6 @@
 
 namespace OwenIt\Auditing\Resolvers;
 
-use Illuminate\Support\Facades\Auth;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
 class UserIdResolver implements \OwenIt\Auditing\Contracts\UserIdResolver
