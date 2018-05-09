@@ -70,13 +70,15 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function user(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(
-            Config::get('audit.user.model'),
-            Config::get('audit.user.foreign_key', 'user_id'),
-            Config::get('audit.user.primary_key', 'id')
-        );
+        return Config::get('audit.morphable', false)
+            ? $this->morphTo()
+            : $this->belongsTo(
+                Config::get('audit.user.model'),
+                Config::get('audit.user.foreign_key', 'user_id'),
+                Config::get('audit.user.primary_key', 'id')
+            );
     }
 
     /**
