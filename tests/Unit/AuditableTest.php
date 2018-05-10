@@ -462,54 +462,6 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
-     *
-     * @dataProvider morphableProvider
-     *
-     * @param bool $morphable
-     */
-    public function itFailsWhenTheUserIdResolverImplementationIsInvalid(bool $morphable)
-    {
-        $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UserIdResolver implementation');
-
-        $this->app['config']->set('audit.user.morphable', $morphable);
-        $this->app['config']->set('audit.resolver.user_id', null);
-
-        $model = new Article();
-
-        $model->setAuditEvent('created');
-
-        $model->toAudit();
-    }
-
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     * @test
-     *
-     * @dataProvider morphableProvider
-     *
-     * @param bool $morphable
-     */
-    public function itFailsWhenTheUserClassResolverImplementationIsInvalidWhenMorphing(bool $morphable)
-    {
-        $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UserClassResolver implementation');
-
-        $this->app['config']->set('audit.user.morphable', true);
-        $this->app['config']->set('audit.resolver.user_class', null);
-
-        $model = new Article();
-
-        $model->setAuditEvent('created');
-
-        $model->toAudit();
-    }
-
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     * @test
      */
     public function itReturnsTheAuditData()
     {

@@ -24,6 +24,7 @@ use OwenIt\Auditing\Contracts\UrlResolver;
 use OwenIt\Auditing\Contracts\UserAgentResolver;
 use OwenIt\Auditing\Contracts\UserClassResolver;
 use OwenIt\Auditing\Contracts\UserIdResolver;
+use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
@@ -283,13 +284,15 @@ trait Auditable
 
         $tags = implode(',', $this->generateTags());
 
+        $user = $this->resolveUser();
+
         $data = [
             'old_values'     => $old,
             'new_values'     => $new,
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            $userForeignKey  => $this->resolveUserId(),
+            $userForeignKey  => $user ? $user->getAuthIdentifier() : null,
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
@@ -297,7 +300,7 @@ trait Auditable
         ];
 
         if (Config::get('audit.user.morphable', true)) {
-            $data['user_type'] = $this->resolveUserClass();
+            $data['user_type'] = $user ? $user->getMorphClass() : null;
         }
 
         return $this->transformAudit($data);
@@ -318,33 +321,15 @@ trait Auditable
      *
      * @return mixed|null
      */
-    protected function resolveUserId()
+    protected function resolveUser()
     {
-        $userResolver = Config::get('audit.resolver.user_id');
+        $userResolver = Config::get('audit.resolver.user');
 
-        if (is_subclass_of($userResolver, UserIdResolver::class)) {
+        if (is_subclass_of($userResolver, UserResolver::class)) {
             return call_user_func([$userResolver, 'resolve']);
         }
 
-        throw new AuditingException('Invalid UserIdResolver implementation');
-    }
-
-    /**
-     * Resolve the User class.
-     *
-     * @throws AuditingException
-     *
-     * @return mixed|null
-     */
-    protected function resolveUserClass()
-    {
-        $userResolver = Config::get('audit.resolver.user_class');
-
-        if (is_subclass_of($userResolver, UserClassResolver::class)) {
-            return call_user_func([$userResolver, 'resolve']);
-        }
-
-        throw new AuditingException('Invalid UserClassResolver implementation');
+        throw new AuditingException('Invalid UserResolver implementation');
     }
 
     /**

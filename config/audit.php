@@ -48,7 +48,6 @@ return [
     |--------------------------------------------------------------------------
     |
     | Define the User guards, in the order they should be checked.
-    | This is used when in 'morphable mode'.
     |
     */
 
@@ -66,8 +65,6 @@ return [
     |
     */
     'resolver' => [
-        'user_id'    => OwenIt\Auditing\Resolvers\UserIdResolver::class,
-        'user_class' => OwenIt\Auditing\Resolvers\UserClassResolver::class,
         'user'       => OwenIt\Auditing\Resolvers\UserResolver::class,
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,

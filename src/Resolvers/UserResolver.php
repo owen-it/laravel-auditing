@@ -15,6 +15,7 @@
 namespace OwenIt\Auditing\Resolvers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
 {
@@ -23,27 +24,7 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
      */
     public static function resolve()
     {
-        return \Config::get('audit.user.morphable', false) ? static::resolveMorphable() : static::resolveSingle();
-    }
-
-    /**
-     * Resolves the user when not morphable.
-     *
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    private static function resolveSingle()
-    {
-        return Auth::check() ? Auth::user() : null;
-    }
-
-    /**
-     * Resolves the user when morphable.
-     *
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    private static function resolveMorphable()
-    {
-        $guards = \Config::get('audit.guards', ['web']);
+        $guards = Config::get('audit.guards', ['web']);
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
