@@ -296,7 +296,7 @@ trait Auditable
             'tags'           => empty($tags) ? null : $tags,
         ];
 
-        if (Config::get('audit.morphable', true)) {
+        if (Config::get('audit.user.morphable', true)) {
             $data['user_type'] = $this->resolveUserClass();
         }
 

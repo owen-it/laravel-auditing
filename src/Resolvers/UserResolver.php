@@ -23,7 +23,7 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
      */
     public static function resolve()
     {
-        return \Config::get('audit.morphable', false) ? static::resolveMorphable() : static::resolveSingle();
+        return \Config::get('audit.user.morphable', false) ? static::resolveMorphable() : static::resolveSingle();
     }
 
     /**

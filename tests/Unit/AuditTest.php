@@ -32,7 +32,7 @@ class AuditTest extends AuditingTestCase
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
 
-        $this->app['config']->set('audit.morphable', false);
+        $this->app['config']->set('audit.user.morphable', false);
         $this->app['config']->set('audit.user.model', User::class);
         $this->app['config']->set('audit.user.primary_key', 'pk_id');
         $this->app['config']->set('audit.user.foreign_key', 'fk_id');
@@ -62,7 +62,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itResolvesAuditData(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $now = Carbon::now();
 
@@ -105,7 +105,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itResolvesAuditDataIncludingUserAttributes(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $now = Carbon::now();
 
@@ -164,7 +164,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTheAppropriateAuditableDataValues(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $user = factory(User::class)->create([
             'is_admin'   => 1,
@@ -215,7 +215,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataAsArray(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $audit = factory(Article::class)->create()->audits()->first();
 
@@ -244,7 +244,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsArray(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $user = factory(User::class)->create([
             'is_admin'   => 1,
@@ -288,7 +288,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataAsJsonString(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $audit = factory(Article::class)->create()->audits()->first();
 
@@ -321,7 +321,7 @@ EOF;
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsJsonString(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $user = factory(User::class)->create([
             'is_admin'   => 1,
@@ -369,7 +369,7 @@ EOF;
      */
     public function itReturnsAuditableModifiedAttributesAsArray(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $now = Carbon::now();
 
@@ -411,7 +411,7 @@ EOF;
      */
     public function itReturnsAuditableModifiedAttributesAsJsonString(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $now = Carbon::now();
 
@@ -457,7 +457,7 @@ EOF;
      */
     public function itReturnsTags(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $audit = factory(Audit::class)->create([
             'tags' => 'foo,bar,baz',
@@ -481,7 +481,7 @@ EOF;
      */
     public function itReturnsEmptyTags(bool $morphable)
     {
-        $this->app['config']->set('audit.morphable', $morphable);
+        $this->app['config']->set('audit.user.morphable', $morphable);
 
         $audit = factory(Audit::class)->create([
             'tags' => null,

@@ -71,7 +71,7 @@ trait Audit
      */
     public function user()
     {
-        return Config::get('audit.morphable', false)
+        return Config::get('audit.user.morphable', false)
             ? $this->morphTo()
             : $this->belongsTo(
                 Config::get('audit.user.model'),

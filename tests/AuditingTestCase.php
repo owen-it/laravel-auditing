@@ -41,7 +41,7 @@ class AuditingTestCase extends TestCase
         ]);
 
         // Audit
-        $app['config']->set('audit.morphable', false);
+        $app['config']->set('audit.user.morphable', false);
         $app['config']->set('audit.user.model', User::class);
         $app['config']->set('audit.resolver.user_class', UserClassResolver::class);
         $app['config']->set('audit.resolver.user_id', UserIdResolver::class);
