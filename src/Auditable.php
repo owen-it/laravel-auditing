@@ -22,8 +22,6 @@ use OwenIt\Auditing\Contracts\AuditRedactor;
 use OwenIt\Auditing\Contracts\IpAddressResolver;
 use OwenIt\Auditing\Contracts\UrlResolver;
 use OwenIt\Auditing\Contracts\UserAgentResolver;
-use OwenIt\Auditing\Contracts\UserClassResolver;
-use OwenIt\Auditing\Contracts\UserIdResolver;
 use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
