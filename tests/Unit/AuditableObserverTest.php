@@ -41,7 +41,7 @@ class AuditableObserverTest extends AuditingTestCase
 
         $this->assertSame($expectedBefore, $observer::$restoring);
 
-        call_user_func([$observer, $eventMethod], $model);
+        $observer->$eventMethod($model);
 
         $this->assertSame($expectedAfter, $observer::$restoring);
     }
@@ -49,7 +49,7 @@ class AuditableObserverTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableObserverTestProvider()
+    public function auditableObserverTestProvider(): array
     {
         return [
             [

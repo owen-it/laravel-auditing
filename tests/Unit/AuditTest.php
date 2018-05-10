@@ -16,41 +16,12 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use Mockery;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditTest extends AuditingTestCase
 {
-    /**
-     * @group Audit::user
-     * @test
-     */
-    public function itRelatesToUserWithCustomKeys()
-    {
-        $audit = Mockery::mock(Audit::class)
-            ->makePartial();
-
-        $this->app['config']->set('audit.user.model', User::class);
-        $this->app['config']->set('audit.user.primary_key', 'pk_id');
-        $this->app['config']->set('audit.user.foreign_key', 'fk_id');
-
-        $this->assertInstanceOf(User::class, $audit->user()->getRelated());
-
-        // Up to Laravel 5.3, the ownerKey attribute was called otherKey
-        if (method_exists($audit->user(), 'getOtherKey')) {
-            $this->assertSame('pk_id', $audit->user()->getOtherKey());
-        }
-
-        // From Laravel 5.4 onward, the otherKey attribute was renamed to ownerKey
-        if (method_exists($audit->user(), 'getOwnerKey')) {
-            $this->assertSame('pk_id', $audit->user()->getOwnerKey());
-        }
-
-        $this->assertSame('fk_id', $audit->user()->getForeignKey());
-    }
-
     /**
      * @group Audit::resolveData
      * @test
@@ -68,7 +39,7 @@ class AuditTest extends AuditingTestCase
 
         $audit = $article->audits()->first();
 
-        $this->assertCount(14, $resolvedData = $audit->resolveData());
+        $this->assertCount(15, $resolvedData = $audit->resolveData());
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -80,6 +51,7 @@ class AuditTest extends AuditingTestCase
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => null,
+            'user_type'        => null,
             'new_title'        => 'How To Audit Eloquent Models',
             'new_content'      => 'First step: install the laravel-auditing package.',
             'new_published_at' => $now->toDateTimeString(),
@@ -114,7 +86,7 @@ class AuditTest extends AuditingTestCase
 
         $audit = $article->audits()->first();
 
-        $this->assertCount(20, $resolvedData = $audit->resolveData());
+        $this->assertCount(21, $resolvedData = $audit->resolveData());
 
         $this->assertArraySubset([
             'audit_id'         => 2,
@@ -126,6 +98,7 @@ class AuditTest extends AuditingTestCase
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => '1',
+            'user_type'        => User::class,
             'user_is_admin'    => '1',
             'user_first_name'  => 'rick',
             'user_last_name'   => 'Sanchez',
@@ -164,7 +137,7 @@ class AuditTest extends AuditingTestCase
         ])->audits()->first();
 
         // Resolve data, making it available to the getDataValue() method
-        $this->assertCount(20, $audit->resolveData());
+        $this->assertCount(21, $audit->resolveData());
 
         // Mutate value
         $this->assertSame('HOW TO AUDIT ELOQUENT MODELS', $audit->getDataValue('new_title'));
@@ -194,7 +167,7 @@ class AuditTest extends AuditingTestCase
     {
         $audit = factory(Article::class)->create()->audits()->first();
 
-        $this->assertCount(9, $metadata = $audit->getMetadata());
+        $this->assertCount(10, $metadata = $audit->getMetadata());
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -206,6 +179,7 @@ class AuditTest extends AuditingTestCase
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => null,
+            'user_type'        => null,
         ], $metadata, true);
     }
 
@@ -226,7 +200,7 @@ class AuditTest extends AuditingTestCase
 
         $audit = factory(Article::class)->create()->audits()->first();
 
-        $this->assertCount(15, $metadata = $audit->getMetadata());
+        $this->assertCount(16, $metadata = $audit->getMetadata());
 
         $this->assertArraySubset([
             'audit_id'         => 2,
@@ -238,6 +212,7 @@ class AuditTest extends AuditingTestCase
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => 1,
+            'user_type'        => User::class,
             'user_is_admin'    => true,
             'user_first_name'  => 'Rick',
             'user_last_name'   => 'Sanchez',
@@ -267,7 +242,8 @@ class AuditTest extends AuditingTestCase
     "audit_tags": null,
     "audit_created_at": "$audit->created_at",
     "audit_updated_at": "$audit->updated_at",
-    "user_id": null
+    "user_id": null,
+    "user_type": null
 }
 EOF;
 
@@ -304,6 +280,7 @@ EOF;
     "audit_created_at": "$audit->created_at",
     "audit_updated_at": "$audit->updated_at",
     "user_id": 1,
+    "user_type": "OwenIt\\\Auditing\\\Tests\\\Models\\\User",
     "user_is_admin": true,
     "user_first_name": "Rick",
     "user_last_name": "Sanchez",

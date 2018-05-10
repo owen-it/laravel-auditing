@@ -260,7 +260,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditCustomAttributeGetterFailTestProvider()
+    public function auditCustomAttributeGetterFailTestProvider(): array
     {
         return [
             [
@@ -388,7 +388,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->setAuditEvent('created');
 
-        $this->assertCount(10, $auditData = $model->toAudit());
+        $this->assertCount(11, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
             'old_values' => [],
@@ -402,6 +402,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_id'   => null,
             'auditable_type' => Article::class,
             'user_id'        => null,
+            'user_type'      => null,
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
             'user_agent'     => 'Symfony/3.X',
@@ -413,12 +414,27 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
      * @test
+     *
+     * @dataProvider userResolverProvider
+     *
+     * @param string $guard
+     * @param string $driver
+     * @param int    $id
+     * @param string $type
      */
-    public function itReturnsTheAuditDataIncludingUserAttributes()
-    {
+    public function itReturnsTheAuditDataIncludingUserAttributes(
+        string $guard,
+        string $driver,
+        int $id = null,
+        string $type = null
+    ) {
+        $this->app['config']->set('audit.user.guards', [
+            $guard,
+        ]);
+
         $user = factory(User::class)->create();
 
-        $this->actingAs($user);
+        $this->actingAs($user, $driver);
 
         $now = Carbon::now();
 
@@ -431,7 +447,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->setAuditEvent('created');
 
-        $this->assertCount(10, $auditData = $model->toAudit());
+        $this->assertCount(11, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
             'old_values' => [],
@@ -444,12 +460,46 @@ class AuditableTest extends AuditingTestCase
             'event'          => 'created',
             'auditable_id'   => null,
             'auditable_type' => Article::class,
-            'user_id'        => 1,
+            'user_id'        => $id,
+            'user_type'      => $type,
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
             'user_agent'     => 'Symfony/3.X',
             'tags'           => null,
         ], $auditData, true);
+    }
+
+    /**
+     * @return array
+     */
+    public function userResolverProvider(): array
+    {
+        return [
+            [
+                'api',
+                'web',
+                null,
+                null,
+            ],
+            [
+                'web',
+                'api',
+                null,
+                null,
+            ],
+            [
+                'api',
+                'api',
+                1,
+                User::class,
+            ],
+            [
+                'web',
+                'web',
+                1,
+                User::class,
+            ],
+        ];
     }
 
     /**
@@ -479,7 +529,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->setAuditEvent('created');
 
-        $this->assertCount(10, $auditData = $model->toAudit());
+        $this->assertCount(11, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
             'old_values' => [],
@@ -491,6 +541,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_id'   => null,
             'auditable_type' => Article::class,
             'user_id'        => null,
+            'user_type'      => null,
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
             'user_agent'     => 'Symfony/3.X',
@@ -587,7 +638,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->setAuditEvent('created');
 
-        $this->assertCount(10, $auditData = $model->toAudit());
+        $this->assertCount(11, $auditData = $model->toAudit());
 
         $this->assertArraySubset([
             'new_values' => [
@@ -1004,7 +1055,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableTransitionTestProvider()
+    public function auditableTransitionTestProvider(): array
     {
         return [
             //
