@@ -16,7 +16,6 @@ namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
 
@@ -70,13 +69,15 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function user(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(
-            Config::get('audit.user.model'),
-            Config::get('audit.user.foreign_key', 'user_id'),
-            Config::get('audit.user.primary_key', 'id')
-        );
+        return Config::get('audit.user.morphable', false)
+            ? $this->morphTo()
+            : $this->belongsTo(
+                Config::get('audit.user.model'),
+                Config::get('audit.user.foreign_key', 'user_id'),
+                Config::get('audit.user.primary_key', 'id')
+            );
     }
 
     /**

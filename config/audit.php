@@ -31,6 +31,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Define the User primary key, foreign key and Eloquent model.
+    | This is used when in 'single mode'.
     |
     */
 
@@ -38,6 +39,21 @@ return [
         'primary_key' => 'id',
         'foreign_key' => 'user_id',
         'model'       => App\User::class,
+        'morphable'   => false,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | User guards
+    |--------------------------------------------------------------------------
+    |
+    | Define the User guards, in the order they should be checked.
+    |
+    */
+
+    'guards' => [
+        'web',
+        'api',
     ],
 
     /*

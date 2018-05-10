@@ -32,6 +32,7 @@ class AuditTest extends AuditingTestCase
         $audit = Mockery::mock(Audit::class)
             ->makePartial();
 
+        $this->app['config']->set('audit.user.morphable', false);
         $this->app['config']->set('audit.user.model', User::class);
         $this->app['config']->set('audit.user.primary_key', 'pk_id');
         $this->app['config']->set('audit.user.foreign_key', 'fk_id');
@@ -54,9 +55,15 @@ class AuditTest extends AuditingTestCase
     /**
      * @group Audit::resolveData
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itResolvesAuditData()
+    public function itResolvesAuditData(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $now = Carbon::now();
 
         $article = factory(Article::class)->create([
@@ -91,9 +98,15 @@ class AuditTest extends AuditingTestCase
     /**
      * @group Audit::resolveData
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itResolvesAuditDataIncludingUserAttributes()
+    public function itResolvesAuditDataIncludingUserAttributes(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $now = Carbon::now();
 
         $user = factory(User::class)->create([
@@ -144,9 +157,15 @@ class AuditTest extends AuditingTestCase
      * @group Audit::resolveData
      * @group Audit::getDataValue
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsTheAppropriateAuditableDataValues()
+    public function itReturnsTheAppropriateAuditableDataValues(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $user = factory(User::class)->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
@@ -189,9 +208,15 @@ class AuditTest extends AuditingTestCase
     /**
      * @group Audit::getMetadata
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsAuditMetadataAsArray()
+    public function itReturnsAuditMetadataAsArray(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $audit = factory(Article::class)->create()->audits()->first();
 
         $this->assertCount(9, $metadata = $audit->getMetadata());
@@ -212,9 +237,15 @@ class AuditTest extends AuditingTestCase
     /**
      * @group Audit::getMetadata
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsAuditMetadataIncludingUserAttributesAsArray()
+    public function itReturnsAuditMetadataIncludingUserAttributesAsArray(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $user = factory(User::class)->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
@@ -250,9 +281,15 @@ class AuditTest extends AuditingTestCase
     /**
      * @group Audit::getMetadata
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsAuditMetadataAsJsonString()
+    public function itReturnsAuditMetadataAsJsonString(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $audit = factory(Article::class)->create()->audits()->first();
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
@@ -277,9 +314,15 @@ EOF;
     /**
      * @group Audit::getMetadata
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsAuditMetadataIncludingUserAttributesAsJsonString()
+    public function itReturnsAuditMetadataIncludingUserAttributesAsJsonString(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $user = factory(User::class)->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
@@ -319,9 +362,15 @@ EOF;
     /**
      * @group Audit::getModified
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsAuditableModifiedAttributesAsArray()
+    public function itReturnsAuditableModifiedAttributesAsArray(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $now = Carbon::now();
 
         $audit = factory(Article::class)->create([
@@ -355,9 +404,15 @@ EOF;
     /**
      * @group Audit::getModified
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsAuditableModifiedAttributesAsJsonString()
+    public function itReturnsAuditableModifiedAttributesAsJsonString(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $now = Carbon::now();
 
         $audit = factory(Article::class)->create([
@@ -395,9 +450,15 @@ EOF;
     /**
      * @group Audit::getTags
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsTags()
+    public function itReturnsTags(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $audit = factory(Audit::class)->create([
             'tags' => 'foo,bar,baz',
         ]);
@@ -413,14 +474,35 @@ EOF;
     /**
      * @group Audit::getTags
      * @test
+     *
+     * @dataProvider morphableProvider
+     *
+     * @param bool $morphable
      */
-    public function itReturnsEmptyTags()
+    public function itReturnsEmptyTags(bool $morphable)
     {
+        $this->app['config']->set('audit.user.morphable', $morphable);
+
         $audit = factory(Audit::class)->create([
             'tags' => null,
         ]);
 
         $this->assertInternalType('array', $audit->getTags());
         $this->assertEmpty($audit->getTags());
+    }
+
+    /**
+     * @return array
+     */
+    public function morphableProvider()
+    {
+        return [
+            [
+                false,
+            ],
+            [
+                true,
+            ],
+        ];
     }
 }

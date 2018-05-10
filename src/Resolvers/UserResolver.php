@@ -15,6 +15,7 @@
 namespace OwenIt\Auditing\Resolvers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
 {
@@ -23,6 +24,16 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
      */
     public static function resolve()
     {
-        return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
+        $guards = Config::get('audit.guards', ['web']);
+
+        foreach ($guards as $guard) {
+            if (Auth::guard($guard)->check()) {
+                return Auth::guard($guard)->user();
+            }
+        }
+
+        if (Auth::check()) {
+            return Auth::user();
+        }
     }
 }

@@ -282,18 +282,26 @@ trait Auditable
 
         $tags = implode(',', $this->generateTags());
 
-        return $this->transformAudit([
+        $user = $this->resolveUser();
+
+        $data = [
             'old_values'     => $old,
             'new_values'     => $new,
             'event'          => $this->auditEvent,
             'auditable_id'   => $this->getKey(),
             'auditable_type' => $this->getMorphClass(),
-            $userForeignKey  => $this->resolveUser(),
+            $userForeignKey  => $user ? $user->getAuthIdentifier() : null,
             'url'            => $this->resolveUrl(),
             'ip_address'     => $this->resolveIpAddress(),
             'user_agent'     => $this->resolveUserAgent(),
             'tags'           => empty($tags) ? null : $tags,
-        ]);
+        ];
+
+        if (Config::get('audit.user.morphable', true)) {
+            $data['user_type'] = $user ? $user->getMorphClass() : null;
+        }
+
+        return $this->transformAudit($data);
     }
 
     /**
@@ -305,7 +313,7 @@ trait Auditable
     }
 
     /**
-     * Resolve the User.
+     * Resolve the User id.
      *
      * @throws AuditingException
      *

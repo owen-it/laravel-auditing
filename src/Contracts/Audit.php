@@ -14,7 +14,6 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 interface Audit
@@ -43,9 +42,9 @@ interface Audit
     /**
      * User responsible for the changes.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo|\Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo;
+    public function user();
 
     /**
      * Audit data resolver.
