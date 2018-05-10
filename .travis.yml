@@ -1,9 +1,18 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=042b12c9351435acd203f5cd992f08b21601d249030b3baf38bebb360ba3bb99
+
 language: php
 
 php:
     - 7.0
     - 7.1
     - 7.2
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 before_install:
     - travis_retry composer self-update
@@ -12,7 +21,10 @@ install:
     - travis_retry composer install --no-interaction --prefer-dist
 
 script:
-    - vendor/bin/phpunit --verbose
+    - vendor/bin/phpunit --coverage-clover=clover.xml --verbose
+
+after_script:
+  - ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT
 
 matrix:
     fast_finish: true
