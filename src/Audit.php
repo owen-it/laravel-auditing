@@ -16,7 +16,6 @@ namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
 
@@ -70,13 +69,9 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function user(): BelongsTo
+    public function user(): MorphTo
     {
-        return $this->belongsTo(
-            Config::get('audit.user.model'),
-            Config::get('audit.user.foreign_key', 'user_id'),
-            Config::get('audit.user.primary_key', 'id')
-        );
+        return $this->morphTo();
     }
 
     /**
@@ -84,6 +79,8 @@ trait Audit
      */
     public function resolveData(): array
     {
+        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
+
         // Metadata
         $this->data = [
             'audit_id'         => $this->id,
@@ -94,7 +91,8 @@ trait Audit
             'audit_tags'       => $this->tags,
             'audit_created_at' => $this->serializeDate($this->created_at),
             'audit_updated_at' => $this->serializeDate($this->updated_at),
-            'user_id'          => $this->getAttribute(Config::get('audit.user.foreign_key', 'user_id')),
+            'user_id'          => $this->getAttribute($morphPrefix.'_id'),
+            'user_type'        => $this->getAttribute($morphPrefix.'_type'),
         ];
 
         if ($this->user) {

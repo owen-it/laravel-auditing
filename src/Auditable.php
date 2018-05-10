@@ -278,21 +278,24 @@ trait Auditable
             }
         }
 
-        $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
+        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 
         $tags = implode(',', $this->generateTags());
 
+        $user = $this->resolveUser();
+
         return $this->transformAudit([
-            'old_values'     => $old,
-            'new_values'     => $new,
-            'event'          => $this->auditEvent,
-            'auditable_id'   => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $userForeignKey  => $this->resolveUser(),
-            'url'            => $this->resolveUrl(),
-            'ip_address'     => $this->resolveIpAddress(),
-            'user_agent'     => $this->resolveUserAgent(),
-            'tags'           => empty($tags) ? null : $tags,
+            'old_values'         => $old,
+            'new_values'         => $new,
+            'event'              => $this->auditEvent,
+            'auditable_id'       => $this->getKey(),
+            'auditable_type'     => $this->getMorphClass(),
+            $morphPrefix.'_id'   => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
+            'url'                => $this->resolveUrl(),
+            'ip_address'         => $this->resolveIpAddress(),
+            'user_agent'         => $this->resolveUserAgent(),
+            'tags'               => empty($tags) ? null : $tags,
         ]);
     }
 

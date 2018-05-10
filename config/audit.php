@@ -30,14 +30,18 @@ return [
     | User Keys, Model
     |--------------------------------------------------------------------------
     |
-    | Define the User primary key, foreign key and Eloquent model.
+    | Define the User Eloquent model, morph prefix and authentication guards
+    | to use in the User resolver.
     |
     */
 
     'user' => [
-        'primary_key' => 'id',
-        'foreign_key' => 'user_id',
-        'model'       => App\User::class,
+        'model'        => App\User::class,
+        'morph_prefix' => 'user',
+        'guards'       => [
+            'web',
+            'api',
+        ],
     ],
 
     /*
