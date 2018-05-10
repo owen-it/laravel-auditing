@@ -28,6 +28,7 @@ $factory->define(Audit::class, function (Faker $faker) {
         'user_id' => function () {
             return factory(User::class)->create()->id;
         },
+        'user_type'    => User::class,
         'event'        => 'updated',
         'auditable_id' => function () {
             return factory(Article::class)->create()->id;
