@@ -27,16 +27,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Keys, Model
+    | User Morph prefix & Guards
     |--------------------------------------------------------------------------
     |
-    | Define the User Eloquent model, morph prefix and authentication guards
-    | to use in the User resolver.
+    | Define the morph prefix and authentication guards for the User resolver.
     |
     */
 
     'user' => [
-        'model'        => App\User::class,
         'morph_prefix' => 'user',
         'guards'       => [
             'web',
