@@ -1,5 +1,8 @@
-## v6.1.1 (2018-04-27)
+## v7.0.0 (2018-05-12)
+### Added
+- Audit Multi User feature ([#421](https://github.com/owen-it/laravel-auditing/pull/421))
 
+## v6.1.1 (2018-04-27)
 ### Fixed
 - Audit presentation issue when using `trans()` or `@lang()` ([#418](https://github.com/owen-it/laravel-auditing/issues/418))
 
