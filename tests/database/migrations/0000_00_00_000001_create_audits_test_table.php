@@ -26,8 +26,8 @@ class CreateAuditsTestTable extends Migration
     {
         Schema::create('audits', function (Blueprint $table) {
             $table->increments('id');
-			$this->string('user_type')->nullable();
-			$this->unsignedBigInteger('user_id')->nullable();
+            $this->string('user_type')->nullable();
+            $this->unsignedBigInteger('user_id')->nullable();
             $table->string('event');
             $table->morphs('auditable');
             $table->text('old_values')->nullable();
@@ -37,8 +37,8 @@ class CreateAuditsTestTable extends Migration
             $table->string('user_agent')->nullable();
             $table->string('tags')->nullable();
             $table->timestamps();
-			
-			$this->index(['user_id', 'user_type']);
+
+            $this->index(['user_id', 'user_type']);
         });
     }
 
