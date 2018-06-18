@@ -98,7 +98,7 @@ trait Auditable
         if (!$this->getAuditTimestamps()) {
             array_push($this->excludedAttributes, $this->getCreatedAtColumn(), $this->getUpdatedAtColumn());
 
-            if (in_array(SoftDeletes::class, class_uses_recursive($this))) {
+            if (in_array(SoftDeletes::class, class_uses_recursive(get_class($this)))) {
                 $this->excludedAttributes[] = $this->getDeletedAtColumn();
             }
         }
