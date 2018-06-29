@@ -1,3 +1,7 @@
+## v7.0.1 (2018-06-29)
+### Fixed
+- Illuminate 5.2 incompatibility issues ([#431](https://github.com/owen-it/laravel-auditing/pull/431))
+
 ## v7.0.0 (2018-05-12)
 ### Added
 - Audit Multi User feature ([#421](https://github.com/owen-it/laravel-auditing/pull/421))
