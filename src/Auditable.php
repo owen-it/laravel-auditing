@@ -43,6 +43,13 @@ trait Auditable
     protected $auditEvent;
 
     /**
+     * Audit disabled.
+     *
+     * @var string
+     */
+    protected $auditDisabled;
+
+    /**
      * Is auditing disabled?
      *
      * @var bool
@@ -211,11 +218,19 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
-        if (static::$auditingDisabled) {
+        if (static::$auditingDisabled || $this->getAuditDisabled()) {
             return false;
         }
 
         return $this->isEventAuditable($this->auditEvent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuditDisabled(): bool
+    {
+        return $this->auditDisabled ?? Config::get('audit.disabled', false);
     }
 
     /**
