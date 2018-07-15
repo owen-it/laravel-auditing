@@ -197,7 +197,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertArraySubset([
             'content'      => 'First step: install the laravel-auditing package.',
-            'published_at' => $now->format('Y-m-d H:i:s'),
+            'published_at' => $now->toDateTimeString(),
             'reviewed'     => 1,
         ], $audit->new_values, true);
     }
