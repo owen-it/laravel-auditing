@@ -18,6 +18,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
+use OwenIt\Auditing\Contracts\AttributeEncoder;
 
 trait Audit
 {
@@ -164,7 +165,39 @@ trait Audit
 
         // Auditable value
         if ($this->auditable && starts_with($key, ['new_', 'old_'])) {
-            return $this->getFormattedValue($this->auditable, substr($key, 4), $value);
+            $attribute = substr($key, 4);
+
+            return $this->getFormattedValue(
+                $this->auditable,
+                $attribute,
+                $this->decodeAttributeValue($this->auditable, $attribute, $value)
+            );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Decode attribute value.
+     *
+     * @param Contracts\Auditable $auditable
+     * @param string              $attribute
+     * @param mixed               $value
+     *
+     * @return mixed
+     */
+    protected function decodeAttributeValue(Contracts\Auditable $auditable, string $attribute, $value)
+    {
+        $attributeModifiers = $auditable->getAttributeModifiers();
+
+        if (!array_key_exists($attribute, $attributeModifiers)) {
+            return $value;
+        }
+
+        $attributeDecoder = $attributeModifiers[$attribute];
+
+        if (is_subclass_of($attributeDecoder, AttributeEncoder::class)) {
+            return call_user_func([$attributeDecoder, 'decode'], $value);
         }
 
         return $value;
