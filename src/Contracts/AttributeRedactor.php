@@ -14,10 +14,10 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-interface AuditRedactor
+interface AttributeRedactor extends AttributeModifier
 {
     /**
-     * Redact a value.
+     * Redact an attribute value.
      *
      * @param mixed $value
      *
