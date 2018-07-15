@@ -16,7 +16,9 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -367,6 +369,54 @@ EOF;
 EOF;
 
         $this->assertSame($expected, $modified);
+    }
+
+    /**
+     * @group Audit::getModified
+     * @test
+     */
+    public function itReturnsDecodedAuditableAttributes()
+    {
+        $article = new class() extends Article {
+            protected $table = 'articles';
+
+            protected $attributeModifiers = [
+                'title'   => Base64Encoder::class,
+                'content' => LeftRedactor::class,
+            ];
+        };
+
+        // Audit with redacted/encoded attributes
+        $audit = factory(Audit::class)->create([
+            'auditable_type' => get_class($article),
+            'old_values'     => [
+                'title'    => 'SG93IFRvIEF1ZGl0IE1vZGVscw==',
+                'content'  => '##A',
+                'reviewed' => 0,
+            ],
+            'new_values'     => [
+                'title'    => 'SG93IFRvIEF1ZGl0IEVsb3F1ZW50IE1vZGVscw==',
+                'content'  => '############################################kage.',
+                'reviewed' => 1,
+            ],
+        ]);
+
+        $this->assertCount(3, $modified = $audit->getModified());
+
+        $this->assertArraySubset([
+            'title' => [
+                'new' => 'HOW TO AUDIT ELOQUENT MODELS',
+                'old' => 'HOW TO AUDIT MODELS',
+            ],
+            'content' => [
+                'new' => '############################################kage.',
+                'old' => '##A',
+            ],
+            'reviewed' => [
+                'new' => true,
+                'old' => false,
+            ],
+        ], $modified, true);
     }
 
     /**
