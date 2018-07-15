@@ -107,11 +107,11 @@ interface Auditable
     public function getAuditThreshold(): int;
 
     /**
-     * Get the Audit redactors.
+     * Get the Attribute modifiers.
      *
      * @return array
      */
-    public function getAuditRedactors(): array;
+    public function getAttributeModifiers(): array;
 
     /**
      * Transform the data before performing an audit.
