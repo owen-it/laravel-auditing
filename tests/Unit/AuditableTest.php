@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\App;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
@@ -554,17 +555,15 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function itFailsWhenTheAuditRedactorImplementationIsInvalid()
+    public function itFailsWhenTheAttributeModifierImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid AuditRedactor implementation');
-
-        $this->app['config']->set('audit.redact', true);
+        $this->expectExceptionMessage('Invalid AttributeModifier implementation: invalidAttributeRedactorOrEncoder');
 
         $model = factory(Article::class)->make();
 
-        $model->auditRedactors = [
-            'title' => 'invalidAuditRedactor',
+        $model->attributeModifiers = [
+            'title' => 'invalidAttributeRedactorOrEncoder',
         ];
 
         $model->setAuditEvent('created');
@@ -577,37 +576,44 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::toAudit
      * @test
      */
-    public function itRedactsTheAuditData()
+    public function itModifiesTheAuditAttributesSuccessfully()
     {
-        $this->app['config']->set('audit.redact', true);
-
         $model = factory(Article::class)->make([
-            'title'    => 'How To Audit Models',
-            'content'  => 'N/A',
-            'reviewed' => 0,
+            'title'        => 'How To Audit Models',
+            'content'      => 'N/A',
+            'reviewed'     => 0,
+            'published_at' => null,
         ]);
+
+        $now = Carbon::now();
 
         $model->syncOriginal();
 
         $model->title = 'How To Audit Eloquent Models';
         $model->content = 'First step: install the laravel-auditing package.';
         $model->reviewed = 1;
+        $model->published_at = $now;
 
         $model->setAuditEvent('updated');
 
-        $model->auditRedactors = [
-            'title'   => RightRedactor::class,
-            'content' => LeftRedactor::class,
+        $model->attributeModifiers = [
+            'title'    => RightRedactor::class,
+            'content'  => LeftRedactor::class,
+            'reviewed' => Base64Encoder::class,
         ];
 
         $this->assertArraySubset([
             'old_values' => [
-                'title'   => 'Ho#################',
-                'content' => '##A',
+                'title'        => 'Ho#################',
+                'content'      => '##A',
+                'published_at' => null,
+                'reviewed'     => 'MA==',
             ],
             'new_values' => [
-                'title'   => 'How#########################',
-                'content' => '############################################kage.',
+                'title'        => 'How#########################',
+                'content'      => '############################################kage.',
+                'published_at' => $now->toDateTimeString(),
+                'reviewed'     => 'MQ==',
             ],
         ], $model->toAudit(), true);
     }
@@ -949,14 +955,14 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
-    public function itFailsToTransitionWhenAuditRedactorsAreSet()
+    public function itFailsToTransitionWhenAnAttributeRedactorIsSet()
     {
         $this->expectException(AuditableTransitionException::class);
-        $this->expectExceptionMessage('Cannot transition states when Audit redactors are set');
+        $this->expectExceptionMessage('Cannot transition states when an AttributeRedactor is set');
 
         $model = factory(Article::class)->create();
 
-        $model->auditRedactors = [
+        $model->attributeModifiers = [
             'title' => RightRedactor::class,
         ];
 
