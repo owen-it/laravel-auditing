@@ -165,5 +165,5 @@ return [
     |
     */
 
-    'nonScalar' => false,
+    'non_scalar' => false,
 ];
