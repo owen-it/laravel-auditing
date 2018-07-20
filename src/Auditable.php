@@ -103,7 +103,7 @@ trait Auditable
             }
         }
 
-        if (!Config::get('audit.nonScalar', false)) {
+        if (!Config::get('audit.non_scalar', false)) {
             // Valid attributes are all those that made it out of the exclusion array
             $attributes = array_except($this->attributes, $this->excludedAttributes);
 
