@@ -23,7 +23,7 @@ return [
     |
     */
 
-    'implementation' => OwenIt\Auditing\Models\Audit::class,
+    'implementation' => App\Models\Audit::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ return [
 
     'user' => [
         'morph_prefix' => 'user',
-        'guards'       => [
+        'guards' => [
             'web',
             'api',
         ],
@@ -51,10 +51,10 @@ return [
     |
     */
     'resolver' => [
-        'user'       => OwenIt\Auditing\Resolvers\UserResolver::class,
+        'user' => OwenIt\Auditing\Resolvers\UserResolver::class,
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
-        'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
+        'url' => OwenIt\Auditing\Resolvers\UrlResolver::class,
     ],
 
     /*
@@ -105,7 +105,7 @@ return [
     |
     */
 
-    'threshold' => 0,
+    'threshold' => 100,
 
     /*
     |--------------------------------------------------------------------------
@@ -140,8 +140,8 @@ return [
 
     'drivers' => [
         'database' => [
-            'table'      => 'audits',
-            'connection' => null,
+            'table' => 'audits',
+            'connection' => 'mongodb',
         ],
     ],
 
@@ -155,7 +155,7 @@ return [
     */
 
     'console' => false,
-    
+
     /*
     |--------------------------------------------------------------------------
     | Audit Allow Saving NonScalar Values and Recursive Arrays
@@ -164,6 +164,7 @@ return [
     | Allow Saving NonScalar Values and Recursive Arrays
     |
     */
-    
-    'nonScalar' => false,
+
+    'nonScalar' => true,
+
 ];
