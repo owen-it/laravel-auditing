@@ -164,6 +164,6 @@ return [
     | Allow Saving NonScalar Values and Recursive Arrays
     |
     */
-
+    
     'nonScalar' => false,
 ];
