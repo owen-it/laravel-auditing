@@ -109,7 +109,7 @@ trait Auditable
 
             foreach ($attributes as $attribute => $value) {
                 // Apart from null, non scalar values will be excluded
-                if (\is_array($value) || (\is_object($value) && !method_exists($value, '__toString'))) {
+                if (is_array($value) || (is_object($value) && !method_exists($value, '__toString'))) {
                     $this->excludedAttributes[] = $attribute;
                 }
             }
