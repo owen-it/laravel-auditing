@@ -23,7 +23,7 @@ return [
     |
     */
 
-    'implementation' => App\Models\Audit::class,
+    'implementation' => OwenIt\Auditing\Models\Audit::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -105,7 +105,7 @@ return [
     |
     */
 
-    'threshold' => 100,
+    'threshold' => 0,
 
     /*
     |--------------------------------------------------------------------------
@@ -141,7 +141,7 @@ return [
     'drivers' => [
         'database' => [
             'table'      => 'audits',
-            'connection' => 'mongodb',
+            'connection' => null,
         ],
     ],
 
