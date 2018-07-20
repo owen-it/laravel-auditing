@@ -103,13 +103,15 @@ trait Auditable
             }
         }
 
-        // Valid attributes are all those that made it out of the exclusion array
-        $attributes = array_except($this->attributes, $this->excludedAttributes);
+        if (!Config::get('audit.nonScalar', false)) {
+            // Valid attributes are all those that made it out of the exclusion array
+            $attributes = array_except($this->attributes, $this->excludedAttributes);
 
-        foreach ($attributes as $attribute => $value) {
-            // Apart from null, non scalar values will be excluded
-            if (is_array($value) || (is_object($value) && !method_exists($value, '__toString'))) {
-                $this->excludedAttributes[] = $attribute;
+            foreach ($attributes as $attribute => $value) {
+                // Apart from null, non scalar values will be excluded
+                if (\is_array($value) || (\is_object($value) && !method_exists($value, '__toString'))) {
+                    $this->excludedAttributes[] = $attribute;
+                }
             }
         }
     }
