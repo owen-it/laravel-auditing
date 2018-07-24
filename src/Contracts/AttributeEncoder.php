@@ -21,16 +21,16 @@ interface AttributeEncoder extends AttributeModifier
      *
      * @param mixed $value
      *
-     * @return string
+     * @return mixed
      */
-    public static function encode($value): string;
+    public static function encode($value);
 
     /**
      * Decode an attribute value.
      *
      * @param mixed $value
      *
-     * @return string
+     * @return mixed
      */
-    public static function decode($value): string;
+    public static function decode($value);
 }

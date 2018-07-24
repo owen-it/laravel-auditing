@@ -19,7 +19,7 @@ class Base64Encoder implements \OwenIt\Auditing\Contracts\AttributeEncoder
     /**
      * {@inheritdoc}
      */
-    public static function encode($value): string
+    public static function encode($value)
     {
         return base64_encode($value);
     }
@@ -27,7 +27,7 @@ class Base64Encoder implements \OwenIt\Auditing\Contracts\AttributeEncoder
     /**
      * {@inheritdoc}
      */
-    public static function decode($value): string
+    public static function decode($value)
     {
         return base64_decode($value);
     }
