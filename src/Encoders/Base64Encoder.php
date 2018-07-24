@@ -12,16 +12,23 @@
  * with this source code.
  */
 
-namespace OwenIt\Auditing\Contracts;
+namespace OwenIt\Auditing\Encoders;
 
-interface AuditRedactor
+class Base64Encoder implements \OwenIt\Auditing\Contracts\AttributeEncoder
 {
     /**
-     * Redact a value.
-     *
-     * @param mixed $value
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public static function redact($value): string;
+    public static function encode($value): string
+    {
+        return base64_encode($value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function decode($value): string
+    {
+        return base64_decode($value);
+    }
 }

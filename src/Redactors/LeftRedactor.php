@@ -14,7 +14,7 @@
 
 namespace OwenIt\Auditing\Redactors;
 
-class LeftRedactor implements \OwenIt\Auditing\Contracts\AuditRedactor
+class LeftRedactor implements \OwenIt\Auditing\Contracts\AttributeRedactor
 {
     /**
      * {@inheritdoc}
