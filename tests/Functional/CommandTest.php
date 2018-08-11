@@ -21,24 +21,6 @@ class CommandTest extends AuditingTestCase
     /**
      * @test
      */
-    public function itWillGenerateTheAuditMigration()
-    {
-        $migrationFilePath = sprintf(
-            '%s/migrations/%s_create_audits_table.php',
-            $this->app->databasePath(),
-            date('Y_m_d_His')
-        );
-
-        $this->assertSame(0, $this->artisan('auditing:table'));
-
-        $this->assertFileExists($migrationFilePath);
-
-        $this->assertTrue(unlink($migrationFilePath));
-    }
-
-    /**
-     * @test
-     */
     public function itWillGenerateTheAuditDriver()
     {
         $driverFilePath = sprintf(
@@ -53,30 +35,5 @@ class CommandTest extends AuditingTestCase
         $this->assertFileExists($driverFilePath);
 
         $this->assertTrue(unlink($driverFilePath));
-    }
-
-    /**
-     * @test
-     */
-    public function itWillPublishTheVendorFiles()
-    {
-        $configFilePath = sprintf(
-            '%s/audit.php',
-            $this->app->configPath()
-        );
-
-        $migrationFilePath = sprintf(
-            '%s/migrations/%s_create_audits_table.php',
-            $this->app->databasePath(),
-            date('Y_m_d_His')
-        );
-
-        $this->assertSame(0, $this->artisan('auditing:install'));
-
-        $this->assertFileExists($migrationFilePath);
-        $this->assertFileExists($configFilePath);
-
-        $this->assertTrue(unlink($migrationFilePath));
-        $this->assertTrue(unlink($configFilePath));
     }
 }

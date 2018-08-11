@@ -16,8 +16,6 @@ namespace OwenIt\Auditing;
 
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditDriverMakeCommand;
-use OwenIt\Auditing\Console\AuditTableCommand;
-use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Auditor;
 
 class AuditingServiceProvider extends ServiceProvider
@@ -34,13 +32,16 @@ class AuditingServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $config = realpath(__DIR__).'/../config/audit.php';
+        $config = __DIR__.'/../config/audit.php';
+        $migration = __DIR__.'/../database/migrations/audits.stub';
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                $config => base_path('config/audit.php'),
-            ]);
-        }
+        $this->publishes([
+            $config => config_path('audit.php'),
+        ], 'config');
+
+        $this->publishes([
+            $migration => database_path(sprintf('migrations/%s_create_audits_table.php', date('Y_m_d_His'))),
+        ], 'migrations');
 
         $this->mergeConfigFrom($config, 'audit');
     }
@@ -53,9 +54,7 @@ class AuditingServiceProvider extends ServiceProvider
     public function register()
     {
         $this->commands([
-            AuditTableCommand::class,
             AuditDriverMakeCommand::class,
-            InstallCommand::class,
         ]);
 
         $this->app->singleton(Auditor::class, function ($app) {
