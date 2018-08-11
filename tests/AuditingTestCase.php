@@ -38,6 +38,7 @@ class AuditingTestCase extends TestCase
         ]);
 
         // Audit
+        $app['config']->set('audit.drivers.database.connection', 'testing');
         $app['config']->set('audit.user.morph_prefix', 'user');
         $app['config']->set('audit.user.guards', [
             'web',

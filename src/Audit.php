@@ -46,9 +46,9 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getConnection()
+    public function getConnectionName()
     {
-        return static::resolveConnection(Config::get('audit.drivers.database.connection'));
+        return Config::get('audit.drivers.database.connection');
     }
 
     /**
