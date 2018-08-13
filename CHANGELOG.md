@@ -1,3 +1,14 @@
+## v8.0.0 (2018-08-13)
+### Added
+- `AttributeModifier` and `AttributeEncoder` interfaces ([#437](https://github.com/owen-it/laravel-auditing/pull/437))
+
+### Changed
+- `AttributeRedactor` replaces `AuditRedactor`
+
+### Removed
+- `audit.redact` boolean configuration entry
+- Unnecessary `Artisan` commands for publishing the configuration/migration
+
 ## v7.0.1 (2018-06-29)
 ### Fixed
 - Illuminate 5.2 incompatibility issues ([#431](https://github.com/owen-it/laravel-auditing/pull/431))
