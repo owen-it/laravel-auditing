@@ -144,4 +144,15 @@ return [
     */
 
     'console' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Allow Saving NonScalar Values and Recursive Arrays
+    |--------------------------------------------------------------------------
+    |
+    | Allow Saving NonScalar Values and Recursive Arrays
+    |
+    */
+
+    'non_scalar' => false,
 ];
