@@ -1,3 +1,7 @@
+## v8.0.1 (2018-08-28)
+### Added
+- Illuminate 5.7 support
+
 ## v8.0.0 (2018-08-13)
 ### Added
 - `AttributeModifier` and `AttributeEncoder` interfaces ([#437](https://github.com/owen-it/laravel-auditing/pull/437))
