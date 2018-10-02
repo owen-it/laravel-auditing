@@ -1,3 +1,7 @@
+## v8.0.2 (2018-08-28)
+### Fixed
+- Lumen compatibility issue ([#447](https://github.com/owen-it/laravel-auditing/issues/447))
+
 ## v8.0.1 (2018-08-28)
 ### Added
 - Illuminate 5.7 support
@@ -15,7 +19,7 @@
 
 ## v7.0.1 (2018-06-29)
 ### Fixed
-- Illuminate 5.2 incompatibility issues ([#431](https://github.com/owen-it/laravel-auditing/pull/431))
+- Illuminate 5.2 compatibility issues ([#431](https://github.com/owen-it/laravel-auditing/pull/431))
 
 ## v7.0.0 (2018-05-12)
 ### Added
