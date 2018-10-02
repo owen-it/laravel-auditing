@@ -35,8 +35,9 @@ class AuditingServiceProvider extends ServiceProvider
         $config = __DIR__.'/../config/audit.php';
         $migration = __DIR__.'/../database/migrations/audits.stub';
 
+        // Lumen lacks a config_path() helper, so we use base_path()
         $this->publishes([
-            $config => config_path('audit.php'),
+            $config => base_path('config/audit.php'),
         ], 'config');
 
         $this->publishes([
