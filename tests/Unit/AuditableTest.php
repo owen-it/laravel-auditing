@@ -26,6 +26,7 @@ use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
+use ReflectionClass;
 
 class AuditableTest extends AuditingTestCase
 {
@@ -949,6 +950,51 @@ class AuditableTest extends AuditingTestCase
         $secondModel = factory(Article::class)->create();
 
         $secondModel->transitionTo($firstAudit);
+    }
+
+    /**
+     * @group Auditable::transitionTo
+     * @test
+     */
+    public function itFailsToTransitionWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
+    {
+        $this->expectException(AuditableTransitionException::class);
+        $this->expectExceptionMessage('Expected Auditable id 1, got 1 instead');
+
+        $model = factory(Article::class)->create();
+
+        $audit = factory(Audit::class)->create([
+            'auditable_type' => Article::class,
+            'auditable_id'   => (string) $model->id,
+        ]);
+
+        // Make sure the auditable_id isn't being cast
+        $auditReflection = new ReflectionClass($audit);
+
+        $auditCastsProperty = $auditReflection->getProperty('casts');
+        $auditCastsProperty->setAccessible(true);
+        $auditCastsProperty->setValue($audit, [
+            'old_values' => 'json',
+            'new_values' => 'json',
+        ]);
+
+        $model->transitionTo($audit);
+    }
+
+    /**
+     * @group Auditable::transitionTo
+     * @test
+     */
+    public function itTransitionsWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
+    {
+        $model = factory(Article::class)->create();
+
+        $audit = factory(Audit::class)->create([
+            'auditable_type' => Article::class,
+            'auditable_id'   => (string) $model->id,
+        ]);
+
+        $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit));
     }
 
     /**
