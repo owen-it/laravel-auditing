@@ -16,7 +16,6 @@ namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 
@@ -57,22 +56,6 @@ trait Audit
     public function getTable(): string
     {
         return Config::get('audit.drivers.database.table', parent::getTable());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function auditable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function user(): MorphTo
-    {
-        return $this->morphTo();
     }
 
     /**
