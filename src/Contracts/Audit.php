@@ -19,11 +19,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 interface Audit
 {
     /**
-     * Get the database connection for the model.
+     * Get the current connection name for the model.
      *
-     * @return \Illuminate\Database\Connection
+     * @return string|null
      */
-    public function getConnection();
+    public function getConnectionName();
 
     /**
      * Get the table associated with the model.
