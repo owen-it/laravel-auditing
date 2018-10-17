@@ -18,9 +18,9 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
      * {@inheritdoc}
      */
     protected $casts = [
-        'old_values'    => 'json',
-        'new_values'    => 'json',
-        'auditable_id'  => 'integer',
+        'old_values'   => 'json',
+        'new_values'   => 'json',
+        'auditable_id' => 'integer',
     ];
 
     /**
