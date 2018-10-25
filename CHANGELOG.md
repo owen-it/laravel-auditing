@@ -1,3 +1,7 @@
+## v8.0.3 (2018-10-25)
+### Fixed
+- Cast `auditable_id` property by default to avoid `transitionTo()` errors ([#432](https://github.com/owen-it/laravel-auditing/issues/432))
+
 ## v8.0.2 (2018-10-02)
 ### Fixed
 - Lumen compatibility issue ([#447](https://github.com/owen-it/laravel-auditing/issues/447))
