@@ -1,24 +1,12 @@
 <?php
-/**
- * This file is part of the Laravel Auditing package.
- *
- * @author     Antério Vieira <anteriovieira@gmail.com>
- * @author     Quetzy Garcia  <quetzyg@altek.org>
- * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
- *
- * For the full copyright and license information,
- * please view the LICENSE.md file that was distributed
- * with this source code.
- */
 
 namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
+use OwenIt\Auditing\Contracts\AttributeEncoder;
 
 trait Audit
 {
@@ -46,9 +34,25 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function getConnection()
+    public function auditable(): MorphTo
     {
-        return static::resolveConnection(Config::get('audit.drivers.database.connection'));
+        return $this->morphTo();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function user(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConnectionName()
+    {
+        return Config::get('audit.drivers.database.connection');
     }
 
     /**
@@ -62,28 +66,10 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function auditable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(
-            Config::get('audit.user.model'),
-            Config::get('audit.user.foreign_key', 'user_id'),
-            Config::get('audit.user.primary_key', 'id')
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function resolveData(): array
     {
+        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
+
         // Metadata
         $this->data = [
             'audit_id'         => $this->id,
@@ -94,7 +80,8 @@ trait Audit
             'audit_tags'       => $this->tags,
             'audit_created_at' => $this->serializeDate($this->created_at),
             'audit_updated_at' => $this->serializeDate($this->updated_at),
-            'user_id'          => $this->getAttribute(Config::get('audit.user.foreign_key', 'user_id')),
+            'user_id'          => $this->getAttribute($morphPrefix.'_id'),
+            'user_type'        => $this->getAttribute($morphPrefix.'_type'),
         ];
 
         if ($this->user) {
@@ -141,8 +128,8 @@ trait Audit
         }
 
         // Honour DateTime attribute
-        if (in_array($key, $model->getDates()) && $value !== null) {
-            return $this->asDateTime($value);
+        if ($value !== null && in_array($key, $model->getDates(), true)) {
+            return $model->asDateTime($value);
         }
 
         return $value;
@@ -160,13 +147,45 @@ trait Audit
         $value = $this->data[$key];
 
         // User value
-        if (starts_with($key, 'user_') && $this->user) {
+        if ($this->user && starts_with($key, 'user_')) {
             return $this->getFormattedValue($this->user, substr($key, 5), $value);
         }
 
         // Auditable value
-        if (starts_with($key, ['new_', 'old_']) && $this->auditable) {
-            return $this->getFormattedValue($this->auditable, substr($key, 4), $value);
+        if ($this->auditable && starts_with($key, ['new_', 'old_'])) {
+            $attribute = substr($key, 4);
+
+            return $this->getFormattedValue(
+                $this->auditable,
+                $attribute,
+                $this->decodeAttributeValue($this->auditable, $attribute, $value)
+            );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Decode attribute value.
+     *
+     * @param Contracts\Auditable $auditable
+     * @param string              $attribute
+     * @param mixed               $value
+     *
+     * @return mixed
+     */
+    protected function decodeAttributeValue(Contracts\Auditable $auditable, string $attribute, $value)
+    {
+        $attributeModifiers = $auditable->getAttributeModifiers();
+
+        if (!array_key_exists($attribute, $attributeModifiers)) {
+            return $value;
+        }
+
+        $attributeDecoder = $attributeModifiers[$attribute];
+
+        if (is_subclass_of($attributeDecoder, AttributeEncoder::class)) {
+            return call_user_func([$attributeDecoder, 'decode'], $value);
         }
 
         return $value;
@@ -224,8 +243,8 @@ trait Audit
      *
      * @return array
      */
-    public function getTagsAttribute(): array
+    public function getTags(): array
     {
-        return preg_split('/,/', $this->attributes['tags'], null, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->tags, null, PREG_SPLIT_NO_EMPTY);
     }
 }

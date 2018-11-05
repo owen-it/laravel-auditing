@@ -1,3 +1,81 @@
+## v8.0.3 (2018-10-25)
+### Fixed
+- Cast `auditable_id` property by default to avoid `transitionTo()` errors ([#432](https://github.com/owen-it/laravel-auditing/issues/432))
+
+## v8.0.2 (2018-10-02)
+### Fixed
+- Lumen compatibility issue ([#447](https://github.com/owen-it/laravel-auditing/issues/447))
+
+## v8.0.1 (2018-08-28)
+### Added
+- Illuminate 5.7 support
+
+## v8.0.0 (2018-08-13)
+### Added
+- `AttributeModifier` and `AttributeEncoder` interfaces ([#437](https://github.com/owen-it/laravel-auditing/pull/437))
+
+### Changed
+- `AttributeRedactor` replaces `AuditRedactor`
+
+### Removed
+- `audit.redact` boolean configuration entry
+- Unnecessary `Artisan` commands for publishing the configuration/migration
+
+## v7.0.1 (2018-06-29)
+### Fixed
+- Illuminate 5.2 compatibility issues ([#431](https://github.com/owen-it/laravel-auditing/pull/431))
+
+## v7.0.0 (2018-05-12)
+### Added
+- Audit Multi User feature ([#421](https://github.com/owen-it/laravel-auditing/pull/421))
+
+## v6.1.1 (2018-04-27)
+### Fixed
+- Audit presentation issue when using `trans()` or `@lang()` ([#418](https://github.com/owen-it/laravel-auditing/issues/418))
+
+## v6.1.0 (2018-04-23)
+### Added
+- Audit redactor feature ([#395](https://github.com/owen-it/laravel-auditing/issues/395))
+
+### Changed
+- Minor optimisations
+- Increase test coverage to 100%
+
+### Fixed
+- `deleted_at` attribute exclusion from the `Audit`
+- `InvalidArgumentExceptionTrailing` when using a different `$dateFormat` ([#409](https://github.com/owen-it/laravel-auditing/pull/409))
+
+## v6.0.2 (2018-04-02)
+### Changed
+- Minor optimisations
+
+### Fixed
+- Illuminate 5.2/5.3 incompatibility issue ([#401](https://github.com/owen-it/laravel-auditing/issues/401))
+
+## v6.0.1 (2018-02-15)
+### Added
+- Ability to quickly enable/disable auditing ([#387](https://github.com/owen-it/laravel-auditing/issues/387))
+
+## v6.0.0 (2018-02-09)
+### Added
+- Resolver classes & interfaces for _IP Address_, _URL_, _User Agent_ and _User_ ([#369](https://github.com/owen-it/laravel-auditing/issues/369))
+- Laravel 5.6 support
+- Scrutinizer CI integration
+
+### Changed
+- Rename UserResolver method to `resolve()`
+- Updated the configuration file structure to accommodate the new resolvers
+- Refactor the `prune()` method from the Database driver
+- Increase test coverage
+- Updated dev dependencies
+
+### Fixed
+- Hardcode the default AuditDriver value in the Auditor to avoid chicken/egg situation
+
+## v5.0.4 (2018-02-06)
+### Fixed
+- Issue with Auditable resolveUserAgent() method ([#372](https://github.com/owen-it/laravel-auditing/issues/372))
+
 ## v5.0.3 (2017-12-28)
 ### Fixed
 - Lumen installation issue ([#364](https://github.com/owen-it/laravel-auditing/issues/364))

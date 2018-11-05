@@ -1,56 +1,17 @@
 <?php
-/**
- * This file is part of the Laravel Auditing package.
- *
- * @author     Antério Vieira <anteriovieira@gmail.com>
- * @author     Quetzy Garcia  <quetzyg@altek.org>
- * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
- *
- * For the full copyright and license information,
- * please view the LICENSE.md file that was distributed
- * with this source code.
- */
 
 namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use Mockery;
+use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditTest extends AuditingTestCase
 {
-    /**
-     * @group Audit::user
-     * @test
-     */
-    public function itRelatesToUserWithCustomKeys()
-    {
-        $audit = Mockery::mock(Audit::class)
-            ->makePartial();
-
-        $this->app['config']->set('audit.user.model', User::class);
-        $this->app['config']->set('audit.user.primary_key', 'pk_id');
-        $this->app['config']->set('audit.user.foreign_key', 'fk_id');
-
-        $this->assertInstanceOf(User::class, $audit->user()->getRelated());
-
-        // Up to Laravel 5.3, the ownerKey attribute was called otherKey
-        if (method_exists($audit->user(), 'getOtherKey')) {
-            $this->assertSame('pk_id', $audit->user()->getOtherKey());
-        }
-
-        // From Laravel 5.4 onward, the otherKey attribute was renamed to ownerKey
-        if (method_exists($audit->user(), 'getOwnerKey')) {
-            $this->assertSame('pk_id', $audit->user()->getOwnerKey());
-        }
-
-        $this->assertSame('fk_id', $audit->user()->getForeignKey());
-    }
-
     /**
      * @group Audit::resolveData
      * @test
@@ -68,7 +29,7 @@ class AuditTest extends AuditingTestCase
 
         $audit = $article->audits()->first();
 
-        $this->assertCount(14, $resolvedData = $audit->resolveData());
+        $this->assertCount(15, $resolvedData = $audit->resolveData());
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -76,10 +37,11 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => null,
+            'user_type'        => null,
             'new_title'        => 'How To Audit Eloquent Models',
             'new_content'      => 'First step: install the laravel-auditing package.',
             'new_published_at' => $now->toDateTimeString(),
@@ -103,6 +65,8 @@ class AuditTest extends AuditingTestCase
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
 
+        $this->actingAs($user);
+
         $article = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
@@ -112,7 +76,7 @@ class AuditTest extends AuditingTestCase
 
         $audit = $article->audits()->first();
 
-        $this->assertCount(20, $resolvedData = $audit->resolveData());
+        $this->assertCount(21, $resolvedData = $audit->resolveData());
 
         $this->assertArraySubset([
             'audit_id'         => 2,
@@ -120,10 +84,11 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => '1',
+            'user_type'        => User::class,
             'user_is_admin'    => '1',
             'user_first_name'  => 'rick',
             'user_last_name'   => 'Sanchez',
@@ -145,12 +110,14 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTheAppropriateAuditableDataValues()
     {
-        factory(User::class)->create([
+        $user = factory(User::class)->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
+
+        $this->actingAs($user);
 
         $audit = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
@@ -160,7 +127,7 @@ class AuditTest extends AuditingTestCase
         ])->audits()->first();
 
         // Resolve data, making it available to the getDataValue() method
-        $this->assertCount(20, $audit->resolveData());
+        $this->assertCount(21, $audit->resolveData());
 
         // Mutate value
         $this->assertSame('HOW TO AUDIT ELOQUENT MODELS', $audit->getDataValue('new_title'));
@@ -190,7 +157,7 @@ class AuditTest extends AuditingTestCase
     {
         $audit = factory(Article::class)->create()->audits()->first();
 
-        $this->assertCount(9, $metadata = $audit->getMetadata());
+        $this->assertCount(10, $metadata = $audit->getMetadata());
 
         $this->assertArraySubset([
             'audit_id'         => 1,
@@ -198,10 +165,11 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => null,
+            'user_type'        => null,
         ], $metadata, true);
     }
 
@@ -217,9 +185,12 @@ class AuditTest extends AuditingTestCase
             'last_name'  => 'Sanchez',
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
+
+        $this->actingAs($user);
+
         $audit = factory(Article::class)->create()->audits()->first();
 
-        $this->assertCount(15, $metadata = $audit->getMetadata());
+        $this->assertCount(16, $metadata = $audit->getMetadata());
 
         $this->assertArraySubset([
             'audit_id'         => 2,
@@ -227,10 +198,11 @@ class AuditTest extends AuditingTestCase
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony/3.X',
-            'audit_tags'       => [],
+            'audit_tags'       => null,
             'audit_created_at' => $audit->created_at->toDateTimeString(),
             'audit_updated_at' => $audit->updated_at->toDateTimeString(),
             'user_id'          => 1,
+            'user_type'        => User::class,
             'user_is_admin'    => true,
             'user_first_name'  => 'Rick',
             'user_last_name'   => 'Sanchez',
@@ -257,10 +229,11 @@ class AuditTest extends AuditingTestCase
     "audit_url": "console",
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony\/3.X",
-    "audit_tags": [],
+    "audit_tags": null,
     "audit_created_at": "$audit->created_at",
     "audit_updated_at": "$audit->updated_at",
-    "user_id": null
+    "user_id": null,
+    "user_type": null
 }
 EOF;
 
@@ -280,6 +253,8 @@ EOF;
             'email'      => 'rick@wubba-lubba-dub.dub',
         ]);
 
+        $this->actingAs($user);
+
         $audit = factory(Article::class)->create()->audits()->first();
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
@@ -291,10 +266,11 @@ EOF;
     "audit_url": "console",
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony\/3.X",
-    "audit_tags": [],
+    "audit_tags": null,
     "audit_created_at": "$audit->created_at",
     "audit_updated_at": "$audit->updated_at",
     "user_id": 1,
+    "user_type": "OwenIt\\\Auditing\\\Tests\\\Models\\\User",
     "user_is_admin": true,
     "user_first_name": "Rick",
     "user_last_name": "Sanchez",
@@ -381,5 +357,85 @@ EOF;
 EOF;
 
         $this->assertSame($expected, $modified);
+    }
+
+    /**
+     * @group Audit::getModified
+     * @test
+     */
+    public function itReturnsDecodedAuditableAttributes()
+    {
+        $article = new class() extends Article {
+            protected $table = 'articles';
+
+            protected $attributeModifiers = [
+                'title'   => Base64Encoder::class,
+                'content' => LeftRedactor::class,
+            ];
+        };
+
+        // Audit with redacted/encoded attributes
+        $audit = factory(Audit::class)->create([
+            'auditable_type' => get_class($article),
+            'old_values'     => [
+                'title'    => 'SG93IFRvIEF1ZGl0IE1vZGVscw==',
+                'content'  => '##A',
+                'reviewed' => 0,
+            ],
+            'new_values'     => [
+                'title'    => 'SG93IFRvIEF1ZGl0IEVsb3F1ZW50IE1vZGVscw==',
+                'content'  => '############################################kage.',
+                'reviewed' => 1,
+            ],
+        ]);
+
+        $this->assertCount(3, $modified = $audit->getModified());
+
+        $this->assertArraySubset([
+            'title' => [
+                'new' => 'HOW TO AUDIT ELOQUENT MODELS',
+                'old' => 'HOW TO AUDIT MODELS',
+            ],
+            'content' => [
+                'new' => '############################################kage.',
+                'old' => '##A',
+            ],
+            'reviewed' => [
+                'new' => true,
+                'old' => false,
+            ],
+        ], $modified, true);
+    }
+
+    /**
+     * @group Audit::getTags
+     * @test
+     */
+    public function itReturnsTags()
+    {
+        $audit = factory(Audit::class)->create([
+            'tags' => 'foo,bar,baz',
+        ]);
+
+        $this->assertInternalType('array', $audit->getTags());
+        $this->assertArraySubset([
+            'foo',
+            'bar',
+            'baz',
+        ], $audit->getTags(), true);
+    }
+
+    /**
+     * @group Audit::getTags
+     * @test
+     */
+    public function itReturnsEmptyTags()
+    {
+        $audit = factory(Audit::class)->create([
+            'tags' => null,
+        ]);
+
+        $this->assertInternalType('array', $audit->getTags());
+        $this->assertEmpty($audit->getTags());
     }
 }

@@ -1,23 +1,9 @@
 <?php
-/**
- * This file is part of the Laravel Auditing package.
- *
- * @author     Antério Vieira <anteriovieira@gmail.com>
- * @author     Quetzy Garcia  <quetzyg@altek.org>
- * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
- *
- * For the full copyright and license information,
- * please view the LICENSE.md file that was distributed
- * with this source code.
- */
 
 namespace OwenIt\Auditing;
 
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditDriverMakeCommand;
-use OwenIt\Auditing\Console\AuditTableCommand;
-use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Auditor;
 
 class AuditingServiceProvider extends ServiceProvider
@@ -34,13 +20,17 @@ class AuditingServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $config = realpath(__DIR__.'/../config/audit.php');
+        $config = __DIR__.'/../config/audit.php';
+        $migration = __DIR__.'/../database/migrations/audits.stub';
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                $config => base_path('config/audit.php'),
-            ]);
-        }
+        // Lumen lacks a config_path() helper, so we use base_path()
+        $this->publishes([
+            $config => base_path('config/audit.php'),
+        ], 'config');
+
+        $this->publishes([
+            $migration => database_path(sprintf('migrations/%s_create_audits_table.php', date('Y_m_d_His'))),
+        ], 'migrations');
 
         $this->mergeConfigFrom($config, 'audit');
     }
@@ -53,9 +43,7 @@ class AuditingServiceProvider extends ServiceProvider
     public function register()
     {
         $this->commands([
-            AuditTableCommand::class,
             AuditDriverMakeCommand::class,
-            InstallCommand::class,
         ]);
 
         $this->app->singleton(Auditor::class, function ($app) {

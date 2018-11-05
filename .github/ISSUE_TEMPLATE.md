@@ -4,8 +4,8 @@
 | New Feature?      | no|yes
 | Framework         | Laravel|Lumen
 | Framework version | 5.x.y
-| Package version   | 4.x.y
-| PHP version       | 5.x.y|7.x.y
+| Package version   | 6.x.y
+| PHP version       | 7.x.y
 
 #### Actual Behaviour
 
@@ -19,9 +19,13 @@ Describe the behaviour you're expecting.
 
 #### Steps to Reproduce
 
-List all the steps needed to reproduce the issue you're having. Make sure to include code (affected models, configurations),
-any screenshots and/or other resources that may help us understand what's going on.
+List **all the steps** needed to reproduce the issue you're having.
 
+Make sure to **include code** (affected models, configuration, ...).
+
+Pastebins, screenshots and/or other resources that may help us understand what's going on, will also be appreciated.
+
+In a nutshell, help us, help you.
 
 #### Possible Solutions
 

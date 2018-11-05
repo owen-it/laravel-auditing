@@ -1,16 +1,4 @@
 <?php
-/**
- * This file is part of the Laravel Auditing package.
- *
- * @author     Antério Vieira <anteriovieira@gmail.com>
- * @author     Quetzy Garcia  <quetzyg@altek.org>
- * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
- *
- * For the full copyright and license information,
- * please view the LICENSE.md file that was distributed
- * with this source code.
- */
 
 namespace OwenIt\Auditing\Tests;
 
@@ -41,7 +29,7 @@ class AuditableObserverTest extends AuditingTestCase
 
         $this->assertSame($expectedBefore, $observer::$restoring);
 
-        call_user_func([$observer, $eventMethod], $model);
+        $observer->$eventMethod($model);
 
         $this->assertSame($expectedAfter, $observer::$restoring);
     }
@@ -49,7 +37,7 @@ class AuditableObserverTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableObserverTestProvider()
+    public function auditableObserverTestProvider(): array
     {
         return [
             [

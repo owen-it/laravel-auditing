@@ -1,0 +1,47 @@
+checks:
+  php:
+    code_rating: true
+    duplication: true
+
+filter:
+  excluded_paths:
+    - tests/*
+
+build:
+  nodes:
+    php70:
+      environment:
+        php:
+          version: 7.0.20
+      tests:
+        override:
+          - php-scrutinizer-run
+          -
+            command: vendor/bin/phpunit --coverage-clover=coverage70
+            coverage:
+              file: coverage70
+              format: php-clover
+    php71:
+      environment:
+        php:
+          version: 7.1.12
+      tests:
+        override:
+          - php-scrutinizer-run
+          -
+            command: vendor/bin/phpunit --coverage-clover=coverage71
+            coverage:
+              file: coverage71
+              format: php-clover
+    php72:
+      environment:
+        php:
+          version: 7.2.0
+      tests:
+        override:
+          - php-scrutinizer-run
+          -
+            command: vendor/bin/phpunit --coverage-clover=coverage72
+            coverage:
+              file: coverage72
+              format: php-clover

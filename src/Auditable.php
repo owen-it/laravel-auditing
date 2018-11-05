@@ -1,23 +1,16 @@
 <?php
-/**
- * This file is part of the Laravel Auditing package.
- *
- * @author     Antério Vieira <anteriovieira@gmail.com>
- * @author     Quetzy Garcia  <quetzyg@altek.org>
- * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
- *
- * For the full copyright and license information,
- * please view the LICENSE.md file that was distributed
- * with this source code.
- */
 
 namespace OwenIt\Auditing;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Request;
+use OwenIt\Auditing\Contracts\AttributeEncoder;
+use OwenIt\Auditing\Contracts\AttributeRedactor;
+use OwenIt\Auditing\Contracts\IpAddressResolver;
+use OwenIt\Auditing\Contracts\UrlResolver;
+use OwenIt\Auditing\Contracts\UserAgentResolver;
 use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
@@ -37,6 +30,13 @@ trait Auditable
      * @var string
      */
     protected $auditEvent;
+
+    /**
+     * Is auditing disabled?
+     *
+     * @var bool
+     */
+    public static $auditingDisabled = false;
 
     /**
      * Auditable boot logic.
@@ -85,10 +85,10 @@ trait Auditable
 
         // Exclude Timestamps
         if (!$this->getAuditTimestamps()) {
-            array_push($this->excludedAttributes, static::CREATED_AT, static::UPDATED_AT);
+            array_push($this->excludedAttributes, $this->getCreatedAtColumn(), $this->getUpdatedAtColumn());
 
-            if (defined('static::DELETED_AT')) {
-                $this->excludedAttributes[] = static::DELETED_AT;
+            if (in_array(SoftDeletes::class, class_uses_recursive(get_class($this)))) {
+                $this->excludedAttributes[] = $this->getDeletedAtColumn();
             }
         }
 
@@ -97,7 +97,7 @@ trait Auditable
 
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
-            if (is_object($value) && !method_exists($value, '__toString') || is_array($value)) {
+            if (is_array($value) || (is_object($value) && !method_exists($value, '__toString'))) {
                 $this->excludedAttributes[] = $attribute;
             }
         }
@@ -200,7 +200,42 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
+        if (static::$auditingDisabled) {
+            return false;
+        }
+
         return $this->isEventAuditable($this->auditEvent);
+    }
+
+    /**
+     * Modify attribute value.
+     *
+     * @param string $attribute
+     * @param mixed  $value
+     *
+     * @throws AuditingException
+     *
+     * @return mixed
+     */
+    protected function modifyAttributeValue(string $attribute, $value)
+    {
+        $attributeModifiers = $this->getAttributeModifiers();
+
+        if (!array_key_exists($attribute, $attributeModifiers)) {
+            return $value;
+        }
+
+        $attributeModifier = $attributeModifiers[$attribute];
+
+        if (is_subclass_of($attributeModifier, AttributeRedactor::class)) {
+            return call_user_func([$attributeModifier, 'redact'], $value);
+        }
+
+        if (is_subclass_of($attributeModifier, AttributeEncoder::class)) {
+            return call_user_func([$attributeModifier, 'encode'], $value);
+        }
+
+        throw new AuditingException(sprintf('Invalid AttributeModifier implementation: %s', $attributeModifier));
     }
 
     /**
@@ -224,23 +259,36 @@ trait Auditable
 
         $this->resolveAuditExclusions();
 
-        list($old, $new) = call_user_func([$this, $attributeGetter]);
+        list($old, $new) = $this->$attributeGetter();
 
-        $userForeignKey = Config::get('audit.user.foreign_key', 'user_id');
+        if ($this->getAttributeModifiers()) {
+            foreach ($old as $attribute => $value) {
+                $old[$attribute] = $this->modifyAttributeValue($attribute, $value);
+            }
+
+            foreach ($new as $attribute => $value) {
+                $new[$attribute] = $this->modifyAttributeValue($attribute, $value);
+            }
+        }
+
+        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 
         $tags = implode(',', $this->generateTags());
 
+        $user = $this->resolveUser();
+
         return $this->transformAudit([
-            'old_values'     => $old,
-            'new_values'     => $new,
-            'event'          => $this->auditEvent,
-            'auditable_id'   => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $userForeignKey  => $this->resolveUserId(),
-            'url'            => $this->resolveUrl(),
-            'ip_address'     => $this->resolveIpAddress(),
-            'user_agent'     => $this->resolveUserAgent(),
-            'tags'           => empty($tags) ? null : $tags,
+            'old_values'         => $old,
+            'new_values'         => $new,
+            'event'              => $this->auditEvent,
+            'auditable_id'       => $this->getKey(),
+            'auditable_type'     => $this->getMorphClass(),
+            $morphPrefix.'_id'   => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
+            'url'                => $this->resolveUrl(),
+            'ip_address'         => $this->resolveIpAddress(),
+            'user_agent'         => $this->resolveUserAgent(),
+            'tags'               => empty($tags) ? null : $tags,
         ]);
     }
 
@@ -253,55 +301,75 @@ trait Auditable
     }
 
     /**
-     * Resolve the ID of the logged User.
+     * Resolve the User.
      *
      * @throws AuditingException
      *
      * @return mixed|null
      */
-    protected function resolveUserId()
+    protected function resolveUser()
     {
-        $userResolver = Config::get('audit.user.resolver');
+        $userResolver = Config::get('audit.resolver.user');
 
         if (is_subclass_of($userResolver, UserResolver::class)) {
-            return call_user_func([$userResolver, 'resolveId']);
+            return call_user_func([$userResolver, 'resolve']);
         }
 
         throw new AuditingException('Invalid UserResolver implementation');
     }
 
     /**
-     * Resolve the current request URL if available.
+     * Resolve the URL.
+     *
+     * @throws AuditingException
      *
      * @return string
      */
     protected function resolveUrl(): string
     {
-        if (App::runningInConsole()) {
-            return 'console';
+        $urlResolver = Config::get('audit.resolver.url');
+
+        if (is_subclass_of($urlResolver, UrlResolver::class)) {
+            return call_user_func([$urlResolver, 'resolve']);
         }
 
-        return Request::fullUrl();
+        throw new AuditingException('Invalid UrlResolver implementation');
     }
 
     /**
-     * Resolve the current IP address.
+     * Resolve the IP Address.
+     *
+     * @throws AuditingException
      *
      * @return string
      */
     protected function resolveIpAddress(): string
     {
-        return Request::ip();
+        $ipAddressResolver = Config::get('audit.resolver.ip_address');
+
+        if (is_subclass_of($ipAddressResolver, IpAddressResolver::class)) {
+            return call_user_func([$ipAddressResolver, 'resolve']);
+        }
+
+        throw new AuditingException('Invalid IpAddressResolver implementation');
     }
 
     /**
-     * Resolve the current User Agent.
+     * Resolve the User Agent.
      *
-     * @return string
+     * @throws AuditingException
+     *
+     * @return string|null
      */
-    protected function resolveUserAgent(): string
+    protected function resolveUserAgent()
     {
-        return Request::header('User-Agent');
+        $userAgentResolver = Config::get('audit.resolver.user_agent');
+
+        if (is_subclass_of($userAgentResolver, UserAgentResolver::class)) {
+            return call_user_func([$userAgentResolver, 'resolve']);
+        }
+
+        throw new AuditingException('Invalid UserAgentResolver implementation');
     }
 
     /**
@@ -314,7 +382,7 @@ trait Auditable
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->excludedAttributes)) {
+        if (in_array($attribute, $this->excludedAttributes, true)) {
             return false;
         }
 
@@ -322,7 +390,7 @@ trait Auditable
         // listed or when the include array is empty
         $include = $this->getAuditInclude();
 
-        return in_array($attribute, $include) || empty($include);
+        return empty($include) || in_array($attribute, $include, true);
     }
 
     /**
@@ -386,6 +454,26 @@ trait Auditable
             'deleted',
             'restored',
         ]);
+    }
+
+    /**
+     * Disable Auditing.
+     *
+     * @return void
+     */
+    public static function disableAuditing()
+    {
+        static::$auditingDisabled = true;
+    }
+
+    /**
+     * Enable Auditing.
+     *
+     * @return void
+     */
+    public static function enableAuditing()
+    {
+        static::$auditingDisabled = false;
     }
 
     /**
@@ -453,6 +541,14 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
+    public function getAttributeModifiers(): array
+    {
+        return $this->attributeModifiers ?? [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function generateTags(): array
     {
         return [];
@@ -479,6 +575,13 @@ trait Auditable
                 $this->getKey(),
                 $audit->auditable_id
             ));
+        }
+
+        // Redacted data should not be used when transitioning states
+        foreach ($this->getAttributeModifiers() as $attribute => $modifier) {
+            if (is_subclass_of($modifier, AttributeRedactor::class)) {
+                throw new AuditableTransitionException('Cannot transition states when an AttributeRedactor is set');
+            }
         }
 
         // The attribute compatibility between the Audit and the Auditable model must be met

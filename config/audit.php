@@ -1,22 +1,10 @@
 <?php
-/**
- * This file is part of the Laravel Auditing package.
- *
- * @author     Antério Vieira <anteriovieira@gmail.com>
- * @author     Quetzy Garcia  <quetzyg@altek.org>
- * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
- *
- * For the full copyright and license information,
- * please view the LICENSE.md file that was distributed
- * with this source code.
- */
 
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit implementation
+    | Audit Implementation
     |--------------------------------------------------------------------------
     |
     | Define which Audit model implementation should be used.
@@ -27,19 +15,34 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | User Keys, Model & Resolver
+    | User Morph prefix & Guards
     |--------------------------------------------------------------------------
     |
-    | Define the User primary and foreign keys, Eloquent model and ID resolver
-    | class.
+    | Define the morph prefix and authentication guards for the User resolver.
     |
     */
 
     'user' => [
-        'primary_key' => 'id',
-        'foreign_key' => 'user_id',
-        'model'       => App\User::class,
-        'resolver'    => App\User::class,
+        'morph_prefix' => 'user',
+        'guards'       => [
+            'web',
+            'api',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Resolvers
+    |--------------------------------------------------------------------------
+    |
+    | Define the User, IP Address, User Agent and URL resolver implementations.
+    |
+    */
+    'resolver' => [
+        'user'       => OwenIt\Auditing\Resolvers\UserResolver::class,
+        'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
+        'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
+        'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
     ],
 
     /*
@@ -60,7 +63,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Strict mode
+    | Strict Mode
     |--------------------------------------------------------------------------
     |
     | Enable the strict mode when auditing?
@@ -71,7 +74,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit timestamps
+    | Audit Timestamps
     |--------------------------------------------------------------------------
     |
     | Should the created_at, updated_at and deleted_at timestamps be audited?
@@ -82,7 +85,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit threshold
+    | Audit Threshold
     |--------------------------------------------------------------------------
     |
     | Specify a threshold for the amount of Audit records a model can have.
@@ -105,7 +108,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit Drivers
+    | Audit Driver Configurations
     |--------------------------------------------------------------------------
     |
     | Available audit drivers and respective configurations.
@@ -121,10 +124,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Audit Console?
+    | Audit Console
     |--------------------------------------------------------------------------
     |
-    | Whether we should audit console events (eg. php artisan db:seed).
+    | Whether console events should be audited (eg. php artisan db:seed).
     |
     */
 

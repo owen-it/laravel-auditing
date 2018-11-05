@@ -1,16 +1,5 @@
 <?php
-/**
- * This file is part of the Laravel Auditing package.
- *
- * @author     Antério Vieira <anteriovieira@gmail.com>
- * @author     Quetzy Garcia  <quetzyg@altek.org>
- * @author     Raphael França <raphaelfrancabsb@gmail.com>
- * @copyright  2015-2017
- *
- * For the full copyright and license information,
- * please view the LICENSE.md file that was distributed
- * with this source code.
- */
+
 use Faker\Generator as Faker;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Models\Article;
@@ -28,6 +17,7 @@ $factory->define(Audit::class, function (Faker $faker) {
         'user_id' => function () {
             return factory(User::class)->create()->id;
         },
+        'user_type'    => User::class,
         'event'        => 'updated',
         'auditable_id' => function () {
             return factory(Article::class)->create()->id;
