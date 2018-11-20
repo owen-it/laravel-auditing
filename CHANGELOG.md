@@ -1,3 +1,7 @@
+## v8.0.4 (2018-11-20)
+### Changed
+- Make the `auditable()` and `user()` method return types loose
+
 ## v8.0.3 (2018-10-25)
 ### Fixed
 - Cast `auditable_id` property by default to avoid `transitionTo()` errors ([#432](https://github.com/owen-it/laravel-auditing/issues/432))
