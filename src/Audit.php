@@ -4,7 +4,6 @@ namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 
@@ -34,7 +33,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function auditable(): MorphTo
+    public function auditable()
     {
         return $this->morphTo();
     }
@@ -42,7 +41,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function user(): MorphTo
+    public function user()
     {
         return $this->morphTo();
     }
