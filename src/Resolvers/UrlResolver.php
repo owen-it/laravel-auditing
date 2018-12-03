@@ -16,6 +16,6 @@ class UrlResolver implements \OwenIt\Auditing\Contracts\UrlResolver
             return 'console';
         }
 
-        return Request::fullUrlWithQuery([]);
+        return Request::fullUrl();
     }
 }
