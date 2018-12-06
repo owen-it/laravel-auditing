@@ -9,7 +9,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
 
-
 class AuditingServiceProvider extends ServiceProvider
 {
     /**
@@ -31,11 +30,11 @@ class AuditingServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 $config => base_path('config/audit.php'),
-            ],'config');
+            ], 'config');
 
             $this->publishes([
                 $migration => database_path('migrations/'.$this->deprecatedFileName()),
-            ],'migrations');
+            ], 'migrations');
         }
 
         $this->mergeConfigFrom($config, 'audit');
