@@ -28,14 +28,14 @@ class AuditingServiceProvider extends ServiceProvider
         $migration = __DIR__.'/../database/migrations/audits.stub';
 
         // Lumen lacks a config_path() helper, so we use base_path()
-        if($this->app->runningInConsole()) {
-            $this->publishes( [
-                $config => base_path( 'config/audit.php' ),
-            ], 'config' );
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                $config => base_path('config/audit.php'),
+            ],'config');
 
-            $this->publishes( [
-                $migration => database_path( 'migrations/' . $this->deprecatedFileName() ),
-            ], 'migrations' );
+            $this->publishes([
+                $migration => database_path('migrations/'.$this->deprecatedFileName()),
+            ],'migrations');
         }
 
         $this->mergeConfigFrom($config, 'audit');
@@ -44,6 +44,7 @@ class AuditingServiceProvider extends ServiceProvider
     /**
      * Check to see if package has been used previously.
      * If it has, use that file name, if not, use a file name that timestamps the day of this pull request.
+     *
      * @return string
      */
     protected function deprecatedFileName()
