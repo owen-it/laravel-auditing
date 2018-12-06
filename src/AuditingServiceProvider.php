@@ -29,7 +29,6 @@ class AuditingServiceProvider extends ServiceProvider
 
         // Lumen lacks a config_path() helper, so we use base_path()
         if($this->app->runningInConsole()) {
-
             $this->publishes( [
                 $config => base_path( 'config/audit.php' ),
             ], 'config' );
@@ -37,7 +36,6 @@ class AuditingServiceProvider extends ServiceProvider
             $this->publishes( [
                 $migration => database_path( 'migrations/' . $this->deprecatedFileName() ),
             ], 'migrations' );
-
         }
 
         $this->mergeConfigFrom($config, 'audit');
@@ -45,14 +43,14 @@ class AuditingServiceProvider extends ServiceProvider
 
     /**
      * Check to see if package has been used previously.
-     * If it has, use that file name, if not, use a file name that timestamps the day of this pull request
+     * If it has, use that file name, if not, use a file name that timestamps the day of this pull request.
      * @return string
      */
     protected function deprecatedFileName()
     {
         $iterator = iterator_to_array(new RecursiveIteratorIterator(
             new RecursiveRegexIterator(
-                new RecursiveDirectoryIterator(database_path('migrations'), RecursiveDirectoryIterator::KEY_AS_PATHNAME|RecursiveDirectoryIterator::SKIP_DOTS),
+                new RecursiveDirectoryIterator(database_path('migrations'), RecursiveDirectoryIterator::KEY_AS_PATHNAME | RecursiveDirectoryIterator::SKIP_DOTS),
                 '/(\d{4})_(\d{2})_(\d{2})_(\d{6})_create_audits_table\.php/i', RecursiveRegexIterator::MATCH
             ),
             RecursiveIteratorIterator::SELF_FIRST
