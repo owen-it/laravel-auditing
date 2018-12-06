@@ -28,13 +28,17 @@ class AuditingServiceProvider extends ServiceProvider
         $migration = __DIR__.'/../database/migrations/audits.stub';
 
         // Lumen lacks a config_path() helper, so we use base_path()
-        $this->publishes([
-            $config => base_path('config/audit.php'),
-        ], 'config');
+        if($this->app->runningInConsole()) {
 
-        $this->publishes([
-            $migration => database_path('migrations/'.$this->deprecatedFileName()),
-        ], 'migrations');
+            $this->publishes( [
+                $config => base_path( 'config/audit.php' ),
+            ], 'config' );
+
+            $this->publishes( [
+                $migration => database_path( 'migrations/' . $this->deprecatedFileName() ),
+            ], 'migrations' );
+
+        }
 
         $this->mergeConfigFrom($config, 'audit');
     }
@@ -56,7 +60,6 @@ class AuditingServiceProvider extends ServiceProvider
 
         return count($iterator) ? reset($iterator)->getFilename() : '2018_11_22_000000_create_audits_table.php';
     }
-
 
     /**
      * Register the service provider.
