@@ -5,6 +5,7 @@ namespace OwenIt\Auditing\Tests;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
@@ -21,7 +22,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -395,7 +396,7 @@ class AuditableTest extends AuditingTestCase
             'user_type'      => null,
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony/3.X',
+            'user_agent'     => 'Symfony',
             'tags'           => null,
         ], $auditData, true);
     }
@@ -454,7 +455,7 @@ class AuditableTest extends AuditingTestCase
             'user_type'      => $type,
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony/3.X',
+            'user_agent'     => 'Symfony',
             'tags'           => null,
         ], $auditData, true);
     }
@@ -534,7 +535,7 @@ class AuditableTest extends AuditingTestCase
             'user_type'      => null,
             'url'            => 'console',
             'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony/3.X',
+            'user_agent'     => 'Symfony',
             'tags'           => null,
         ], $auditData, true);
     }
@@ -625,7 +626,7 @@ class AuditableTest extends AuditingTestCase
 
             public function transformAudit(array $data): array
             {
-                $data['new_values']['slug'] = str_slug($data['new_values']['title']);
+                $data['new_values']['slug'] = Str::slug($data['new_values']['title']);
 
                 return $data;
             }

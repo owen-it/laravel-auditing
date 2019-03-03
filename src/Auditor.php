@@ -70,7 +70,7 @@ class Auditor extends Manager implements Contracts\Auditor
             $driver->prune($model);
         }
 
-        $this->app->make('events')->fire(
+        $this->app->make('events')->dispatch(
             new Audited($model, $driver, $audit)
         );
     }
