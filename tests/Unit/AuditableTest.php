@@ -981,9 +981,9 @@ class AuditableTest extends AuditingTestCase
 
         // Key depends on type
         if ($model->getKeyType() == 'string') {
-            $key = (string)$model->id;
+            $key = (string) $model->id;
         } else {
-            $key = (int)$model->id;
+            $key = (int) $model->id;
         }
 
         $audit = factory(Audit::class)->create([
