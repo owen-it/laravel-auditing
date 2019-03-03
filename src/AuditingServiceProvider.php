@@ -2,17 +2,13 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditDriverMakeCommand;
 use OwenIt\Auditing\Contracts\Auditor;
 
-class AuditingServiceProvider extends ServiceProvider
+class AuditingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $defer = true;
-
     /**
      * Bootstrap the service provider.
      *
