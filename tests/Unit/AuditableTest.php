@@ -978,9 +978,16 @@ class AuditableTest extends AuditingTestCase
     {
         $model = factory(Article::class)->create();
 
+        // Key depends on type
+        if ($model->getKeyType() == 'string') {
+            $key = (string)$model->id;
+        } else {
+            $key = (int)$model->id;
+        }
+
         $audit = factory(Audit::class)->create([
             'auditable_type' => Article::class,
-            'auditable_id'   => (string) $model->id,
+            'auditable_id'   => $key,
         ]);
 
         $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit));
