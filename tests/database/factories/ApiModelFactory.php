@@ -1,5 +1,6 @@
 <?php
 
+use Ramsey\Uuid\Uuid;
 use Faker\Generator as Faker;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 
@@ -12,7 +13,7 @@ use OwenIt\Auditing\Tests\Models\ApiModel;
 
 $factory->define(ApiModel::class, function (Faker $faker) {
     return [
-        'api_model_id' => '8a7c2336-705a-41ad-9231-9199b4a64269',
+        'api_model_id' => Uuid::uuid4(),
         'content'      => $faker->unique()->paragraph(6),
         'published_at' => null,
     ];
