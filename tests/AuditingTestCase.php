@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing\Tests;
 
-use Orchestra\Database\ConsoleServiceProvider;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\AuditingServiceProvider;
 use OwenIt\Auditing\Resolvers\IpAddressResolver;
@@ -42,7 +41,7 @@ class AuditingTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -57,7 +56,6 @@ class AuditingTestCase extends TestCase
     {
         return [
             AuditingServiceProvider::class,
-            ConsoleServiceProvider::class,
         ];
     }
 }
