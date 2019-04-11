@@ -283,8 +283,8 @@ trait Auditable
             'event'              => $this->auditEvent,
             'auditable_id'       => $this->getKey(),
             'auditable_type'     => $this->getMorphClass(),
-            $morphPrefix.'_id'   => $user ? $user->getAuthIdentifier() : null,
-            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
+            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
             'url'                => $this->resolveUrl(),
             'ip_address'         => $this->resolveIpAddress(),
             'user_agent'         => $this->resolveUserAgent(),
@@ -487,7 +487,7 @@ trait Auditable
             return Config::get('audit.console', false);
         }
 
-        return true;
+        return Config::get('audit.enabled', true);
     }
 
     /**

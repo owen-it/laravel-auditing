@@ -2,6 +2,8 @@
 
 return [
 
+    'enabled' => env('AUDITING_ENABLED', true),
+
     /*
     |--------------------------------------------------------------------------
     | Audit Implementation
