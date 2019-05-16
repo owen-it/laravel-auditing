@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing\Resolvers;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Request;
 
 class UserAgentResolver implements \OwenIt\Auditing\Contracts\UserAgentResolver
@@ -11,6 +12,6 @@ class UserAgentResolver implements \OwenIt\Auditing\Contracts\UserAgentResolver
      */
     public static function resolve()
     {
-        return Request::header('User-Agent');
+        return Str::limit(Request::header('User-Agent'), 255);
     }
 }
