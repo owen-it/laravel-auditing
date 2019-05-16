@@ -2,8 +2,8 @@
 
 namespace OwenIt\Auditing\Resolvers;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
 class UserAgentResolver implements \OwenIt\Auditing\Contracts\UserAgentResolver
 {
