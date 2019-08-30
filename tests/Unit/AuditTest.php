@@ -417,7 +417,7 @@ EOF;
             'tags' => 'foo,bar,baz',
         ]);
 
-        $this->assertInternalType('array', $audit->getTags());
+        $this->assertIsArray($audit->getTags());
         $this->assertArraySubset([
             'foo',
             'bar',
@@ -435,7 +435,7 @@ EOF;
             'tags' => null,
         ]);
 
-        $this->assertInternalType('array', $audit->getTags());
+        $this->assertIsArray($audit->getTags());
         $this->assertEmpty($audit->getTags());
     }
 }

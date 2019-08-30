@@ -5,6 +5,7 @@ namespace OwenIt\Auditing;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 
 trait Audit
@@ -146,12 +147,12 @@ trait Audit
         $value = $this->data[$key];
 
         // User value
-        if ($this->user && starts_with($key, 'user_')) {
+        if ($this->user && Str::startsWith($key, 'user_')) {
             return $this->getFormattedValue($this->user, substr($key, 5), $value);
         }
 
         // Auditable value
-        if ($this->auditable && starts_with($key, ['new_', 'old_'])) {
+        if ($this->auditable && Str::startsWith($key, ['new_', 'old_'])) {
             $attribute = substr($key, 4);
 
             return $this->getFormattedValue(

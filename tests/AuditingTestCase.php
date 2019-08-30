@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing\Tests;
 
+use Illuminate\Foundation\Testing\Assert;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\AuditingServiceProvider;
 use OwenIt\Auditing\Resolvers\IpAddressResolver;
@@ -57,5 +58,13 @@ class AuditingTestCase extends TestCase
         return [
             AuditingServiceProvider::class,
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function assertArraySubset($subset, $array, bool $checkForObjectIdentity = false, string $message = ''): void
+    {
+        Assert::assertArraySubset($subset, $array, $checkForObjectIdentity, $message);
     }
 }
