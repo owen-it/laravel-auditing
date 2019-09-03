@@ -8,7 +8,8 @@ filter:
     - tests/*
 
 build:
-  php72:
+  nodes:
+    php72:
       environment:
         php:
           version: 7.2.0
