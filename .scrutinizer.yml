@@ -9,18 +9,6 @@ filter:
 
 build:
   nodes:
-    php71:
-      environment:
-        php:
-          version: 7.1.3
-      tests:
-        override:
-          - php-scrutinizer-run
-          -
-            command: vendor/bin/phpunit --coverage-clover=coverage71
-            coverage:
-              file: coverage71
-              format: php-clover
     php72:
       environment:
         php:
