@@ -493,8 +493,7 @@ trait Auditable
         if (App::runningInConsole()) {
             return Config::get('audit.console', false);
         }
-
-        return true;
+        return Config::get('audit.enabled', true);
     }
 
     /**
