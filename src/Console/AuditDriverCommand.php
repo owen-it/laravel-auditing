@@ -4,12 +4,12 @@ namespace OwenIt\Auditing\Console;
 
 use Illuminate\Console\GeneratorCommand;
 
-class AuditDriverMakeCommand extends GeneratorCommand
+class AuditDriverCommand extends GeneratorCommand
 {
     /**
      * {@inheritdoc}
      */
-    protected $name = 'make:audit-driver';
+    protected $name = 'auditing:audit-driver';
 
     /**
      * {@inheritdoc}

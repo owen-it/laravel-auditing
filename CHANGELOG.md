@@ -1,3 +1,7 @@
+## v9.0.0 (2019-03-02)
+### Added
+- Illuminate 5.8 support
+
 ## v8.0.4 (2018-11-20)
 ### Changed
 - Make the `auditable()` and `user()` method return types loose
