@@ -13,6 +13,7 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
+use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 use ReflectionClass;
@@ -995,9 +996,16 @@ class AuditableTest extends AuditingTestCase
     {
         $model = factory(Article::class)->create();
 
+        // Key depends on type
+        if ($model->getKeyType() == 'string') {
+            $key = (string) $model->id;
+        } else {
+            $key = (int) $model->id;
+        }
+
         $audit = factory(Audit::class)->create([
             'auditable_type' => Article::class,
-            'auditable_id'   => (string) $model->id,
+            'auditable_id'   => $key,
         ]);
 
         $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit));
@@ -1108,6 +1116,24 @@ class AuditableTest extends AuditingTestCase
         // Transition with new values
         $this->assertInstanceOf(Auditable::class, $models[1]->transitionTo($audits[1]));
         $this->assertSame($newExpectation, $models[1]->getDirty());
+    }
+
+    /**
+     * @test
+     */
+    public function itWorksWithStringKeyModels()
+    {
+        $model = factory(ApiModel::class)->create();
+        $model->save();
+        $model->refresh();
+
+        $this->assertCount(1, $model->audits);
+
+        $model->content = 'Something else';
+        $model->save();
+        $model->refresh();
+
+        $this->assertCount(2, $model->audits);
     }
 
     /**
