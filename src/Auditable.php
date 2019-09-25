@@ -550,9 +550,9 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function generateTags(): array
+    public function generateTags(array $tags = []): array
     {
-        return [];
+        return $tags;
     }
 
     /**
