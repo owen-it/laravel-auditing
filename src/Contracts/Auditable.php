@@ -113,9 +113,11 @@ interface Auditable
     /**
      * Generate an array with the model tags.
      *
+     * @param array $tags
+     * 
      * @return array
      */
-    public function generateTags(): array;
+    public function generateTags(array $tags = []): array;
 
     /**
      * Transition to another model state from an Audit.
