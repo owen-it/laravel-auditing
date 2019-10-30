@@ -43,7 +43,7 @@ class InstallCommand extends Command
      */
     protected function registerAuditingServiceProvider()
     {
-        $namespace = str_replace_last('\\', '', $this->getAppNamespace());
+        $namespace = Str::replace_last('\\', '', $this->getAppNamespace());
 
         $appConfig = file_get_contents(config_path('app.php'));
 
