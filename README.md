@@ -17,7 +17,7 @@ This package will help you understand changes in your Eloquent models, by provid
 Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
 
 ## Official Documentation
-The package documentation can be found on the [official website](http://laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
+The package documentation can be found on the [official website](http://www.laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
 
 ## Version Information
  Version   | Illuminate    | Status                  | PHP Version
