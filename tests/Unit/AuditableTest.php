@@ -4,6 +4,7 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -115,7 +116,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'created',
             'updated',
             'deleted',
@@ -136,7 +137,7 @@ class AuditableTest extends AuditingTestCase
             'archived',
         ];
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'published' => 'getPublishedEventAttributes',
             'archived',
         ], $model->getAuditEvents(), true);
@@ -155,7 +156,7 @@ class AuditableTest extends AuditingTestCase
 
         $model = new Article();
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'published' => 'getPublishedEventAttributes',
             'archived',
         ], $model->getAuditEvents(), true);
@@ -399,7 +400,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'old_values' => [],
             'new_values' => [
                 'title'        => 'How To Audit Eloquent Models',
@@ -458,7 +459,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'old_values' => [],
             'new_values' => [
                 'title'        => 'How To Audit Eloquent Models',
@@ -540,7 +541,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'old_values' => [],
             'new_values' => [
                 'title'   => 'How To Audit Eloquent Models',
@@ -610,7 +611,7 @@ class AuditableTest extends AuditingTestCase
             'reviewed' => Base64Encoder::class,
         ];
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'old_values' => [
                 'title'        => 'Ho#################',
                 'content'      => '##A',
@@ -654,7 +655,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'new_values' => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => 'First step: install the laravel-auditing package.',
@@ -673,7 +674,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertArraySubset([], $model->getAuditInclude(), true);
+        Assert::assertArraySubset([], $model->getAuditInclude(), true);
     }
 
     /**
@@ -689,7 +690,7 @@ class AuditableTest extends AuditingTestCase
             'content',
         ];
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'title',
             'content',
         ], $model->getAuditInclude(), true);
@@ -703,7 +704,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertArraySubset([], $model->getAuditExclude(), true);
+        Assert::assertArraySubset([], $model->getAuditExclude(), true);
     }
 
     /**
@@ -718,7 +719,7 @@ class AuditableTest extends AuditingTestCase
             'published_at',
         ];
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'published_at',
         ], $model->getAuditExclude(), true);
     }
@@ -879,7 +880,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertArraySubset([], $model->generateTags(), true);
+        Assert::assertArraySubset([], $model->generateTags(), true);
     }
 
     /**
@@ -898,7 +899,7 @@ class AuditableTest extends AuditingTestCase
             }
         };
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'foo',
             'bar',
         ], $model->generateTags(), true);
@@ -1061,7 +1062,7 @@ class AuditableTest extends AuditingTestCase
                 $e->getMessage()
             );
 
-            $this->assertArraySubset([
+            Assert::assertArraySubset([
                 'subject',
                 'text',
             ], $e->getIncompatibilities(), true);
