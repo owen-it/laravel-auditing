@@ -3,6 +3,7 @@
 namespace OwenIt\Auditing\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Str;
 
 class InstallCommand extends Command
@@ -20,7 +21,7 @@ class InstallCommand extends Command
     /**
      * {@inheritdoc}
      */
-    public function handle()
+    public function handle(Application $app)
     {
         $this->comment('Publishing Auditing Configuration...');
         $this->callSilent('vendor:publish', ['--tag' => 'config']);
@@ -28,7 +29,7 @@ class InstallCommand extends Command
         $this->comment('Publishing Auditing Migrations...');
         $this->callSilent('vendor:publish', ['--tag' => 'migrations']);
 
-        $this->registerAuditingServiceProvider();
+        $this->registerAuditingServiceProvider($app);
 
         $this->info('Auditing installed successfully.');
     }
@@ -36,11 +37,12 @@ class InstallCommand extends Command
     /**
      * Register the Auditing service provider in the application configuration file.
      *
+     * @param Application $app
      * @return void
      */
-    protected function registerAuditingServiceProvider()
+    protected function registerAuditingServiceProvider(Application $app)
     {
-        $namespace = 'App';
+        $namespace = Str::replaceLast('\\', '', $app->getNamespace());
 
         $appConfig = file_get_contents(config_path('app.php'));
 
