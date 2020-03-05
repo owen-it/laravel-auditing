@@ -4,7 +4,6 @@ risky: true
 
 enabled:
   - php_unit_strict
-  - return_type_declaration
 
 disabled:
   - self_accessor
