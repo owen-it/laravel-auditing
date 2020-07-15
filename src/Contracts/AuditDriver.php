@@ -11,7 +11,7 @@ interface AuditDriver
      *
      * @return \OwenIt\Auditing\Contracts\Audit
      */
-    public function audit(Auditable $model): Audit;
+    public function audit(Auditable $model): ?Audit;
 
     /**
      * Remove older audits that go over the threshold.

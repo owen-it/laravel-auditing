@@ -66,9 +66,12 @@ class Auditor extends Manager implements Contracts\Auditor
             return;
         }
 
-        if ($audit = $driver->audit($model)) {
-            $driver->prune($model);
+        $audit = $driver->audit($model);
+        if (!$audit) {
+            return;
         }
+
+        $driver->prune($model);
 
         $this->app->make('events')->dispatch(
             new Audited($model, $driver, $audit)
