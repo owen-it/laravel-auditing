@@ -16,6 +16,15 @@ class Database implements AuditDriver
     {
         $implementation = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
 
+        // If we want to avoid storing Audits with empty old_values & new_values, return null here.
+        if (!Config::get('audit.empty_values')) {
+            $attributeGetter = $model->resolveAttributeGetter($model->getAuditEvent());
+            list($old, $new) = $model->$attributeGetter();
+            if (empty($old) && empty($new)) {
+                return null;
+            }
+        }
+
         return call_user_func([$implementation, 'create'], $model->toAudit());
     }
 

@@ -399,4 +399,52 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(2, Audit::count());
         $this->assertSame(3, Article::count());
     }
+
+    /**
+     * @test
+     */
+    public function itWillNotAuditModelsWhenValuesAreEmpty()
+    {
+        $this->app['config']->set('audit.empty_values', false);
+
+        Article::disableAuditing();
+        $model = factory(Article::class)->create([
+            'reviewed' => 0,
+        ]);
+        Article::enableAuditing();
+
+        $model->setHidden([
+            'reviewed',
+        ]);
+
+        $model->reviewed = 1;
+        $model->save();
+
+        $this->assertSame(1, Article::query()->count());
+        $this->assertSame(0, Audit::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditModelsWhenValuesAreEmpty()
+    {
+        $this->app['config']->set('audit.empty_values', true);
+
+        Article::disableAuditing();
+        $model = factory(Article::class)->create([
+            'reviewed' => 0,
+        ]);
+        Article::enableAuditing();
+
+        $model->setHidden([
+            'reviewed',
+        ]);
+
+        $model->reviewed = 1;
+        $model->save();
+
+        $this->assertSame(1, Article::query()->count());
+        $this->assertSame(0, Audit::query()->count());
+    }
 }
