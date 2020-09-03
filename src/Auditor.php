@@ -24,22 +24,6 @@ class Auditor extends Manager implements Contracts\Auditor
     /**
      * {@inheritdoc}
      */
-    protected function createDriver($driver)
-    {
-        try {
-            return parent::createDriver($driver);
-        } catch (InvalidArgumentException $exception) {
-            if (class_exists($driver)) {
-                return $this->app->make($driver);
-            }
-
-            throw $exception;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function auditDriver(Auditable $model): AuditDriver
     {
         $driver = $this->driver($model->getAuditDriver());
@@ -70,9 +54,25 @@ class Auditor extends Manager implements Contracts\Auditor
             $driver->prune($model);
         }
 
-        $this->app->make('events')->dispatch(
+        $this->container->make('events')->dispatch(
             new Audited($model, $driver, $audit)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createDriver($driver)
+    {
+        try {
+            return parent::createDriver($driver);
+        } catch (InvalidArgumentException $exception) {
+            if (class_exists($driver)) {
+                return $this->container->make($driver);
+            }
+
+            throw $exception;
+        }
     }
 
     /**
@@ -82,7 +82,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function createDatabaseDriver(): Database
     {
-        return $this->app->make(Database::class);
+        return $this->container->make(Database::class);
     }
 
     /**
@@ -95,7 +95,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
-        return $this->app->make('events')->until(
+        return $this->container->make('events')->until(
             new Auditing($model, $driver)
         ) !== false;
     }

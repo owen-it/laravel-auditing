@@ -1,13 +1,14 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Foundation\Testing\Assert;
+use Illuminate\Testing\Assert;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -39,8 +40,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $this->serializeDate($audit->created_at),
+            'audit_updated_at' => $this->serializeDate($audit->updated_at),
             'user_id'          => null,
             'user_type'        => null,
             'new_title'        => 'How To Audit Eloquent Models',
@@ -86,8 +87,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $this->serializeDate($audit->created_at),
+            'audit_updated_at' => $this->serializeDate($audit->updated_at),
             'user_id'          => '1',
             'user_type'        => User::class,
             'user_is_admin'    => '1',
@@ -167,8 +168,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $this->serializeDate($audit->created_at),
+            'audit_updated_at' => $this->serializeDate($audit->updated_at),
             'user_id'          => null,
             'user_type'        => null,
         ], $metadata, true);
@@ -200,16 +201,16 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $this->serializeDate($audit->created_at),
+            'audit_updated_at' => $this->serializeDate($audit->updated_at),
             'user_id'          => 1,
             'user_type'        => User::class,
             'user_is_admin'    => true,
             'user_first_name'  => 'Rick',
             'user_last_name'   => 'Sanchez',
             'user_email'       => 'rick@wubba-lubba-dub.dub',
-            'user_created_at'  => $user->created_at->toDateTimeString(),
-            'user_updated_at'  => $user->updated_at->toDateTimeString(),
+            'user_created_at'  => $this->serializeDate($user->created_at),
+            'user_updated_at'  => $this->serializeDate($user->updated_at),
         ], $metadata, true);
     }
 
@@ -231,8 +232,8 @@ class AuditTest extends AuditingTestCase
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony",
     "audit_tags": null,
-    "audit_created_at": "$audit->created_at",
-    "audit_updated_at": "$audit->updated_at",
+    "audit_created_at": "{$this->serializeDate($audit->created_at)}",
+    "audit_updated_at": "{$this->serializeDate($audit->updated_at)}",
     "user_id": null,
     "user_type": null
 }
@@ -268,16 +269,16 @@ EOF;
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony",
     "audit_tags": null,
-    "audit_created_at": "$audit->created_at",
-    "audit_updated_at": "$audit->updated_at",
+    "audit_created_at": "{$this->serializeDate($audit->created_at)}",
+    "audit_updated_at": "{$this->serializeDate($audit->updated_at)}",
     "user_id": 1,
     "user_type": "OwenIt\\\Auditing\\\Tests\\\Models\\\User",
     "user_is_admin": true,
     "user_first_name": "Rick",
     "user_last_name": "Sanchez",
     "user_email": "rick@wubba-lubba-dub.dub",
-    "user_created_at": "$user->created_at",
-    "user_updated_at": "$user->updated_at"
+    "user_created_at": "{$this->serializeDate($user->created_at)}",
+    "user_updated_at": "{$this->serializeDate($user->updated_at)}"
 }
 EOF;
 
@@ -309,7 +310,7 @@ EOF;
                 'new' => 'First step: install the laravel-auditing package.',
             ],
             'published_at' => [
-                'new' => $now->toDateTimeString(),
+                'new' => $this->serializeDate($now),
             ],
             'reviewed' => [
                 'new' => true,
@@ -346,7 +347,7 @@ EOF;
         "new": "First step: install the laravel-auditing package."
     },
     "published_at": {
-        "new": "$now"
+        "new": "{$this->serializeDate($now)}"
     },
     "reviewed": {
         "new": true
@@ -383,7 +384,7 @@ EOF;
                 'content'  => '##A',
                 'reviewed' => 0,
             ],
-            'new_values'     => [
+            'new_values' => [
                 'title'    => 'SG93IFRvIEF1ZGl0IEVsb3F1ZW50IE1vZGVscw==',
                 'content'  => '############################################kage.',
                 'reviewed' => 1,
@@ -438,5 +439,10 @@ EOF;
 
         $this->assertIsArray($audit->getTags());
         $this->assertEmpty($audit->getTags());
+    }
+
+    private function serializeDate(Carbon $date)
+    {
+        return Carbon::parse($date->toDateTimeString())->toJSON();
     }
 }

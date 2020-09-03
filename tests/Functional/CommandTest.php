@@ -17,8 +17,10 @@ class CommandTest extends AuditingTestCase
         );
 
         $this->assertInstanceOf(
-            \Illuminate\Foundation\Testing\PendingCommand::class,
-            $this->artisan('auditing:audit-driver', [
+            \Illuminate\Testing\PendingCommand::class,
+            $this->artisan(
+                'auditing:audit-driver',
+                [
                     'name' => 'TestDriver',
                 ]
             )

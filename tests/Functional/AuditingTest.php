@@ -3,9 +3,9 @@
 namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Testing\Assert;
 use InvalidArgumentException;
 use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;

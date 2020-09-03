@@ -56,6 +56,7 @@ class AuditingTestCase extends TestCase
     {
         return [
             AuditingServiceProvider::class,
+
         ];
     }
 }
