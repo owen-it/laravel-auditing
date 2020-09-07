@@ -206,7 +206,7 @@ trait Audit
             $value = $this->getDataValue($key);
 
             $metadata[$key] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
+                ? ($this->auditable ? $this->auditable->serializeDate($value) : $this->serializeDate($value))
                 : $value;
         }
 
@@ -231,7 +231,7 @@ trait Audit
             $value = $this->getDataValue($key);
 
             $modified[$attribute][$state] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
+                ? ($this->auditable ? $this->auditable->serializeDate($value) : $this->serializeDate($value))
                 : $value;
         }
 
