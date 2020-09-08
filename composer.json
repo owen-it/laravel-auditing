@@ -40,7 +40,7 @@
     ],
     "require": {
         "php": ">=7.2.5",
-        "illuminate/console": "^5.8|^6.0|^7.0",
+        "illuminate/console": "^5.8|^6.0|^7.0|^8.0",
         "illuminate/database": "^5.8|^6.0|^7.0",
         "illuminate/filesystem": "^5.8|^6.0|^7.0|^8.0"
     },
