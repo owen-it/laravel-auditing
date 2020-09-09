@@ -82,7 +82,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function createDatabaseDriver(): Database
     {
-        return $this->app->make(Database::class);
+        return $this->container->make(Database::class);
     }
 
     /**
@@ -95,7 +95,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
-        return $this->app->make('events')->until(
+        return $this->container->make('events')->until(
             new Auditing($model, $driver)
         ) !== false;
     }
