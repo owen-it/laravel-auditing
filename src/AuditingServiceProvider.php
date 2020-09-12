@@ -4,10 +4,9 @@ namespace OwenIt\Auditing;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-
-use OwenIt\Auditing\Contracts\Auditor;
 use OwenIt\Auditing\Console\AuditDriverCommand;
 use OwenIt\Auditing\Console\InstallCommand;
+use OwenIt\Auditing\Contracts\Auditor as AuditorContract;
 
 class AuditingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
@@ -34,8 +33,8 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
             InstallCommand::class,
         ]);
 
-        $this->app->singleton(Auditor::class, function ($app) {
-            return new \OwenIt\Auditing\Auditor($app);
+        $this->app->singleton(AuditorContract::class, function ($app) {
+            return (new Auditor($app))->setContainer($app);
         });
     }
 
@@ -66,7 +65,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
     public function provides()
     {
         return [
-            Auditor::class,
+            AuditorContract::class,
         ];
     }
 }

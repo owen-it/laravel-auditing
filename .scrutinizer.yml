@@ -21,7 +21,6 @@ build:
             coverage:
               file: coverage74
               format: php-clover
-
     php73:
       environment:
         php:

@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -13,6 +14,11 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 class Auditor extends Manager implements Contracts\Auditor
 {
+    /**
+     * @var Container
+     */
+    protected $container;
+
     /**
      * {@inheritdoc}
      */
@@ -57,6 +63,16 @@ class Auditor extends Manager implements Contracts\Auditor
         $this->container->make('events')->dispatch(
             new Audited($model, $driver, $audit)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer($container)
+    {
+        $this->container = $container;
+
+        return $this;
     }
 
     /**

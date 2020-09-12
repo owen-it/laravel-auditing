@@ -1,79 +1,79 @@
 {
-    "name": "owen-it/laravel-auditing",
-    "description": "Audit changes of your Eloquent models in Laravel/Lumen",
-    "keywords": [
-        "accountability",
-        "audit",
-        "auditing",
-        "changes",
-        "eloquent",
-        "history",
-        "log",
-        "logging",
-        "observer",
-        "laravel",
-        "lumen",
-        "record",
-        "revision",
-        "tracking"
-    ],
-    "homepage": "http://laravel-auditing.com",
-    "type": "package",
-    "license": "MIT",
-    "support": {
-        "issues": "https://github.com/owen-it/laravel-auditing/issues",
-        "source": "https://github.com/owen-it/laravel-auditing"
+  "name": "owen-it/laravel-auditing",
+  "description": "Audit changes of your Eloquent models in Laravel/Lumen",
+  "keywords": [
+    "accountability",
+    "audit",
+    "auditing",
+    "changes",
+    "eloquent",
+    "history",
+    "log",
+    "logging",
+    "observer",
+    "laravel",
+    "lumen",
+    "record",
+    "revision",
+    "tracking"
+  ],
+  "homepage": "http://laravel-auditing.com",
+  "type": "package",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/owen-it/laravel-auditing/issues",
+    "source": "https://github.com/owen-it/laravel-auditing"
+  },
+  "authors": [
+    {
+      "name": "Antério Vieira",
+      "email": "anteriovieira@gmail.com"
     },
-    "authors": [
-        {
-            "name": "Antério Vieira",
-            "email": "anteriovieira@gmail.com"
-        },
-        {
-            "name": "Quetzy Garcia",
-            "email": "quetzyg@altek.org"
-        },
-        {
-            "name": "Raphael França",
-            "email": "raphaelfrancabsb@gmail.com"
-        }
-    ],
-    "require": {
-        "php": "^7.3",
-        "illuminate/console": "^8.0",
-        "illuminate/database": "^8.0",
-        "illuminate/filesystem": "^8.0"
+    {
+      "name": "Quetzy Garcia",
+      "email": "quetzyg@altek.org"
     },
-    "require-dev": {
-        "phpunit/phpunit": "^8.0|^9.3",
-        "laravel/legacy-factories": "^1.0",
-        "mockery/mockery": "^1.0",
-        "orchestra/testbench": "^6.0",
-        "ramsey/uuid": "^4.0"
+    {
+      "name": "Raphael França",
+      "email": "raphaelfrancabsb@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.3",
+    "illuminate/console": "^5.8|^6.0|^7.0|^8.0",
+    "illuminate/database": "^5.8|^6.0|^7.0|^8.0",
+    "illuminate/filesystem": "^5.8|^6.0|^7.0|^8.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.0|^9.3",
+    "laravel/legacy-factories": "^1.0",
+    "mockery/mockery": "^1.0",
+    "orchestra/testbench": "^3.8|^4.8|^5.5|^6.0",
+    "ramsey/uuid": "^3.0|^4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "OwenIt\\Auditing\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "OwenIt\\Auditing\\Tests\\": "tests/"
+    }
+  },
+  "suggest": {
+    "laravelista/lumen-vendor-publish": "Needed to publish the package configuration in Lumen"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "10.0-dev"
     },
-    "autoload": {
-        "psr-4": {
-            "OwenIt\\Auditing\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "OwenIt\\Auditing\\Tests\\": "tests/"
-        }
-    },
-    "suggest": {
-        "laravelista/lumen-vendor-publish": "Needed to publish the package configuration in Lumen"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "10.0-dev"
-        },
-        "laravel": {
-            "providers": [
-                "OwenIt\\Auditing\\AuditingServiceProvider"
-            ]
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "laravel": {
+      "providers": [
+        "OwenIt\\Auditing\\AuditingServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
