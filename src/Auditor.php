@@ -13,28 +13,19 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 class Auditor extends Manager implements Contracts\Auditor
 {
+    public function setContainer($container)
+    {
+        $this->container = $container;
+
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getDefaultDriver()
     {
         return 'database';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function createDriver($driver)
-    {
-        try {
-            return parent::createDriver($driver);
-        } catch (InvalidArgumentException $exception) {
-            if (class_exists($driver)) {
-                return $this->container->make($driver);
-            }
-
-            throw $exception;
-        }
     }
 
     /**
@@ -73,6 +64,22 @@ class Auditor extends Manager implements Contracts\Auditor
         $this->container->make('events')->dispatch(
             new Audited($model, $driver, $audit)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createDriver($driver)
+    {
+        try {
+            return parent::createDriver($driver);
+        } catch (InvalidArgumentException $exception) {
+            if (class_exists($driver)) {
+                return $this->container->make($driver);
+            }
+
+            throw $exception;
+        }
     }
 
     /**
