@@ -13,12 +13,57 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 class Auditor extends Manager implements Contracts\Auditor
 {
+    public function setContainer($container)
+    {
+        $this->container = $container;
+
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getDefaultDriver()
     {
         return 'database';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function auditDriver(Auditable $model): AuditDriver
+    {
+        $driver = $this->driver($model->getAuditDriver());
+
+        if (! $driver instanceof AuditDriver) {
+            throw new AuditingException('The driver must implement the AuditDriver contract');
+        }
+
+        return $driver;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute(Auditable $model)
+    {
+        if (! $model->readyForAuditing()) {
+            return;
+        }
+
+        $driver = $this->auditDriver($model);
+
+        if (! $this->fireAuditingEvent($model, $driver)) {
+            return;
+        }
+
+        if ($audit = $driver->audit($model)) {
+            $driver->prune($model);
+        }
+
+        $this->container->make('events')->dispatch(
+            new Audited($model, $driver, $audit)
+        );
     }
 
     /**
@@ -35,44 +80,6 @@ class Auditor extends Manager implements Contracts\Auditor
 
             throw $exception;
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function auditDriver(Auditable $model): AuditDriver
-    {
-        $driver = $this->driver($model->getAuditDriver());
-
-        if (!$driver instanceof AuditDriver) {
-            throw new AuditingException('The driver must implement the AuditDriver contract');
-        }
-
-        return $driver;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function execute(Auditable $model)
-    {
-        if (!$model->readyForAuditing()) {
-            return;
-        }
-
-        $driver = $this->auditDriver($model);
-
-        if (!$this->fireAuditingEvent($model, $driver)) {
-            return;
-        }
-
-        if ($audit = $driver->audit($model)) {
-            $driver->prune($model);
-        }
-
-        $this->container->make('events')->dispatch(
-            new Audited($model, $driver, $audit)
-        );
     }
 
     /**
