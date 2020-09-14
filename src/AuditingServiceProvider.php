@@ -4,7 +4,6 @@ namespace OwenIt\Auditing;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-
 use OwenIt\Auditing\Console\AuditDriverCommand;
 use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Auditor;

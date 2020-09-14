@@ -35,7 +35,7 @@ class Auditor extends Manager implements Contracts\Auditor
     {
         $driver = $this->driver($model->getAuditDriver());
 
-        if (! $driver instanceof AuditDriver) {
+        if (!$driver instanceof AuditDriver) {
             throw new AuditingException('The driver must implement the AuditDriver contract');
         }
 
@@ -47,13 +47,13 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     public function execute(Auditable $model)
     {
-        if (! $model->readyForAuditing()) {
+        if (!$model->readyForAuditing()) {
             return;
         }
 
         $driver = $this->auditDriver($model);
 
-        if (! $this->fireAuditingEvent($model, $driver)) {
+        if (!$this->fireAuditingEvent($model, $driver)) {
             return;
         }
 
