@@ -30,7 +30,7 @@ class Auditor extends Manager implements Contracts\Auditor
             return parent::createDriver($driver);
         } catch (InvalidArgumentException $exception) {
             if (class_exists($driver)) {
-                return $this->app->make($driver);
+                return $this->container->make($driver);
             }
 
             throw $exception;
@@ -70,7 +70,7 @@ class Auditor extends Manager implements Contracts\Auditor
             $driver->prune($model);
         }
 
-        $this->app->make('events')->dispatch(
+        $this->container->make('events')->dispatch(
             new Audited($model, $driver, $audit)
         );
     }
@@ -82,7 +82,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function createDatabaseDriver(): Database
     {
-        return $this->app->make(Database::class);
+        return $this->container->make(Database::class);
     }
 
     /**
@@ -95,7 +95,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
-        return $this->app->make('events')->until(
+        return $this->container->make('events')->until(
             new Auditing($model, $driver)
         ) !== false;
     }
