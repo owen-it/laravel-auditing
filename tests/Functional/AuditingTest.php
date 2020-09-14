@@ -3,9 +3,9 @@
 namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Testing\Assert;
 use InvalidArgumentException;
 use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
@@ -108,10 +108,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         factory(Article::class)->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         Article::first();
@@ -133,10 +133,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         factory(Article::class)->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $audit = Audit::first();
@@ -144,11 +144,11 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->old_values);
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->new_values, true);
     }
 
@@ -162,32 +162,32 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = factory(Article::class)->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $now = Carbon::now();
 
         $article->update([
-            'content'      => 'First step: install the laravel-auditing package.',
+            'content' => 'First step: install the laravel-auditing package.',
             'published_at' => $now,
-            'reviewed'     => 1,
+            'reviewed' => 1,
         ]);
 
         $audit = Audit::first();
 
         Assert::assertArraySubset([
-            'content'      => 'N/A',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ], $audit->old_values, true);
 
         Assert::assertArraySubset([
-            'content'      => 'First step: install the laravel-auditing package.',
+            'content' => 'First step: install the laravel-auditing package.',
             'published_at' => $now->toDateTimeString(),
-            'reviewed'     => 1,
+            'reviewed' => 1,
         ], $audit->new_values, true);
     }
 
@@ -201,10 +201,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = factory(Article::class)->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $article->delete();
@@ -212,11 +212,11 @@ class AuditingTest extends AuditingTestCase
         $audit = Audit::first();
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->old_values, true);
 
         $this->assertEmpty($audit->new_values);
@@ -232,10 +232,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = factory(Article::class)->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $article->delete();
@@ -246,11 +246,11 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->old_values);
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->new_values, true);
     }
 
@@ -335,10 +335,10 @@ class AuditingTest extends AuditingTestCase
         $this->app['config']->set('audit.driver', null);
 
         factory(Article::class)->create([
-            'title'        => 'How To Audit Using The Fallback Driver',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Using The Fallback Driver',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $audit = Audit::first();
@@ -346,11 +346,11 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->old_values);
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Using The Fallback Driver',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Using The Fallback Driver',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->new_values, true);
     }
 

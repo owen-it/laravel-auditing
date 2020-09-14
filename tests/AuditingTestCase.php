@@ -2,6 +2,8 @@
 
 namespace OwenIt\Auditing\Tests;
 
+use Carbon\Carbon;
+use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase;
 use OwenIt\Auditing\AuditingServiceProvider;
 use OwenIt\Auditing\Resolvers\IpAddressResolver;
@@ -14,14 +16,25 @@ class AuditingTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
+        $this->withFactories(__DIR__.'/database/factories');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getEnvironmentSetUp($app)
     {
         // Database
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         // Audit
@@ -41,21 +54,17 @@ class AuditingTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
-        $this->withFactories(__DIR__.'/database/factories');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getPackageProviders($app)
     {
         return [
             AuditingServiceProvider::class,
         ];
+    }
+
+    protected function serializeDate(Carbon $date)
+    {
+        return version_compare(Application::VERSION, '7', '<')
+            ? $date->toDateTimeString()
+            : Carbon::parse($date->toDateTimeString())->toJSON();
     }
 }
