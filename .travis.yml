@@ -8,6 +8,7 @@ language: php
 php:
     - 7.3
     - 7.4
+    - nightly
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -15,7 +16,7 @@ before_script:
   - ./cc-test-reporter before-build
 
 before_install:
-    - travis_retry composer selfupdate --1
+    - travis_retry composer selfupdate
 
 install:
     - travis_retry composer install --no-interaction --prefer-dist
