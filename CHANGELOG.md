@@ -1,3 +1,10 @@
+## v12.0.0 (2020-12-02)
+### Added
+- PHP 8.0 support
+
+### Removed
+- Illuminate 5.8 support
+
 ## v9.0.0 (2019-03-02)
 ### Added
 - Illuminate 5.8 support
