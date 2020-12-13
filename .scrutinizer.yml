@@ -24,7 +24,7 @@ build:
     php80:
       environment:
         php:
-          version: 8.0
+          version: "8.0.0"
       tests:
         override:
           - php-scrutinizer-run
