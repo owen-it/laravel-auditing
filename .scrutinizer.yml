@@ -29,7 +29,7 @@ build:
         override:
           - php-scrutinizer-run
           -
-            command: vendor/bin/phpunit --coverage-clover=coverage80
+            command: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover=coverage80
             coverage:
               file: coverage80
               format: php-clover
