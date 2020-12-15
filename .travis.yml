@@ -6,6 +6,7 @@ language: php
 
 php:
     - 7.3
+    - 8.0
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
