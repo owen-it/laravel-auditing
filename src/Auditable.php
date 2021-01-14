@@ -282,7 +282,7 @@ trait Auditable
             'old_values'         => $old,
             'new_values'         => $new,
             'event'              => $this->auditEvent,
-            'auditable_id'       => $this->getKey(),
+            'auditable_id'       => $this->getKey() ?? 0,
             'auditable_type'     => $this->getMorphClass(),
             $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
             $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
