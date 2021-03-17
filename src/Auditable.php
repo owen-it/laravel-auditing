@@ -504,7 +504,7 @@ trait Auditable
      */
     public function getAuditExclude(): array
     {
-        return $this->auditExclude ?? [];
+        return $this->auditExclude ??  Config::get('audit.audit_exclude', []);
     }
 
     /**
