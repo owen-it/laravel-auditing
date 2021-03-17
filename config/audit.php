@@ -73,7 +73,7 @@ return [
     */
 
     'audit_exclude' => [
-        //if the table has an index Userstamps created_by, updated_by_id
+        //example: if the tables has an userstamps,  created_by, updated_by_id...
     ],
 
 
