@@ -3,9 +3,9 @@
 namespace OwenIt\Auditing;
 
 use DateTimeInterface;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 
 trait Audit
@@ -206,7 +206,7 @@ trait Audit
             $value = $this->getDataValue($key);
 
             $metadata[$key] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
+                ? ($this->auditable ? $this->auditable->serializeDate($value) : $this->serializeDate($value))
                 : $value;
         }
 
@@ -231,7 +231,7 @@ trait Audit
             $value = $this->getDataValue($key);
 
             $modified[$attribute][$state] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
+                ? ($this->auditable ? $this->auditable->serializeDate($value) : $this->serializeDate($value))
                 : $value;
         }
 
