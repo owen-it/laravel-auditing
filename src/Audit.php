@@ -3,9 +3,9 @@
 namespace OwenIt\Auditing;
 
 use DateTimeInterface;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 
 trait Audit
