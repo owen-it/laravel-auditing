@@ -3,11 +3,12 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-
-use OwenIt\Auditing\Contracts\Auditor;
 use OwenIt\Auditing\Console\AuditDriverCommand;
 use OwenIt\Auditing\Console\InstallCommand;
+use OwenIt\Auditing\Contracts\Auditor;
 
 class AuditingServiceProvider extends ServiceProvider implements DeferrableProvider
 {
@@ -16,9 +17,9 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
      *
      * @return void
      */
-    public function boot()
+    public function boot(Filesystem $filesystem)
     {
-        $this->registerPublishing();
+        $this->registerPublishing($filesystem);
         $this->mergeConfigFrom(__DIR__.'/../config/audit.php', 'audit');
     }
 
@@ -44,7 +45,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
      *
      * @return void
      */
-    private function registerPublishing()
+    private function registerPublishing($filesystem)
     {
         if ($this->app->runningInConsole()) {
             // Lumen lacks a config_path() helper, so we use base_path()
@@ -52,12 +53,32 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
                 __DIR__.'/../config/audit.php' => base_path('config/audit.php'),
             ], 'config');
 
-            $this->publishes([
-                __DIR__.'/../database/migrations/audits.stub' => database_path(
-                    sprintf('migrations/%s_create_audits_table.php', date('Y_m_d_His'))
-                ),
-            ], 'migrations');
+            if (!class_exists('CreateAuditsTable') && !$this->migrationAlreadyPublished(
+                $filesystem,
+                '_create_audits_table.php'
+            )) {
+                $this->publishes([
+                    __DIR__.'/../database/migrations/audits.stub' => database_path(
+                        sprintf('migrations/%s_create_audits_table.php', date('Y_m_d_His'))
+                    ),
+                ], 'migrations');
+            }
         }
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     * @param $filename
+     *
+     * @return bool
+     */
+    protected function migrationAlreadyPublished(Filesystem $filesystem, $filename): bool
+    {
+        return Collection::make($this->app->databasePath().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR)
+                ->flatMap(function ($path) use ($filesystem, $filename) {
+                    return $filesystem->glob($path.'*'.$filename);
+                })
+                ->count() > 0;
     }
 
     /**
