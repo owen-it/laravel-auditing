@@ -21,9 +21,11 @@ class AuditableObserver
      *
      * @return void
      */
-    public function retrieved(Auditable $model)
+    public function retrieved($model)
     {
-        Auditor::execute($model->setAuditEvent('retrieved'));
+        if($model instanceof Auditable){			
+            Auditor::execute($model->setAuditEvent('retrieved'));
+        }
     }
 
     /**
