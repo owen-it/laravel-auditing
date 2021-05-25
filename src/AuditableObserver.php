@@ -23,7 +23,7 @@ class AuditableObserver
      */
     public function retrieved($model)
     {
-        if($model instanceof Auditable){
+        if ($model instanceof Auditable){
             Auditor::execute($model->setAuditEvent('retrieved'));
         }
         
@@ -38,7 +38,7 @@ class AuditableObserver
      */
     public function created($model)
     {
-        if($model instanceof Auditable){
+        if ($model instanceof Auditable){
             Auditor::execute($model->setAuditEvent('created'));
         }
     }
@@ -52,7 +52,7 @@ class AuditableObserver
      */
     public function updated($model)
     {
-        if($model instanceof Auditable){
+        if ($model instanceof Auditable){
             // Ignore the updated event when restoring
             if (!static::$restoring) {
                 Auditor::execute($model->setAuditEvent('updated'));
@@ -69,7 +69,7 @@ class AuditableObserver
      */
     public function deleted(Auditable $model)
     {
-        if($model instanceof Auditable){
+        if ($model instanceof Auditable){
             Auditor::execute($model->setAuditEvent('deleted'));
         }
     }
@@ -83,7 +83,7 @@ class AuditableObserver
      */
     public function restoring($model)
     {
-        if($model instanceof Auditable){
+        if ($model instanceof Auditable){
             // When restoring a model, an updated event is also fired.
             // By keeping track of the main event that took place,
             // we avoid creating a second audit with wrong values
@@ -100,7 +100,7 @@ class AuditableObserver
      */
     public function restored($model)
     {
-        if($model instanceof Auditable){
+        if ($model instanceof Auditable){
             Auditor::execute($model->setAuditEvent('restored'));
             // Once the model is restored, we need to put everything back
             // as before, in case a legitimate update event is fired
