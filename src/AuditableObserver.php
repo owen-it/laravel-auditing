@@ -25,7 +25,7 @@ class AuditableObserver
     {
         if ($model instanceof Auditable) {
             Auditor::execute($model->setAuditEvent('retrieved'));
-        }       
+        }
     }
 
     /**
