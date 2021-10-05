@@ -12,11 +12,17 @@ class Database implements AuditDriver
     /**
      * {@inheritdoc}
      */
-    public function audit(Auditable $model): Audit
+    public function audit(Auditable $model): ?Audit
     {
         $implementation = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
+        
+        $audit = $model->toAudit();
 
-        return call_user_func([$implementation, 'create'], $model->toAudit());
+        if (!$model->shouldCreateEmptyAudits() && empty($audit['new_values'])) {
+            return null;
+        }
+
+        return call_user_func([$implementation, 'create'], $audit);
     }
 
     /**

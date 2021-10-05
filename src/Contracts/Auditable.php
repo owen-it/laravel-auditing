@@ -44,6 +44,13 @@ interface Auditable
     public function readyForAuditing(): bool;
 
     /**
+     * Should audits be created when there are no changes?
+     * 
+     * @return bool
+     */
+    public function shouldCreateEmptyAudits(): bool;
+
+    /**
      * Return data for an Audit.
      *
      * @throws \OwenIt\Auditing\Exceptions\AuditingException

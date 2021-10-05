@@ -13,6 +13,7 @@ use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
+use OwenIt\Auditing\Tests\Models\ArticleExclude;
 
 class AuditingTest extends AuditingTestCase
 {
@@ -398,5 +399,43 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertSame(2, Audit::count());
         $this->assertSame(3, Article::count());
+    }
+
+    /** 
+     * @test 
+     */
+    public function itWillNotInsertAuditWhenModelShouldNotCreateEmptyAudits()
+    {
+        ArticleExclude::$shouldCreateEmptyAudits = false;
+
+        $this->assertFalse(ArticleExclude::$shouldCreateEmptyAudits);
+        
+        $article = factory(ArticleExclude::class)->create();
+
+        $this->assertSame(1, ArticleExclude::count());
+        $this->assertSame(1, Audit::count());
+
+        $article->update(['published_at' => now()]);
+
+        $this->assertSame(1, Audit::count());
+    }
+
+    /** 
+     * @test 
+     */
+    public function itWillInsertAuditWhenModelShouldCreateEmptyAudits()
+    {
+        ArticleExclude::$shouldCreateEmptyAudits = true;
+
+        $this->assertTrue(ArticleExclude::$shouldCreateEmptyAudits);
+        
+        $article = factory(ArticleExclude::class)->create();
+
+        $this->assertSame(1, ArticleExclude::count());
+        $this->assertSame(1, Audit::count());
+
+        $article->update(['published_at' => now()]);
+
+        $this->assertSame(2, Audit::count());
     }
 }

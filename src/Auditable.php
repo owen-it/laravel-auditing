@@ -209,6 +209,14 @@ trait Auditable
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function shouldCreateEmptyAudits(): bool
+    {
+        return true;
+    }
+
+    /**
      * Modify attribute value.
      *
      * @param string $attribute
