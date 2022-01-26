@@ -4,29 +4,29 @@ namespace OwenIt\Auditing\Console;
 
 use Illuminate\Console\GeneratorCommand;
 
-class AuditDriverCommand extends GeneratorCommand
+class AuditResolverCommand extends GeneratorCommand
 {
     /**
      * {@inheritdoc}
      */
-    protected $name = 'auditing:audit-driver';
+    protected $name = 'auditing:resolver';
 
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Create a new audit driver';
+    protected $description = 'Create a new resolver';
 
     /**
      * {@inheritdoc}
      */
-    protected $type = 'AuditDriver';
+    protected $type = 'AuditResolver';
 
     /**
      * {@inheritdoc}
      */
     protected function getStub()
     {
-        return __DIR__.'/../../stubs/driver.stub';
+        return __DIR__.'/../../stubs/resolver.stub';
     }
 
     /**
@@ -34,6 +34,6 @@ class AuditDriverCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\AuditDrivers';
+        return $rootNamespace.'\Resolvers';
     }
 }
