@@ -8,6 +8,7 @@ interface Resolver
 {
     /**
      * @param Model|\OwenIt\Auditing\Auditable $model
+     *
      * @return mixed
      */
     public static function resolve(Model $model);
