@@ -7,7 +7,7 @@ use OwenIt\Auditing\Contracts\Resolver;
 class ArbitraryResolver implements Resolver
 {
 
-    public static function resolve()
+    public static function resolve($model)
     {
         return 'Did my job!';
     }

@@ -10,7 +10,7 @@ class IpAddressResolver implements Resolver
     /**
      * {@inheritdoc}
      */
-    public static function resolve(): string
+    public static function resolve($model): string
     {
         return Request::ip();
     }

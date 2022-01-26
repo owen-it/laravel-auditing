@@ -2,12 +2,17 @@
 
 namespace DummyNamespace;
 
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Resolver;
 
 class DummyClass implements Resolver
 {
 
-    public static function resolve()
+    /**
+     * @param Model|\OwenIt\Auditing\Auditable $model
+     * @return mixed
+     */
+    public static function resolve($model)
     {
         // TODO: Implement the resolver logic
     }

@@ -11,7 +11,7 @@ class UrlResolver implements Resolver
     /**
      * {@inheritdoc}
      */
-    public static function resolve(): string
+    public static function resolve($model): string
     {
         if (App::runningInConsole()) {
             return 'console';

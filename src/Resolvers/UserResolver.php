@@ -11,7 +11,7 @@ class UserResolver implements Resolver
     /**
      * {@inheritdoc}
      */
-    public static function resolve()
+    public static function resolve($model)
     {
         $guards = Config::get('audit.user.guards', [
             'web',

@@ -290,7 +290,7 @@ trait Auditable
         foreach (Config::get('audit.resolvers') as $name => $class) {
 
             if (is_subclass_of($class, Resolver::class)) {
-                $auditData[$name] = call_user_func([$class, 'resolve']);
+                $auditData[$name] = call_user_func_array([$class, 'resolve'], [&$this]);
                 continue;
             }
 
@@ -320,7 +320,7 @@ trait Auditable
         $userResolver = Config::get('audit.user.resolver');
 
         if (is_subclass_of($userResolver, Resolver::class)) {
-            return call_user_func([$userResolver, 'resolve']);
+            return call_user_func_array([$userResolver, 'resolve'], [&$this]);
         }
 
         throw new AuditingException('Invalid UserResolver implementation');

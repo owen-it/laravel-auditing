@@ -10,7 +10,7 @@ class UserAgentResolver implements Resolver
     /**
      * {@inheritdoc}
      */
-    public static function resolve()
+    public static function resolve($model)
     {
         return Request::header('User-Agent');
     }
