@@ -276,14 +276,14 @@ trait Auditable
         $user = $this->resolveUser();
 
         $auditData = [
-            'old_values' => $old,
-            'new_values' => $new,
-            'event' => $this->auditEvent,
-            'auditable_id' => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $morphPrefix . '_id' => $user ? $user->getAuthIdentifier() : null,
+            'old_values'           => $old,
+            'new_values'           => $new,
+            'event'                => $this->auditEvent,
+            'auditable_id'         => $this->getKey(),
+            'auditable_type'       => $this->getMorphClass(),
+            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
             $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'tags' => empty($tags) ? null : $tags,
+            'tags'                 => empty($tags) ? null : $tags,
         ];
 
 
