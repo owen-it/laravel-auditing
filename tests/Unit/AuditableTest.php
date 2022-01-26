@@ -14,6 +14,7 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
+use OwenIt\Auditing\Tests\Functional\Fixtures\ArbitraryResolver;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
@@ -312,9 +313,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheIpAddressResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid IpAddressResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for ip_address');
 
-        $this->app['config']->set('audit.resolver.ip_address', null);
+        $this->app['config']->set('audit.resolvers.ip_address', null);
 
         $model = new Article();
 
@@ -331,9 +332,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheUrlResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UrlResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for url');
 
-        $this->app['config']->set('audit.resolver.url', null);
+        $this->app['config']->set('audit.resolvers.url', null);
 
         $model = new Article();
 
@@ -350,9 +351,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheUserAgentResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UserAgentResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for user_agent');
 
-        $this->app['config']->set('audit.resolver.user_agent', null);
+        $this->app['config']->set('audit.resolvers.user_agent', null);
 
         $model = new Article();
 
@@ -369,15 +370,40 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheUserResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UserResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for user');
 
-        $this->app['config']->set('audit.resolver.user', null);
+        $this->app['config']->set('audit.resolvers.user', null);
 
         $model = new Article();
 
         $model->setAuditEvent('created');
 
         $model->toAudit();
+    }
+
+    /**
+     * @group Auditable::setAuditEvent
+     * @group Auditable::toAudit
+     * @test
+     */
+    public function arbitraryResolverCanBeAdded()
+    {
+        $this->app['config']->set('audit.resolvers.arbitrary', ArbitraryResolver::class);
+
+        $now = Carbon::now();
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How to add custom resolver',
+            'content'      => 'First step, make a resolver. Second step. Add it to config',
+            'reviewed'     => 1,
+            'published_at' => $now,
+        ]);
+
+        $model->setAuditEvent('created');
+
+        Assert::assertArraySubset([
+            'arbitrary' => 'Did my job!'
+        ], $model->toAudit(), true);
     }
 
     /**

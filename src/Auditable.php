@@ -275,19 +275,29 @@ trait Auditable
 
         $user = $this->resolveUser();
 
-        return $this->transformAudit([
-            'old_values'         => $old,
-            'new_values'         => $new,
-            'event'              => $this->auditEvent,
-            'auditable_id'       => $this->getKey(),
-            'auditable_type'     => $this->getMorphClass(),
-            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
+        $auditData = [
+            'old_values' => $old,
+            'new_values' => $new,
+            'event' => $this->auditEvent,
+            'auditable_id' => $this->getKey(),
+            'auditable_type' => $this->getMorphClass(),
+            $morphPrefix . '_id' => $user ? $user->getAuthIdentifier() : null,
             $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'url'                => $this->resolveUrl(),
-            'ip_address'         => $this->resolveIpAddress(),
-            'user_agent'         => $this->resolveUserAgent(),
-            'tags'               => empty($tags) ? null : $tags,
-        ]);
+            'tags' => empty($tags) ? null : $tags,
+        ];
+
+
+        foreach (Config::get('audit.resolvers') as $name => $class) {
+
+            if (is_subclass_of($class, Resolver::class)) {
+                $auditData[$name] = call_user_func([$class, 'resolve']);
+                continue;
+            }
+
+            throw new AuditingException('Invalid Resolver implementation for ' . $name);
+        }
+
+        return $this->transformAudit($auditData);
     }
 
     /**
@@ -307,67 +317,13 @@ trait Auditable
      */
     protected function resolveUser()
     {
-        $userResolver = Config::get('audit.resolver.user');
+        $userResolver = Config::get('audit.user.resolver');
 
         if (is_subclass_of($userResolver, Resolver::class)) {
             return call_user_func([$userResolver, 'resolve']);
         }
 
         throw new AuditingException('Invalid UserResolver implementation');
-    }
-
-    /**
-     * Resolve the URL.
-     *
-     * @throws AuditingException
-     *
-     * @return string
-     */
-    protected function resolveUrl(): string
-    {
-        $urlResolver = Config::get('audit.resolver.url');
-
-        if (is_subclass_of($urlResolver, Resolver::class)) {
-            return call_user_func([$urlResolver, 'resolve']);
-        }
-
-        throw new AuditingException('Invalid UrlResolver implementation');
-    }
-
-    /**
-     * Resolve the IP Address.
-     *
-     * @throws AuditingException
-     *
-     * @return string
-     */
-    protected function resolveIpAddress(): string
-    {
-        $ipAddressResolver = Config::get('audit.resolver.ip_address');
-
-        if (is_subclass_of($ipAddressResolver, Resolver::class)) {
-            return call_user_func([$ipAddressResolver, 'resolve']);
-        }
-
-        throw new AuditingException('Invalid IpAddressResolver implementation');
-    }
-
-    /**
-     * Resolve the User Agent.
-     *
-     * @throws AuditingException
-     *
-     * @return string|null
-     */
-    protected function resolveUserAgent()
-    {
-        $userAgentResolver = Config::get('audit.resolver.user_agent');
-
-        if (is_subclass_of($userAgentResolver, Resolver::class)) {
-            return call_user_func([$userAgentResolver, 'resolve']);
-        }
-
-        throw new AuditingException('Invalid UserAgentResolver implementation');
     }
 
     /**

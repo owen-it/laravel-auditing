@@ -31,10 +31,10 @@ class AuditingTestCase extends TestCase
             'web',
             'api',
         ]);
-        $app['config']->set('audit.resolver.user', UserResolver::class);
-        $app['config']->set('audit.resolver.url', UrlResolver::class);
-        $app['config']->set('audit.resolver.ip_address', IpAddressResolver::class);
-        $app['config']->set('audit.resolver.user_agent', UserAgentResolver::class);
+        $app['config']->set('audit.user.resolver', UserResolver::class);
+        $app['config']->set('audit.resolvers.url', UrlResolver::class);
+        $app['config']->set('audit.resolvers.ip_address', IpAddressResolver::class);
+        $app['config']->set('audit.resolvers.user_agent', UserAgentResolver::class);
         $app['config']->set('audit.console', true);
     }
 
