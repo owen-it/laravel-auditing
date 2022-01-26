@@ -4,8 +4,9 @@ namespace OwenIt\Auditing\Resolvers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
+use OwenIt\Auditing\Contracts\Resolver;
 
-class UrlResolver implements \OwenIt\Auditing\Contracts\UrlResolver
+class UrlResolver implements Resolver
 {
     /**
      * {@inheritdoc}

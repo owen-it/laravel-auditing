@@ -9,10 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 use OwenIt\Auditing\Contracts\AttributeRedactor;
-use OwenIt\Auditing\Contracts\IpAddressResolver;
-use OwenIt\Auditing\Contracts\UrlResolver;
-use OwenIt\Auditing\Contracts\UserAgentResolver;
-use OwenIt\Auditing\Contracts\UserResolver;
+use OwenIt\Auditing\Contracts\Resolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
@@ -312,7 +309,7 @@ trait Auditable
     {
         $userResolver = Config::get('audit.resolver.user');
 
-        if (is_subclass_of($userResolver, UserResolver::class)) {
+        if (is_subclass_of($userResolver, Resolver::class)) {
             return call_user_func([$userResolver, 'resolve']);
         }
 
@@ -330,7 +327,7 @@ trait Auditable
     {
         $urlResolver = Config::get('audit.resolver.url');
 
-        if (is_subclass_of($urlResolver, UrlResolver::class)) {
+        if (is_subclass_of($urlResolver, Resolver::class)) {
             return call_user_func([$urlResolver, 'resolve']);
         }
 
@@ -348,7 +345,7 @@ trait Auditable
     {
         $ipAddressResolver = Config::get('audit.resolver.ip_address');
 
-        if (is_subclass_of($ipAddressResolver, IpAddressResolver::class)) {
+        if (is_subclass_of($ipAddressResolver, Resolver::class)) {
             return call_user_func([$ipAddressResolver, 'resolve']);
         }
 
@@ -366,7 +363,7 @@ trait Auditable
     {
         $userAgentResolver = Config::get('audit.resolver.user_agent');
 
-        if (is_subclass_of($userAgentResolver, UserAgentResolver::class)) {
+        if (is_subclass_of($userAgentResolver, Resolver::class)) {
             return call_user_func([$userAgentResolver, 'resolve']);
         }
 

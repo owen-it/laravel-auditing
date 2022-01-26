@@ -2,12 +2,10 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-interface UserResolver
+interface Resolver
 {
     /**
-     * Resolve the User.
-     *
-     * @return mixed|null
+     * @return mixed
      */
     public static function resolve();
 }
