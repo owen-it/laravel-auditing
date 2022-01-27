@@ -366,7 +366,7 @@ EOF;
      */
     public function itReturnsDecodedAuditableAttributes()
     {
-        $article = new class() extends Article {
+        $article = new class () extends Article {
             protected $table = 'articles';
 
             protected $attributeModifiers = [
