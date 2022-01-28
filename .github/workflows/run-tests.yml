@@ -21,7 +21,7 @@ jobs:
                     - laravel: 7.*
                       testbench: 5.*
 
-        name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+        name: PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
         steps:
             - name: Update apt
@@ -44,7 +44,8 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+                  composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" --no-interaction --no-update
+                  composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
                   composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
 
             - name: Execute tests
