@@ -29,7 +29,6 @@ class AuditingTestCase extends TestCase
         $app['config']->set('audit.user.morph_prefix', 'user');
         $app['config']->set('audit.user.guards', [
             'web',
-            'api',
         ]);
         $app['config']->set('audit.user.resolver', UserResolver::class);
         $app['config']->set('audit.resolvers.url', UrlResolver::class);
