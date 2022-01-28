@@ -43,5 +43,6 @@ Please see the [contributing](http://laravel-auditing.com/docs/master/contributi
 - [Raphael França](https://github.com/raphaelfranca)
 - [All Contributors](https://github.com/owen-it/laravel-auditing/graphs/contributors)
 
+
 ## License
 The **Laravel Auditing** package is open source software licensed under the [MIT LICENSE](LICENSE.md).
