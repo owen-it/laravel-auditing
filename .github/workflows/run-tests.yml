@@ -14,7 +14,6 @@ jobs:
             matrix:
                 php: [7.4, 8.0]
                 laravel: [8.*, 7.*]
-                dependency-version: [prefer-lowest, prefer-stable]
                 include:
                     - laravel: 8.*
                       testbench: 6.*
@@ -46,7 +45,7 @@ jobs:
               run: |
                   composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" --no-interaction --no-update
                   composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
-                  composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+                  composer update --prefer-dist --no-interaction --no-suggest
 
             - name: Execute tests
               run: vendor/bin/phpunit
