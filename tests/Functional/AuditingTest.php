@@ -3,6 +3,7 @@
 namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -142,7 +143,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertEmpty($audit->old_values);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -177,13 +178,13 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'content'      => 'N/A',
             'published_at' => null,
             'reviewed'     => 0,
         ], $audit->old_values, true);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'content'      => 'First step: install the laravel-auditing package.',
             'published_at' => $now->toDateTimeString(),
             'reviewed'     => 1,
@@ -210,7 +211,7 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -244,7 +245,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertEmpty($audit->old_values);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -344,7 +345,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertEmpty($audit->old_values);
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Using The Fallback Driver',
             'content'      => 'N/A',
             'published_at' => null,

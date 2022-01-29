@@ -4,6 +4,7 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use Illuminate\Foundation\Testing\Assert;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
@@ -31,7 +32,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(15, $resolvedData = $audit->resolveData());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -78,7 +79,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(21, $resolvedData = $audit->resolveData());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -159,7 +160,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(10, $metadata = $audit->getMetadata());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -192,7 +193,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(16, $metadata = $audit->getMetadata());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -300,7 +301,7 @@ EOF;
 
         $this->assertCount(5, $modified = $audit->getModified());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'title' => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
@@ -391,7 +392,7 @@ EOF;
 
         $this->assertCount(3, $modified = $audit->getModified());
 
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'title' => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
                 'old' => 'HOW TO AUDIT MODELS',
@@ -417,8 +418,8 @@ EOF;
             'tags' => 'foo,bar,baz',
         ]);
 
-        $this->assertInternalType('array', $audit->getTags());
-        $this->assertArraySubset([
+        $this->assertIsArray($audit->getTags());
+        Assert::assertArraySubset([
             'foo',
             'bar',
             'baz',
@@ -435,7 +436,7 @@ EOF;
             'tags' => null,
         ]);
 
-        $this->assertInternalType('array', $audit->getTags());
+        $this->assertIsArray($audit->getTags());
         $this->assertEmpty($audit->getTags());
     }
 }
