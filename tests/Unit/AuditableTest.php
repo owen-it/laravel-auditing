@@ -635,7 +635,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itTransformsTheAuditData()
     {
-        $model = new class() extends Article {
+        $model = new class () extends Article {
             protected $attributes = [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => 'First step: install the laravel-auditing package.',
@@ -889,7 +889,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itReturnsTheCustomGeneratedAuditTags()
     {
-        $model = new class() extends Article {
+        $model = new class () extends Article {
             public function generateTags(): array
             {
                 return [
