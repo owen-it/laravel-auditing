@@ -316,7 +316,7 @@ EOF;
                 'new' => 'First step: install the laravel-auditing package.',
             ],
             'published_at' => [
-                'new' => $audit->getSerialisedDate($now),
+                'new' => $audit->getSerializedDate($now),
             ],
             'reviewed'     => [
                 'new' => true,
