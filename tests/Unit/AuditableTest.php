@@ -4,7 +4,6 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
