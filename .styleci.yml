@@ -4,6 +4,3 @@ risky: true
 
 enabled:
   - php_unit_strict
-
-disabled:
-  - self_accessor
