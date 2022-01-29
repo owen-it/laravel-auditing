@@ -32,7 +32,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(15, $resolvedData = $audit->resolveData());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -79,7 +79,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(21, $resolvedData = $audit->resolveData());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -160,7 +160,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(10, $metadata = $audit->getMetadata());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -193,7 +193,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(16, $metadata = $audit->getMetadata());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -301,7 +301,7 @@ EOF;
 
         $this->assertCount(5, $modified = $audit->getModified());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'title' => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
@@ -392,7 +392,7 @@ EOF;
 
         $this->assertCount(3, $modified = $audit->getModified());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'title' => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
                 'old' => 'HOW TO AUDIT MODELS',
@@ -419,7 +419,7 @@ EOF;
         ]);
 
         $this->assertIsArray($audit->getTags());
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'foo',
             'bar',
             'baz',

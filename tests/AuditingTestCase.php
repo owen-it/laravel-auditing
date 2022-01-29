@@ -57,4 +57,12 @@ class AuditingTestCase extends TestCase
             AuditingServiceProvider::class,
         ];
     }
+
+    public static function Assert()
+    {
+        if(class_exists('Illuminate\Foundation\Testing\Assert')) {
+            return '\Illuminate\Foundation\Testing\Assert';
+        }
+        return '\Illuminate\Testing\Assert';
+    }
 }
