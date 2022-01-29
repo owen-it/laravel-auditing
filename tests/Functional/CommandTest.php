@@ -16,8 +16,9 @@ class CommandTest extends AuditingTestCase
             $this->app->path()
         );
 
+        $className = class_exists('Illuminate\Foundation\Testing\PendingCommand') ? 'Illuminate\Foundation\Testing\PendingCommand' : '\Illuminate\Testing\PendingCommand';
         $this->assertInstanceOf(
-            \Illuminate\Foundation\Testing\PendingCommand::class,
+            $className,
             $this->artisan('auditing:audit-driver', [
                     'name' => 'TestDriver',
                 ]
