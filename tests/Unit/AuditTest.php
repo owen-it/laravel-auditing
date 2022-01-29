@@ -28,6 +28,7 @@ class AuditTest extends AuditingTestCase
             'published_at' => $now,
         ]);
 
+        /** @var Audit $audit */
         $audit = $article->audits()->first();
 
         $this->assertCount(15, $resolvedData = $audit->resolveData());
@@ -39,8 +40,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->created_at->toJSON(),
+            'audit_updated_at' => $audit->updated_at->toJSON(),
             'user_id'          => null,
             'user_type'        => null,
             'new_title'        => 'How To Audit Eloquent Models',
@@ -86,8 +87,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->created_at->toJSON(),
+            'audit_updated_at' => $audit->updated_at->toJSON(),
             'user_id'          => '1',
             'user_type'        => User::class,
             'user_is_admin'    => '1',
@@ -167,8 +168,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->created_at->toJSON(),
+            'audit_updated_at' => $audit->updated_at->toJSON(),
             'user_id'          => null,
             'user_type'        => null,
         ], $metadata, true);
@@ -189,6 +190,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
+        /** @var Audit $audit */
         $audit = factory(Article::class)->create()->audits()->first();
 
         $this->assertCount(16, $metadata = $audit->getMetadata());
@@ -200,16 +202,16 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->created_at->toJSON(),
+            'audit_updated_at' => $audit->updated_at->toJSON(),
             'user_id'          => 1,
             'user_type'        => User::class,
             'user_is_admin'    => true,
             'user_first_name'  => 'Rick',
             'user_last_name'   => 'Sanchez',
             'user_email'       => 'rick@wubba-lubba-dub.dub',
-            'user_created_at'  => $user->created_at->toDateTimeString(),
-            'user_updated_at'  => $user->updated_at->toDateTimeString(),
+            'user_created_at'  => $user->created_at->toJSON(),
+            'user_updated_at'  => $user->updated_at->toJSON(),
         ], $metadata, true);
     }
 
@@ -223,6 +225,8 @@ class AuditTest extends AuditingTestCase
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
+        $created_at = $audit->created_at->toJSON();
+        $updated_at = $audit->updated_at->toJSON();
         $expected = <<< EOF
 {
     "audit_id": 1,
@@ -231,8 +235,8 @@ class AuditTest extends AuditingTestCase
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony",
     "audit_tags": null,
-    "audit_created_at": "$audit->created_at",
-    "audit_updated_at": "$audit->updated_at",
+    "audit_created_at": "$created_at",
+    "audit_updated_at": "$updated_at",
     "user_id": null,
     "user_type": null
 }
@@ -260,6 +264,10 @@ EOF;
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
+        $created_at = $audit->created_at->toJSON();
+        $updated_at = $audit->updated_at->toJSON();
+        $user_created_at = $user->created_at->toJSON();
+        $user_updated_at = $user->updated_at->toJSON();
         $expected = <<< EOF
 {
     "audit_id": 2,
@@ -268,16 +276,16 @@ EOF;
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony",
     "audit_tags": null,
-    "audit_created_at": "$audit->created_at",
-    "audit_updated_at": "$audit->updated_at",
+    "audit_created_at": "$created_at",
+    "audit_updated_at": "$updated_at",
     "user_id": 1,
     "user_type": "OwenIt\\\Auditing\\\Tests\\\Models\\\User",
     "user_is_admin": true,
     "user_first_name": "Rick",
     "user_last_name": "Sanchez",
     "user_email": "rick@wubba-lubba-dub.dub",
-    "user_created_at": "$user->created_at",
-    "user_updated_at": "$user->updated_at"
+    "user_created_at": "$user_created_at",
+    "user_updated_at": "$user_updated_at"
 }
 EOF;
 
@@ -290,7 +298,7 @@ EOF;
      */
     public function itReturnsAuditableModifiedAttributesAsArray()
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->second(0)->microsecond(0);
 
         $audit = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
@@ -309,7 +317,7 @@ EOF;
                 'new' => 'First step: install the laravel-auditing package.',
             ],
             'published_at' => [
-                'new' => $now->toDateTimeString(),
+                'new' => $now->toJSON(),
             ],
             'reviewed' => [
                 'new' => true,
@@ -326,7 +334,7 @@ EOF;
      */
     public function itReturnsAuditableModifiedAttributesAsJsonString()
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->second(0)->microsecond(0);
 
         $audit = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
@@ -346,7 +354,7 @@ EOF;
         "new": "First step: install the laravel-auditing package."
     },
     "published_at": {
-        "new": "$now"
+        "new": "{$now->toJSON()}"
     },
     "reviewed": {
         "new": true
