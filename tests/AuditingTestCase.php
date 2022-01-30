@@ -45,8 +45,8 @@ class AuditingTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
-        $this->withFactories(__DIR__.'/database/factories');
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        $this->withFactories(__DIR__ . '/database/factories');
     }
 
     /**
@@ -57,5 +57,18 @@ class AuditingTestCase extends TestCase
         return [
             AuditingServiceProvider::class,
         ];
+    }
+
+    /**
+     * Locate the Illuminate testing class. It changed namespace with v7
+     * @see https://readouble.com/laravel/7.x/en/upgrade.html
+     * @return string
+     */
+    public static function Assert()
+    {
+        if(class_exists('Illuminate\Foundation\Testing\Assert')) {
+            return '\Illuminate\Foundation\Testing\Assert';
+        }
+        return '\Illuminate\Testing\Assert';
     }
 }
