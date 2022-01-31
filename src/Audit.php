@@ -80,13 +80,13 @@ trait Audit
             'audit_tags'       => $this->tags,
             'audit_created_at' => $this->serializeDate($this->created_at),
             'audit_updated_at' => $this->serializeDate($this->updated_at),
-            'user_id'          => $this->getAttribute($morphPrefix.'_id'),
-            'user_type'        => $this->getAttribute($morphPrefix.'_type'),
+            'user_id'          => $this->getAttribute($morphPrefix . '_id'),
+            'user_type'        => $this->getAttribute($morphPrefix . '_type'),
         ];
 
         if ($this->user) {
             foreach ($this->user->getArrayableAttributes() as $attribute => $value) {
-                $this->data['user_'.$attribute] = $value;
+                $this->data['user_' . $attribute] = $value;
             }
         }
 
@@ -94,11 +94,11 @@ trait Audit
 
         // Modified Auditable attributes
         foreach ($this->new_values as $key => $value) {
-            $this->data['new_'.$key] = $value;
+            $this->data['new_' . $key] = $value;
         }
 
         foreach ($this->old_values as $key => $value) {
-            $this->data['old_'.$key] = $value;
+            $this->data['old_' . $key] = $value;
         }
 
         $this->modified = array_diff_key(array_keys($this->data), $this->metadata);
