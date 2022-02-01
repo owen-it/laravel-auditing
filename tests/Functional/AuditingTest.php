@@ -414,7 +414,7 @@ class AuditingTest extends AuditingTestCase
 
         /** @var Audit $audit */
         $audit = $article->audits()->skip(1)->first();
-        $this->assertEquals(false, $audit->getModified()['config']['new']['articleIsGood']);
-        $this->assertEquals(true, $audit->getModified()['config']['old']['articleIsGood']);
+        $this->assertSame(false, $audit->getModified()['config']['new']['articleIsGood']);
+        $this->assertSame(true, $audit->getModified()['config']['old']['articleIsGood']);
     }
 }

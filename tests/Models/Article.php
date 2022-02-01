@@ -16,7 +16,7 @@ class Article extends Model implements Auditable
      */
     protected $casts = [
         'reviewed' => 'bool',
-        'config' => 'json'
+        'config'   => 'json'
     ];
 
     /**
@@ -39,7 +39,7 @@ class Article extends Model implements Auditable
 
     public function __construct(array $attributes = [])
     {
-        if(class_exists(\Illuminate\Database\Eloquent\Casts\AsArrayObject::class)) {
+        if (class_exists(\Illuminate\Database\Eloquent\Casts\AsArrayObject::class)) {
             $this->casts['config'] = \Illuminate\Database\Eloquent\Casts\AsArrayObject::class;
         }
         parent::__construct($attributes);
