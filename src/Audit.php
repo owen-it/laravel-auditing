@@ -109,9 +109,9 @@ trait Audit
     /**
      * Get the formatted value of an Eloquent model.
      *
-     * @param Model  $model
+     * @param Model $model
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -122,7 +122,7 @@ trait Audit
             return $model->mutateAttribute($key, $value);
         }
 
-        if($model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
+        if ($model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
             $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true));
             return $arrayObject;
         }
@@ -174,8 +174,8 @@ trait Audit
      * Decode attribute value.
      *
      * @param Contracts\Auditable $auditable
-     * @param string              $attribute
-     * @param mixed               $value
+     * @param string $attribute
+     * @param mixed $value
      *
      * @return mixed
      */
