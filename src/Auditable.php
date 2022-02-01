@@ -489,7 +489,7 @@ trait Auditable
     public static function isAuditingEnabled(): bool
     {
         if (App::runningInConsole()) {
-            return Config::get('audit.console', false);
+            return Config::get('audit.enabled', true) && Config::get('audit.console', false);
         }
 
         return Config::get('audit.enabled', true);

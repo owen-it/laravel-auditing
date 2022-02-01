@@ -4,7 +4,6 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Foundation\Testing\Assert;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
@@ -28,19 +27,20 @@ class AuditTest extends AuditingTestCase
             'published_at' => $now,
         ]);
 
+        /** @var Audit $audit */
         $audit = $article->audits()->first();
 
         $this->assertCount(15, $resolvedData = $audit->resolveData());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
+            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
             'user_id'          => null,
             'user_type'        => null,
             'new_title'        => 'How To Audit Eloquent Models',
@@ -79,15 +79,15 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(21, $resolvedData = $audit->resolveData());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
+            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
             'user_id'          => '1',
             'user_type'        => User::class,
             'user_is_admin'    => '1',
@@ -160,15 +160,15 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(10, $metadata = $audit->getMetadata());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
+            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
             'user_id'          => null,
             'user_type'        => null,
         ], $metadata, true);
@@ -189,27 +189,28 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
+        /** @var Audit $audit */
         $audit = factory(Article::class)->create()->audits()->first();
 
         $this->assertCount(16, $metadata = $audit->getMetadata());
 
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->created_at->toDateTimeString(),
-            'audit_updated_at' => $audit->updated_at->toDateTimeString(),
+            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
+            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
             'user_id'          => 1,
             'user_type'        => User::class,
             'user_is_admin'    => true,
             'user_first_name'  => 'Rick',
             'user_last_name'   => 'Sanchez',
             'user_email'       => 'rick@wubba-lubba-dub.dub',
-            'user_created_at'  => $user->created_at->toDateTimeString(),
-            'user_updated_at'  => $user->updated_at->toDateTimeString(),
+            'user_created_at'  => $audit->getSerializedDate($user->created_at),
+            'user_updated_at'  => $audit->getSerializedDate($user->updated_at),
         ], $metadata, true);
     }
 
@@ -223,6 +224,8 @@ class AuditTest extends AuditingTestCase
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
+        $created_at = $audit->getSerializedDate($audit->created_at);
+        $updated_at = $audit->getSerializedDate($audit->updated_at);
         $expected = <<< EOF
 {
     "audit_id": 1,
@@ -231,8 +234,8 @@ class AuditTest extends AuditingTestCase
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony",
     "audit_tags": null,
-    "audit_created_at": "$audit->created_at",
-    "audit_updated_at": "$audit->updated_at",
+    "audit_created_at": "$created_at",
+    "audit_updated_at": "$updated_at",
     "user_id": null,
     "user_type": null
 }
@@ -260,6 +263,10 @@ EOF;
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
+        $created_at = $audit->getSerializedDate($audit->created_at);
+        $updated_at = $audit->getSerializedDate($audit->updated_at);
+        $user_created_at = $audit->getSerializedDate($user->created_at);
+        $user_updated_at = $audit->getSerializedDate($user->updated_at);
         $expected = <<< EOF
 {
     "audit_id": 2,
@@ -268,16 +275,16 @@ EOF;
     "audit_ip_address": "127.0.0.1",
     "audit_user_agent": "Symfony",
     "audit_tags": null,
-    "audit_created_at": "$audit->created_at",
-    "audit_updated_at": "$audit->updated_at",
+    "audit_created_at": "$created_at",
+    "audit_updated_at": "$updated_at",
     "user_id": 1,
     "user_type": "OwenIt\\\Auditing\\\Tests\\\Models\\\User",
     "user_is_admin": true,
     "user_first_name": "Rick",
     "user_last_name": "Sanchez",
     "user_email": "rick@wubba-lubba-dub.dub",
-    "user_created_at": "$user->created_at",
-    "user_updated_at": "$user->updated_at"
+    "user_created_at": "$user_created_at",
+    "user_updated_at": "$user_updated_at"
 }
 EOF;
 
@@ -290,7 +297,7 @@ EOF;
      */
     public function itReturnsAuditableModifiedAttributesAsArray()
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->second(0)->microsecond(0);
 
         $audit = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
@@ -301,20 +308,20 @@ EOF;
 
         $this->assertCount(5, $modified = $audit->getModified());
 
-        Assert::assertArraySubset([
-            'title' => [
+        self::Assert()::assertArraySubset([
+            'title'        => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
-            'content' => [
+            'content'      => [
                 'new' => 'First step: install the laravel-auditing package.',
             ],
             'published_at' => [
-                'new' => $now->toDateTimeString(),
+                'new' => $audit->getSerializedDate($now),
             ],
-            'reviewed' => [
+            'reviewed'     => [
                 'new' => true,
             ],
-            'id' => [
+            'id'           => [
                 'new' => 1,
             ],
         ], $modified, true);
@@ -326,8 +333,9 @@ EOF;
      */
     public function itReturnsAuditableModifiedAttributesAsJsonString()
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->second(0)->microsecond(0);
 
+        /** @var Audit $audit */
         $audit = factory(Article::class)->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
@@ -337,6 +345,7 @@ EOF;
 
         $modified = $audit->getModified(true, JSON_PRETTY_PRINT);
 
+        $serializedDate = $audit->getSerializedDate($now);
         $expected = <<< EOF
 {
     "title": {
@@ -346,7 +355,7 @@ EOF;
         "new": "First step: install the laravel-auditing package."
     },
     "published_at": {
-        "new": "$now"
+        "new": "$serializedDate"
     },
     "reviewed": {
         "new": true
@@ -392,12 +401,12 @@ EOF;
 
         $this->assertCount(3, $modified = $audit->getModified());
 
-        Assert::assertArraySubset([
-            'title' => [
+        self::Assert()::assertArraySubset([
+            'title'    => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
                 'old' => 'HOW TO AUDIT MODELS',
             ],
-            'content' => [
+            'content'  => [
                 'new' => '############################################kage.',
                 'old' => '##A',
             ],
@@ -419,7 +428,7 @@ EOF;
         ]);
 
         $this->assertIsArray($audit->getTags());
-        Assert::assertArraySubset([
+        self::Assert()::assertArraySubset([
             'foo',
             'bar',
             'baz',

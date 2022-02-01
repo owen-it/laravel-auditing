@@ -30,10 +30,6 @@
             "email": "anteriovieira@gmail.com"
         },
         {
-            "name": "Quetzy Garcia",
-            "email": "quetzyg@altek.org"
-        },
-        {
             "name": "Raphael França",
             "email": "raphaelfrancabsb@gmail.com"
         }
@@ -48,7 +44,7 @@
         "phpunit/phpunit": "^9.0",
         "mockery/mockery": "^1.0",
         "orchestra/testbench": "^4.0",
-        "ramsey/uuid": "^3.0"
+        "laravel/legacy-factories": "*"
     },
     "autoload": {
         "psr-4": {
