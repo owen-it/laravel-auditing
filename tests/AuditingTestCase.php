@@ -31,6 +31,10 @@ class AuditingTestCase extends TestCase
             'web',
             'api',
         ]);
+        $app['config']->set('auth.guards.api', [
+            'driver'   => 'session',
+            'provider' => 'users',
+        ]);
         $app['config']->set('audit.resolver.user', UserResolver::class);
         $app['config']->set('audit.resolver.url', UrlResolver::class);
         $app['config']->set('audit.resolver.ip_address', IpAddressResolver::class);
@@ -66,7 +70,7 @@ class AuditingTestCase extends TestCase
      */
     public static function Assert()
     {
-        if(class_exists('Illuminate\Foundation\Testing\Assert')) {
+        if (class_exists('Illuminate\Foundation\Testing\Assert')) {
             return '\Illuminate\Foundation\Testing\Assert';
         }
         return '\Illuminate\Testing\Assert';
