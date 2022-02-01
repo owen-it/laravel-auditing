@@ -122,7 +122,7 @@ trait Audit
             return $model->mutateAttribute($key, $value);
         }
 
-        if ($model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
+        if (array_key_exists($key, $model->getCasts()) && $model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
             $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true));
             return $arrayObject;
         }
