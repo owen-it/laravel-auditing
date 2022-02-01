@@ -399,4 +399,22 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(2, Audit::count());
         $this->assertSame(3, Article::count());
     }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itHandlesJsonColumnsCorrectly()
+    {
+        $article = factory(Article::class)->create(['config' => ['articleIsGood' => true, 'authorsJob' => 'vampire']]);
+        $article->refresh();
+
+        $article->config = ['articleIsGood' => false, 'authorsJob' => 'vampire'];
+        $article->save();
+
+        /** @var Audit $audit */
+        $audit = $article->audits()->skip(1)->first();
+        $this->assertEquals(false, $audit->getModified()['config']['new']['articleIsGood']);
+        $this->assertEquals(true, $audit->getModified()['config']['old']['articleIsGood']);
+    }
 }

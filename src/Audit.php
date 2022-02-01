@@ -3,9 +3,9 @@
 namespace OwenIt\Auditing;
 
 use DateTimeInterface;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 
 trait Audit
@@ -120,6 +120,11 @@ trait Audit
         // Apply defined get mutator
         if ($model->hasGetMutator($key)) {
             return $model->mutateAttribute($key, $value);
+        }
+
+        if($model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
+            $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true));
+            return $arrayObject;
         }
 
         // Cast to native PHP type
