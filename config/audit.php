@@ -28,7 +28,7 @@ return [
         'morph_prefix' => 'user',
         'guards'       => [
             'web',
-            'api',
+            'sanctum',
         ],
     ],
 
