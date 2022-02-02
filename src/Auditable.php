@@ -212,11 +212,11 @@ trait Auditable
      * Modify attribute value.
      *
      * @param string $attribute
-     * @param mixed  $value
-     *
-     * @throws AuditingException
+     * @param mixed $value
      *
      * @return mixed
+     * @throws AuditingException
+     *
      */
     protected function modifyAttributeValue(string $attribute, $value)
     {
@@ -279,17 +279,17 @@ trait Auditable
         $user = $this->resolveUser();
 
         return $this->transformAudit([
-            'old_values'         => $old,
-            'new_values'         => $new,
-            'event'              => $this->auditEvent,
-            'auditable_id'       => $this->getKey(),
-            'auditable_type'     => $this->getMorphClass(),
+            'old_values'           => $old,
+            'new_values'           => $new,
+            'event'                => $this->auditEvent,
+            'auditable_id'         => $this->getKey(),
+            'auditable_type'       => $this->getMorphClass(),
             $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
             $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'url'                => $this->resolveUrl(),
-            'ip_address'         => $this->resolveIpAddress(),
-            'user_agent'         => $this->resolveUserAgent(),
-            'tags'               => empty($tags) ? null : $tags,
+            'url'                  => $this->resolveUrl(),
+            'ip_address'           => $this->resolveIpAddress(),
+            'user_agent'           => $this->resolveUserAgent(),
+            'tags'                 => empty($tags) ? null : $tags,
         ]);
     }
 
@@ -304,9 +304,9 @@ trait Auditable
     /**
      * Resolve the User.
      *
+     * @return mixed|null
      * @throws AuditingException
      *
-     * @return mixed|null
      */
     protected function resolveUser()
     {
@@ -322,9 +322,9 @@ trait Auditable
     /**
      * Resolve the URL.
      *
+     * @return string
      * @throws AuditingException
      *
-     * @return string
      */
     protected function resolveUrl(): string
     {
@@ -340,9 +340,9 @@ trait Auditable
     /**
      * Resolve the IP Address.
      *
+     * @return string
      * @throws AuditingException
      *
-     * @return string
      */
     protected function resolveIpAddress(): string
     {
@@ -358,9 +358,9 @@ trait Auditable
     /**
      * Resolve the User Agent.
      *
+     * @return string|null
      * @throws AuditingException
      *
-     * @return string|null
      */
     protected function resolveUserAgent()
     {
@@ -415,6 +415,10 @@ trait Auditable
      */
     protected function resolveAttributeGetter($event)
     {
+        if (empty($event)) {
+            return;
+        }
+
         foreach ($this->getAuditEvents() as $key => $value) {
             $auditableEvent = is_int($key) ? $value : $key;
 
@@ -450,11 +454,11 @@ trait Auditable
     public function getAuditEvents(): array
     {
         return $this->auditEvents ?? Config::get('audit.events', [
-            'created',
-            'updated',
-            'deleted',
-            'restored',
-        ]);
+                'created',
+                'updated',
+                'deleted',
+                'restored',
+            ]);
     }
 
     /**
@@ -485,7 +489,7 @@ trait Auditable
     public static function isAuditingEnabled(): bool
     {
         if (App::runningInConsole()) {
-            return Config::get('audit.console', false);
+            return Config::get('audit.enabled', true) && Config::get('audit.console', false);
         }
 
         return Config::get('audit.enabled', true);
