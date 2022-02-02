@@ -235,10 +235,11 @@ trait Audit
             $state = substr($key, 0, 3);
 
             $value = $this->getDataValue($key);
+            $modified[$attribute][$state] = $value;
 
-            $modified[$attribute][$state] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
-                : $value;
+            if($value instanceof DateTimeInterface) {
+                $modified[$attribute][$state] = !is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
+            }
         }
 
         return $json ? json_encode($modified, $options, $depth) : $modified;
