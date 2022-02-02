@@ -19,6 +19,7 @@ class CreateArticlesTestTable extends Migration
             $table->text('content');
             $table->boolean('reviewed');
             $table->timestamp('published_at')->nullable();
+            $table->json('config')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

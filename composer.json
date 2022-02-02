@@ -38,7 +38,8 @@
         "php": "^7.3|^8.0",
         "illuminate/console": "^6.0|^7.0|^8.0|^9.0",
         "illuminate/database": "^6.0|^7.0|^8.0|^9.0",
-        "illuminate/filesystem": "^6.0|^7.0|^8.0|^9.0"
+        "illuminate/filesystem": "^6.0|^7.0|^8.0|^9.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
