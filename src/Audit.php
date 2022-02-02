@@ -209,10 +209,11 @@ trait Audit
 
         foreach ($this->metadata as $key) {
             $value = $this->getDataValue($key);
+            $metadata[$key] = $value;
 
-            $metadata[$key] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
-                : $value;
+            if($value instanceof DateTimeInterface) {
+                $metadata[$key] = !is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
+            }
         }
 
         return $json ? json_encode($metadata, $options, $depth) : $metadata;
