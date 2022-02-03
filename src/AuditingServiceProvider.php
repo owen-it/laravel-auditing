@@ -50,7 +50,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
         if ($this->app->runningInConsole()) {
             // Lumen lacks a config_path() helper, so we use base_path()
             $this->publishes([
-                __DIR__.'/../config/audit.php' => base_path('config/audit.php'),
+                __DIR__ . '/../config/audit.php' => base_path('config/audit.php'),
             ], 'config');
 
             if (!class_exists('CreateAuditsTable') && !$this->migrationAlreadyPublished(
@@ -63,6 +63,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
                     ),
                 ], 'migrations');
             }
+
         }
     }
 
