@@ -230,14 +230,14 @@ class AuditTest extends AuditingTestCase
 {
     "audit_id": 1,
     "audit_event": "created",
-    "audit_url": "console",
-    "audit_ip_address": "127.0.0.1",
-    "audit_user_agent": "Symfony",
     "audit_tags": null,
     "audit_created_at": "$created_at",
     "audit_updated_at": "$updated_at",
     "user_id": null,
-    "user_type": null
+    "user_type": null,
+    "audit_url": "console",
+    "audit_ip_address": "127.0.0.1",
+    "audit_user_agent": "Symfony"
 }
 EOF;
 
@@ -271,14 +271,14 @@ EOF;
 {
     "audit_id": 2,
     "audit_event": "created",
-    "audit_url": "console",
-    "audit_ip_address": "127.0.0.1",
-    "audit_user_agent": "Symfony",
     "audit_tags": null,
     "audit_created_at": "$created_at",
     "audit_updated_at": "$updated_at",
     "user_id": 1,
     "user_type": "OwenIt\\\Auditing\\\Tests\\\Models\\\User",
+    "audit_url": "console",
+    "audit_ip_address": "127.0.0.1",
+    "audit_user_agent": "Symfony",
     "user_is_admin": true,
     "user_first_name": "Rick",
     "user_last_name": "Sanchez",

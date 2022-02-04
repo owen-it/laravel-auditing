@@ -74,15 +74,19 @@ trait Audit
         $this->data = [
             'audit_id'         => $this->id,
             'audit_event'      => $this->event,
-            'audit_url'        => $this->url,
-            'audit_ip_address' => $this->ip_address,
-            'audit_user_agent' => $this->user_agent,
             'audit_tags'       => $this->tags,
             'audit_created_at' => $this->serializeDate($this->created_at),
             'audit_updated_at' => $this->serializeDate($this->updated_at),
             'user_id'          => $this->getAttribute($morphPrefix . '_id'),
             'user_type'        => $this->getAttribute($morphPrefix . '_type'),
         ];
+
+        // add resolvers data to metadata
+        $resolverData = [];
+        foreach (array_keys(Config::get('audit.resolvers', [])) as $name) {
+            $resolverData['audit_' . $name] = $this->$name;
+        }
+        $this->data = array_merge($this->data, $resolverData);
 
         if ($this->user) {
             foreach ($this->user->getArrayableAttributes() as $attribute => $value) {

@@ -432,7 +432,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertTrue(true);
         $audit = $article->audits()->first();
-        $this->assertSame(1, $audit->tenant_id);
+        $this->assertSame(1, (int)$audit->tenant_id);
     }
 
     /**
