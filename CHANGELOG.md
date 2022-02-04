@@ -1,11 +1,21 @@
-## v12.0.0 (2020-12-02)
+## v13.0.0
+
 ### Added
+
+- **dynamic resolvers** | Option to add/disable resolvers in config
+
+## v12.0.0 (2020-12-02)
+
+### Added
+
 - PHP 8.0 support
 
 ### Removed
+
 - Illuminate 5.8 support
 
 ## v9.0.0 (2019-03-02)
+
 ### Added
 - Illuminate 5.8 support
 
