@@ -41,6 +41,7 @@ class AuditingTestCase extends TestCase
         $app['config']->set('audit.resolvers.ip_address', IpAddressResolver::class);
         $app['config']->set('audit.resolvers.user_agent', UserAgentResolver::class);
         $app['config']->set('audit.console', true);
+        $app['config']->set('audit.empty_values', true);
     }
 
     /**

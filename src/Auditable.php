@@ -37,6 +37,11 @@ trait Auditable
     public static $auditingDisabled = false;
 
     /**
+     * @var array
+     */
+    protected $auditExclude;
+
+    /**
      * Auditable boot logic.
      *
      * @return void
@@ -394,6 +399,11 @@ trait Auditable
         $this->auditEvent = $this->isEventAuditable($event) ? $event : null;
 
         return $this;
+    }
+
+    public function setAuditExcludedAttributes(array $excludedAttributes)
+    {
+        $this->auditExclude = $excludedAttributes;
     }
 
     /**

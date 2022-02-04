@@ -36,7 +36,6 @@ class Article extends Model implements Auditable
         'reviewed',
     ];
 
-
     public function __construct(array $attributes = [])
     {
         if (class_exists(\Illuminate\Database\Eloquent\Casts\AsArrayObject::class)) {

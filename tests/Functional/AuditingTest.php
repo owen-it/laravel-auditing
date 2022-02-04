@@ -94,7 +94,6 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(1, Audit::query()->count());
 
         User::first();
-
         $this->assertSame(1, User::query()->count());
         $this->assertSame(2, Audit::query()->count());
     }
@@ -449,5 +448,44 @@ class AuditingTest extends AuditingTestCase
         $this->assertTrue(true);
         $audit = $article->audits()->first();
         $this->assertEmpty($audit->ip_address);
+    }
+
+    /**
+     * @test
+     */
+    public function itWillNotAuditModelsWhenValuesAreEmpty()
+    {
+        $this->app['config']->set('audit.empty_values', false);
+
+        /** @var Article $model */
+        $model = factory(Article::class)->create([
+            'reviewed' => 0,
+        ]);
+
+        $model->setAuditExcludedAttributes([
+            'reviewed',
+        ]);
+
+        $model->reviewed = 1;
+        $model->save();
+
+        $this->assertSame(1, Article::query()->count());
+        $this->assertSame(1, Audit::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditModelsWhenValuesAreEmpty()
+    {
+        $model = factory(Article::class)->create([
+            'reviewed' => 0,
+        ]);
+
+        $model->reviewed = 1;
+        $model->save();
+
+        $this->assertSame(1, Article::query()->count());
+        $this->assertSame(2, Audit::query()->count());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -66,9 +67,19 @@ class Auditor extends Manager implements Contracts\Auditor
             return;
         }
 
-        if ($audit = $driver->audit($model)) {
-            $driver->prune($model);
+        // If we want to avoid storing Audits with empty old_values & new_values, return null here.
+        if (!Config::get('audit.empty_values')) {
+            if (empty($model->toAudit()['new_values']) && empty($model->toAudit()['old_values'])) {
+                return;
+            }
         }
+
+        $audit = $driver->audit($model);
+        if (!$audit) {
+            return;
+        }
+
+        $driver->prune($model);
 
         $this->container->make('events')->dispatch(
             new Audited($model, $driver, $audit)
@@ -96,7 +107,7 @@ class Auditor extends Manager implements Contracts\Auditor
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
         return $this->container->make('events')->until(
-            new Auditing($model, $driver)
-        ) !== false;
+                new Auditing($model, $driver)
+            ) !== false;
     }
 }

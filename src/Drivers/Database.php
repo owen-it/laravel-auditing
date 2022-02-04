@@ -12,7 +12,7 @@ class Database implements AuditDriver
     /**
      * {@inheritdoc}
      */
-    public function audit(Auditable $model): Audit
+    public function audit(Auditable $model): ?Audit
     {
         $implementation = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
 
