@@ -69,7 +69,11 @@ class Auditor extends Manager implements Contracts\Auditor
 
         // If we want to avoid storing Audits with empty old_values & new_values, return null here.
         if (!Config::get('audit.empty_values')) {
-            if (empty($model->toAudit()['new_values']) && empty($model->toAudit()['old_values'])) {
+            if (
+                empty($model->toAudit()['new_values']) &&
+                empty($model->toAudit()['old_values']) &&
+                !in_array($model->getAuditEvent(), Config::get('audit.allowed_empty_values'))
+            ) {
                 return;
             }
         }
@@ -99,7 +103,7 @@ class Auditor extends Manager implements Contracts\Auditor
     /**
      * Fire the Auditing event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable   $model
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
      * @param \OwenIt\Auditing\Contracts\AuditDriver $driver
      *
      * @return bool

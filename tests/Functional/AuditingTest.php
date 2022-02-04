@@ -474,6 +474,29 @@ class AuditingTest extends AuditingTestCase
     }
 
     /**
+     * @return void
+     * @test
+     */
+    public function itWillAuditRetrievedEventEvenIfAuditEmptyIsDisabled()
+    {
+        $this->app['config']->set('audit.empty_values', false);
+        $this->app['config']->set('audit.allowed_empty_values', ['retrieved']);
+        $this->app['config']->set('audit.events', [
+            'created',
+            'retrieved'
+        ]);
+
+        $this->app['config']->set('audit.empty_values', false);
+
+        /** @var Article $model */
+        factory(Article::class)->create();
+
+        Article::find(1);
+
+        $this->assertSame(2, Audit::query()->count());
+    }
+
+    /**
      * @test
      */
     public function itWillAuditModelsWhenValuesAreEmpty()
