@@ -313,11 +313,14 @@ trait Auditable
         throw new AuditingException('Invalid UserResolver implementation');
     }
 
-
     protected function runResolvers(): array
     {
         $resolved = [];
         foreach (Config::get('audit.resolvers', []) as $name => $implementation) {
+            if (empty($implementation)) {
+                continue;
+            }
+
             if (!is_subclass_of($implementation, Resolver::class)) {
                 throw new AuditingException('Invalid Resolver implementation for: ' . $name);
             }

@@ -25,6 +25,7 @@ class CreateAuditsTestTable extends Migration
             $table->ipAddress('ip_address')->nullable();
             $table->string('user_agent')->nullable();
             $table->string('tags')->nullable();
+            $table->string('tenant_id')->nullable();
             $table->timestamps();
 
             $table->index(['user_id', 'user_type']);

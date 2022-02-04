@@ -11,6 +11,7 @@ use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
+use OwenIt\Auditing\Tests\fixtures\TenantResolver;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -416,5 +417,37 @@ class AuditingTest extends AuditingTestCase
         $audit = $article->audits()->skip(1)->first();
         $this->assertSame(false, $audit->getModified()['config']['new']['articleIsGood']);
         $this->assertSame(true, $audit->getModified()['config']['old']['articleIsGood']);
+    }
+
+    /**
+     * @return void
+     * @test
+     */
+    public function canAddAdditionalResolver()
+    {
+        // added new resolver
+        $this->app['config']->set('audit.resolvers.tenant_id', TenantResolver::class);
+
+        $article = factory(Article::class)->create();
+
+        $this->assertTrue(true);
+        $audit = $article->audits()->first();
+        $this->assertSame(1, $audit->tenant_id);
+    }
+
+    /**
+     * @return void
+     * @test
+     */
+    public function canDisableResolver()
+    {
+        // added new resolver
+        $this->app['config']->set('audit.resolvers.ip_address', null);
+
+        $article = factory(Article::class)->create();
+
+        $this->assertTrue(true);
+        $audit = $article->audits()->first();
+        $this->assertEmpty($audit->ip_address);
     }
 }
