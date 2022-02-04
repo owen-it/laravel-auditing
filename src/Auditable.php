@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing;
 
-use Dotenv\Loader\Resolver;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
@@ -10,7 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 use OwenIt\Auditing\Contracts\AttributeRedactor;
-use OwenIt\Auditing\Contracts\UserResolver;
+use OwenIt\Auditing\Contracts\Resolver;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
@@ -305,9 +304,9 @@ trait Auditable
      */
     protected function resolveUser()
     {
-        $userResolver = Config::get('audit.resolver.user');
+        $userResolver = Config::get('audit.user.resolver');
 
-        if (is_subclass_of($userResolver, UserResolver::class)) {
+        if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\Resolver::class)) {
             return call_user_func([$userResolver, 'resolve']);
         }
 
@@ -319,11 +318,10 @@ trait Auditable
     {
         $resolved = [];
         foreach (Config::get('audit.resolvers', []) as $name => $implementation) {
-            if (is_subclass_of($implementation, Resolver::class)) {
-                $resolved[$name] = call_user_func([$implementation, 'resolve']);
+            if (!is_subclass_of($implementation, Resolver::class)) {
+                throw new AuditingException('Invalid Resolver implementation for: ' . $name);
             }
-
-            throw new AuditingException('Invalid Resolver implementation for: ' . $name);
+            $resolved[$name] = call_user_func([$implementation, 'resolve']);
         }
         return $resolved;
     }

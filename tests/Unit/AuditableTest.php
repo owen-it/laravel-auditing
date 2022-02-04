@@ -312,9 +312,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheIpAddressResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid IpAddressResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for: ip_address');
 
-        $this->app['config']->set('audit.resolver.ip_address', null);
+        $this->app['config']->set('audit.resolvers.ip_address', null);
 
         $model = new Article();
 
@@ -331,9 +331,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheUrlResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UrlResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for: url');
 
-        $this->app['config']->set('audit.resolver.url', null);
+        $this->app['config']->set('audit.resolvers.url', null);
 
         $model = new Article();
 
@@ -350,9 +350,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheUserAgentResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UserAgentResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for: user_agent');
 
-        $this->app['config']->set('audit.resolver.user_agent', null);
+        $this->app['config']->set('audit.resolvers.user_agent', null);
 
         $model = new Article();
 
@@ -371,7 +371,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserResolver implementation');
 
-        $this->app['config']->set('audit.resolver.user', null);
+        $this->app['config']->set('audit.user.resolver', null);
 
         $model = new Article();
 
