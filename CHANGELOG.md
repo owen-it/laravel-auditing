@@ -3,6 +3,7 @@
 ### Added
 
 - **dynamic resolvers** | Option to add/disable resolvers in config
+- Resolvers extend same contract and does not enforce a specific returntype at contract level
 
 ## v12.0.0 (2020-12-02)
 
