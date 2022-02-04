@@ -20,19 +20,21 @@ Laravel Auditing allows you to keep a history of model changes by simply using a
 The package documentation can be found on the [official website](http://www.laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
 
 ## Version Information
- Version   | Illuminate    | Status                  | PHP Version
+
+Version   | Illuminate    | Status                  | PHP Version
 :----------|:--------------|:------------------------|:------------
- 12.x      | 6.x.x - 8.x.x | Active support :rocket: | >= 7.3 \| 8.0
- 11.x      | 5.8.x - 8.x.x | Active support          | >= 7.3
- 10.x      | 5.8.x - 7.x.x | Active support          | >= 7.2.5
- 9.x       | 5.8.x - 6.x.x | Active support          | >= 7.1.3
- 8.x       | 5.2.x - 5.7.x | Active support          | >= 7.0.13
- 7.x       | 5.2.x - 5.6.x | End of life             | >= 7.0.13
- 6.x       | 5.2.x - 5.6.x | End of life             | >= 7.0.13
- 5.x       | 5.2.x - 5.5.x | End of life             | >= 7.0.13
- 4.x       | 5.2.x - 5.5.x | End of life             | >= 5.5.9
- 3.x       | 5.2.x - 5.4.x | End of life             | >= 5.5.9
- 2.x       | 5.1.x - 5.3.x | End of life             | >= 5.5.9
+13.x      | 7.x.x - 8.x.x | Active support :rocket: | > = 7.3 \| 8.0
+12.x      | 6.x.x - 8.x.x | Active support          | > = 7.3 \| 8.0
+11.x      | 5.8.x - 8.x.x | Active support          | > = 7.3
+10.x      | 5.8.x - 7.x.x | End of life             | > = 7.2.5
+9.x       | 5.8.x - 6.x.x | End of life             | > = 7.1.3
+8.x       | 5.2.x - 5.7.x | End of life             | > = 7.0.13
+7.x       | 5.2.x - 5.6.x | End of life             | > = 7.0.13
+6.x       | 5.2.x - 5.6.x | End of life             | > = 7.0.13
+5.x       | 5.2.x - 5.5.x | End of life             | > = 7.0.13
+4.x       | 5.2.x - 5.5.x | End of life             | > = 5.5.9
+3.x       | 5.2.x - 5.4.x | End of life             | > = 5.5.9
+2.x       | 5.1.x - 5.3.x | End of life             | > = 5.5.9
 
 ## Contributing
 Please see the [contributing](http://laravel-auditing.com/docs/master/contributing) entry for more details.
