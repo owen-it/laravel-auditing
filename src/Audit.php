@@ -122,7 +122,10 @@ trait Audit
             return $model->mutateAttribute($key, $value);
         }
 
-        if (array_key_exists($key, $model->getCasts()) && $model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
+        if (array_key_exists(
+            $key,
+            $model->getCasts()
+        ) && $model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
             $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true));
             return $arrayObject;
         }
@@ -209,10 +212,11 @@ trait Audit
 
         foreach ($this->metadata as $key) {
             $value = $this->getDataValue($key);
+            $metadata[$key] = $value;
 
-            $metadata[$key] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
-                : $value;
+            if ($value instanceof DateTimeInterface) {
+                $metadata[$key] = !is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
+            }
         }
 
         return $json ? json_encode($metadata, $options, $depth) : $metadata;
@@ -234,10 +238,11 @@ trait Audit
             $state = substr($key, 0, 3);
 
             $value = $this->getDataValue($key);
+            $modified[$attribute][$state] = $value;
 
-            $modified[$attribute][$state] = $value instanceof DateTimeInterface
-                ? $this->serializeDate($value)
-                : $value;
+            if ($value instanceof DateTimeInterface) {
+                $modified[$attribute][$state] = !is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
+            }
         }
 
         return $json ? json_encode($modified, $options, $depth) : $modified;
