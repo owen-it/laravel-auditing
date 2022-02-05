@@ -16,7 +16,7 @@ interface Audit
      *
      * @return string
      */
-    public function getTable(): string;
+    public function getTable();
 
     /**
      * Get the auditable model to which this Audit belongs.
