@@ -329,7 +329,7 @@ trait Auditable
             if (!is_subclass_of($implementation, Resolver::class)) {
                 throw new AuditingException('Invalid Resolver implementation for: ' . $name);
             }
-            $resolved[$name] = call_user_func([$implementation, 'resolve']);
+            $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
         return $resolved;
     }
