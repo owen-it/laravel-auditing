@@ -4,7 +4,6 @@ namespace OwenIt\Auditing\Resolvers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use OwenIt\Auditing\Contracts\Resolver;
 
 class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
 {
