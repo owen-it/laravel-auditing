@@ -311,7 +311,7 @@ trait Auditable
     {
         $userResolver = Config::get('audit.user.resolver');
 
-        if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\Resolver::class)) {
+        if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\UserResolver::class)) {
             return call_user_func([$userResolver, 'resolve']);
         }
 
