@@ -169,7 +169,6 @@ class AuditingTest extends AuditingTestCase
             'reviewed'     => 0,
         ]);
 
-        $article->eventAway();
         $now = Carbon::now();
 
         $article->update([
