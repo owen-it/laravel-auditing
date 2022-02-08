@@ -42,6 +42,24 @@ trait Auditable
     protected $auditExclude;
 
     /**
+     * Property may set custom event data to register
+     * @var null|array
+     */
+    public $auditCustomOld = null;
+
+    /**
+     * Property may set custom event data to register
+     * @var null|array
+     */
+    public $auditCustomNew = null;
+
+    /**
+     * If this is a custom event (as opposed to an eloquent event
+     * @var bool
+     */
+    public $isCustomEvent = false;
+
+    /**
      * Auditable boot logic.
      *
      * @return void
@@ -143,6 +161,14 @@ trait Auditable
         ];
     }
 
+    protected function getCustomEventAttributes(): array
+    {
+        return [
+            $this->auditCustomOld,
+            $this->auditCustomNew
+        ];
+    }
+
     /**
      * Get the old/new attributes of an updated event.
      *
@@ -207,6 +233,10 @@ trait Auditable
             return false;
         }
 
+        if ($this->isCustomEvent) {
+            return true;
+        }
+
         return $this->isEventAuditable($this->auditEvent);
     }
 
@@ -264,7 +294,7 @@ trait Auditable
 
         list($old, $new) = $this->$attributeGetter();
 
-        if ($this->getAttributeModifiers()) {
+        if ($this->getAttributeModifiers() && !$this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
                 $old[$attribute] = $this->modifyAttributeValue($attribute, $value);
             }
@@ -378,6 +408,10 @@ trait Auditable
     {
         if (empty($event)) {
             return;
+        }
+
+        if ($this->isCustomEvent) {
+            return 'getCustomEventAttributes';
         }
 
         foreach ($this->getAuditEvents() as $key => $value) {
