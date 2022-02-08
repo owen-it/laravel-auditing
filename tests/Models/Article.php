@@ -4,9 +4,7 @@ namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Events\AuditCustom;
 
 class Article extends Model implements Auditable
 {
@@ -50,20 +48,6 @@ class Article extends Model implements Auditable
     public function categories()
     {
         return $this->morphToMany(Category::class, 'model', 'model_has_categories');
-    }
-
-    public function attachCategories($category)
-    {
-        $this->auditEvent = 'attach';
-        $this->isCustomEvent = true;
-        $this->auditCustomOld = [
-            "categories" => $this->categories()->get()->isEmpty() ? [] : $this->categories()->get()->toArray()
-        ];
-        $this->categories()->attach($category);
-        $this->auditCustomNew = [
-            'categories' => $this->categories()->get()->isEmpty() ? [] : $this->categories()->get()->toArray()
-        ];
-        Event::dispatch(AuditCustom::class, [$this]);
     }
 
     /**

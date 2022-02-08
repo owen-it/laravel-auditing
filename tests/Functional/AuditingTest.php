@@ -523,8 +523,8 @@ class AuditingTest extends AuditingTestCase
         $secondCategory = factory(Category::class)->create();
         $article = factory(Article::class)->create();
 
-        $article->attachCategories($firstCategory);
-        $article->attachCategories($secondCategory);
+        $article->auditAttach('categories', $firstCategory);
+        $article->auditAttach('categories', $secondCategory);
         $this->assertSame($firstCategory->name, $article->categories->first()->name);
         $this->assertSame(
             $secondCategory->name,

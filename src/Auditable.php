@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 use OwenIt\Auditing\Contracts\AttributeRedactor;
 use OwenIt\Auditing\Contracts\Resolver;
+use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
@@ -611,5 +613,52 @@ trait Auditable
         }
 
         return $this;
+    }
+
+    /**
+     * @param $relationName
+     * @param $id
+     * @return void
+     * @throws AuditingException
+     */
+    public function auditAttach($relationName, $id)
+    {
+        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'attach')) {
+            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method attach');
+        }
+        $this->auditEvent = 'attach';
+        $this->isCustomEvent = true;
+        $this->auditCustomOld = [
+            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+        ];
+        $this->{$relationName}()->attach($id);
+        $this->auditCustomNew = [
+            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+        ];
+        Event::dispatch(AuditCustom::class, [$this]);
+    }
+
+    /**
+     * @param $relationName
+     * @param $id
+     * @return void
+     * @throws AuditingException
+     */
+    public function auditDetach($relationName, $id)
+    {
+        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'detach')) {
+            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method detach');
+        }
+
+        $this->auditEvent = 'detach';
+        $this->isCustomEvent = true;
+        $this->auditCustomOld = [
+            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+        ];
+        $this->{$relationName}()->detach($id);
+        $this->auditCustomNew = [
+            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+        ];
+        Event::dispatch(AuditCustom::class, [$this]);
     }
 }
