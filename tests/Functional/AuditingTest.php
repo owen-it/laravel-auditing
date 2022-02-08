@@ -527,7 +527,9 @@ class AuditingTest extends AuditingTestCase
         $article->attachCategories($firstCategory);
         $article->attachCategories($secondCategory);
         $this->assertSame($firstCategory->name, $article->categories->first()->name);
-        $this->assertSame($secondCategory->name,
-            $article->audits->last()->getModified()['categories']['new'][1]['name']);
+        $this->assertSame(
+            $secondCategory->name,
+            $article->audits->last()->getModified()['categories']['new'][1]['name']
+        );
     }
 }

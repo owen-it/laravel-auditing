@@ -110,8 +110,9 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
-        return $this->container->make('events')->until(
-                new Auditing($model, $driver)
-            ) !== false;
+        return $this
+                ->container
+                ->make('events')
+                ->until(new Auditing($model, $driver)) !== false;
     }
 }
