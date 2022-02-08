@@ -13,6 +13,7 @@ use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\fixtures\TenantResolver;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\Category;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditingTest extends AuditingTestCase
@@ -168,6 +169,7 @@ class AuditingTest extends AuditingTestCase
             'reviewed'     => 0,
         ]);
 
+        $article->eventAway();
         $now = Carbon::now();
 
         $article->update([
@@ -510,5 +512,22 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertSame(1, Article::query()->count());
         $this->assertSame(2, Audit::query()->count());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditCustomEventData()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->attachCategories($firstCategory);
+        $article->attachCategories($secondCategory);
+        $this->assertSame($firstCategory->name, $article->categories->first()->name);
+        $this->assertSame($secondCategory->name,
+            $article->audits->last()->getModified()['categories']['new'][1]['name']);
     }
 }
