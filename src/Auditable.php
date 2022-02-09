@@ -701,11 +701,17 @@ trait Auditable
         return $changes;
     }
 
-    public function auditSyncWithoutDetaching($relationName, $ids)
+    /**
+     * @param string $relationName
+     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
+     * @return array
+     * @throws AuditingException
+     */
+    public function auditSyncWithoutDetaching(string $relationName, $ids)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method syncWithoutDetaching');
         }
-        $this->auditSync($relationName, $ids, false);
+        return $this->auditSync($relationName, $ids, false);
     }
 }
