@@ -615,13 +615,24 @@ trait Auditable
         return $this;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Pivot help methods
+    |--------------------------------------------------------------------------
+    |
+    | Methods for auditing pivot actions
+    |
+    */
+
     /**
-     * @param $relationName
-     * @param $id
+     * @param string $relationName
+     * @param mixed $id
+     * @param array $attributes
+     * @param bool $touch
      * @return void
      * @throws AuditingException
      */
-    public function auditAttach($relationName, $id)
+    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'attach')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method attach');
@@ -631,7 +642,7 @@ trait Auditable
         $this->auditCustomOld = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
-        $this->{$relationName}()->attach($id);
+        $this->{$relationName}()->attach($id, $attributes, $touch);
         $this->auditCustomNew = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
@@ -639,12 +650,13 @@ trait Auditable
     }
 
     /**
-     * @param $relationName
-     * @param $id
-     * @return void
+     * @param string $relationName
+     * @param mixed $ids
+     * @param bool $touch
+     * @return int
      * @throws AuditingException
      */
-    public function auditDetach($relationName, $id)
+    public function auditDetach(string $relationName, $ids = null, $touch = true)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'detach')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method detach');
@@ -655,13 +667,21 @@ trait Auditable
         $this->auditCustomOld = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
-        $this->{$relationName}()->detach($id);
+        $results = $this->{$relationName}()->detach($ids, $touch);
         $this->auditCustomNew = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
+        return empty($results) ? 0 : $results;
     }
 
+    /**
+     * @param $relationName
+     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
+     * @param bool $detaching
+     * @return array
+     * @throws AuditingException
+     */
     public function auditSync($relationName, $ids, $detaching = true)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'sync')) {
@@ -673,11 +693,12 @@ trait Auditable
         $this->auditCustomOld = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
-        $this->{$relationName}()->sync($ids, $detaching);
+        $changes = $this->{$relationName}()->sync($ids, $detaching);
         $this->auditCustomNew = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
+        return $changes;
     }
 
     public function auditSyncWithoutDetaching($relationName, $ids)
