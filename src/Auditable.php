@@ -661,4 +661,30 @@ trait Auditable
         ];
         Event::dispatch(AuditCustom::class, [$this]);
     }
+
+    public function auditSync($relationName, $ids, $detaching = true)
+    {
+        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'sync')) {
+            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method sync');
+        }
+
+        $this->auditEvent = 'sync';
+        $this->isCustomEvent = true;
+        $this->auditCustomOld = [
+            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+        ];
+        $this->{$relationName}()->sync($ids, $detaching);
+        $this->auditCustomNew = [
+            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+        ];
+        Event::dispatch(AuditCustom::class, [$this]);
+    }
+
+    public function auditSyncWithoutDetaching($relationName, $ids)
+    {
+        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
+            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method syncWithoutDetaching');
+        }
+        $this->auditSync($relationName, $ids, false);
+    }
 }
