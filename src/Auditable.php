@@ -39,11 +39,6 @@ trait Auditable
     public static $auditingDisabled = false;
 
     /**
-     * @var array
-     */
-    protected $auditExclude;
-
-    /**
      * Property may set custom event data to register
      * @var null|array
      */
