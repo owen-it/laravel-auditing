@@ -462,11 +462,9 @@ class AuditingTest extends AuditingTestCase
         $model = factory(Article::class)->create([
             'reviewed' => 0,
         ]);
-
-        $model->setAuditExcludedAttributes([
+        $model->auditExclude = [
             'reviewed',
-        ]);
-
+        ];
         $model->reviewed = 1;
         $model->save();
 

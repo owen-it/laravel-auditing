@@ -432,11 +432,6 @@ trait Auditable
         return $this;
     }
 
-    public function setAuditExcludedAttributes(array $excludedAttributes)
-    {
-        $this->auditExclude = $excludedAttributes;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -627,7 +622,7 @@ trait Auditable
      * @return void
      * @throws AuditingException
      */
-    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true)
+    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['name'])
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'attach')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method attach');

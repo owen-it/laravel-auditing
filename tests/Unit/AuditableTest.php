@@ -715,9 +715,9 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $model->setAuditExcludedAttributes([
+        $model->auditExclude = [
             'published_at',
-        ]);
+        ];
 
         self::Assert()::assertArraySubset([
             'published_at',
