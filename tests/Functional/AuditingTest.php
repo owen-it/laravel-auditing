@@ -446,9 +446,57 @@ class AuditingTest extends AuditingTestCase
 
         $article = factory(Article::class)->create();
 
-        $this->assertTrue(true);
         $audit = $article->audits()->first();
         $this->assertEmpty($audit->ip_address);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillOmitExcludedValues()
+    {
+        $article = factory(Article::class)->create();
+        $audited = $article->audits()->first();
+        $this->assertArrayHasKey('title', $audited->getModified());
+
+        $article->setAuditExcludedAttributes(['title']);
+        $article->title = 'New title';
+        $article->content = 'Content changed too';
+        $article->save();
+        $audited = $article->audits()->skip(1)->first();
+        $this->assertArrayHasKey('content', $audited->getModified());
+        $this->assertArrayNotHasKey('title', $audited->getModified());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function canGloballySetExcludeAndOverrideLocally()
+    {
+        $this->app['config']->set('audit.exclude', ['title']);
+
+        $article = factory(Article::class)->create();
+        $audited = $article->audits()->first();
+        $this->assertArrayHasKey('content', $audited->getModified());
+        $this->assertArrayNotHasKey('title', $audited->getModified());
+
+        $article->setAuditExcludedAttributes(['content']);
+        $article->title = 'New title';
+        $article->content = 'Content changed too';
+        $article->save();
+        $audited = $article->audits()->skip(1)->first();
+        $this->assertArrayNotHasKey('content', $audited->getModified());
+        $this->assertArrayHasKey('title', $audited->getModified());
+
+        $article->setAuditExcludedAttributes([]);
+        $article->title = 'Another New title';
+        $article->content = 'Content changed again';
+        $article->save();
+        $audited = $article->audits()->skip(2)->first();
+        $this->assertArrayHasKey('content', $audited->getModified());
+        $this->assertArrayHasKey('title', $audited->getModified());
     }
 
     /**
