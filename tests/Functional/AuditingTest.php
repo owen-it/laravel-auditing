@@ -460,7 +460,7 @@ class AuditingTest extends AuditingTestCase
         $audited = $article->audits()->first();
         $this->assertArrayHasKey('title', $audited->getModified());
 
-        $article->setAuditExcludedAttributes(['title']);
+        $article->setAuditExclude(['title']);
         $article->title = 'New title';
         $article->content = 'Content changed too';
         $article->save();
@@ -482,7 +482,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertArrayHasKey('content', $audited->getModified());
         $this->assertArrayNotHasKey('title', $audited->getModified());
 
-        $article->setAuditExcludedAttributes(['content']);
+        $article->setAuditExclude(['content']);
         $article->title = 'New title';
         $article->content = 'Content changed too';
         $article->save();
@@ -490,7 +490,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertArrayNotHasKey('content', $audited->getModified());
         $this->assertArrayHasKey('title', $audited->getModified());
 
-        $article->setAuditExcludedAttributes([]);
+        $article->setAuditExclude([]);
         $article->title = 'Another New title';
         $article->content = 'Content changed again';
         $article->save();
@@ -510,9 +510,9 @@ class AuditingTest extends AuditingTestCase
         $model = factory(Article::class)->create([
             'reviewed' => 0,
         ]);
-        $model->auditExclude = [
+        $model->setAuditExclude([
             'reviewed',
-        ];
+        ]);
         $model->reviewed = 1;
         $model->save();
 

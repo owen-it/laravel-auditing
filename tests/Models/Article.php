@@ -11,15 +11,6 @@ class Article extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
 
-
-    /**
-     * Attributes to exclude from the Audit.
-     *
-     * @var array
-     */
-    public $auditExclude = [
-    ];
-
     /**
      * {@inheritdoc}
      */

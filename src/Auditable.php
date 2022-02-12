@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
+use OwenIt\Auditing\Concerns\ExcludesAuditAttributes;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 use OwenIt\Auditing\Contracts\AttributeRedactor;
 use OwenIt\Auditing\Contracts\Resolver;
@@ -17,6 +18,7 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait Auditable
 {
+    use ExcludesAuditAttributes;
     /**
      * Auditable attributes excluded from the Audit.
      *
@@ -493,14 +495,6 @@ trait Auditable
     public function getAuditInclude(): array
     {
         return $this->auditInclude ?? [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuditExclude(): array
-    {
-        return $this->auditExclude ?? Config::get('audit.exclude', []);
     }
 
     /**
