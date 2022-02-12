@@ -477,11 +477,13 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.exclude', ['title']);
 
+        // Setting field in global exclude
         $article = factory(Article::class)->create();
         $audited = $article->audits()->first();
         $this->assertArrayHasKey('content', $audited->getModified());
         $this->assertArrayNotHasKey('title', $audited->getModified());
 
+        // Setting field in audit exclude overrides global and excludes field
         $article->setAuditExclude(['content']);
         $article->title = 'New title';
         $article->content = 'Content changed too';
@@ -490,6 +492,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertArrayNotHasKey('content', $audited->getModified());
         $this->assertArrayHasKey('title', $audited->getModified());
 
+        // Setting audit exclude empty means nothing is excluded (overrides global config)
         $article->setAuditExclude([]);
         $article->title = 'Another New title';
         $article->content = 'Content changed again';
