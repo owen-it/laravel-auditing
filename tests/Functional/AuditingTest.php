@@ -504,6 +504,31 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     * @return void
+     */
+    public function itHandelsAuditInclude()
+    {
+        $this->app['config']->set('audit.exclude', ['title']);
+
+        // Setting field in global exclude
+        $article = factory(Article::class)->create();
+        $audited = $article->audits()->first();
+        $this->assertArrayHasKey('content', $audited->getModified());
+        $this->assertArrayNotHasKey('title', $audited->getModified());
+
+        // Wont log any of these. We excluded title, and include on title.
+        // Using include, excludes everything else
+        $article->setAuditInclude(['title']);
+        $article->title = 'New title';
+        $article->content = 'Content changed too';
+        $article->save();
+        $audited = $article->audits()->skip(1)->first();
+        $this->assertArrayNotHasKey('content', $audited->getModified());
+        $this->assertArrayNotHasKey('title', $audited->getModified());
+    }
+
+    /**
+     * @test
      */
     public function itWillNotAuditModelsWhenValuesAreEmpty()
     {

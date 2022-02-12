@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\Concerns\ExcludesAuditAttributes;
+use OwenIt\Auditing\Concerns\IncludesAuditAttribute;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 use OwenIt\Auditing\Contracts\AttributeRedactor;
 use OwenIt\Auditing\Contracts\Resolver;
@@ -19,6 +20,8 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 trait Auditable
 {
     use ExcludesAuditAttributes;
+    use IncludesAuditAttribute;
+
     /**
      * Auditable attributes excluded from the Audit.
      *
@@ -373,7 +376,7 @@ trait Auditable
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->excludedAttributes, true)) {
+        if (in_array($attribute, $this->getAuditExclude(), true)) {
             return false;
         }
 
@@ -487,14 +490,6 @@ trait Auditable
         }
 
         return Config::get('audit.enabled', true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuditInclude(): array
-    {
-        return $this->auditInclude ?? [];
     }
 
     /**
