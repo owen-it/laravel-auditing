@@ -29,8 +29,8 @@ class AuditTest extends AuditingTestCase
 
         /** @var Audit $audit */
         $audit = $article->audits()->first();
-
-        $this->assertCount(15, $resolvedData = $audit->resolveData());
+        $resolvedData = $audit->resolveData();
+        $this->assertCount(17, $resolvedData);
 
         self::Assert()::assertArraySubset([
             'audit_id'         => 1,

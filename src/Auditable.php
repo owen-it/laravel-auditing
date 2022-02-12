@@ -22,6 +22,7 @@ trait Auditable
     use ExcludesAuditAttributes;
     use IncludesAuditAttribute;
 
+
     /**
      * Auditable attributes excluded from the Audit.
      *
