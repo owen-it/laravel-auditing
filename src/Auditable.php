@@ -377,7 +377,7 @@ trait Auditable
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->getAuditExclude(), true)) {
+        if (in_array($attribute, $this->excludedAttributes, true)) {
             return false;
         }
 

@@ -685,10 +685,10 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $model->auditInclude = [
+        $model->setAuditInclude([
             'title',
             'content',
-        ];
+        ]);
 
         self::Assert()::assertArraySubset([
             'title',
