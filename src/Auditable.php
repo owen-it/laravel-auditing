@@ -153,8 +153,8 @@ trait Auditable
 
         foreach ($this->getDirty() as $attribute => $value) {
             if ($this->isAttributeAuditable($attribute)) {
-                $old[$attribute] = Arr::get($this->original, $attribute);
-                $new[$attribute] = Arr::get($this->attributes, $attribute);
+                $old[$attribute] = $this->getOriginal($attribute);
+                $new[$attribute] = $this->getAttribute($attribute);
             }
         }
 
