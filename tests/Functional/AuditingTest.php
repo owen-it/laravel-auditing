@@ -4,6 +4,7 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\Assert;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -13,11 +14,14 @@ use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\fixtures\TenantResolver;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\ArticleExcludes;
 use OwenIt\Auditing\Tests\Models\Category;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditingTest extends AuditingTestCase
 {
+    use WithFaker;
+
     /**
      * @test
      */
@@ -456,19 +460,22 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillNotAuditModelsWhenValuesAreEmpty()
     {
-        $this->markTestSkipped('Handle include and exclude not implemented');
-
         $this->app['config']->set('audit.empty_values', false);
 
-        /** @var Article $model */
-        $model = factory(Article::class)->create([
-            'reviewed' => 0,
-        ]);
-        $model->setAuditExclude([
+        $article = new ArticleExcludes();
+        $article->auditExclude = [];
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->published_at = null;
+        $article->reviewed = 0;
+        $article->save();
+
+        $article->auditExclude = [
             'reviewed',
-        ]);
-        $model->reviewed = 1;
-        $model->save();
+        ];
+
+        $article->reviewed = 1;
+        $article->save();
 
         $this->assertSame(1, Article::query()->count());
         $this->assertSame(1, Audit::query()->count());
