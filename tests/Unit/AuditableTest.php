@@ -5,6 +5,7 @@ namespace OwenIt\Auditing\Tests;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Testing\Assert;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -16,11 +17,13 @@ use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\ArticleExcludes;
 use OwenIt\Auditing\Tests\Models\User;
 use ReflectionClass;
 
 class AuditableTest extends AuditingTestCase
 {
+    use WithFaker;
     /**
      * {@inheritdoc}
      */
@@ -722,6 +725,24 @@ class AuditableTest extends AuditingTestCase
         self::Assert()::assertArraySubset([
             'published_at',
         ], $model->getAuditExclude(), true);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itExcludesAttributesFromExclude()
+    {
+        $model = new ArticleExcludes();
+
+        $model->title = 'Darth Vader announces new paternity leave option for stormtroopers';
+        $model->content = 'Storm troopers has for a long time wanted a more flexible schedule... ';
+        $model->reviewed = 1;
+        $model->save();
+
+        /** @var Audit $audit */
+        $audit = Audit::all()->first();
+        $this->assertArrayNotHasKey('title', $audit->getModified());
     }
 
     /**
