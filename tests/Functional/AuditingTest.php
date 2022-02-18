@@ -22,6 +22,13 @@ class AuditingTest extends AuditingTestCase
 {
     use WithFaker;
 
+    
+    /**
+    *@test
+    */
+    public function itFails() {
+        $this->assertTrue(false);
+    }
     /**
      * @test
      */
