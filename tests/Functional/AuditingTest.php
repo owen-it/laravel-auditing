@@ -456,6 +456,41 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     * @return void
+     */
+    public function itWillExcludeIfGlobalExcludeIsSet()
+    {
+        $this->app['config']->set('audit.exclude', ['content']);
+
+        $article = new Article();
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->published_at = null;
+        $article->reviewed = 0;
+        $article->save();
+        $this->assertArrayNotHasKey('content', $article->audits()->first()->getModified());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function localExcludeOverridesGlobalExclude()
+    {
+        $this->app['config']->set('audit.exclude', ['content']);
+
+        $article = new ArticleExcludes();
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->published_at = null;
+        $article->reviewed = 0;
+        $article->save();
+        $this->assertArrayHasKey('content', $article->audits()->first()->getModified());
+        $this->assertArrayNotHasKey('title', $article->audits()->first()->getModified());
+    }
+
+    /**
+     * @test
      *
      */
     public function itWillNotAuditModelsWhenValuesAreEmpty()
