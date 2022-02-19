@@ -24,12 +24,6 @@ class AuditingTest extends AuditingTestCase
 
     
     /**
-    *@test
-    */
-    public function itFails() {
-        $this->assertTrue(false);
-    }
-    /**
      * @test
      */
     public function itWillNotAuditModelsWhenRunningFromTheConsole()
