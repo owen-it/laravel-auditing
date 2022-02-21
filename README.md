@@ -22,7 +22,7 @@ The package documentation can be found on the [official website](http://www.lara
 ## Version Information
  Version   | Illuminate    | Status                  | PHP Version
 :----------|:--------------|:------------------------|:------------
- 12.x      | 6.x.x - 8.x.x | Active support :rocket: | >= 7.3 \| 8.0
+ 12.x      | 6.x.x - 9.x.x | Active support :rocket: | >= 7.3 \| 8.0
  11.x      | 5.8.x - 8.x.x | Active support          | >= 7.3
  10.x      | 5.8.x - 7.x.x | Active support          | >= 7.2.5
  9.x       | 5.8.x - 6.x.x | Active support          | >= 7.1.3
