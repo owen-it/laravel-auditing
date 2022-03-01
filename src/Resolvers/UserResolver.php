@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Config;
 
 class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function resolve()
     {
         $guards = Config::get('audit.user.guards', [

@@ -1,11 +1,24 @@
-## v12.0.0 (2020-12-02)
+## v13.0.0
+
 ### Added
+
+- **dynamic resolvers** | Option to add/disable resolvers in config
+- Resolvers extend same contract and does not enforce a specific returntype at contract level
+- a new "exclude" config key for setting a global default
+  exclude ([#637](https://github.com/owen-it/laravel-auditing/pull/637))
+
+## v12.0.0 (2020-12-02)
+
+### Added
+
 - PHP 8.0 support
 
 ### Removed
+
 - Illuminate 5.8 support
 
 ## v9.0.0 (2019-03-02)
+
 ### Added
 - Illuminate 5.8 support
 

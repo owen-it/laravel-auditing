@@ -2,6 +2,10 @@
 
 namespace OwenIt\Auditing\Contracts;
 
+/**
+ * @deprecated
+ * @see Resolver
+ */
 interface IpAddressResolver
 {
     /**

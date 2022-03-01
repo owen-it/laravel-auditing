@@ -24,12 +24,13 @@ return [
     |
     */
 
-    'user' => [
+    'user'      => [
         'morph_prefix' => 'user',
         'guards'       => [
             'web',
             'api',
         ],
+        'resolver' => OwenIt\Auditing\Resolvers\UserResolver::class
     ],
 
     /*
@@ -40,8 +41,7 @@ return [
     | Define the User, IP Address, User Agent and URL resolver implementations.
     |
     */
-    'resolver' => [
-        'user'       => OwenIt\Auditing\Resolvers\UserResolver::class,
+    'resolvers' => [
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
         'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
@@ -60,7 +60,7 @@ return [
         'created',
         'updated',
         'deleted',
-        'restored',
+        'restored'
     ],
 
     /*
@@ -73,6 +73,37 @@ return [
     */
 
     'strict' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Global exclude
+    |--------------------------------------------------------------------------
+    |
+    | Have something you always want to exclude by default? - add it here.
+    | Note that this is overwritten (not merged) with local exclude
+    |
+    */
+
+    'exclude' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Empty Values
+    |--------------------------------------------------------------------------
+    |
+    | Should Audit records be stored when the recorded old_values & new_values
+    | are both empty?
+    |
+    | Some events may be empty on purpose. Use allowed_empty_values to exclude
+    | those from the empty values check. For example when auditing
+    | model retrieved events which will never have new and old values
+    |
+    */
+
+    'empty_values'         => true,
+    'allowed_empty_values' => [
+        'retrieved'
+    ],
 
     /*
     |--------------------------------------------------------------------------

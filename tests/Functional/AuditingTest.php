@@ -4,6 +4,7 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\Assert;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -11,11 +12,17 @@ use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
+use OwenIt\Auditing\Tests\fixtures\TenantResolver;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\ArticleExcludes;
+use OwenIt\Auditing\Tests\Models\Category;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditingTest extends AuditingTestCase
 {
+    use WithFaker;
+
+    
     /**
      * @test
      */
@@ -93,7 +100,6 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(1, Audit::query()->count());
 
         User::first();
-
         $this->assertSame(1, User::query()->count());
         $this->assertSame(2, Audit::query()->count());
     }
@@ -416,5 +422,156 @@ class AuditingTest extends AuditingTestCase
         $audit = $article->audits()->skip(1)->first();
         $this->assertSame(false, $audit->getModified()['config']['new']['articleIsGood']);
         $this->assertSame(true, $audit->getModified()['config']['old']['articleIsGood']);
+    }
+
+    /**
+     * @return void
+     * @test
+     */
+    public function canAddAdditionalResolver()
+    {
+        // added new resolver
+        $this->app['config']->set('audit.resolvers.tenant_id', TenantResolver::class);
+
+        $article = factory(Article::class)->create();
+
+        $this->assertTrue(true);
+        $audit = $article->audits()->first();
+        $this->assertSame(1, (int)$audit->tenant_id);
+    }
+
+    /**
+     * @return void
+     * @test
+     */
+    public function canDisableResolver()
+    {
+        // added new resolver
+        $this->app['config']->set('audit.resolvers.ip_address', null);
+
+        $article = factory(Article::class)->create();
+
+        $audit = $article->audits()->first();
+        $this->assertEmpty($audit->ip_address);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillExcludeIfGlobalExcludeIsSet()
+    {
+        $this->app['config']->set('audit.exclude', ['content']);
+
+        $article = new Article();
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->published_at = null;
+        $article->reviewed = 0;
+        $article->save();
+        $this->assertArrayNotHasKey('content', $article->audits()->first()->getModified());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function localExcludeOverridesGlobalExclude()
+    {
+        $this->app['config']->set('audit.exclude', ['content']);
+
+        $article = new ArticleExcludes();
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->published_at = null;
+        $article->reviewed = 0;
+        $article->save();
+        $this->assertArrayHasKey('content', $article->audits()->first()->getModified());
+        $this->assertArrayNotHasKey('title', $article->audits()->first()->getModified());
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function itWillNotAuditModelsWhenValuesAreEmpty()
+    {
+        $this->app['config']->set('audit.empty_values', false);
+
+        $article = new ArticleExcludes();
+        $article->auditExclude = [];
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->published_at = null;
+        $article->reviewed = 0;
+        $article->save();
+
+        $article->auditExclude = [
+            'reviewed',
+        ];
+
+        $article->reviewed = 1;
+        $article->save();
+
+        $this->assertSame(1, Article::query()->count());
+        $this->assertSame(1, Audit::query()->count());
+    }
+
+    /**
+     * @return void
+     * @test
+     */
+    public function itWillAuditRetrievedEventEvenIfAuditEmptyIsDisabled()
+    {
+        $this->app['config']->set('audit.empty_values', false);
+        $this->app['config']->set('audit.allowed_empty_values', ['retrieved']);
+        $this->app['config']->set('audit.events', [
+            'created',
+            'retrieved'
+        ]);
+
+        $this->app['config']->set('audit.empty_values', false);
+
+        /** @var Article $model */
+        factory(Article::class)->create();
+
+        Article::find(1);
+
+        $this->assertSame(2, Audit::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function itWillAuditModelsWhenValuesAreEmpty()
+    {
+        $model = factory(Article::class)->create([
+            'reviewed' => 0,
+        ]);
+
+        $model->reviewed = 1;
+        $model->save();
+
+        $this->assertSame(1, Article::query()->count());
+        $this->assertSame(2, Audit::query()->count());
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditCustomEventData()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->auditAttach('categories', $firstCategory);
+        $article->auditAttach('categories', $secondCategory);
+        $this->assertSame($firstCategory->name, $article->categories->first()->name);
+        $this->assertSame(
+            $secondCategory->name,
+            $article->audits->last()->getModified()['categories']['new'][1]['name']
+        );
     }
 }

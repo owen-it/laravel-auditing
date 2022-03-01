@@ -250,7 +250,7 @@ class AuditableTest extends AuditingTestCase
      * @dataProvider auditCustomAttributeGetterFailTestProvider
      *
      * @param string $event
-     * @param array  $auditEvents
+     * @param array $auditEvents
      * @param string $exceptionMessage
      */
     public function itFailsWhenTheCustomAttributeGettersAreMissing(
@@ -315,9 +315,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheIpAddressResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid IpAddressResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for: ip_address');
 
-        $this->app['config']->set('audit.resolver.ip_address', null);
+        $this->app['config']->set('audit.resolvers.ip_address', Audit::class);
 
         $model = new Article();
 
@@ -334,9 +334,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheUrlResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UrlResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for: url');
 
-        $this->app['config']->set('audit.resolver.url', null);
+        $this->app['config']->set('audit.resolvers.url', Audit::class);
 
         $model = new Article();
 
@@ -353,9 +353,9 @@ class AuditableTest extends AuditingTestCase
     public function itFailsWhenTheUserAgentResolverImplementationIsInvalid()
     {
         $this->expectException(AuditingException::class);
-        $this->expectExceptionMessage('Invalid UserAgentResolver implementation');
+        $this->expectExceptionMessage('Invalid Resolver implementation for: user_agent');
 
-        $this->app['config']->set('audit.resolver.user_agent', null);
+        $this->app['config']->set('audit.resolvers.user_agent', Audit::class);
 
         $model = new Article();
 
@@ -374,7 +374,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserResolver implementation');
 
-        $this->app['config']->set('audit.resolver.user', null);
+        $this->app['config']->set('audit.user.resolver', null);
 
         $model = new Article();
 
@@ -404,8 +404,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(11, $auditData = $model->toAudit());
 
         self::Assert()::assertArraySubset([
-            'old_values' => [],
-            'new_values' => [
+            'old_values'     => [],
+            'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => 'First step: install the laravel-auditing package.',
                 'reviewed'     => 1,
@@ -432,7 +432,7 @@ class AuditableTest extends AuditingTestCase
      *
      * @param string $guard
      * @param string $driver
-     * @param int    $id
+     * @param int $id
      * @param string $type
      */
     public function itReturnsTheAuditDataIncludingUserAttributes(
@@ -463,8 +463,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(11, $auditData = $model->toAudit());
 
         self::Assert()::assertArraySubset([
-            'old_values' => [],
-            'new_values' => [
+            'old_values'     => [],
+            'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => 'First step: install the laravel-auditing package.',
                 'reviewed'     => 1,
@@ -545,8 +545,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(11, $auditData = $model->toAudit());
 
         self::Assert()::assertArraySubset([
-            'old_values' => [],
-            'new_values' => [
+            'old_values'     => [],
+            'new_values'     => [
                 'title'   => 'How To Audit Eloquent Models',
                 'content' => 'First step: install the laravel-auditing package.',
             ],
@@ -994,7 +994,7 @@ class AuditableTest extends AuditingTestCase
 
         $audit = factory(Audit::class)->create([
             'auditable_type' => Article::class,
-            'auditable_id'   => (string) $model->id,
+            'auditable_id'   => (string)$model->id,
         ]);
 
         // Make sure the auditable_id isn't being cast
@@ -1020,9 +1020,9 @@ class AuditableTest extends AuditingTestCase
 
         // Key depends on type
         if ($model->getKeyType() == 'string') {
-            $key = (string) $model->id;
+            $key = (string)$model->id;
         } else {
-            $key = (int) $model->id;
+            $key = (int)$model->id;
         }
 
         $audit = factory(Audit::class)->create([
@@ -1096,7 +1096,7 @@ class AuditableTest extends AuditingTestCase
      *
      * @dataProvider auditableTransitionTestProvider
      *
-     * @param bool  $morphMap
+     * @param bool $morphMap
      * @param array $oldValues
      * @param array $newValues
      * @param array $oldExpectation

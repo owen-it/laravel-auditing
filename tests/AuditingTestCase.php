@@ -27,6 +27,7 @@ class AuditingTestCase extends TestCase
         // Audit
         $app['config']->set('audit.drivers.database.connection', 'testing');
         $app['config']->set('audit.user.morph_prefix', 'user');
+        $app['config']->set('audit.user.resolver', UserResolver::class);
         $app['config']->set('audit.user.guards', [
             'web',
             'api',
@@ -35,11 +36,12 @@ class AuditingTestCase extends TestCase
             'driver'   => 'session',
             'provider' => 'users',
         ]);
-        $app['config']->set('audit.resolver.user', UserResolver::class);
-        $app['config']->set('audit.resolver.url', UrlResolver::class);
-        $app['config']->set('audit.resolver.ip_address', IpAddressResolver::class);
-        $app['config']->set('audit.resolver.user_agent', UserAgentResolver::class);
+
+        $app['config']->set('audit.resolvers.url', UrlResolver::class);
+        $app['config']->set('audit.resolvers.ip_address', IpAddressResolver::class);
+        $app['config']->set('audit.resolvers.user_agent', UserAgentResolver::class);
         $app['config']->set('audit.console', true);
+        $app['config']->set('audit.empty_values', true);
     }
 
     /**

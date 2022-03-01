@@ -3,8 +3,8 @@
 | Bug?              | no|yes
 | New Feature?      | no|yes
 | Framework         | Laravel|Lumen
-| Framework version | 5.x.y
-| Package version   | 6.x.y
+| Framework version | 8.x.y
+| Package version   | 12.x.y
 | PHP version       | 7.x.y
 
 #### Actual Behaviour

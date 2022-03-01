@@ -1,0 +1,14 @@
+<?php
+
+namespace DummyNamespace;
+
+use OwenIt\Auditing\Contracts\Resolver;
+use OwenIt\Auditing\Contracts\Auditable;
+
+class DummyClass implements Resolver
+{
+    public static function resolve(Auditable $auditable)
+    {
+        // TODO: Implement resolve() method.
+    }
+}

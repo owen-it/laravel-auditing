@@ -36,13 +36,18 @@ class Article extends Model implements Auditable
         'reviewed',
     ];
 
-
     public function __construct(array $attributes = [])
     {
         if (class_exists(\Illuminate\Database\Eloquent\Casts\AsArrayObject::class)) {
             $this->casts['config'] = \Illuminate\Database\Eloquent\Casts\AsArrayObject::class;
         }
+
         parent::__construct($attributes);
+    }
+
+    public function categories()
+    {
+        return $this->morphToMany(Category::class, 'model', 'model_has_categories');
     }
 
     /**
@@ -56,4 +61,5 @@ class Article extends Model implements Auditable
     {
         return strtoupper($value);
     }
+
 }
