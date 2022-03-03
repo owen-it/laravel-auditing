@@ -2,12 +2,14 @@
 
 namespace OwenIt\Auditing\Contracts;
 
+use Illuminate\Auth\Authenticatable;
+
 interface UserResolver
 {
     /**
      * Resolve the User.
      *
-     * @return mixed|null
+     * @return Authenticatable|null
      */
     public static function resolve();
 }
