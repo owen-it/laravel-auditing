@@ -31,7 +31,7 @@ trait Auditable
      *
      * @var string
      */
-    protected $auditEvent;
+    public $auditEvent;
 
     /**
      * Is auditing disabled?
