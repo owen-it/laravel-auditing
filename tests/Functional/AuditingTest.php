@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
+use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
@@ -573,5 +574,31 @@ class AuditingTest extends AuditingTestCase
             $secondCategory->name,
             $article->audits->last()->getModified()['categories']['new'][1]['name']
         );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function canAuditAnyCustomEvent()
+    {
+        $article = factory(Article::class)->create();
+        $article->auditEvent = 'whateverYouWant';
+        $article->isCustomEvent = true;
+        $article->auditCustomOld = [
+            'customExample' => 'Anakin Skywalker'
+        ];
+        $article->auditCustomNew = [
+            'customExample' => 'Darth Vader'
+        ];
+        Event::dispatch(AuditCustom::class, [$article]);
+
+        $this->assertDatabaseHas('audits', [
+            'auditable_id'   => $article->id,
+            'auditable_type' => Article::class,
+            'event'          => 'whateverYouWant',
+            'new_values'     => '{"customExample":"Darth Vader"}',
+            'old_values'     => '{"customExample":"Anakin Skywalker"}'
+        ]);
     }
 }
