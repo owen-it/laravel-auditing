@@ -17,8 +17,6 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait Auditable
 {
-
-
     /**
      * Auditable attributes excluded from the Audit.
      *
