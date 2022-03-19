@@ -17,8 +17,6 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait Auditable
 {
-
-
     /**
      * Auditable attributes excluded from the Audit.
      *
@@ -639,6 +637,7 @@ trait Auditable
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
+        $this->isCustomEvent = false;
     }
 
     /**
@@ -664,6 +663,7 @@ trait Auditable
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
+        $this->isCustomEvent = false;
         return empty($results) ? 0 : $results;
     }
 
@@ -690,6 +690,7 @@ trait Auditable
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
+        $this->isCustomEvent = false;
         return $changes;
     }
 
