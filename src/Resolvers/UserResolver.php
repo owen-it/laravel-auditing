@@ -18,12 +18,12 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
 
         foreach ($guards as $guard) {
             try {
-                $authenticated = Auth::guard($guard);
+                $authenticated = Auth::guard($guard)->check();
             } catch (\Exception $exception) {
                 continue;
             }
 
-            if ($authenticated) {
+            if (true === $authenticated) {
                 return Auth::guard($guard)->user();
             }
         }
