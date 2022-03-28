@@ -671,21 +671,27 @@ trait Auditable
      * @param $relationName
      * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
      * @param bool $detaching
+     * @param bool $skipUnchanged
      * @return array
      * @throws AuditingException
      */
-    public function auditSync($relationName, $ids, $detaching = true)
+    public function auditSync($relationName, $ids, $detaching = true, $skipUnchanged = false)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'sync')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method sync');
         }
 
-        $this->auditEvent = 'sync';
-        $this->isCustomEvent = true;
         $this->auditCustomOld = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
         $changes = $this->{$relationName}()->sync($ids, $detaching);
+
+        if ($skipUnchanged && collect($changes)->flatten()->isEmpty()) {
+            return $changes;
+        }
+
+        $this->auditEvent = 'sync';
+        $this->isCustomEvent = true;
         $this->auditCustomNew = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
@@ -697,14 +703,30 @@ trait Auditable
     /**
      * @param string $relationName
      * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
+     * @param bool $skipUnchanged
      * @return array
      * @throws AuditingException
      */
-    public function auditSyncWithoutDetaching(string $relationName, $ids)
+    public function auditSyncWithoutDetaching(string $relationName, $ids, $skipUnchanged = false)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method syncWithoutDetaching');
         }
-        return $this->auditSync($relationName, $ids, false);
+        return $this->auditSync($relationName, $ids, false, $skipUnchanged);
+    }
+
+    /**
+     * @param string $relationName
+     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
+     * @param bool $skipUnchanged
+     * @return array
+     * @throws AuditingException
+     */
+    public function auditSyncIfChanged(string $relationName, $ids, $detaching = true)
+    {
+        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
+            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method syncWithoutDetaching');
+        }
+        return $this->auditSync($relationName, $ids, $detaching, true);
     }
 }
