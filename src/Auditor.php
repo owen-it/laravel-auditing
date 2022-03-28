@@ -78,6 +78,14 @@ class Auditor extends Manager implements Contracts\Auditor
             }
         }
 
+        //Don't store audits if there are no changes, expect for 'retrieved' events
+        if (
+            $model->toAudit()['new_values'] == $model->toAudit()['old_values'] &&
+            !in_array($model->getAuditEvent(), ['retrieved'])
+        ) {
+            return;
+        }
+
         $audit = $driver->audit($model);
         if (!$audit) {
             return;
