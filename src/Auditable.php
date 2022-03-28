@@ -681,6 +681,8 @@ trait Auditable
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method sync');
         }
 
+        $this->auditEvent = 'sync';
+
         $this->auditCustomOld = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
@@ -690,13 +692,14 @@ trait Auditable
             return $changes;
         }
 
-        $this->auditEvent = 'sync';
-        $this->isCustomEvent = true;
         $this->auditCustomNew = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
+
+        $this->isCustomEvent = true;
         Event::dispatch(AuditCustom::class, [$this]);
         $this->isCustomEvent = false;
+
         return $changes;
     }
 
