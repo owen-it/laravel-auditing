@@ -23,7 +23,6 @@ class AuditingTest extends AuditingTestCase
 {
     use WithFaker;
 
-    
     /**
      * @test
      */
