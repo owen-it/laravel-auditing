@@ -631,8 +631,10 @@ class AuditingTest extends AuditingTestCase
      * @test
      * @return void
      */
-    public function itWillAuditSyncWhenSkipUnchangedPassed()
+    public function itWillAuditSyncWhenSkippingEmptyValues()
     {
+        $this->app['config']->set('audit.empty_values', false);
+
         $firstCategory = factory(Category::class)->create();
         $secondCategory = factory(Category::class)->create();
         $article = factory(Article::class)->create();
@@ -642,7 +644,7 @@ class AuditingTest extends AuditingTestCase
         $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
         $categoryBefore = $article->categories()->first()->getKey();
 
-        $article->auditSyncIfChanged('categories', [$secondCategory->getKey()]);
+        $article->auditSync('categories', [$secondCategory->getKey()]);
 
         $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
         $categoryAfter = $article->categories()->first()->getKey();
@@ -657,8 +659,10 @@ class AuditingTest extends AuditingTestCase
      * @test
      * @return void
      */
-    public function itWillNotAuditSyncWhenSkipUnchangedPassedButNoChanges()
+    public function itWillNotAuditSyncWhenSkippingEmptyValuesAndNoChangesMade()
     {
+        $this->app['config']->set('audit.empty_values', false);
+
         $firstCategory = factory(Category::class)->create();
         $article = factory(Article::class)->create();
 
@@ -667,7 +671,7 @@ class AuditingTest extends AuditingTestCase
         $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
         $categoryBefore = $article->categories()->first()->getKey();
 
-        $article->auditSyncIfChanged('categories', [$firstCategory->getKey()]);
+        $article->auditSync('categories', [$firstCategory->getKey()]);
 
         $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
         $categoryAfter = $article->categories()->first()->getKey();
