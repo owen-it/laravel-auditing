@@ -243,10 +243,6 @@ trait Audit
 
             $value = $this->getDataValue($key);
             $modified[$attribute][$state] = $value;
-
-            if ($value instanceof DateTimeInterface) {
-                $modified[$attribute][$state] = !is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
-            }
         }
 
         return $json ? json_encode($modified, $options, $depth) : $modified;
