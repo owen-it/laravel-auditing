@@ -671,6 +671,7 @@ trait Auditable
      * @param $relationName
      * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
      * @param bool $detaching
+     * @param bool $skipUnchanged
      * @return array
      * @throws AuditingException
      */
@@ -681,22 +682,33 @@ trait Auditable
         }
 
         $this->auditEvent = 'sync';
-        $this->isCustomEvent = true;
+
         $this->auditCustomOld = [
             $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
         ];
+
         $changes = $this->{$relationName}()->sync($ids, $detaching);
-        $this->auditCustomNew = [
-            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
-        ];
+
+        if (collect($changes)->flatten()->isEmpty()) {
+            $this->auditCustomOld = [];
+            $this->auditCustomNew = [];
+        } else {
+            $this->auditCustomNew = [
+                $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+            ];
+        }
+
+        $this->isCustomEvent = true;
         Event::dispatch(AuditCustom::class, [$this]);
         $this->isCustomEvent = false;
+
         return $changes;
     }
 
     /**
      * @param string $relationName
      * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
+     * @param bool $skipUnchanged
      * @return array
      * @throws AuditingException
      */
