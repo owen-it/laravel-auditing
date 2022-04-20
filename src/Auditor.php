@@ -70,9 +70,8 @@ class Auditor extends Manager implements Contracts\Auditor
         // Check if we want to avoid storing empty values
         $allowEmpty = Config::get('audit.empty_values');
         $explicitAllowEmpty = in_array($model->getAuditEvent(), Config::get('audit.allowed_empty_values', []));
-        $explicitDisallowEmpty = in_array($model->getAuditEvent(), Config::get('audit.disallowed_empty_values', []));
 
-        if ($explicitDisallowEmpty || (!$allowEmpty && !$explicitAllowEmpty)) {
+        if (!$allowEmpty && !$explicitAllowEmpty) {
             if (
                 empty($model->toAudit()['new_values']) &&
                 empty($model->toAudit()['old_values'])
