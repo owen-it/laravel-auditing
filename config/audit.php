@@ -98,16 +98,12 @@ return [
     | those from the empty values check. For example when auditing
     | model retrieved events which will never have new and old values.
     |
-    | When using empty_values => true, you can still exclude certain events
-    | with empty values by specifying them in disallowed_empty_values.
     |
     */
 
     'empty_values'         => true,
     'allowed_empty_values' => [
         'retrieved'
-    ],
-    'disallowed_empty_values' => [
     ],
 
     /*
