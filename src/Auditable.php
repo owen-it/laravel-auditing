@@ -375,13 +375,14 @@ trait Auditable
     protected function runResolvers(): array
     {
         $resolved = [];
-        if (Config::has('audit.resolver')) {
+        $resolvers = Config::get('audit.resolvers', []);
+        if (empty($resolvers) && Config::has('audit.resolver')) {
             trigger_error('The config file audit.php is not updated to the new version 13.0. Please see https://www.laravel-auditing.com/docs/13.0/upgrading',
                 E_USER_DEPRECATED);
-            return [];
+            $resolvers = Config::get('audit.resolver', []);
         }
 
-        foreach (Config::get('audit.resolvers', []) as $name => $implementation) {
+        foreach ($resolvers as $name => $implementation) {
             if (empty($implementation)) {
                 continue;
             }
