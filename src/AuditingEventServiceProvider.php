@@ -2,7 +2,11 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+if (app() instanceof \Illuminate\Foundation\Application) {
+    class_alias(\Illuminate\Foundation\Support\Providers\EventServiceProvider::class, '\OwenIt\Auditing\ServiceProvider');
+} else {
+    class_alias(\Laravel\Lumen\Providers\EventServiceProvider::class, '\OwenIt\Auditing\ServiceProvider');
+}
 use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Listeners\RecordCustomAudit;
 
