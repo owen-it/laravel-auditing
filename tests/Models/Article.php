@@ -61,5 +61,4 @@ class Article extends Model implements Auditable
     {
         return strtoupper($value);
     }
-
 }
