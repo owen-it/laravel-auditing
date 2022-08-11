@@ -75,8 +75,8 @@ trait Audit
             'audit_id'         => $this->id,
             'audit_event'      => $this->event,
             'audit_tags'       => $this->tags,
-            'audit_created_at' => $this->serializeDate($this->created_at),
-            'audit_updated_at' => $this->serializeDate($this->updated_at),
+            'audit_created_at' => $this->serializeDate($this->{$this->getCreatedAtColumn()}),
+            'audit_updated_at' => $this->serializeDate($this->{$this->getUpdatedAtColumn()}),
             'user_id'          => $this->getAttribute($morphPrefix . '_id'),
             'user_type'        => $this->getAttribute($morphPrefix . '_type'),
         ];
