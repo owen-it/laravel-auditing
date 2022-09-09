@@ -38,7 +38,7 @@ return [
     | Audit Resolvers
     |--------------------------------------------------------------------------
     |
-    | Define the User, IP Address, User Agent and URL resolver implementations.
+    | Define the IP Address, User Agent and URL resolver implementations.
     |
     */
     'resolvers' => [
