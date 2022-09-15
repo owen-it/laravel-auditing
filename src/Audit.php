@@ -136,6 +136,8 @@ trait Audit
 
         // Cast to native PHP type
         if ($model->hasCast($key)) {
+            unset($model->classCastCache[$key]);
+
             return $model->castAttribute($key, $value);
         }
 
