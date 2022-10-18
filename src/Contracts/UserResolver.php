@@ -2,7 +2,7 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 interface UserResolver
 {
