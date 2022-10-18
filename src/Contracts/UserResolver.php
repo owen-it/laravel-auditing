@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing\Contracts;
 
-
 interface UserResolver
 {
     /**
