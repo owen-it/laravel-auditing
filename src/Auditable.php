@@ -25,6 +25,13 @@ trait Auditable
     protected $excludedAttributes = [];
 
     /**
+     * Tags to be included when saving the audit
+     *
+     * @var array
+     */
+    protected $auditTags = [];
+    
+    /**
      * Audit event name.
      *
      * @var string
@@ -570,7 +577,7 @@ trait Auditable
      */
     public function generateTags(): array
     {
-        return [];
+        return $this->auditTags;
     }
 
     /**
