@@ -483,7 +483,7 @@ trait Auditable
      */
     public function getAuditEvents(): array
     {
-        return $this->auditEvents ?? Config::get('audit.events', [
+        return (property_exists($this, 'auditEvents') ? $this->auditEvents : null) ?: Config::get('audit.events', [
                 'created',
                 'updated',
                 'deleted',
