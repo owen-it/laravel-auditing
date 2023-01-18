@@ -39,7 +39,7 @@
         }
     ],
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.3|^8.0|^8.2",
         "illuminate/console": "^7.0|^8.0|^9.0",
         "illuminate/database": "^7.0|^8.0|^9.0",
         "illuminate/filesystem": "^7.0|^8.0|^9.0",
