@@ -1,5 +1,5 @@
 {
-    "name": "owen-it/laravel-auditing",
+    "name": "snappshop/laravel-auditing-with-async",
     "description": "Audit changes of your Eloquent models in Laravel/Lumen",
     "keywords": [
         "accountability",
@@ -17,7 +17,6 @@
         "revision",
         "tracking"
     ],
-    "homepage": "http://laravel-auditing.com",
     "type": "package",
     "license": "MIT",
     "support": {
@@ -36,6 +35,10 @@
         {
             "name": "Morten D. Hansen",
             "email": "morten@visia.dk"
+        },
+        {
+            "name": "Hamed Hosseini",
+            "email": "hamedmax73@gmail.com"
         }
     ],
     "require": {
@@ -61,9 +64,6 @@
             "OwenIt\\Auditing\\Tests\\": "tests/"
         }
     },
-    "suggest": {
-        "laravelista/lumen-vendor-publish": "Needed to publish the package configuration in Lumen"
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "v13-dev"
@@ -73,7 +73,5 @@
                 "OwenIt\\Auditing\\AuditingServiceProvider"
             ]
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
