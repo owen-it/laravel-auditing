@@ -545,6 +545,15 @@ trait Auditable
     }
 
     /**
+     * check we should queue the audit or not
+     * @return bool
+     */
+    public function getShouldQueue(): bool
+    {
+        return $this->shouldQueue ?? Config::get('audit.should_queue', true);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getAuditTimestamps(): bool

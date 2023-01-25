@@ -80,11 +80,12 @@ class Auditor extends Manager implements Contracts\Auditor
                 return;
             }
         }
+
+        //check for queue
         $jobQueueName = Config::get('audit.job_queue_name');
+        $shouldQueue = $model->getShouldQueue();
         $allowQueue = Config::get('audit.should_queue');
-
-
-        if ($allowQueue) {
+        if ($allowQueue && $shouldQueue) {
             //attach resolvers to use in jobs
             $resolvers = $model->runResolvers();
             AuditModelChanges::dispatch($driver, $model, $resolvers, $model->getAuditEvent())->onQueue($jobQueueName);
