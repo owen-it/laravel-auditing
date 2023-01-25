@@ -11,6 +11,7 @@ use OwenIt\Auditing\Drivers\Database;
 use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
+use OwenIt\Auditing\Jobs\AuditModelChanges;
 
 class Auditor extends Manager implements Contracts\Auditor
 {
@@ -80,16 +81,27 @@ class Auditor extends Manager implements Contracts\Auditor
             }
         }
 
-        $audit = $driver->audit($model);
-        if (!$audit) {
-            return;
+        //check for queue
+        $jobQueueName = Config::get('audit.job_queue_name');
+        $shouldQueue = $model->getShouldQueue();
+        $allowQueue = Config::get('audit.should_queue');
+        if ($allowQueue && $shouldQueue) {
+            //attach resolvers to use in jobs
+            $resolvers = $model->runResolvers();
+            AuditModelChanges::dispatch($driver, $model, $resolvers, $model->getAuditEvent())->onQueue($jobQueueName);
+        } else {
+            $audit = $driver->audit($model);
+            if (!$audit) {
+                return;
+            }
+
+            $driver->prune($model);
+
+            $this->container->make('events')->dispatch(
+                new Audited($model, $driver, $audit)
+            );
+
         }
-
-        $driver->prune($model);
-
-        $this->container->make('events')->dispatch(
-            new Audited($model, $driver, $audit)
-        );
     }
 
     /**

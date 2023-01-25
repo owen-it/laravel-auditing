@@ -25,6 +25,12 @@ trait Auditable
     protected $excludedAttributes = [];
 
     /**
+     * List of resolvers.
+     * @var array
+     */
+    public $appendedResolver = [];
+
+    /**
      * Audit event name.
      *
      * @var string
@@ -88,7 +94,7 @@ trait Auditable
     {
         $this->excludedAttributes = $this->getAuditExclude();
 
-        // When in strict mode, hidden and non visible attributes are excluded
+        // When in strict mode, hidden and non-visible attributes are excluded
         if ($this->getAuditStrict()) {
             // Hidden attributes
             $this->excludedAttributes = array_merge($this->excludedAttributes, $this->hidden);
@@ -312,6 +318,11 @@ trait Auditable
 
         list($old, $new) = $this->$attributeGetter();
 
+        //if we dose not has any resolvers, we must run resolvers
+        if (empty($this->appendedResolver)) {
+            $this->appendedResolver = $this->runResolvers();
+        }
+
         if ($this->getAttributeModifiers() && !$this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
                 $old[$attribute] = $this->modifyAttributeValue($attribute, $value);
@@ -329,15 +340,15 @@ trait Auditable
         $user = $this->resolveUser();
 
         return $this->transformAudit(array_merge([
-            'old_values'           => $old,
-            'new_values'           => $new,
-            'event'                => $this->auditEvent,
-            'auditable_id'         => $this->getKey(),
-            'auditable_type'       => $this->getMorphClass(),
-            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
+            'old_values' => $old,
+            'new_values' => $new,
+            'event' => $this->auditEvent,
+            'auditable_id' => $this->getKey(),
+            'auditable_type' => $this->getMorphClass(),
+            $morphPrefix . '_id' => $user ? $user->getAuthIdentifier() : null,
             $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'tags'                 => empty($tags) ? null : $tags,
-        ], $this->runResolvers()));
+            'tags' => empty($tags) ? null : $tags,
+        ], $this->appendedResolver));
     }
 
     /**
@@ -374,7 +385,7 @@ trait Auditable
         throw new AuditingException('Invalid UserResolver implementation');
     }
 
-    protected function runResolvers(): array
+    public function runResolvers(): array
     {
         $resolved = [];
         $resolvers = Config::get('audit.resolvers', []);
@@ -484,11 +495,11 @@ trait Auditable
     public function getAuditEvents(): array
     {
         return $this->auditEvents ?? Config::get('audit.events', [
-                'created',
-                'updated',
-                'deleted',
-                'restored',
-            ]);
+            'created',
+            'updated',
+            'deleted',
+            'restored',
+        ]);
     }
 
     /**
@@ -531,6 +542,15 @@ trait Auditable
     public function getAuditStrict(): bool
     {
         return $this->auditStrict ?? Config::get('audit.strict', false);
+    }
+
+    /**
+     * check we should queue the audit or not
+     * @return bool
+     */
+    public function getShouldQueue(): bool
+    {
+        return $this->shouldQueue ?? Config::get('audit.should_queue', true);
     }
 
     /**
