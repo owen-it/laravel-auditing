@@ -88,7 +88,7 @@ trait Auditable
     {
         $this->excludedAttributes = $this->getAuditExclude();
 
-        // When in strict mode, hidden and non visible attributes are excluded
+        // When in strict mode, hidden and non-visible attributes are excluded
         if ($this->getAuditStrict()) {
             // Hidden attributes
             $this->excludedAttributes = array_merge($this->excludedAttributes, $this->hidden);
