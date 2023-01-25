@@ -28,17 +28,19 @@ class AuditModelChanges implements ShouldQueue
     public $model;
     public $auditDriver;
     public $event;
+    public $resolvers;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(AuditDriver $auditDriver, Auditable $model, $event)
+    public function __construct(AuditDriver $auditDriver, Auditable $model, $resolvers, $event)
     {
         $this->auditDriver = $auditDriver;
         $this->model = $model;
         $this->event = $event;
+        $this->resolvers = $resolvers;
     }
 
     /**
@@ -49,6 +51,7 @@ class AuditModelChanges implements ShouldQueue
     public function handle()
     {
         $this->model->setAuditEvent($this->event);
+        $this->model->appendedResolver = $this->resolvers;
         $audit = $this->auditDriver->audit($this->model);
         if (!$audit) {
             $this->fail();
