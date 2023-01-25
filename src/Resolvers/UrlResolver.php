@@ -13,9 +13,9 @@ class UrlResolver implements \OwenIt\Auditing\Contracts\Resolver
      */
     public static function resolve(Auditable $auditable): string
     {
-//        if (App::runningInConsole()) {
-//            return 'console';
-//        }
+        if (App::runningInConsole()) {
+            return 'console';
+        }
 
         return Request::fullUrl();
     }
