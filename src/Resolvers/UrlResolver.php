@@ -9,6 +9,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class UrlResolver implements \OwenIt\Auditing\Contracts\Resolver
 {
     /**
+     * @param  Auditable  $auditable
      * @return string
      */
     public static function resolve(Auditable $auditable): string

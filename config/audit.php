@@ -24,13 +24,13 @@ return [
     |
     */
 
-    'user' => [
+    'user'      => [
         'morph_prefix' => 'user',
-        'guards' => [
+        'guards'       => [
             'web',
             'api'
         ],
-        'resolver' => OwenIt\Auditing\Resolvers\UserResolver::class
+        'resolver'     => OwenIt\Auditing\Resolvers\UserResolver::class
     ],
 
     /*
@@ -44,7 +44,7 @@ return [
     'resolvers' => [
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
-        'url' => OwenIt\Auditing\Resolvers\UrlResolver::class,
+        'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
     ],
 
     /*
@@ -101,7 +101,7 @@ return [
     |
     */
 
-    'empty_values' => true,
+    'empty_values'         => true,
     'allowed_empty_values' => [
         'retrieved'
     ],
@@ -151,7 +151,7 @@ return [
 
     'drivers' => [
         'database' => [
-            'table' => 'audits',
+            'table'      => 'audits',
             'connection' => null,
         ],
     ],
@@ -165,7 +165,7 @@ return [
     |
     */
 
-    'console' => false,
+    'console'        => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -175,6 +175,6 @@ return [
     | Name of queue that job dispatch on that
     |
     */
-    'should_queue' => true,
+    'should_queue'   => true,
     'job_queue_name' => 'audit',
 ];
