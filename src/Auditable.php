@@ -2,9 +2,11 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
@@ -267,8 +269,8 @@ trait Auditable
     /**
      * Modify attribute value.
      *
-     * @param string $attribute
-     * @param mixed $value
+     * @param  string  $attribute
+     * @param  mixed  $value
      *
      * @return mixed
      * @throws AuditingException
@@ -340,14 +342,14 @@ trait Auditable
         $user = $this->resolveUser();
 
         return $this->transformAudit(array_merge([
-            'old_values' => $old,
-            'new_values' => $new,
-            'event' => $this->auditEvent,
-            'auditable_id' => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $morphPrefix . '_id' => $user ? $user->getAuthIdentifier() : null,
-            $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'tags' => empty($tags) ? null : $tags,
+            'old_values'         => $old,
+            'new_values'         => $new,
+            'event'              => $this->auditEvent,
+            'auditable_id'       => $this->getKey(),
+            'auditable_type'     => $this->getMorphClass(),
+            $morphPrefix.'_id'   => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
+            'tags'               => empty($tags) ? null : $tags,
         ], $this->appendedResolver));
     }
 
@@ -403,7 +405,7 @@ trait Auditable
             }
 
             if (!is_subclass_of($implementation, Resolver::class)) {
-                throw new AuditingException('Invalid Resolver implementation for: ' . $name);
+                throw new AuditingException('Invalid Resolver implementation for: '.$name);
             }
             $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
@@ -413,7 +415,7 @@ trait Auditable
     /**
      * Determine if an attribute is eligible for auditing.
      *
-     * @param string $attribute
+     * @param  string  $attribute
      *
      * @return bool
      */
@@ -434,7 +436,7 @@ trait Auditable
     /**
      * Determine whether an event is auditable.
      *
-     * @param string $event
+     * @param  string  $event
      *
      * @return bool
      */
@@ -446,7 +448,7 @@ trait Auditable
     /**
      * Attribute getter method resolver.
      *
-     * @param string $event
+     * @param  string  $event
      *
      * @return string|null
      */
@@ -657,17 +659,18 @@ trait Auditable
     */
 
     /**
-     * @param string $relationName
-     * @param mixed $id
-     * @param array $attributes
-     * @param bool $touch
+     * @param  string  $relationName
+     * @param  mixed  $id
+     * @param  array  $attributes
+     * @param  bool  $touch
+     * @param  string[]  $columns
      * @return void
      * @throws AuditingException
      */
     public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['name'])
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'attach')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method attach');
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method attach');
         }
         $this->auditEvent = 'attach';
         $this->isCustomEvent = true;
@@ -683,16 +686,16 @@ trait Auditable
     }
 
     /**
-     * @param string $relationName
-     * @param mixed $ids
-     * @param bool $touch
+     * @param  string  $relationName
+     * @param  mixed  $ids
+     * @param  bool  $touch
      * @return int
      * @throws AuditingException
      */
     public function auditDetach(string $relationName, $ids = null, $touch = true)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'detach')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method detach');
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method detach');
         }
 
         $this->auditEvent = 'detach';
@@ -711,16 +714,15 @@ trait Auditable
 
     /**
      * @param $relationName
-     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
-     * @param bool $detaching
-     * @param bool $skipUnchanged
+     * @param  Collection|Model|array  $ids
+     * @param  bool  $detaching
      * @return array
      * @throws AuditingException
      */
     public function auditSync($relationName, $ids, $detaching = true)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'sync')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method sync');
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method sync');
         }
 
         $this->auditEvent = 'sync';
@@ -748,16 +750,15 @@ trait Auditable
     }
 
     /**
-     * @param string $relationName
-     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
-     * @param bool $skipUnchanged
+     * @param  string  $relationName
+     * @param  Collection|Model|array  $ids
      * @return array
      * @throws AuditingException
      */
     public function auditSyncWithoutDetaching(string $relationName, $ids)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method syncWithoutDetaching');
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method syncWithoutDetaching');
         }
         return $this->auditSync($relationName, $ids, false);
     }
