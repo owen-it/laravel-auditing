@@ -16,7 +16,8 @@ class Article extends Model implements Auditable
      */
     protected $casts = [
         'reviewed' => 'bool',
-        'config'   => 'json'
+        'config'   => 'json',
+        'published_at' => 'datetime',
     ];
 
     /**

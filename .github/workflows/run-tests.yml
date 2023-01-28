@@ -12,9 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [7.4, 8.0]
-        laravel: [ 8.*, 7.*, 9.* ]
+        php: [7.4, 8.0, 8.1, 8.2]
+        laravel: [ 10.*, 9.*, 8.*, 7.*, 9.* ]
         include:
+          - laravel: 10.*
+            testbench: 8.*
           - laravel: 9.*
             testbench: 7.*
           - laravel: 8.*
@@ -22,8 +24,14 @@ jobs:
           - laravel: 7.*
             testbench: 5.*
         exclude:
+          - laravel: 10.*
+            php: 7.4
+          - laravel: 10.*
+            php: 8.0
           - laravel: 9.*
             php: 7.4
+          - laravel: 7.*
+            php: 8.2
 
     name: PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
@@ -43,7 +51,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" --no-interaction --no-update
+          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" "nesbot/carbon:^2.62.1" --no-interaction --no-update
           composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-suggest
 
