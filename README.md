@@ -1,7 +1,3 @@
-> **Warning** 
->
-> Hi guys, thank you for your trust in this package. I would like to dedicate more time to the project but at the moment it is not possible. If this project is useful to you and you would like to help, please contact me at anteriovieira@gmail.com. I have no intention of archiving this project.
-
 <p align="center">
     <a href="http://laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
 </p>
