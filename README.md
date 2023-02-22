@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="http://laravel-auditing.com" target="_blank"><img width="130" src="https://laravel-auditing.netlify.app/logo.svg#v2"></a>
+    <a href="http://laravel-auditing.com" target="_blank"><img width="130" src="https://laravel-auditing.com/logo.svg#v2"></a>
 </p>
 
 <p align="center">
@@ -17,7 +17,9 @@ This package will help you understand changes in your Eloquent models, by provid
 Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
 
 ## Official Documentation
-The package documentation can be found on [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
+For more information on how to use the package, please refer to our official documentation available on [laravel-auditing.com](https//laravel-auditing.com) or in the [repository](https://github.com/owen-it/laravel-auditing-doc/blob/main/documentation.md) documentation file. Our documentation provides detailed instructions on how to install and use the package, as well as examples and best practices for auditing in Laravel applications.
+
+Thank you for choosing OwenIt\LaravelAuditing!
 
 ## Version Information
 
