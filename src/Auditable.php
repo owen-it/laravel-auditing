@@ -361,7 +361,7 @@ trait Auditable
 
         if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
             trigger_error(
-                'The config file audit.php is not updated to the new version 13.0. Please see https://www.laravel-auditing.com/docs/13.0/upgrading',
+                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
                 E_USER_DEPRECATED
             );
             $userResolver = Config::get('audit.resolver.user');
@@ -380,7 +380,7 @@ trait Auditable
         $resolvers = Config::get('audit.resolvers', []);
         if (empty($resolvers) && Config::has('audit.resolver')) {
             trigger_error(
-                'The config file audit.php is not updated to the new version 13.0. Please see https://www.laravel-auditing.com/docs/13.0/upgrading',
+                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
                 E_USER_DEPRECATED
             );
             $resolvers = Config::get('audit.resolver', []);
