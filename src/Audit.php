@@ -44,7 +44,9 @@ trait Audit
      */
     public function user()
     {
-        return $this->morphTo();
+        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
+
+        return $this->morphTo(__FUNCTION__, $morphPrefix . '_type', $morphPrefix . '_id');
     }
 
     /**

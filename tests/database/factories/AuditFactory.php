@@ -13,11 +13,13 @@ use OwenIt\Auditing\Tests\Models\User;
 */
 
 $factory->define(Audit::class, function (Faker $faker) {
+    $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
+
     return [
-        'user_id' => function () {
+        $morphPrefix . '_id' => function () {
             return factory(User::class)->create()->id;
         },
-        'user_type'    => User::class,
+        $morphPrefix . '_type'    => User::class,
         'event'        => 'updated',
         'auditable_id' => function () {
             return factory(Article::class)->create()->id;
