@@ -590,8 +590,10 @@ trait Auditable
         // The Audit must be for this specific Auditable model
         if ($this->getKey() !== $audit->auditable_id) {
             throw new AuditableTransitionException(sprintf(
-                'Expected Auditable id %s, got %s instead',
+                'Expected Auditable id (%s)%s, got (%s)%s instead',
+                gettype($this->getKey()),
                 $this->getKey(),
+                gettype($audit->auditable_id),
                 $audit->auditable_id
             ));
         }
