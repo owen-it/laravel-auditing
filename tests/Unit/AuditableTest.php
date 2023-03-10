@@ -973,9 +973,12 @@ class AuditableTest extends AuditingTestCase
     public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId()
     {
         $this->expectException(AuditableTransitionException::class);
-        $this->expectExceptionMessage('Expected Auditable id 2, got 1 instead');
+        $this->expectExceptionMessage('Expected Auditable id (integer)2, got (integer)1 instead');
 
-        $firstAudit = factory(Article::class)->create()->audits()->first();
+        $firstModel = factory(Article::class)->create();
+        $firstAudit = $firstModel->audits()->first();
+        $firstAudit->auditable_id = $firstModel->id;
+
         $secondModel = factory(Article::class)->create();
 
         $secondModel->transitionTo($firstAudit);
@@ -988,7 +991,7 @@ class AuditableTest extends AuditingTestCase
     public function itFailsToTransitionWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
     {
         $this->expectException(AuditableTransitionException::class);
-        $this->expectExceptionMessage('Expected Auditable id 1, got 1 instead');
+        $this->expectExceptionMessage('Expected Auditable id (integer)1, got (string)1 instead');
 
         $model = factory(Article::class)->create();
 
