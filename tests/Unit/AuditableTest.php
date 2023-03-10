@@ -75,15 +75,16 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::bootAuditable
      * @test
      */
-    public function itWillNotBootTraitWhenStaticFlagIsSet()
+    public function itWillBootTraitWhenStaticFlagIsSet()
     {
         App::spy();
 
         Article::$auditingDisabled = true;
 
-        new Article();
+        $article = new Article();
 
-        App::shouldNotHaveReceived('runningInConsole');
+        $this->assertFalse($article->readyForAuditing());
+        App::shouldReceive('runningInConsole');
 
         Article::$auditingDisabled = false;
     }
