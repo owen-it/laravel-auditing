@@ -403,6 +403,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
@@ -411,15 +412,15 @@ class AuditableTest extends AuditingTestCase
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'          => 'created',
-            'auditable_id'   => null,
-            'auditable_type' => Article::class,
-            'user_id'        => null,
-            'user_type'      => null,
-            'url'            => 'console',
-            'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony',
-            'tags'           => null,
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => null,
+            $morphPrefix . '_type'  => null,
+            'url'                   => 'console',
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
         ], $auditData, true);
     }
 
@@ -462,6 +463,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
@@ -470,15 +472,15 @@ class AuditableTest extends AuditingTestCase
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'          => 'created',
-            'auditable_id'   => null,
-            'auditable_type' => Article::class,
-            'user_id'        => $id,
-            'user_type'      => $type,
-            'url'            => 'console',
-            'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony',
-            'tags'           => null,
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => $id,
+            $morphPrefix . '_type'  => $type,
+            'url'                   => 'console',
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
         ], $auditData, true);
     }
 
@@ -544,21 +546,22 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
                 'title'   => 'How To Audit Eloquent Models',
                 'content' => 'First step: install the laravel-auditing package.',
             ],
-            'event'          => 'created',
-            'auditable_id'   => null,
-            'auditable_type' => Article::class,
-            'user_id'        => null,
-            'user_type'      => null,
-            'url'            => 'console',
-            'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony',
-            'tags'           => null,
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => null,
+            $morphPrefix . '_type'  => null,
+            'url'                   => 'console',
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
         ], $auditData, true);
     }
 
