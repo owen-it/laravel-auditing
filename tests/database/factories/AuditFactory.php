@@ -1,35 +1,41 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace OwenIt\Auditing\Tests\database\factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
-/*
-|--------------------------------------------------------------------------
-| Audit Factories
-|--------------------------------------------------------------------------
-|
-*/
+class AuditFactory extends Factory
+{
 
-$factory->define(Audit::class, function (Faker $faker) {
-    $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
+    public function definition()
+    {
+        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 
-    return [
-        $morphPrefix . '_id' => function () {
-            return factory(User::class)->create()->id;
-        },
-        $morphPrefix . '_type'    => User::class,
-        'event'        => 'updated',
-        'auditable_id' => function () {
-            return factory(Article::class)->create()->id;
-        },
-        'auditable_type' => Article::class,
-        'old_values'     => [],
-        'new_values'     => [],
-        'url'            => $faker->url,
-        'ip_address'     => $faker->ipv4,
-        'user_agent'     => $faker->userAgent,
-        'tags'           => implode(',', $faker->words(4)),
-    ];
-});
+        return [
+            $morphPrefix . '_id'   => function () {
+                return factory(User::class)->create()->id;
+            },
+            $morphPrefix . '_type' => User::class,
+            'event'                => 'updated',
+            'auditable_id'         => function () {
+                return factory(Article::class)->create()->id;
+            },
+            'auditable_type'       => Article::class,
+            'old_values'           => [],
+            'new_values'           => [],
+            'url'                  => fake()->url,
+            'ip_address'           => fake()->ipv4,
+            'user_agent'           => fake()->userAgent,
+            'tags'                 => implode(',', fake()->words(4)),
+        ];
+    }
+
+    public function modelName()
+    {
+        return Audit::class;
+    }
+}

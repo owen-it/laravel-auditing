@@ -5,11 +5,13 @@ namespace OwenIt\Auditing\Tests\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Tests\database\factories\HasTestFactory;
 
 class Article extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
+    use HasTestFactory;
 
     /**
      * {@inheritdoc}
