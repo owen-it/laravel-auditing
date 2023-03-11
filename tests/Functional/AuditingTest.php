@@ -560,7 +560,6 @@ class AuditingTest extends AuditingTestCase
 
         /** @var Article $model */
         Article::factory()->create();
-        Article::factory()->create();
 
         Article::find(1);
 
