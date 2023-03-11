@@ -12,12 +12,12 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
-use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;
+use OwenIt\Auditing\Tests\Models\Audit;
 use OwenIt\Auditing\Tests\Models\User;
 use ReflectionClass;
 
@@ -393,7 +393,7 @@ class AuditableTest extends AuditingTestCase
     {
         $now = Carbon::now();
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -447,13 +447,13 @@ class AuditableTest extends AuditingTestCase
             $guard,
         ]);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->actingAs($user, $driver);
 
         $now = Carbon::now();
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -527,7 +527,7 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.strict', true);
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -576,7 +576,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid AttributeModifier implementation: invalidAttributeRedactorOrEncoder');
 
-        $model = factory(Article::class)->make();
+        $model = Article::factory()->make();
 
         $model->attributeModifiers = [
             'title' => 'invalidAttributeRedactorOrEncoder',
@@ -594,7 +594,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itModifiesTheAuditAttributesSuccessfully()
     {
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Models',
             'content'      => 'N/A',
             'reviewed'     => 0,
@@ -939,7 +939,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable type OwenIt\Auditing\Tests\Models\Article, got OwenIt\Auditing\Tests\Models\User instead');
 
-        $audit = factory(Audit::class)->make([
+        $audit = Audit::factory()->make([
             'auditable_type' => User::class,
         ]);
 
@@ -961,7 +961,7 @@ class AuditableTest extends AuditingTestCase
             'articles' => Article::class,
         ]);
 
-        $audit = factory(Audit::class)->make([
+        $audit = Audit::factory()->make([
             'auditable_type' => 'users',
         ]);
 
@@ -979,11 +979,11 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id (integer)2, got (integer)1 instead');
 
-        $firstModel = factory(Article::class)->create();
+        $firstModel = Article::factory()->create();
         $firstAudit = $firstModel->audits()->first();
         $firstAudit->auditable_id = $firstModel->id;
 
-        $secondModel = factory(Article::class)->create();
+        $secondModel = Article::factory()->create();
 
         $secondModel->transitionTo($firstAudit);
     }
@@ -997,9 +997,9 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id (integer)1, got (string)1 instead');
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::factory()->create([
             'auditable_type' => Article::class,
             'auditable_id'   => (string)$model->id,
         ]);
@@ -1023,7 +1023,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itTransitionsWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
     {
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         // Key depends on type
         if ($model->getKeyType() == 'string') {
@@ -1032,7 +1032,7 @@ class AuditableTest extends AuditingTestCase
             $key = (int)$model->id;
         }
 
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::factory()->create([
             'auditable_type' => Article::class,
             'auditable_id'   => $key,
         ]);
@@ -1049,13 +1049,13 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Cannot transition states when an AttributeRedactor is set');
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $model->attributeModifiers = [
             'title' => RightRedactor::class,
         ];
 
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::factory()->create([
             'auditable_id'   => $model->getKey(),
             'auditable_type' => Article::class,
         ]);
@@ -1069,9 +1069,9 @@ class AuditableTest extends AuditingTestCase
      */
     public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet()
     {
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
-        $incompatibleAudit = factory(Audit::class)->create([
+        $incompatibleAudit = Audit::factory()->create([
             'event'          => 'created',
             'auditable_id'   => $model->getKey(),
             'auditable_type' => Article::class,
@@ -1086,7 +1086,7 @@ class AuditableTest extends AuditingTestCase
             $model->transitionTo($incompatibleAudit);
         } catch (AuditableTransitionException $e) {
             $this->assertSame(
-                'Incompatibility between [OwenIt\Auditing\Tests\Models\Article:1] and [OwenIt\Auditing\Models\Audit:3]',
+                'Incompatibility between [OwenIt\Auditing\Tests\Models\Article:1] and [OwenIt\Auditing\Tests\Models\Audit:3]',
                 $e->getMessage()
             );
 
@@ -1116,7 +1116,7 @@ class AuditableTest extends AuditingTestCase
         array $oldExpectation,
         array $newExpectation
     ) {
-        $models = factory(Article::class, 2)->create([
+        $models = Article::factory()->count(2)->create([
             'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
             'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
         ]);
@@ -1130,7 +1130,7 @@ class AuditableTest extends AuditingTestCase
         $auditableType = $morphMap ? 'articles' : Article::class;
 
         $audits = $models->map(function (Article $model) use ($auditableType, $oldValues, $newValues) {
-            return factory(Audit::class)->create([
+            return Audit::factory()->create([
                 'auditable_id'   => $model->getKey(),
                 'auditable_type' => $auditableType,
                 'old_values'     => $oldValues,
@@ -1152,7 +1152,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itWorksWithStringKeyModels()
     {
-        $model = factory(ApiModel::class)->create();
+        $model = ApiModel::factory()->create();
         $model->save();
         $model->refresh();
 

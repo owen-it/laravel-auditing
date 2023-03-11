@@ -25,7 +25,7 @@ class AuditableObserverTest extends AuditingTestCase
     public function itExecutesTheAuditorSuccessfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
     {
         $observer = new AuditableObserver();
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $this->assertSame($expectedBefore, $observer::$restoring);
 

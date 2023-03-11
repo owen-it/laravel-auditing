@@ -4,7 +4,6 @@ namespace OwenIt\Auditing\Tests\database\factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Config;
-use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -17,12 +16,12 @@ class AuditFactory extends Factory
 
         return [
             $morphPrefix . '_id'   => function () {
-                return factory(User::class)->create()->id;
+                return User::factory()->create()->id;
             },
             $morphPrefix . '_type' => User::class,
             'event'                => 'updated',
             'auditable_id'         => function () {
-                return factory(Article::class)->create()->id;
+                return Article::factory()->create()->id;
             },
             'auditable_type'       => Article::class,
             'old_values'           => [],
@@ -36,6 +35,6 @@ class AuditFactory extends Factory
 
     public function modelName()
     {
-        return Audit::class;
+        return \OwenIt\Auditing\Tests\Models\Audit::class;
     }
 }
