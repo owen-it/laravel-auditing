@@ -1,6 +1,6 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -13,6 +13,7 @@ use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;

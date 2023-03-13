@@ -1,8 +1,9 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use OwenIt\Auditing\AuditableObserver;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 
 class AuditableObserverTest extends AuditingTestCase

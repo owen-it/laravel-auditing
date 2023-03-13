@@ -1,11 +1,12 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use Carbon\Carbon;
 use DateTimeInterface;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\Audit;
 use OwenIt\Auditing\Tests\Models\User;
