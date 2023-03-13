@@ -1,10 +1,11 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use OwenIt\Auditing\Models\Audit;
 use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\AuditableObserver;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Events\DispatchingAudit;
