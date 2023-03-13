@@ -78,7 +78,7 @@ interface Auditable
      *
      * @return bool
      */
-    public function getAuditTimestamps(): bool;
+    public function shouldAuditTimestamps(): bool;
 
     /**
      * Get the Audit Driver.

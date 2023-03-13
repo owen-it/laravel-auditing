@@ -14,6 +14,7 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 class Auditor extends Manager implements Contracts\Auditor
 {
+
     /**
      * {@inheritdoc}
      */

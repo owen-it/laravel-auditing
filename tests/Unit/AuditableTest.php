@@ -795,7 +795,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        $this->assertFalse($model->getAuditTimestamps());
+        $this->assertFalse($model->shouldAuditTimestamps());
     }
 
     /**
@@ -808,7 +808,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->auditTimestamps = true;
 
-        $this->assertTrue($model->getAuditTimestamps());
+        $this->assertTrue($model->shouldAuditTimestamps());
     }
 
     /**
@@ -821,7 +821,7 @@ class AuditableTest extends AuditingTestCase
 
         $model = new Article();
 
-        $this->assertTrue($model->getAuditTimestamps());
+        $this->assertTrue($model->shouldAuditTimestamps());
     }
 
     /**
@@ -960,7 +960,7 @@ class AuditableTest extends AuditingTestCase
 
         $originalStart = new Carbon('2022-01-01 12:00:00');
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,

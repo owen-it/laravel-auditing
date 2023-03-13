@@ -3,11 +3,11 @@
 namespace OwenIt\Auditing;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
+use OwenIt\Auditing\Concerns\DeterminesAuditableAttributes;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 use OwenIt\Auditing\Contracts\AttributeRedactor;
 use OwenIt\Auditing\Contracts\Resolver;
@@ -17,12 +17,7 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait Auditable
 {
-    /**
-     * Auditable attributes excluded from the Audit.
-     *
-     * @var array
-     */
-    protected $excludedAttributes = [];
+    use DeterminesAuditableAttributes;
 
     /**
      * Audit event name.
@@ -77,69 +72,6 @@ trait Auditable
             Config::get('audit.implementation', Models\Audit::class),
             'auditable'
         );
-    }
-
-    /**
-     * Resolve the Auditable attributes to exclude from the Audit.
-     *
-     * @return void
-     */
-    protected function resolveAuditExclusions()
-    {
-        $this->excludedAttributes = $this->getAuditExclude();
-
-        // When in strict mode, hidden and non visible attributes are excluded
-        if ($this->getAuditStrict()) {
-            // Hidden attributes
-            $this->excludedAttributes = array_merge($this->excludedAttributes, $this->hidden);
-
-            // Non visible attributes
-            if ($this->visible) {
-                $invisible = array_diff(array_keys($this->attributes), $this->visible);
-
-                $this->excludedAttributes = array_merge($this->excludedAttributes, $invisible);
-            }
-        }
-
-        // Exclude Timestamps
-        if (!$this->getAuditTimestamps()) {
-            array_push($this->excludedAttributes, $this->getCreatedAtColumn(), $this->getUpdatedAtColumn());
-
-            if (in_array(SoftDeletes::class, class_uses_recursive(get_class($this)))) {
-                $this->excludedAttributes[] = $this->getDeletedAtColumn();
-            }
-        }
-
-        // Valid attributes are all those that made it out of the exclusion array
-        $attributes = Arr::except($this->attributes, $this->excludedAttributes);
-
-        foreach ($attributes as $attribute => $value) {
-            // Apart from null, non scalar values will be excluded
-            if (
-                is_array($value) ||
-                (is_object($value) &&
-                    !method_exists($value, '__toString') &&
-                    !($value instanceof \UnitEnum))
-            ) {
-                $this->excludedAttributes[] = $attribute;
-            }
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getAuditExclude(): array
-    {
-        return $this->auditExclude ?? Config::get('audit.exclude', []);
-    }
-
-    /**
-     * @return array
-     */
-    public function getAuditInclude(): array
-    {
-        return $this->auditInclude ?? [];
     }
 
     /**
@@ -409,7 +341,7 @@ trait Auditable
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->excludedAttributes, true)) {
+        if (in_array($attribute, $this->resolveAuditExclusions(), true)) {
             return false;
         }
 
@@ -484,11 +416,11 @@ trait Auditable
     public function getAuditEvents(): array
     {
         return $this->auditEvents ?? Config::get('audit.events', [
-                'created',
-                'updated',
-                'deleted',
-                'restored',
-            ]);
+            'created',
+            'updated',
+            'deleted',
+            'restored',
+        ]);
     }
 
     /**
@@ -531,14 +463,6 @@ trait Auditable
     public function getAuditStrict(): bool
     {
         return $this->auditStrict ?? Config::get('audit.strict', false);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuditTimestamps(): bool
-    {
-        return $this->auditTimestamps ?? Config::get('audit.timestamps', false);
     }
 
     /**
