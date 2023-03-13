@@ -952,6 +952,39 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
+    public function itWorksOnTimesRestoredCorrectly()
+    {
+        config(['app.timezone' => 'America/New_York']);
+        date_default_timezone_set('America/New_York');
+
+        $originalStart = new Carbon('2022-01-01 12:00:00');
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => $originalStart,
+        ]);
+
+        $model = Article::first();
+        
+        $this->assertEquals($model->published_at, $originalStart);
+
+        $model->published_at = new Carbon('2022-01-01 12:30:00');
+        $model->save();
+        
+        $audit = $model->audits->last();
+        $audit->auditable_id = $model->id;
+
+        $model->transitionTo($audit, true);
+
+        $this->assertEquals($model->published_at, $originalStart);
+    }
+
+    /**
+     * @group Auditable::transitionTo
+     * @test
+     */
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheMorphMapValue()
     {
         $this->expectException(AuditableTransitionException::class);
