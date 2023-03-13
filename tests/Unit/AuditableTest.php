@@ -4,7 +4,6 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
@@ -968,12 +967,12 @@ class AuditableTest extends AuditingTestCase
         ]);
 
         $model = Article::first();
-        
+
         $this->assertEquals($model->published_at, $originalStart);
 
         $model->published_at = new Carbon('2022-01-01 12:30:00');
         $model->save();
-        
+
         $audit = $model->audits->last();
         $audit->auditable_id = $model->id;
 
