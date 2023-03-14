@@ -91,6 +91,7 @@ trait GathersDataToAudit
             }
             $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
+
         return $resolved;
     }
 
@@ -115,7 +116,62 @@ trait GathersDataToAudit
         }
 
         list($old, $new) = $this->$attributeGetter();
+
         return [$old, $new];
+    }
+
+    /**
+     * Determine if an attribute is eligible for auditing.
+     *
+     * @param string $attribute
+     *
+     * @return bool
+     */
+    protected function isAttributeAuditable(string $attribute): bool
+    {
+        // The attribute should not be audited
+        if (in_array($attribute, $this->resolveAuditExclusions(), true)) {
+            return false;
+        }
+
+        // The attribute is auditable when explicitly
+        // listed or when the include array is empty
+        $include = $this->getAuditInclude();
+
+        return empty($include) || in_array($attribute, $include, true);
+    }
+
+
+    /**
+     * Attribute getter method resolver.
+     *
+     * @param string $event
+     *
+     * @return string|null
+     * @uses self::getDeletedEventAttributes()
+     * @uses self::getCreatedEventAttributes()
+     * @uses self::getUpdatedEventAttributes()
+     * @uses self::getRestoredEventAttributes()
+     * @uses self::getCustomEventAttributes()
+     * @uses self::getRetrievedEventAttributes()
+     */
+    protected function resolveAttributeGetter($event)
+    {
+        if ($this->isCustomEvent) {
+            return 'getCustomEventAttributes';
+        }
+
+        foreach ($this->getAuditEvents() as $key => $value) {
+            $auditableEvent = is_int($key) ? $value : $key;
+
+            $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
+
+            if (preg_match($auditableEventRegex, $event)) {
+                return is_int($key) ? sprintf('get%sEventAttributes', ucfirst($event)) : $value;
+            }
+        }
+
+        return null;
     }
 
     /*
