@@ -4,6 +4,7 @@ namespace OwenIt\Auditing\Tests\Unit;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use Illuminate\Testing\Assert;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Tests\AuditingTestCase;
@@ -33,7 +34,7 @@ class AuditTest extends AuditingTestCase
         $resolvedData = $audit->resolveData();
         $this->assertCount(15, $resolvedData);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -80,7 +81,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(21, $resolvedData = $audit->resolveData());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -159,7 +160,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(10, $metadata = $audit->getMetadata());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -193,7 +194,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(16, $metadata = $audit->getMetadata());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -303,7 +304,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(5, $modified = $audit->getModified());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
@@ -394,7 +395,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(3, $modified = $audit->getModified());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'    => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
                 'old' => 'HOW TO AUDIT MODELS',
@@ -421,7 +422,7 @@ class AuditTest extends AuditingTestCase
         ]);
 
         $this->assertIsArray($audit->getTags());
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'foo',
             'bar',
             'baz',
