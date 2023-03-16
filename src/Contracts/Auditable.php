@@ -3,13 +3,14 @@
 namespace OwenIt\Auditing\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use OwenIt\Auditing\Contracts\Audit as AuditContract;
 
 interface Auditable
 {
     /**
      * Auditable Model audits.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<OwenIt\Auditing\Models\Audit>
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<AuditContract>
      */
     public function audits(): MorphMany;
 
