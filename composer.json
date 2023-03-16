@@ -40,15 +40,15 @@
     ],
     "require": {
         "php": "^8.0",
-        "illuminate/console": "^8.0|^9.0|^10.0",
-        "illuminate/database": "^8.0|^9.0|^10.0",
-        "illuminate/filesystem": "^8.0|^9.0|^10.0",
+        "illuminate/console": "^9.0|^10.0",
+        "illuminate/database": "^9.0|^10.0",
+        "illuminate/filesystem": "^9.0|^10.0",
         "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6.5",
         "mockery/mockery": "^1.5.1",
-        "orchestra/testbench": "^6.0|^7.22.1|^8.0",
+        "orchestra/testbench": "^7.22.1|^8.0",
         "friendsofphp/php-cs-fixer": "^3.15.1"
     },
     "autoload": {
