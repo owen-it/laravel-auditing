@@ -61,4 +61,4 @@ jobs:
         run: vendor/bin/phpunit
 
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse src
+        run: vendor/bin/phpstan analyse

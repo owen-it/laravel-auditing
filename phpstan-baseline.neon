@@ -1,0 +1,18 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z]#'
+		-
+			message: "#^Parameter \\#3 \\$depth of function json_encode expects int<1, max>, int given.$#"
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Resolvers\\\\(.*)Resolver\\:\\:resolve\\(\\) should return string but returns array\\|string\\|null\\.$#"
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany::latest\\(\\)\\.$#"
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany::whereIn\\(\\)\\.$#"
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func expects callable\\(\\)\\: mixed, array{mixed, 'create'} given\\.$#"
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Container\\\\Container\\:\\:getNamespace\\(\\)\\.$#"
+			count: 1
+			path: src\Console\InstallCommand.php

@@ -225,7 +225,7 @@ trait Audit
             }
         }
 
-        return $json ? json_encode($metadata, $options, $depth) : $metadata;
+        return ($json ? json_encode($metadata, $options, $depth) : $metadata) ?: [];
     }
 
     /**
@@ -251,7 +251,7 @@ trait Audit
             }
         }
 
-        return $json ? json_encode($modified, $options, $depth) : $modified;
+        return ($json ? json_encode($modified, $options, $depth) : $modified) ?: [];
     }
 
     /**
@@ -261,6 +261,6 @@ trait Audit
      */
     public function getTags(): array
     {
-        return preg_split('/,/', $this->tags, null, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY) ?: [];
     }
 }

@@ -21,7 +21,7 @@ class InstallCommand extends Command
     /**
      * {@inheritdoc}
      */
-    public function handle()
+    public function handle(): void
     {
         $this->comment('Publishing Auditing Configuration...');
         $this->callSilent('vendor:publish', ['--tag' => 'config']);
@@ -43,7 +43,7 @@ class InstallCommand extends Command
     {
         $namespace = Str::replaceLast('\\', '', Container::getInstance()->getNamespace());
 
-        $appConfig = file_get_contents(config_path('app.php'));
+        $appConfig = (string) file_get_contents(config_path('app.php'));
 
         if (Str::contains($appConfig, 'OwenIt\\Auditing\\AuditingServiceProvider::class')) {
             return;
