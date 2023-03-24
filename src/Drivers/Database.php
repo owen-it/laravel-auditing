@@ -15,8 +15,13 @@ class Database implements AuditDriver
     public function audit(Auditable $model): ?Audit
     {
         $implementation = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
+        $callback = [$implementation, 'create'];
 
-        return call_user_func([$implementation, 'create'], $model->toAudit());
+        if(! is_callable($callback)) {
+            throw new \UnexpectedValueException("Method config('audit.implementation')::create() does not exist.");
+        }
+
+        return call_user_func($callback, $model->toAudit());
     }
 
     /**
@@ -25,17 +30,10 @@ class Database implements AuditDriver
     public function prune(Auditable $model): bool
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
-            $forRemoval = $model->audits()
+            return $model->audits()
                 ->latest()
-                ->get()
-                ->slice($threshold)
-                ->pluck('id');
-
-            if (!$forRemoval->isEmpty()) {
-                return $model->audits()
-                    ->whereIn('id', $forRemoval)
-                    ->delete() > 0;
-            }
+                ->offset($threshold)->limit(PHP_INT_MAX)
+                ->delete() > 0;
         }
 
         return false;

@@ -10,6 +10,6 @@ class UserAgentResolver implements Resolver
 {
     public static function resolve(Auditable $auditable): string
     {
-        return Request::header('User-Agent');
+        return (string) Request::header('User-Agent');
     }
 }

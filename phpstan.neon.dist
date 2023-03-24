@@ -1,5 +1,6 @@
 includes:
     - phpstan-baseline.neon
+    - ./vendor/nunomaduro/larastan/extension.neon
 
 parameters:
     bootstrapFiles:
@@ -12,3 +13,4 @@ parameters:
         - stubs
     tmpDir: build/phpstan
     checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false

@@ -225,7 +225,7 @@ trait Audit
             }
         }
 
-        return ($json ? json_encode($metadata, $options, $depth) : $metadata) ?: [];
+        return ($json ? json_encode($metadata, $options, max(1, $depth)) : $metadata) ?: [];
     }
 
     /**
@@ -251,7 +251,7 @@ trait Audit
             }
         }
 
-        return ($json ? json_encode($modified, $options, $depth) : $modified) ?: [];
+        return ($json ? json_encode($modified, $options, max(1, $depth)) : $modified) ?: [];
     }
 
     /**
