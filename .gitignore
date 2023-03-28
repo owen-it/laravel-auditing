@@ -3,3 +3,5 @@
 composer.lock
 .vscode
 .phpunit.result.cache
+phpstan.neon
+build/phpstan

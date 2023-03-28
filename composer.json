@@ -50,7 +50,7 @@
         "mockery/mockery": "^1.0",
         "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
         "laravel/legacy-factories": "*",
-        "phpstan/phpstan": "^1.10"
+        "nunomaduro/larastan": "^1.0|^2.5"
     },
     "autoload": {
         "psr-4": {
