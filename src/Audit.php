@@ -156,6 +156,12 @@ trait Audit
         return $value;
     }
 
+    /**
+     * @param Model $model
+     * @param mixed $value
+     *
+     * @return mixed
+     */
     private function castDatetimeUTC($model, $value)
     {
         if (!is_string($value)) {

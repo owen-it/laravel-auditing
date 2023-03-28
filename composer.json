@@ -49,8 +49,7 @@
         "phpunit/phpunit": "^9.0",
         "mockery/mockery": "^1.0",
         "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
-        "laravel/legacy-factories": "*",
-        "nunomaduro/larastan": "^1.0|^2.5"
+        "laravel/legacy-factories": "*"
     },
     "autoload": {
         "psr-4": {
@@ -74,6 +73,11 @@
                 "OwenIt\\Auditing\\AuditingServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "format": "php-cs-fixer fix --allow-risky=yes",
+        "analyse": "phpstan analyse"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

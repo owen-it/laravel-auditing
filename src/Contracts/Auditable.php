@@ -9,7 +9,7 @@ interface Auditable
     /**
      * Auditable Model audits.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\OwenIt\Auditing\Models\Audit>
+     * @return MorphMany<\OwenIt\Auditing\Models\Audit>
      */
     public function audits(): MorphMany;
 
