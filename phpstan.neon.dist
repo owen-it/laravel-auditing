@@ -9,7 +9,7 @@ parameters:
     paths:
         - src
         - config
-        - database
+        - database/migrations/audits.stub
         - stubs
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
