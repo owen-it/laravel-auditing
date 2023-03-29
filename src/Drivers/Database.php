@@ -17,7 +17,7 @@ class Database implements AuditDriver
         $implementation = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
         $callback = [$implementation, 'create'];
 
-        if(! is_callable($callback)) {
+        if (! is_callable($callback)) {
             throw new \UnexpectedValueException("Method config('audit.implementation')::create() does not exist.");
         }
 

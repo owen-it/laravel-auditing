@@ -5,7 +5,6 @@ namespace OwenIt\Auditing\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
  * @property string $tags
  * @property string $event
  * @property array $new_values
@@ -32,7 +31,7 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
     ];
 
     /**
-     * @param \DateTimeInterface $date
+     * @param  \DateTimeInterface  $date
      * @return string
      */
     public function getSerializedDate($date)

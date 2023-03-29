@@ -155,9 +155,8 @@ trait Audit
     }
 
     /**
-     * @param Model $model
-     * @param mixed $value
-     *
+     * @param  Model  $model
+     * @param  mixed  $value
      * @return mixed
      */
     private function castDatetimeUTC($model, $value)
