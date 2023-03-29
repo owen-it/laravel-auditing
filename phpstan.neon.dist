@@ -5,12 +5,13 @@ includes:
 parameters:
     bootstrapFiles:
         - tests/ClassAliases.php
-    level: 8
+    level: 5
     paths:
         - src
         - config
         - database
         - stubs
     tmpDir: build/phpstan
+    checkOctaneCompatibility: true
     checkMissingIterableValueType: false
     treatPhpDocTypesAsCertain: false

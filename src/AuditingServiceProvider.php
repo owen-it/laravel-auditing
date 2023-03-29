@@ -35,7 +35,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
             InstallCommand::class,
         ]);
 
-        $this->app->singleton(Auditor::class, function ($app) {
+        $this->app->bind(Auditor::class, function ($app) {
             return new \OwenIt\Auditing\Auditor($app);
         });
 

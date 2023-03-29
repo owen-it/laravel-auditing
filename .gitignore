@@ -1,7 +1,7 @@
 .idea
 /vendor
+/build
 composer.lock
 .vscode
 .phpunit.result.cache
-phpstan.neon
-build/phpstan
+.php-cs-fixer.php
