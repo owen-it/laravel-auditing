@@ -6,13 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table(config('audit.drivers.database.table', 'audits'), function(Blueprint $table) {
+        Schema::table(config('audit.drivers.database.table', 'audits'), function (Blueprint $table) {
             $table->unsignedInteger('tenant_id')->nullable();
         });
     }

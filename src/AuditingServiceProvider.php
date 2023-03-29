@@ -21,7 +21,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
     public function boot()
     {
         $this->registerPublishing();
-        $this->mergeConfigFrom(__DIR__ . '/../config/audit.php', 'audit');
+        $this->mergeConfigFrom(__DIR__.'/../config/audit.php', 'audit');
     }
 
     /**
@@ -57,11 +57,11 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
 
         // Lumen lacks a config_path() helper, so we use base_path()
         $this->publishes([
-            __DIR__ . '/../config/audit.php' => base_path('config/audit.php'),
+            __DIR__.'/../config/audit.php' => base_path('config/audit.php'),
         ], 'config');
-        
+
         $this->publishes([
-            __DIR__ . '/../database/migrations/audits.stub' => $this->getMigrationFileName('create_audits_table.php'),
+            __DIR__.'/../database/migrations/audits.stub' => $this->getMigrationFileName('create_audits_table.php'),
         ], 'migrations');
     }
 
@@ -74,7 +74,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
             Auditor::class,
         ];
     }
-    
+
     /**
      * Returns existing migration file if found, else uses the current timestamp.
      */
@@ -84,7 +84,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
 
         $filesystem = $this->app->make(Filesystem::class);
 
-        return Collection::make([$this->app->databasePath() . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR])
+        return Collection::make([$this->app->databasePath().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR])
             ->flatMap(fn ($path) => $filesystem->glob($path.'*_'.$migrationFileName))
             ->push($this->app->databasePath()."/migrations/{$timestamp}_{$migrationFileName}")
             ->first();

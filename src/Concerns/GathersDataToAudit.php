@@ -15,13 +15,13 @@ trait GathersDataToAudit
      */
     public function toAudit(): array
     {
-        if (!$this->readyForAuditing()) {
+        if (! $this->readyForAuditing()) {
             throw new AuditingException('A valid audit event has not been set');
         }
 
-        list($old, $new) = $this->getAuditAttributes();
+        [$old, $new] = $this->getAuditAttributes();
 
-        if ($this->getAttributeModifiers() && !$this->isCustomEvent) {
+        if ($this->getAttributeModifiers() && ! $this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
                 $old[$attribute] = $this->modifyAttributeValue($attribute, $value);
             }
@@ -38,14 +38,14 @@ trait GathersDataToAudit
         $user = $this->resolveUser();
 
         return $this->transformAudit(array_merge([
-            'old_values'           => $old,
-            'new_values'           => $new,
-            'event'                => $this->auditEvent,
-            'auditable_id'         => $this->getKey(),
-            'auditable_type'       => $this->getMorphClass(),
-            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
-            $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'tags'                 => empty($tags) ? null : $tags,
+            'old_values' => $old,
+            'new_values' => $new,
+            'event' => $this->auditEvent,
+            'auditable_id' => $this->getKey(),
+            'auditable_type' => $this->getMorphClass(),
+            $morphPrefix.'_id' => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
+            'tags' => empty($tags) ? null : $tags,
         ], $this->runResolvers()));
     }
 
@@ -61,8 +61,8 @@ trait GathersDataToAudit
      * Resolve the User.
      *
      * @return mixed|null
-     * @throws AuditingException
      *
+     * @throws AuditingException
      */
     protected function resolveUser()
     {
@@ -75,7 +75,6 @@ trait GathersDataToAudit
         throw new AuditingException('Invalid UserResolver implementation');
     }
 
-
     protected function runResolvers(): array
     {
         $resolved = [];
@@ -86,8 +85,8 @@ trait GathersDataToAudit
                 continue;
             }
 
-            if (!is_subclass_of($implementation, ResolverContract::class)) {
-                throw new AuditingException('Invalid Resolver implementation for: ' . $name);
+            if (! is_subclass_of($implementation, ResolverContract::class)) {
+                throw new AuditingException('Invalid Resolver implementation for: '.$name);
             }
             $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
@@ -99,15 +98,16 @@ trait GathersDataToAudit
      * Gets old and new attributes to write as the audit record.
      * First finds the appropriate getter based on event
      * Then get the array of old attributes and array of new attributes
-     * @return array
+     *
      * @throws AuditingException
+     *
      * @see
      */
     protected function getAuditAttributes(): array
     {
         $attributeGetter = $this->resolveAttributeGetter($this->auditEvent);
 
-        if (!method_exists($this, $attributeGetter)) {
+        if (! method_exists($this, $attributeGetter)) {
             throw new AuditingException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
@@ -115,17 +115,13 @@ trait GathersDataToAudit
             ));
         }
 
-        list($old, $new) = $this->$attributeGetter();
+        [$old, $new] = $this->$attributeGetter();
 
         return [$old, $new];
     }
 
     /**
      * Determine if an attribute is eligible for auditing.
-     *
-     * @param string $attribute
-     *
-     * @return bool
      */
     protected function isAttributeAuditable(string $attribute): bool
     {
@@ -141,13 +137,12 @@ trait GathersDataToAudit
         return empty($include) || in_array($attribute, $include, true);
     }
 
-
     /**
      * Attribute getter method resolver.
      *
-     * @param string $event
-     *
+     * @param  string  $event
      * @return string|null
+     *
      * @uses self::getDeletedEventAttributes()
      * @uses self::getCreatedEventAttributes()
      * @uses self::getUpdatedEventAttributes()
@@ -223,13 +218,14 @@ trait GathersDataToAudit
 
     /**
      * Get new and old as specified by custom event
+     *
      * @return array<array>
      */
     protected function getCustomEventAttributes(): array
     {
         return [
             $this->auditCustomOld,
-            $this->auditCustomNew
+            $this->auditCustomNew,
         ];
     }
 
@@ -258,8 +254,6 @@ trait GathersDataToAudit
 
     /**
      * Get the old/new attributes of a deleted event.
-     *
-     * @return array
      */
     protected function getDeletedEventAttributes(): array
     {
@@ -279,8 +273,6 @@ trait GathersDataToAudit
 
     /**
      * Get the old/new attributes of a restored event.
-     *
-     * @return array
      */
     protected function getRestoredEventAttributes(): array
     {

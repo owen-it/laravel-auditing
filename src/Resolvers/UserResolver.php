@@ -13,7 +13,7 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
     public static function resolve()
     {
         $guards = Config::get('audit.user.guards', [
-            \config('auth.defaults.guard')
+            \config('auth.defaults.guard'),
         ]);
 
         foreach ($guards as $guard) {

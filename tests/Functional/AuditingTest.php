@@ -23,7 +23,6 @@ class AuditingTest extends AuditingTestCase
 {
     use WithFaker;
 
-
     /**
      * @test
      */
@@ -115,10 +114,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         Article::factory()->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         Article::first();
@@ -140,10 +139,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         Article::factory()->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $audit = Audit::first();
@@ -151,11 +150,11 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->old_values);
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->new_values, true);
     }
 
@@ -169,32 +168,32 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = Article::factory()->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $now = Carbon::now();
 
         $article->update([
-            'content'      => 'First step: install the laravel-auditing package.',
+            'content' => 'First step: install the laravel-auditing package.',
             'published_at' => $now,
-            'reviewed'     => 1,
+            'reviewed' => 1,
         ]);
 
         $audit = Audit::first();
 
         Assert::assertArraySubset([
-            'content'      => 'N/A',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ], $audit->old_values, true);
 
         Assert::assertArraySubset([
-            'content'      => 'First step: install the laravel-auditing package.',
+            'content' => 'First step: install the laravel-auditing package.',
             'published_at' => $now->toDateTimeString(),
-            'reviewed'     => 1,
+            'reviewed' => 1,
         ], $audit->new_values, true);
     }
 
@@ -208,10 +207,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = Article::factory()->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $article->delete();
@@ -219,11 +218,11 @@ class AuditingTest extends AuditingTestCase
         $audit = Audit::first();
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->old_values, true);
 
         $this->assertEmpty($audit->new_values);
@@ -239,10 +238,10 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = Article::factory()->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $article->delete();
@@ -253,11 +252,11 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->old_values);
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->new_values, true);
     }
 
@@ -342,10 +341,10 @@ class AuditingTest extends AuditingTestCase
         $this->app['config']->set('audit.driver', null);
 
         Article::factory()->create([
-            'title'        => 'How To Audit Using The Fallback Driver',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Using The Fallback Driver',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
+            'reviewed' => 0,
         ]);
 
         $audit = Audit::first();
@@ -353,11 +352,11 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->old_values);
 
         Assert::assertArraySubset([
-            'title'        => 'How To Audit Using The Fallback Driver',
-            'content'      => 'N/A',
+            'title' => 'How To Audit Using The Fallback Driver',
+            'content' => 'N/A',
             'published_at' => null,
-            'reviewed'     => 0,
-            'id'           => 1,
+            'reviewed' => 0,
+            'id' => 1,
         ], $audit->new_values, true);
     }
 
@@ -434,6 +433,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itHandlesJsonColumnsCorrectly()
@@ -452,6 +452,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @return void
+     *
      * @test
      */
     public function canAddAdditionalResolver()
@@ -463,11 +464,12 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertTrue(true);
         $audit = $article->audits()->first();
-        $this->assertSame(1, (int)$audit->tenant_id);
+        $this->assertSame(1, (int) $audit->tenant_id);
     }
 
     /**
      * @return void
+     *
      * @test
      */
     public function canDisableResolver()
@@ -483,6 +485,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillExcludeIfGlobalExcludeIsSet()
@@ -500,6 +503,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function localExcludeOverridesGlobalExclude()
@@ -545,6 +549,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @return void
+     *
      * @test
      */
     public function itWillAuditRetrievedEventEvenIfAuditEmptyIsDisabled()
@@ -553,7 +558,7 @@ class AuditingTest extends AuditingTestCase
         $this->app['config']->set('audit.allowed_empty_values', ['retrieved']);
         $this->app['config']->set('audit.events', [
             'created',
-            'retrieved'
+            'retrieved',
         ]);
 
         $this->app['config']->set('audit.empty_values', false);
@@ -584,6 +589,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillAuditCustomEventData()
@@ -603,6 +609,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillAuditSync()
@@ -629,6 +636,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillAuditSyncWithoutChanges()
@@ -654,6 +662,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillAuditSyncWhenSkippingEmptyValues()
@@ -682,6 +691,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillNotAuditSyncWhenSkippingEmptyValuesAndNoChangesMade()
@@ -709,6 +719,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function canAuditAnyCustomEvent()
@@ -717,19 +728,19 @@ class AuditingTest extends AuditingTestCase
         $article->auditEvent = 'whateverYouWant';
         $article->isCustomEvent = true;
         $article->auditCustomOld = [
-            'customExample' => 'Anakin Skywalker'
+            'customExample' => 'Anakin Skywalker',
         ];
         $article->auditCustomNew = [
-            'customExample' => 'Darth Vader'
+            'customExample' => 'Darth Vader',
         ];
         Event::dispatch(AuditCustom::class, [$article]);
 
         $this->assertDatabaseHas(config('audit.drivers.database.table', 'audits'), [
-            'auditable_id'   => $article->id,
+            'auditable_id' => $article->id,
             'auditable_type' => Article::class,
-            'event'          => 'whateverYouWant',
-            'new_values'     => '{"customExample":"Darth Vader"}',
-            'old_values'     => '{"customExample":"Anakin Skywalker"}'
+            'event' => 'whateverYouWant',
+            'new_values' => '{"customExample":"Darth Vader"}',
+            'old_values' => '{"customExample":"Anakin Skywalker"}',
         ]);
     }
 }

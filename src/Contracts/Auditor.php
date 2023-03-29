@@ -7,17 +7,14 @@ interface Auditor
     /**
      * Get an audit driver instance.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
-     * @return AuditDriver
+     * @param  \OwenIt\Auditing\Contracts\Auditable  $model
      */
     public function auditDriver(Auditable $model): AuditDriver;
 
     /**
      * Perform an audit.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
+     * @param  \OwenIt\Auditing\Contracts\Auditable  $model
      * @return void
      */
     public function execute(Auditable $model);

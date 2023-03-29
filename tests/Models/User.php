@@ -13,7 +13,6 @@ class User extends Model implements Auditable, Authenticatable
     use \OwenIt\Auditing\Auditable;
     use HasTestFactory;
 
-
     /**
      * {@inheritdoc}
      */
@@ -23,10 +22,6 @@ class User extends Model implements Auditable, Authenticatable
 
     /**
      * Uppercase first name character accessor.
-     *
-     * @param string $value
-     *
-     * @return string
      */
     public function getFirstNameAttribute(string $value): string
     {
