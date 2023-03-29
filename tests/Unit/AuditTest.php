@@ -1,13 +1,15 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use Illuminate\Testing\Assert;
 use OwenIt\Auditing\Encoders\Base64Encoder;
-use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\Audit;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditTest extends AuditingTestCase
@@ -20,7 +22,7 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now();
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -32,7 +34,7 @@ class AuditTest extends AuditingTestCase
         $resolvedData = $audit->resolveData();
         $this->assertCount(15, $resolvedData);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -59,7 +61,7 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now();
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -68,7 +70,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -79,7 +81,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(21, $resolvedData = $audit->resolveData());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -109,7 +111,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTheAppropriateAuditableDataValues()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -118,7 +120,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $audit = factory(Article::class)->create([
+        $audit = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -154,11 +156,11 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataAsArray()
     {
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertCount(10, $metadata = $audit->getMetadata());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -178,7 +180,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsArray()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -188,11 +190,11 @@ class AuditTest extends AuditingTestCase
         $this->actingAs($user);
 
         /** @var Audit $audit */
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertCount(16, $metadata = $audit->getMetadata());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
             'audit_url'        => 'console',
@@ -218,7 +220,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataAsJsonString()
     {
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
@@ -246,7 +248,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsJsonString()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -255,7 +257,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
@@ -293,7 +295,7 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now()->second(0)->microsecond(0);
 
-        $audit = factory(Article::class)->create([
+        $audit = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -302,7 +304,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(5, $modified = $audit->getModified());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
@@ -330,7 +332,7 @@ class AuditTest extends AuditingTestCase
         $now = Carbon::now()->second(0)->microsecond(0);
 
         /** @var Audit $audit */
-        $audit = factory(Article::class)->create([
+        $audit = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -377,7 +379,7 @@ class AuditTest extends AuditingTestCase
         };
 
         // Audit with redacted/encoded attributes
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::factory()->create([
             'auditable_type' => get_class($article),
             'old_values'     => [
                 'title'    => 'SG93IFRvIEF1ZGl0IE1vZGVscw==',
@@ -393,7 +395,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertCount(3, $modified = $audit->getModified());
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'    => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
                 'old' => 'HOW TO AUDIT MODELS',
@@ -415,12 +417,12 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTags()
     {
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::factory()->create([
             'tags' => 'foo,bar,baz',
         ]);
 
         $this->assertIsArray($audit->getTags());
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'foo',
             'bar',
             'baz',
@@ -433,7 +435,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsEmptyTags()
     {
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::factory()->create([
             'tags' => null,
         ]);
 

@@ -1,8 +1,9 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use OwenIt\Auditing\AuditableObserver;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 
 class AuditableObserverTest extends AuditingTestCase
@@ -25,7 +26,7 @@ class AuditableObserverTest extends AuditingTestCase
     public function itExecutesTheAuditorSuccessfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
     {
         $observer = new AuditableObserver();
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $this->assertSame($expectedBefore, $observer::$restoring);
 

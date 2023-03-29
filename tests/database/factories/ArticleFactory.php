@@ -1,20 +1,25 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace OwenIt\Auditing\Tests\database\factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
 use OwenIt\Auditing\Tests\Models\Article;
 
-/*
-|--------------------------------------------------------------------------
-| Article Factories
-|--------------------------------------------------------------------------
-|
-*/
+class ArticleFactory extends Factory
+{
 
-$factory->define(Article::class, function (Faker $faker) {
-    return [
-        'title'        => $faker->unique()->sentence,
-        'content'      => $faker->unique()->paragraph(6),
-        'published_at' => null,
-        'reviewed'     => $faker->randomElement([0, 1]),
-    ];
-});
+    public function definition()
+    {
+        return [
+            'title'        => fake()->unique()->sentence,
+            'content'      => fake()->unique()->paragraph(6),
+            'published_at' => null,
+            'reviewed'     => fake()->randomElement([0, 1]),
+        ];
+    }
+
+    public function modelName()
+    {
+        return Article::class;
+    }
+}
