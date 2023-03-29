@@ -10,6 +10,6 @@ class IpAddressResolver implements Resolver
 {
     public static function resolve(Auditable $auditable): string
     {
-        return Request::header('x-forwarded-for', Request::ip());
+        return Request::ip();
     }
 }
