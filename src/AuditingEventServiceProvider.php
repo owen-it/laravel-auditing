@@ -15,7 +15,7 @@ class AuditingEventServiceProvider extends ServiceProvider
     protected $listen = [
         AuditCustom::class => [
             RecordCustomAudit::class,
-        ]
+        ],
     ];
 
     /**

@@ -31,7 +31,7 @@ class Database implements AuditDriver
                 ->slice($threshold)
                 ->pluck('id');
 
-            if (!$forRemoval->isEmpty()) {
+            if (! $forRemoval->isEmpty()) {
                 return $model->audits()
                     ->whereIn('id', $forRemoval)
                     ->delete() > 0;

@@ -25,8 +25,6 @@ class AuditableTransitionException extends AuditingException
 
     /**
      * Get the attribute incompatibilities.
-     *
-     * @return array
      */
     public function getIncompatibilities(): array
     {

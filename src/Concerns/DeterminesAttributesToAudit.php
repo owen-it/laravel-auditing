@@ -22,14 +22,14 @@ trait DeterminesAttributesToAudit
                 $excludedAttributes = array_merge($excludedAttributes, $this->hidden);
             }
 
-            if (!empty($this->getVisible())) {
+            if (! empty($this->getVisible())) {
                 $invisible = array_diff(array_keys($this->attributes), $this->getVisible());
 
                 $excludedAttributes = array_merge($excludedAttributes, $invisible);
             }
 
             // Exclude Timestamps
-            if (!$this->shouldAuditTimestamps()) {
+            if (! $this->shouldAuditTimestamps()) {
                 array_push($excludedAttributes, $this->getCreatedAtColumn(), $this->getUpdatedAtColumn());
                 if (method_exists($this, 'getDeletedAtColumn')) {
                     $excludedAttributes[] = $this->getDeletedAtColumn();
@@ -41,17 +41,11 @@ trait DeterminesAttributesToAudit
         return $this->resolvedExcludedAttributes;
     }
 
-    /**
-     * @return array
-     */
     public function getAuditExclude(): array
     {
         return $this->auditExclude ?? Config::get('audit.exclude', []);
     }
 
-    /**
-     * @return array
-     */
     public function getAuditInclude(): array
     {
         return $this->auditInclude ?? [];

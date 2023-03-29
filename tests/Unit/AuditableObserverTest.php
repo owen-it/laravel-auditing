@@ -15,13 +15,10 @@ class AuditableObserverTest extends AuditingTestCase
      * @group AuditableObserver::deleted
      * @group AuditableObserver::restoring
      * @group AuditableObserver::restored
+     *
      * @test
      *
      * @dataProvider auditableObserverTestProvider
-     *
-     * @param string $eventMethod
-     * @param bool   $expectedBefore
-     * @param bool   $expectedAfter
      */
     public function itExecutesTheAuditorSuccessfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
     {
@@ -35,9 +32,6 @@ class AuditableObserverTest extends AuditingTestCase
         $this->assertSame($expectedAfter, $observer::$restoring);
     }
 
-    /**
-     * @return array
-     */
     public function auditableObserverTestProvider(): array
     {
         return [

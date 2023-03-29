@@ -9,7 +9,6 @@ use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 
 trait CanTransition
 {
-
     /**
      * {@inheritdoc}
      */
