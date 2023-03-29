@@ -12,7 +12,7 @@ trait HasTestFactory
     protected static function newFactory()
     {
         $modelName = Str::after(get_called_class(), 'Models\\');
-        $path = 'OwenIt\Auditing\Tests\database\factories\\' . $modelName . 'Factory';
+        $path = 'OwenIt\Auditing\Tests\database\factories\\'.$modelName.'Factory';
 
         return $path::new();
     }

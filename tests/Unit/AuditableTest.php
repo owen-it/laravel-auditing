@@ -39,6 +39,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::isAuditingEnabled
+     *
      * @test
      */
     public function itWillNotAuditModelsWhenRunningFromTheConsole()
@@ -50,6 +51,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::isAuditingEnabled
+     *
      * @test
      */
     public function itWillAuditModelsWhenRunningFromTheConsole()
@@ -61,6 +63,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::isAuditingEnabled
+     *
      * @test
      */
     public function itWillAlwaysAuditModelsWhenNotRunningFromTheConsole()
@@ -75,6 +78,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::bootAuditable
+     *
      * @test
      */
     public function itWillBootTraitWhenStaticFlagIsSet()
@@ -93,6 +97,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditEvent
+     *
      * @test
      */
     public function itReturnsNullWhenTheAuditEventIsNotSet()
@@ -104,6 +109,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditEvent
+     *
      * @test
      */
     public function itReturnsTheAuditEventThatHasBeenSet()
@@ -116,6 +122,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditEvents
+     *
      * @test
      */
     public function itReturnsTheDefaultAuditEvents()
@@ -132,6 +139,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditEvents
+     *
      * @test
      */
     public function itReturnsTheCustomAuditEventsFromAttribute()
@@ -151,6 +159,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditEvents
+     *
      * @test
      */
     public function itReturnsTheCustomAuditEventsFromConfig()
@@ -171,6 +180,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::readyForAuditing
+     *
      * @test
      */
     public function itIsNotReadyForAuditingWithCustomEvent()
@@ -184,6 +194,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::readyForAuditing
+     *
      * @test
      */
     public function itIsReadyForAuditingWithCustomEvents()
@@ -192,7 +203,7 @@ class AuditableTest extends AuditingTestCase
 
         $model->auditEvents = [
             'published' => 'getPublishedEventAttributes',
-            '*ted'      => 'getMultiEventAttributes',
+            '*ted' => 'getMultiEventAttributes',
             'archived',
         ];
 
@@ -209,6 +220,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::readyForAuditing
+     *
      * @test
      */
     public function itIsReadyForAuditingWithRegularEvents()
@@ -231,6 +243,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itFailsWhenAnInvalidAuditEventIsSet()
@@ -248,13 +261,10 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      *
      * @dataProvider auditCustomAttributeGetterFailTestProvider
-     *
-     * @param string $event
-     * @param array $auditEvents
-     * @param string $exceptionMessage
      */
     public function itFailsWhenTheCustomAttributeGettersAreMissing(
         string $event,
@@ -273,9 +283,6 @@ class AuditableTest extends AuditingTestCase
         $model->toAudit();
     }
 
-    /**
-     * @return array
-     */
     public function auditCustomAttributeGetterFailTestProvider(): array
     {
         return [
@@ -313,6 +320,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itFailsWhenTheIpAddressResolverImplementationIsInvalid()
@@ -332,6 +340,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itFailsWhenTheUrlResolverImplementationIsInvalid()
@@ -351,6 +360,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itFailsWhenTheUserAgentResolverImplementationIsInvalid()
@@ -370,6 +380,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itFailsWhenTheUserResolverImplementationIsInvalid()
@@ -389,6 +400,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itReturnsTheAuditData()
@@ -396,9 +408,9 @@ class AuditableTest extends AuditingTestCase
         $now = Carbon::now();
 
         $model = Article::factory()->make([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'First step: install the laravel-auditing package.',
-            'reviewed'     => 1,
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'First step: install the laravel-auditing package.',
+            'reviewed' => 1,
             'published_at' => $now,
         ]);
 
@@ -408,36 +420,35 @@ class AuditableTest extends AuditingTestCase
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
         Assert::assertArraySubset([
-            'old_values'           => [],
-            'new_values'           => [
-                'title'        => 'How To Audit Eloquent Models',
-                'content'      => 'First step: install the laravel-auditing package.',
-                'reviewed'     => 1,
+            'old_values' => [],
+            'new_values' => [
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'reviewed' => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'                => 'created',
-            'auditable_id'         => null,
-            'auditable_type'       => Article::class,
-            $morphPrefix . '_id'   => null,
-            $morphPrefix . '_type' => null,
-            'url'                  => 'console',
-            'ip_address'           => '127.0.0.1',
-            'user_agent'           => 'Symfony',
-            'tags'                 => null,
+            'event' => 'created',
+            'auditable_id' => null,
+            'auditable_type' => Article::class,
+            $morphPrefix.'_id' => null,
+            $morphPrefix.'_type' => null,
+            'url' => 'console',
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Symfony',
+            'tags' => null,
         ], $auditData, true);
     }
 
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      *
      * @dataProvider userResolverProvider
      *
-     * @param string $guard
-     * @param string $driver
-     * @param int $id
-     * @param string $type
+     * @param  int  $id
+     * @param  string  $type
      */
     public function itReturnsTheAuditDataIncludingUserAttributes(
         string $guard,
@@ -456,9 +467,9 @@ class AuditableTest extends AuditingTestCase
         $now = Carbon::now();
 
         $model = Article::factory()->make([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'First step: install the laravel-auditing package.',
-            'reviewed'     => 1,
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'First step: install the laravel-auditing package.',
+            'reviewed' => 1,
             'published_at' => $now,
         ]);
 
@@ -468,28 +479,25 @@ class AuditableTest extends AuditingTestCase
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
         Assert::assertArraySubset([
-            'old_values'           => [],
-            'new_values'           => [
-                'title'        => 'How To Audit Eloquent Models',
-                'content'      => 'First step: install the laravel-auditing package.',
-                'reviewed'     => 1,
+            'old_values' => [],
+            'new_values' => [
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'reviewed' => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'                => 'created',
-            'auditable_id'         => null,
-            'auditable_type'       => Article::class,
-            $morphPrefix . '_id'   => $id,
-            $morphPrefix . '_type' => $type,
-            'url'                  => 'console',
-            'ip_address'           => '127.0.0.1',
-            'user_agent'           => 'Symfony',
-            'tags'                 => null,
+            'event' => 'created',
+            'auditable_id' => null,
+            'auditable_type' => Article::class,
+            $morphPrefix.'_id' => $id,
+            $morphPrefix.'_type' => $type,
+            'url' => 'console',
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Symfony',
+            'tags' => null,
         ], $auditData, true);
     }
 
-    /**
-     * @return array
-     */
     public function userResolverProvider(): array
     {
         return [
@@ -523,6 +531,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itExcludesAttributesFromTheAuditDataWhenInStrictMode()
@@ -530,9 +539,9 @@ class AuditableTest extends AuditingTestCase
         $this->app['config']->set('audit.strict', true);
 
         $model = Article::factory()->make([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'First step: install the laravel-auditing package.',
-            'reviewed'     => 1,
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'First step: install the laravel-auditing package.',
+            'reviewed' => 1,
             'published_at' => Carbon::now(),
         ]);
 
@@ -551,26 +560,27 @@ class AuditableTest extends AuditingTestCase
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
         Assert::assertArraySubset([
-            'old_values'           => [],
-            'new_values'           => [
-                'title'   => 'How To Audit Eloquent Models',
+            'old_values' => [],
+            'new_values' => [
+                'title' => 'How To Audit Eloquent Models',
                 'content' => 'First step: install the laravel-auditing package.',
             ],
-            'event'                => 'created',
-            'auditable_id'         => null,
-            'auditable_type'       => Article::class,
-            $morphPrefix . '_id'   => null,
-            $morphPrefix . '_type' => null,
-            'url'                  => 'console',
-            'ip_address'           => '127.0.0.1',
-            'user_agent'           => 'Symfony',
-            'tags'                 => null,
+            'event' => 'created',
+            'auditable_id' => null,
+            'auditable_type' => Article::class,
+            $morphPrefix.'_id' => null,
+            $morphPrefix.'_type' => null,
+            'url' => 'console',
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Symfony',
+            'tags' => null,
         ], $auditData, true);
     }
 
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itFailsWhenTheAttributeModifierImplementationIsInvalid()
@@ -592,14 +602,15 @@ class AuditableTest extends AuditingTestCase
     /**
      * @group Auditable::setAuditEvent
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itModifiesTheAuditAttributesSuccessfully()
     {
         $model = Article::factory()->make([
-            'title'        => 'How To Audit Models',
-            'content'      => 'N/A',
-            'reviewed'     => 0,
+            'title' => 'How To Audit Models',
+            'content' => 'N/A',
+            'reviewed' => 0,
             'published_at' => null,
         ]);
 
@@ -615,23 +626,23 @@ class AuditableTest extends AuditingTestCase
         $model->setAuditEvent('updated');
 
         $model->attributeModifiers = [
-            'title'    => RightRedactor::class,
-            'content'  => LeftRedactor::class,
+            'title' => RightRedactor::class,
+            'content' => LeftRedactor::class,
             'reviewed' => Base64Encoder::class,
         ];
 
         Assert::assertArraySubset([
             'old_values' => [
-                'title'        => 'Ho#################',
-                'content'      => '##A',
+                'title' => 'Ho#################',
+                'content' => '##A',
                 'published_at' => null,
-                'reviewed'     => 'MA==',
+                'reviewed' => 'MA==',
             ],
             'new_values' => [
-                'title'        => 'How#########################',
-                'content'      => '############################################kage.',
+                'title' => 'How#########################',
+                'content' => '############################################kage.',
                 'published_at' => $now->toDateTimeString(),
-                'reviewed'     => 'MQ==',
+                'reviewed' => 'MQ==',
             ],
         ], $model->toAudit(), true);
     }
@@ -640,15 +651,17 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::setAuditEvent
      * @group Auditable::transformAudit
      * @group Auditable::toAudit
+     *
      * @test
      */
     public function itTransformsTheAuditData()
     {
-        $model = new class () extends Article {
+        $model = new class() extends Article
+        {
             protected $attributes = [
-                'title'        => 'How To Audit Eloquent Models',
-                'content'      => 'First step: install the laravel-auditing package.',
-                'reviewed'     => 1,
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'reviewed' => 1,
                 'published_at' => '2012-06-14 15:03:00',
             ];
 
@@ -666,17 +679,18 @@ class AuditableTest extends AuditingTestCase
 
         Assert::assertArraySubset([
             'new_values' => [
-                'title'        => 'How To Audit Eloquent Models',
-                'content'      => 'First step: install the laravel-auditing package.',
-                'reviewed'     => 1,
+                'title' => 'How To Audit Eloquent Models',
+                'content' => 'First step: install the laravel-auditing package.',
+                'reviewed' => 1,
                 'published_at' => '2012-06-14 15:03:00',
-                'slug'         => 'how-to-audit-eloquent-models',
+                'slug' => 'how-to-audit-eloquent-models',
             ],
         ], $auditData, true);
     }
 
     /**
      * @group Auditable::getAuditInclude
+     *
      * @test
      */
     public function itReturnsTheDefaultAttributesToBeIncludedInTheAudit()
@@ -688,6 +702,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditInclude
+     *
      * @test
      */
     public function itReturnsTheCustomAttributesToBeIncludedInTheAudit()
@@ -707,6 +722,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditExclude
+     *
      * @test
      */
     public function itReturnsTheDefaultAttributesToBeExcludedFromTheAudit()
@@ -718,6 +734,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditExclude
+     *
      * @test
      */
     public function itReturnsTheCustomAttributesToBeExcludedFromTheAudit()
@@ -735,6 +752,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itExcludesAttributesFromExclude()
@@ -753,6 +771,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditStrict
+     *
      * @test
      */
     public function itReturnsTheDefaultAuditStrictValue()
@@ -764,6 +783,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditStrict
+     *
      * @test
      */
     public function itReturnsTheCustomAuditStrictValueFromAttribute()
@@ -777,6 +797,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditStrict
+     *
      * @test
      */
     public function itReturnsTheCustomAuditStrictValueFromConfig()
@@ -790,6 +811,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditTimestamps
+     *
      * @test
      */
     public function itReturnsTheDefaultAuditTimestampsValue()
@@ -801,6 +823,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditTimestamps
+     *
      * @test
      */
     public function itReturnsTheCustomAuditTimestampsValueFromAttribute()
@@ -814,6 +837,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditTimestamps
+     *
      * @test
      */
     public function itReturnsTheCustomAuditTimestampsValueFromConfig()
@@ -827,6 +851,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditDriver
+     *
      * @test
      */
     public function itReturnsTheDefaultAuditDriverValue()
@@ -838,6 +863,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditDriver
+     *
      * @test
      */
     public function itReturnsTheCustomAuditDriverValueFromAttribute()
@@ -851,6 +877,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditDriver
+     *
      * @test
      */
     public function itReturnsTheCustomAuditDriverValueFromConfig()
@@ -864,6 +891,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditThreshold
+     *
      * @test
      */
     public function itReturnsTheDefaultAuditThresholdValue()
@@ -875,6 +903,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditThreshold
+     *
      * @test
      */
     public function itReturnsTheCustomAuditThresholdValueFromAttribute()
@@ -888,6 +917,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::getAuditThreshold
+     *
      * @test
      */
     public function itReturnsTheCustomAuditThresholdValueFromConfig()
@@ -901,6 +931,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::generateTags
+     *
      * @test
      */
     public function itReturnsTheDefaultGeneratedAuditTags()
@@ -912,11 +943,13 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::generateTags
+     *
      * @test
      */
     public function itReturnsTheCustomGeneratedAuditTags()
     {
-        $model = new class () extends Article {
+        $model = new class() extends Article
+        {
             public function generateTags(): array
             {
                 return [
@@ -934,6 +967,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheModelType()
@@ -952,6 +986,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itWorksOnTimesRestoredCorrectly()
@@ -962,9 +997,9 @@ class AuditableTest extends AuditingTestCase
         $originalStart = new Carbon('2022-01-01 12:00:00');
 
         $article = Article::factory()->create([
-            'title'        => 'How To Audit Eloquent Models',
-            'content'      => 'First step: install the laravel-auditing package.',
-            'reviewed'     => 1,
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'First step: install the laravel-auditing package.',
+            'reviewed' => 1,
             'published_at' => $originalStart,
         ]);
 
@@ -985,6 +1020,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheMorphMapValue()
@@ -1007,6 +1043,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId()
@@ -1025,6 +1062,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itFailsToTransitionWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
@@ -1036,7 +1074,7 @@ class AuditableTest extends AuditingTestCase
 
         $audit = Audit::factory()->create([
             'auditable_type' => Article::class,
-            'auditable_id'   => (string)$model->id,
+            'auditable_id' => (string) $model->id,
         ]);
 
         // Make sure the auditable_id isn't being cast
@@ -1054,6 +1092,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itTransitionsWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
@@ -1062,14 +1101,14 @@ class AuditableTest extends AuditingTestCase
 
         // Key depends on type
         if ($model->getKeyType() == 'string') {
-            $key = (string)$model->id;
+            $key = (string) $model->id;
         } else {
-            $key = (int)$model->id;
+            $key = (int) $model->id;
         }
 
         $audit = Audit::factory()->create([
             'auditable_type' => Article::class,
-            'auditable_id'   => $key,
+            'auditable_id' => $key,
         ]);
 
         $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit));
@@ -1077,6 +1116,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itFailsToTransitionWhenAnAttributeRedactorIsSet()
@@ -1091,7 +1131,7 @@ class AuditableTest extends AuditingTestCase
         ];
 
         $audit = Audit::factory()->create([
-            'auditable_id'   => $model->getKey(),
+            'auditable_id' => $model->getKey(),
             'auditable_type' => Article::class,
         ]);
 
@@ -1100,6 +1140,7 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      */
     public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet()
@@ -1107,13 +1148,13 @@ class AuditableTest extends AuditingTestCase
         $model = Article::factory()->create();
 
         $incompatibleAudit = Audit::factory()->create([
-            'event'          => 'created',
-            'auditable_id'   => $model->getKey(),
+            'event' => 'created',
+            'auditable_id' => $model->getKey(),
             'auditable_type' => Article::class,
-            'old_values'     => [],
-            'new_values'     => [
+            'old_values' => [],
+            'new_values' => [
                 'subject' => 'Culpa qui rerum excepturi quisquam quia officiis.',
-                'text'    => 'Magnam enim suscipit officiis tempore ut quis harum.',
+                'text' => 'Magnam enim suscipit officiis tempore ut quis harum.',
             ],
         ]);
 
@@ -1134,15 +1175,10 @@ class AuditableTest extends AuditingTestCase
 
     /**
      * @group Auditable::transitionTo
+     *
      * @test
      *
      * @dataProvider auditableTransitionTestProvider
-     *
-     * @param bool $morphMap
-     * @param array $oldValues
-     * @param array $newValues
-     * @param array $oldExpectation
-     * @param array $newExpectation
      */
     public function itTransitionsToAnotherModelState(
         bool $morphMap,
@@ -1152,7 +1188,7 @@ class AuditableTest extends AuditingTestCase
         array $newExpectation
     ) {
         $models = Article::factory()->count(2)->create([
-            'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
+            'title' => 'Facilis voluptas qui impedit deserunt vitae quidem.',
             'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
         ]);
 
@@ -1166,10 +1202,10 @@ class AuditableTest extends AuditingTestCase
 
         $audits = $models->map(function (Article $model) use ($auditableType, $oldValues, $newValues) {
             return Audit::factory()->create([
-                'auditable_id'   => $model->getKey(),
+                'auditable_id' => $model->getKey(),
                 'auditable_type' => $auditableType,
-                'old_values'     => $oldValues,
-                'new_values'     => $newValues,
+                'old_values' => $oldValues,
+                'new_values' => $newValues,
             ]);
         });
 
@@ -1200,9 +1236,6 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(2, $model->audits);
     }
 
-    /**
-     * @return array
-     */
     public function auditableTransitionTestProvider(): array
     {
         return [
@@ -1238,7 +1271,7 @@ class AuditableTest extends AuditingTestCase
 
                 // New values
                 [
-                    'title'   => 'Nullam egestas interdum eleifend.',
+                    'title' => 'Nullam egestas interdum eleifend.',
                     'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
                 ],
 
@@ -1247,7 +1280,7 @@ class AuditableTest extends AuditingTestCase
 
                 // Expectation when transitioning with new values
                 [
-                    'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
+                    'title' => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
                     'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
                 ],
             ],
@@ -1261,25 +1294,25 @@ class AuditableTest extends AuditingTestCase
 
                 // Old values
                 [
-                    'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
+                    'title' => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
                     'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
                 ],
 
                 // New values
                 [
-                    'title'   => 'Nullam egestas interdum eleifend.',
+                    'title' => 'Nullam egestas interdum eleifend.',
                     'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
                 ],
 
                 // Expectation when transitioning with old values
                 [
-                    'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
+                    'title' => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
                     'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
                 ],
 
                 // Expectation when transitioning with new values
                 [
-                    'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
+                    'title' => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
                     'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
                 ],
             ],
@@ -1293,7 +1326,7 @@ class AuditableTest extends AuditingTestCase
 
                 // Old values
                 [
-                    'title'   => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
+                    'title' => 'Vivamus a urna et lorem faucibus malesuada nec nec magna.',
                     'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
                 ],
 
@@ -1302,7 +1335,7 @@ class AuditableTest extends AuditingTestCase
 
                 // Expectation when transitioning with old values
                 [
-                    'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
+                    'title' => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
                     'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
                 ],
 

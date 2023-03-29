@@ -18,7 +18,7 @@ class Article extends Model implements Auditable
      */
     protected $casts = [
         'reviewed' => 'bool',
-        'config'   => 'json',
+        'config' => 'json',
         'published_at' => 'datetime',
     ];
 
@@ -55,10 +55,6 @@ class Article extends Model implements Auditable
 
     /**
      * Uppercase Title accessor.
-     *
-     * @param string $value
-     *
-     * @return string
      */
     public function getTitleAttribute(string $value): string
     {

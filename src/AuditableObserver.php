@@ -17,7 +17,6 @@ class AuditableObserver
     /**
      * Handle the retrieved event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -29,7 +28,6 @@ class AuditableObserver
     /**
      * Handle the created event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -41,14 +39,13 @@ class AuditableObserver
     /**
      * Handle the updated event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
     public function updated(Auditable $model)
     {
         // Ignore the updated event when restoring
-        if (!static::$restoring) {
+        if (! static::$restoring) {
             Auditor::execute($model->setAuditEvent('updated'));
         }
     }
@@ -56,7 +53,6 @@ class AuditableObserver
     /**
      * Handle the deleted event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -68,7 +64,6 @@ class AuditableObserver
     /**
      * Handle the restoring event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -83,7 +78,6 @@ class AuditableObserver
     /**
      * Handle the restored event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */

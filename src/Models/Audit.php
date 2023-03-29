@@ -5,7 +5,6 @@ namespace OwenIt\Auditing\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
  * @property string $tags
  * @property string $event
  * @property array $new_values
@@ -26,13 +25,13 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
      * {@inheritdoc}
      */
     protected $casts = [
-        'old_values'   => 'json',
-        'new_values'   => 'json',
+        'old_values' => 'json',
+        'new_values' => 'json',
         // Note: Please do not add 'auditable_id' in here, as it will break non-integer PK models
     ];
 
     /**
-     * @param \DateTimeInterface $date
+     * @param  \DateTimeInterface  $date
      * @return string
      */
     public function getSerializedDate($date)

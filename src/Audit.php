@@ -49,7 +49,7 @@ trait Audit
     {
         $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 
-        return $this->morphTo(__FUNCTION__, $morphPrefix . '_type', $morphPrefix . '_id');
+        return $this->morphTo(__FUNCTION__, $morphPrefix.'_type', $morphPrefix.'_id');
     }
 
     /**
@@ -77,25 +77,25 @@ trait Audit
 
         // Metadata
         $this->data = [
-            'audit_id'         => $this->id,
-            'audit_event'      => $this->event,
-            'audit_tags'       => $this->tags,
+            'audit_id' => $this->id,
+            'audit_event' => $this->event,
+            'audit_tags' => $this->tags,
             'audit_created_at' => $this->serializeDate($this->{$this->getCreatedAtColumn()}),
             'audit_updated_at' => $this->serializeDate($this->{$this->getUpdatedAtColumn()}),
-            'user_id'          => $this->getAttribute($morphPrefix . '_id'),
-            'user_type'        => $this->getAttribute($morphPrefix . '_type'),
+            'user_id' => $this->getAttribute($morphPrefix.'_id'),
+            'user_type' => $this->getAttribute($morphPrefix.'_type'),
         ];
 
         // add resolvers data to metadata
         $resolverData = [];
         foreach (array_keys(Config::get('audit.resolvers', [])) as $name) {
-            $resolverData['audit_' . $name] = $this->$name;
+            $resolverData['audit_'.$name] = $this->$name;
         }
         $this->data = array_merge($this->data, $resolverData);
 
         if ($this->user) {
             foreach ($this->user->getArrayableAttributes() as $attribute => $value) {
-                $this->data['user_' . $attribute] = $value;
+                $this->data['user_'.$attribute] = $value;
             }
         }
 
@@ -103,11 +103,11 @@ trait Audit
 
         // Modified Auditable attributes
         foreach ($this->new_values as $key => $value) {
-            $this->data['new_' . $key] = $value;
+            $this->data['new_'.$key] = $value;
         }
 
         foreach ($this->old_values as $key => $value) {
-            $this->data['old_' . $key] = $value;
+            $this->data['old_'.$key] = $value;
         }
 
         $this->modified = array_diff_key(array_keys($this->data), $this->metadata);
@@ -118,10 +118,7 @@ trait Audit
     /**
      * Get the formatted value of an Eloquent model.
      *
-     * @param Model $model
-     * @param string $key
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return mixed
      */
     protected function getFormattedValue(Model $model, string $key, $value)
@@ -136,6 +133,7 @@ trait Audit
             $model->getCasts()
         ) && $model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
             $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true));
+
             return $arrayObject;
         }
 
@@ -157,14 +155,13 @@ trait Audit
     }
 
     /**
-     * @param Model $model
-     * @param mixed $value
-     *
+     * @param  Model  $model
+     * @param  mixed  $value
      * @return mixed
      */
     private function castDatetimeUTC($model, $value)
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return $value;
         }
 
@@ -188,7 +185,7 @@ trait Audit
      */
     public function getDataValue(string $key)
     {
-        if (!array_key_exists($key, $this->data)) {
+        if (! array_key_exists($key, $this->data)) {
             return;
         }
 
@@ -216,17 +213,14 @@ trait Audit
     /**
      * Decode attribute value.
      *
-     * @param Contracts\Auditable $auditable
-     * @param string $attribute
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return mixed
      */
     protected function decodeAttributeValue(Contracts\Auditable $auditable, string $attribute, $value)
     {
         $attributeModifiers = $auditable->getAttributeModifiers();
 
-        if (!array_key_exists($attribute, $attributeModifiers)) {
+        if (! array_key_exists($attribute, $attributeModifiers)) {
             return $value;
         }
 
@@ -255,7 +249,7 @@ trait Audit
             $metadata[$key] = $value;
 
             if ($value instanceof DateTimeInterface) {
-                $metadata[$key] = !is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
+                $metadata[$key] = ! is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
             }
         }
 
@@ -281,7 +275,7 @@ trait Audit
             $modified[$attribute][$state] = $value;
 
             if ($value instanceof DateTimeInterface) {
-                $modified[$attribute][$state] = !is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
+                $modified[$attribute][$state] = ! is_null($this->auditable) ? $this->auditable->serializeDate($value) : $this->serializeDate($value);
             }
         }
 
@@ -290,8 +284,6 @@ trait Audit
 
     /**
      * Get the Audit tags as an array.
-     *
-     * @return array
      */
     public function getTags(): array
     {

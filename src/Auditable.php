@@ -36,18 +36,21 @@ trait Auditable
 
     /**
      * Property may set custom event data to register
+     *
      * @var null|array
      */
     public $auditCustomOld = null;
 
     /**
      * Property may set custom event data to register
+     *
      * @var null|array
      */
     public $auditCustomNew = null;
 
     /**
      * If this is a custom event (as opposed to an eloquent event
+     *
      * @var bool
      */
     public $isCustomEvent = false;
@@ -94,18 +97,16 @@ trait Auditable
     /**
      * Modify attribute value.
      *
-     * @param string $attribute
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return mixed
-     * @throws AuditingException
      *
+     * @throws AuditingException
      */
     protected function modifyAttributeValue(string $attribute, $value)
     {
         $attributeModifiers = $this->getAttributeModifiers();
 
-        if (!array_key_exists($attribute, $attributeModifiers)) {
+        if (! array_key_exists($attribute, $attributeModifiers)) {
             return $value;
         }
 
@@ -125,9 +126,7 @@ trait Auditable
     /**
      * Determine whether an event is auditable.
      *
-     * @param string $event
-     *
-     * @return bool
+     * @param  string  $event
      */
     protected function isEventAuditable($event): bool
     {
@@ -187,8 +186,6 @@ trait Auditable
 
     /**
      * Determine whether auditing is enabled.
-     *
-     * @return bool
      */
     public static function isAuditingEnabled(): bool
     {
@@ -238,5 +235,4 @@ trait Auditable
     {
         return [];
     }
-
 }

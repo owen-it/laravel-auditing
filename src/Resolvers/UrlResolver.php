@@ -8,9 +8,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class UrlResolver implements \OwenIt\Auditing\Contracts\Resolver
 {
-    /**
-     * @return string
-     */
     public static function resolve(Auditable $auditable): string
     {
         if (App::runningInConsole()) {
