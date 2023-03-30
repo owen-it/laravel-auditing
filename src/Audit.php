@@ -154,6 +154,11 @@ trait Audit
         return $value;
     }
 
+    /**
+     * @param  Model  $model
+     * @param  mixed  $value
+     * @return mixed
+     */
     private function castDatetimeUTC($model, $value)
     {
         if (! is_string($value)) {
@@ -161,7 +166,9 @@ trait Audit
         }
 
         if (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $value)) {
-            return Date::instance(Carbon::createFromFormat('Y-m-d', $value, Date::now('UTC')->getTimezone())->startOfDay());
+            $date = Carbon::createFromFormat('Y-m-d', $value, Date::now('UTC')->getTimezone());
+
+            return $date ? Date::instance($date->startOfDay()) : $value;
         }
 
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/', $value)) {
@@ -248,7 +255,7 @@ trait Audit
             }
         }
 
-        return $json ? json_encode($metadata, $options, $depth) : $metadata;
+        return ($json ? json_encode($metadata, $options, max(1, $depth)) : $metadata) ?: [];
     }
 
     /**
@@ -274,7 +281,7 @@ trait Audit
             }
         }
 
-        return $json ? json_encode($modified, $options, $depth) : $modified;
+        return ($json ? json_encode($modified, $options, max(1, $depth)) : $modified) ?: [];
     }
 
     /**
@@ -282,6 +289,6 @@ trait Audit
      */
     public function getTags(): array
     {
-        return preg_split('/,/', $this->tags, null, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY) ?: [];
     }
 }

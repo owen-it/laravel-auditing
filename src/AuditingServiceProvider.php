@@ -37,7 +37,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
             InstallCommand::class,
         ]);
 
-        $this->app->singleton(Auditor::class, function ($app) {
+        $this->app->bind(Auditor::class, function ($app) {
             return new \OwenIt\Auditing\Auditor($app);
         });
 
@@ -82,7 +82,7 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
     /**
      * Returns existing migration file if found, else uses the current timestamp.
      */
-    protected function getMigrationFileName($migrationFileName): string
+    protected function getMigrationFileName(string $migrationFileName): string
     {
         $timestamp = date('Y_m_d_His');
 

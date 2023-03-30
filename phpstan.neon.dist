@@ -1,0 +1,17 @@
+includes:
+    - phpstan-baseline.neon
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    bootstrapFiles:
+        - tests/ClassAliases.php
+    level: 5
+    paths:
+        - src
+        - config
+        - database/migrations/audits.stub
+        - stubs
+    tmpDir: build/phpstan
+    checkOctaneCompatibility: true
+    checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false

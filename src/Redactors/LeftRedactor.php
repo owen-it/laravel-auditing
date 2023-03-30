@@ -15,6 +15,6 @@ class LeftRedactor implements \OwenIt\Auditing\Contracts\AttributeRedactor
         // Make sure single character strings get redacted
         $length = ($total > $tenth) ? ($total - $tenth) : 1;
 
-        return str_pad(substr($value, $length), $total, '#', STR_PAD_LEFT);
+        return str_pad(substr($value, (int) $length), $total, '#', STR_PAD_LEFT);
     }
 }
