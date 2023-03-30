@@ -51,13 +51,17 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
      */
     private function registerPublishing()
     {
+        if (! function_exists('config_path')) {
+            // Lumen lacks a config_path() helper and 'publish' not relevant in Lumen
+            return;
+        }
+
         if (! $this->app->runningInConsole()) {
             return;
         }
 
-        // Lumen lacks a config_path() helper, so we use base_path()
         $this->publishes([
-            __DIR__.'/../config/audit.php' => base_path('config/audit.php'),
+            __DIR__.'/../config/audit.php' => config_path('audit.php'),
         ], 'config');
 
         $this->publishes([
