@@ -10,3 +10,4 @@ CONTRIBUTING.md  export-ignore
 phpunit.xml      export-ignore
 README.md        export-ignore
 phpstan*         export-ignore
+.php-cs-fixer.dist.php export-ignore
