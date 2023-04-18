@@ -62,7 +62,7 @@
         }
     },
     "suggest": {
-        "laravelista/lumen-vendor-publish": "Needed to publish the package configuration in Lumen"
+        "irazasyed/larasupport": "Needed to publish the package configuration in Lumen"
     },
     "extra": {
         "branch-alias": {
