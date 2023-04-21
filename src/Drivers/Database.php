@@ -31,9 +31,9 @@ class Database implements AuditDriver
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
             return $model->audits()
-              ->latest()
-              ->offset($threshold)->limit(PHP_INT_MAX)
-              ->delete() > 0;
+                ->latest()
+                ->offset($threshold)->limit(PHP_INT_MAX)
+                ->delete() > 0;
         }
 
         return false;
