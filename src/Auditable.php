@@ -63,7 +63,7 @@ trait Auditable
      */
     public static function bootAuditable()
     {
-        if (!self::$auditingDisabled && static::isAuditingEnabled()) {
+        if (static::isAuditingEnabled()) {
             static::observe(new AuditableObserver());
         }
     }
@@ -361,7 +361,7 @@ trait Auditable
 
         if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
             trigger_error(
-                'The config file audit.php is not updated to the new version 13.0. Please see https://www.laravel-auditing.com/docs/13.0/upgrading',
+                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
                 E_USER_DEPRECATED
             );
             $userResolver = Config::get('audit.resolver.user');
@@ -380,7 +380,7 @@ trait Auditable
         $resolvers = Config::get('audit.resolvers', []);
         if (empty($resolvers) && Config::has('audit.resolver')) {
             trigger_error(
-                'The config file audit.php is not updated to the new version 13.0. Please see https://www.laravel-auditing.com/docs/13.0/upgrading',
+                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
                 E_USER_DEPRECATED
             );
             $resolvers = Config::get('audit.resolver', []);
@@ -590,8 +590,10 @@ trait Auditable
         // The Audit must be for this specific Auditable model
         if ($this->getKey() !== $audit->auditable_id) {
             throw new AuditableTransitionException(sprintf(
-                'Expected Auditable id %s, got %s instead',
+                'Expected Auditable id (%s)%s, got (%s)%s instead',
+                gettype($this->getKey()),
                 $this->getKey(),
+                gettype($audit->auditable_id),
                 $audit->auditable_id
             ));
         }

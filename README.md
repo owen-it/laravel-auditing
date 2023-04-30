@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="http://laravel-auditing.com" target="_blank"><img width="130" src="http://www.laravel-auditing.com/assets/img/laravel-auditing-logo.png#v2"></a>
+    <a href="http://laravel-auditing.com" target="_blank"><img width="130" src="https://laravel-auditing.com/logo.svg#v2"></a>
 </p>
 
 <p align="center">
@@ -17,13 +17,16 @@ This package will help you understand changes in your Eloquent models, by provid
 Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
 
 ## Official Documentation
-The package documentation can be found on the [official website](http://www.laravel-auditing.com) or at the [documentation repository](https://github.com/owen-it/laravel-auditing-doc/blob/master/documentation.md).
+
+For more information on how to use the package, please refer to our official documentation available on [laravel-auditing.com](https://laravel-auditing.com) or in the [repository](https://github.com/owen-it/laravel-auditing-doc/blob/main/documentation.md) documentation file. Our documentation provides detailed instructions on how to install and use the package, as well as examples and best practices for auditing in Laravel applications.
+
+Thank you for choosing OwenIt\LaravelAuditing!
 
 ## Version Information
 
-Version   | Illuminate    | Status                  | PHP Version
-:----------|:--------------|:------------------------|:------------
-13.x      | 7.x.x - 9.x.x | Active support :rocket: | > = 7.3 \| 8.0
+Version   | Illuminate     | Status                  | PHP Version
+:----------|:---------------|:------------------------|:------------
+13.x      | 7.x.x - 10.x.x | Active support :rocket: | > = 7.3 \| 8.0
 12.x      | 6.x.x - 9.x.x | Active support          | > = 7.3 \| 8.0
 11.x      | 5.8.x - 8.x.x | End of life             | > = 7.3
 10.x      | 5.8.x - 7.x.x | End of life             | > = 7.2.5

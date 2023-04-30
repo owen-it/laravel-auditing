@@ -224,22 +224,20 @@ class AuditTest extends AuditingTestCase
 
         $created_at = $audit->getSerializedDate($audit->created_at);
         $updated_at = $audit->getSerializedDate($audit->updated_at);
-        $expected = <<< EOF
-{
-    "audit_id": 1,
-    "audit_event": "created",
-    "audit_tags": null,
-    "audit_created_at": "$created_at",
-    "audit_updated_at": "$updated_at",
-    "user_id": null,
-    "user_type": null,
-    "audit_url": "console",
-    "audit_ip_address": "127.0.0.1",
-    "audit_user_agent": "Symfony"
-}
-EOF;
+        $expected = [
+            'audit_id' => 1,
+            'audit_event' => 'created',
+            'audit_tags' => null,
+            'audit_created_at' => $created_at,
+            'audit_updated_at' => $updated_at,
+            'user_id' => null,
+            'user_type' => null,
+            'audit_url' => 'console',
+            'audit_ip_address' => '127.0.0.1',
+            'audit_user_agent' => 'Symfony'
+        ];
 
-        $this->assertSame($expected, $metadata);
+        $this->assertSame($expected, json_decode($metadata, true));
     }
 
     /**
@@ -265,28 +263,26 @@ EOF;
         $updated_at = $audit->getSerializedDate($audit->updated_at);
         $user_created_at = $audit->getSerializedDate($user->created_at);
         $user_updated_at = $audit->getSerializedDate($user->updated_at);
-        $expected = <<< EOF
-{
-    "audit_id": 2,
-    "audit_event": "created",
-    "audit_tags": null,
-    "audit_created_at": "$created_at",
-    "audit_updated_at": "$updated_at",
-    "user_id": 1,
-    "user_type": "OwenIt\\\Auditing\\\Tests\\\Models\\\User",
-    "audit_url": "console",
-    "audit_ip_address": "127.0.0.1",
-    "audit_user_agent": "Symfony",
-    "user_is_admin": true,
-    "user_first_name": "Rick",
-    "user_last_name": "Sanchez",
-    "user_email": "rick@wubba-lubba-dub.dub",
-    "user_created_at": "$user_created_at",
-    "user_updated_at": "$user_updated_at"
-}
-EOF;
+        $expected = [
+            'audit_id' => 2,
+            'audit_event' => 'created',
+            'audit_tags' => null,
+            'audit_created_at' => $created_at,
+            'audit_updated_at' => $updated_at,
+            'user_id' => 1,
+            'user_type' => 'OwenIt\\Auditing\\Tests\\Models\\User',
+            'audit_url' => 'console',
+            'audit_ip_address' => '127.0.0.1',
+            'audit_user_agent' => 'Symfony',
+            'user_is_admin' => true,
+            'user_first_name' => 'Rick',
+            'user_last_name' => 'Sanchez',
+            'user_email' => 'rick@wubba-lubba-dub.dub',
+            'user_created_at' => $user_created_at,
+            'user_updated_at' => $user_updated_at
+        ];
 
-        $this->assertSame($expected, $metadata);
+        $this->assertSame($expected, json_decode($metadata, true));
     }
 
     /**
@@ -344,27 +340,25 @@ EOF;
         $modified = $audit->getModified(true, JSON_PRETTY_PRINT);
 
         $serializedDate = $audit->getSerializedDate($now);
-        $expected = <<< EOF
-{
-    "title": {
-        "new": "HOW TO AUDIT ELOQUENT MODELS"
-    },
-    "content": {
-        "new": "First step: install the laravel-auditing package."
-    },
-    "published_at": {
-        "new": "$serializedDate"
-    },
-    "reviewed": {
-        "new": true
-    },
-    "id": {
-        "new": 1
-    }
-}
-EOF;
+        $expected = [
+            "title" => [
+                "new" => "HOW TO AUDIT ELOQUENT MODELS"
+            ],
+            "content" => [
+                "new" => "First step: install the laravel-auditing package."
+            ],
+            "published_at" => [
+                "new" => "$serializedDate"
+            ],
+            "reviewed" => [
+                "new" => true
+            ],
+            "id" => [
+                "new" => 1
+            ]
+        ];
 
-        $this->assertSame($expected, $modified);
+        $this->assertSame($expected, json_decode($modified, true));
     }
 
     /**

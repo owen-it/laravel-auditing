@@ -75,15 +75,16 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::bootAuditable
      * @test
      */
-    public function itWillNotBootTraitWhenStaticFlagIsSet()
+    public function itWillBootTraitWhenStaticFlagIsSet()
     {
         App::spy();
 
         Article::$auditingDisabled = true;
 
-        new Article();
+        $article = new Article();
 
-        App::shouldNotHaveReceived('runningInConsole');
+        $this->assertFalse($article->readyForAuditing());
+        App::shouldReceive('runningInConsole');
 
         Article::$auditingDisabled = false;
     }
@@ -403,6 +404,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
@@ -411,15 +413,15 @@ class AuditableTest extends AuditingTestCase
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'          => 'created',
-            'auditable_id'   => null,
-            'auditable_type' => Article::class,
-            'user_id'        => null,
-            'user_type'      => null,
-            'url'            => 'console',
-            'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony',
-            'tags'           => null,
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => null,
+            $morphPrefix . '_type'  => null,
+            'url'                   => 'console',
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
         ], $auditData, true);
     }
 
@@ -462,6 +464,7 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
@@ -470,15 +473,15 @@ class AuditableTest extends AuditingTestCase
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'          => 'created',
-            'auditable_id'   => null,
-            'auditable_type' => Article::class,
-            'user_id'        => $id,
-            'user_type'      => $type,
-            'url'            => 'console',
-            'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony',
-            'tags'           => null,
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => $id,
+            $morphPrefix . '_type'  => $type,
+            'url'                   => 'console',
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
         ], $auditData, true);
     }
 
@@ -544,21 +547,22 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
                 'title'   => 'How To Audit Eloquent Models',
                 'content' => 'First step: install the laravel-auditing package.',
             ],
-            'event'          => 'created',
-            'auditable_id'   => null,
-            'auditable_type' => Article::class,
-            'user_id'        => null,
-            'user_type'      => null,
-            'url'            => 'console',
-            'ip_address'     => '127.0.0.1',
-            'user_agent'     => 'Symfony',
-            'tags'           => null,
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => null,
+            $morphPrefix . '_type'  => null,
+            'url'                   => 'console',
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
         ], $auditData, true);
     }
 
@@ -948,6 +952,39 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::transitionTo
      * @test
      */
+    public function itWorksOnTimesRestoredCorrectly()
+    {
+        config(['app.timezone' => 'America/New_York']);
+        date_default_timezone_set('America/New_York');
+
+        $originalStart = new Carbon('2022-01-01 12:00:00');
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => $originalStart,
+        ]);
+
+        $model = Article::first();
+        
+        $this->assertEquals($model->published_at, $originalStart);
+
+        $model->published_at = new Carbon('2022-01-01 12:30:00');
+        $model->save();
+        
+        $audit = $model->audits->last();
+        $audit->auditable_id = $model->id;
+
+        $model->transitionTo($audit, true);
+
+        $this->assertEquals($model->published_at, $originalStart);
+    }
+
+    /**
+     * @group Auditable::transitionTo
+     * @test
+     */
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheMorphMapValue()
     {
         $this->expectException(AuditableTransitionException::class);
@@ -973,9 +1010,12 @@ class AuditableTest extends AuditingTestCase
     public function itFailsToTransitionWhenTheAuditAuditableIdDoesNotMatchTheModelId()
     {
         $this->expectException(AuditableTransitionException::class);
-        $this->expectExceptionMessage('Expected Auditable id 2, got 1 instead');
+        $this->expectExceptionMessage('Expected Auditable id (integer)2, got (integer)1 instead');
 
-        $firstAudit = factory(Article::class)->create()->audits()->first();
+        $firstModel = factory(Article::class)->create();
+        $firstAudit = $firstModel->audits()->first();
+        $firstAudit->auditable_id = $firstModel->id;
+
         $secondModel = factory(Article::class)->create();
 
         $secondModel->transitionTo($firstAudit);
@@ -988,7 +1028,7 @@ class AuditableTest extends AuditingTestCase
     public function itFailsToTransitionWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
     {
         $this->expectException(AuditableTransitionException::class);
-        $this->expectExceptionMessage('Expected Auditable id 1, got 1 instead');
+        $this->expectExceptionMessage('Expected Auditable id (integer)1, got (string)1 instead');
 
         $model = factory(Article::class)->create();
 

@@ -409,6 +409,31 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     */
+    public function itDisablesAndEnablesAuditingBackAgainViaFacade()
+    {
+        // Auditing is enabled by default
+        $this->assertFalse(Article::$auditingDisabled);
+
+        Article::disableAuditing();
+
+        factory(Article::class)->create();
+
+        $this->assertSame(1, Article::count());
+        $this->assertSame(0, Audit::count());
+
+        // Enable Auditing
+        Article::enableAuditing();
+        $this->assertFalse(Article::$auditingDisabled);
+
+        factory(Article::class)->create();
+
+        $this->assertSame(2, Article::count());
+        $this->assertSame(1, Audit::count());
+    }
+
+    /**
+     * @test
      * @return void
      */
     public function itHandlesJsonColumnsCorrectly()
@@ -699,7 +724,7 @@ class AuditingTest extends AuditingTestCase
         ];
         Event::dispatch(AuditCustom::class, [$article]);
 
-        $this->assertDatabaseHas('audits', [
+        $this->assertDatabaseHas(config('audit.drivers.database.table', 'audits'), [
             'auditable_id'   => $article->id,
             'auditable_type' => Article::class,
             'event'          => 'whateverYouWant',

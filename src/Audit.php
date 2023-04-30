@@ -4,8 +4,11 @@ namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 
 trait Audit
@@ -44,7 +47,9 @@ trait Audit
      */
     public function user()
     {
-        return $this->morphTo();
+        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
+
+        return $this->morphTo(__FUNCTION__, $morphPrefix . '_type', $morphPrefix . '_id');
     }
 
     /**
@@ -75,8 +80,8 @@ trait Audit
             'audit_id'         => $this->id,
             'audit_event'      => $this->event,
             'audit_tags'       => $this->tags,
-            'audit_created_at' => $this->serializeDate($this->created_at),
-            'audit_updated_at' => $this->serializeDate($this->updated_at),
+            'audit_created_at' => $this->serializeDate($this->{$this->getCreatedAtColumn()}),
+            'audit_updated_at' => $this->serializeDate($this->{$this->getUpdatedAtColumn()}),
             'user_id'          => $this->getAttribute($morphPrefix . '_id'),
             'user_type'        => $this->getAttribute($morphPrefix . '_type'),
         ];
@@ -138,15 +143,40 @@ trait Audit
         if ($model->hasCast($key)) {
             unset($model->classCastCache[$key]);
 
+            if ($model->getCastType($key) == 'datetime' ) {
+                $value = $this->castDatetimeUTC($model, $value);
+            }
+
             return $model->castAttribute($key, $value);
         }
 
         // Honour DateTime attribute
         if ($value !== null && in_array($key, $model->getDates(), true)) {
-            return $model->asDateTime($value);
+            return $model->asDateTime($this->castDatetimeUTC($model, $value));
         }
 
         return $value;
+    }
+
+    private function castDatetimeUTC($model, $value)
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        if (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $value)) {
+            return Date::instance(Carbon::createFromFormat('Y-m-d', $value, Date::now('UTC')->getTimezone())->startOfDay());
+        }
+
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/', $value)) {
+            return Date::instance(Carbon::createFromFormat('Y-m-d H:i:s', $value, Date::now('UTC')->getTimezone()));
+        }
+
+        try {
+            return Date::createFromFormat($model->getDateFormat(), $value, Date::now('UTC')->getTimezone());
+        } catch (InvalidArgumentException $e) {
+            return $value;
+        }
     }
 
     /**
