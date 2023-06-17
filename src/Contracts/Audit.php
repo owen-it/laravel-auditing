@@ -5,6 +5,14 @@ namespace OwenIt\Auditing\Contracts;
 interface Audit
 {
     /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>|static
+     */
+    public function newEloquentBuilder($query);
+    
+    /**
      * Get the current connection name for the model.
      *
      * @return string|null
