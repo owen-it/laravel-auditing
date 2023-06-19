@@ -658,11 +658,11 @@ trait Auditable
         $this->auditEvent = 'attach';
         $this->isCustomEvent = true;
         $this->auditCustomOld = [
-            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get()->toArray()
         ];
         $this->{$relationName}()->attach($id, $attributes, $touch);
         $this->auditCustomNew = [
-            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get()->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
         $this->isCustomEvent = false;
@@ -684,11 +684,11 @@ trait Auditable
         $this->auditEvent = 'detach';
         $this->isCustomEvent = true;
         $this->auditCustomOld = [
-            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get()->toArray()
         ];
         $results = $this->{$relationName}()->detach($ids, $touch);
         $this->auditCustomNew = [
-            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get()->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
         $this->isCustomEvent = false;
@@ -712,7 +712,7 @@ trait Auditable
         $this->auditEvent = 'sync';
 
         $this->auditCustomOld = [
-            $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get()->toArray()
         ];
 
         $changes = $this->{$relationName}()->sync($ids, $detaching);
@@ -722,7 +722,7 @@ trait Auditable
             $this->auditCustomNew = [];
         } else {
             $this->auditCustomNew = [
-                $relationName => $this->{$relationName}()->get()->isEmpty() ? [] : $this->{$relationName}()->get()->toArray()
+                $relationName => $this->{$relationName}()->get()->toArray()
             ];
         }
 
