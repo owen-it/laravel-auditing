@@ -161,7 +161,7 @@ trait GathersDataToAudit
 
             $auditableEventRegex = sprintf('/%s/', preg_replace('/\*+/', '.*', $auditableEvent));
 
-            if (preg_match($auditableEventRegex, $event)) {
+            if (preg_match($auditableEventRegex, (string) $event)) {
                 return is_int($key) ? sprintf('get%sEventAttributes', ucfirst($event)) : $value;
             }
         }
