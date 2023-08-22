@@ -161,7 +161,7 @@ return [
     | Audit Queue Configurations
     |--------------------------------------------------------------------------
     |
-    | Available audit drivers and respective configurations.
+    | Available audit queue configurations.
     |
     */
 
