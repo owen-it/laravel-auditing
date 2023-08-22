@@ -4,6 +4,7 @@ namespace OwenIt\Auditing;
 
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Facades\Auditor;
+use OwenIt\Auditing\Events\DispatchingAudit;
 
 class AuditableObserver
 {
@@ -23,7 +24,7 @@ class AuditableObserver
      */
     public function retrieved(Auditable $model)
     {
-        Auditor::execute($model->setAuditEvent('retrieved'));
+        $this->dispatchAudit($model->setAuditEvent('retrieved'));
     }
 
     /**
@@ -35,7 +36,7 @@ class AuditableObserver
      */
     public function created(Auditable $model)
     {
-        Auditor::execute($model->setAuditEvent('created'));
+        $this->dispatchAudit($model->setAuditEvent('created'));
     }
 
     /**
@@ -49,7 +50,7 @@ class AuditableObserver
     {
         // Ignore the updated event when restoring
         if (!static::$restoring) {
-            Auditor::execute($model->setAuditEvent('updated'));
+            $this->dispatchAudit($model->setAuditEvent('updated'));
         }
     }
 
@@ -62,7 +63,7 @@ class AuditableObserver
      */
     public function deleted(Auditable $model)
     {
-        Auditor::execute($model->setAuditEvent('deleted'));
+        $this->dispatchAudit($model->setAuditEvent('deleted'));
     }
 
     /**
@@ -89,10 +90,32 @@ class AuditableObserver
      */
     public function restored(Auditable $model)
     {
-        Auditor::execute($model->setAuditEvent('restored'));
+        $this->dispatchAudit($model->setAuditEvent('restored'));
 
         // Once the model is restored, we need to put everything back
         // as before, in case a legitimate update event is fired
         static::$restoring = false;
+    }
+
+    protected function dispatchAudit(Auditable $model)
+    {
+        if (!$this->fireDispatchingAuditEvent($model)) {
+            return;
+        }
+
+        Auditor::execute($model);
+    }
+
+    /**
+     * Fire the Auditing event.
+     *
+     * @param \OwenIt\Auditing\Contracts\Auditable $model
+     *
+     * @return bool
+     */
+    protected function fireDispatchingAuditEvent(Auditable $model): bool
+    {
+        return app()->make('events')
+                ->until(new DispatchingAudit($model)) !== false;
     }
 }
