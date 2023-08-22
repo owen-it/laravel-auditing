@@ -9,7 +9,7 @@ use OwenIt\Auditing\Console\AuditResolverCommand;
 use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Auditor;
 
-class AuditingServiceProvider extends ServiceProvider implements DeferrableProvider
+class AuditingServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the service provider.
@@ -63,15 +63,5 @@ class AuditingServiceProvider extends ServiceProvider implements DeferrableProvi
                 ], 'migrations');
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function provides()
-    {
-        return [
-            Auditor::class,
-        ];
     }
 }

@@ -21,6 +21,9 @@ class AuditingEventServiceProvider extends ServiceProvider
         AuditCustom::class => [
             RecordCustomAudit::class,
         ],
+        DispatchAudit::class => [
+            ProcessDispatchAudit::class,
+        ],
     ];
 
     /**
@@ -31,7 +34,5 @@ class AuditingEventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        Event::listen(DispatchAudit::class, Config::get('audit.queue.dispatch_listener', ProcessDispatchAudit::class));
     }
 }

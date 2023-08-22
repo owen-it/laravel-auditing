@@ -166,7 +166,6 @@ return [
     */
 
     'queue' => [
-        'dispatch_listener' => \OwenIt\Auditing\Listeners\ProcessDispatchAudit::class,
         'connection' => 'sync',
         'queue'      => 'default',
         'delay'      => 0,
