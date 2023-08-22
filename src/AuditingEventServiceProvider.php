@@ -9,6 +9,7 @@ if (app() instanceof \Illuminate\Foundation\Application) {
 }
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Listeners\RecordCustomAudit;
@@ -31,6 +32,6 @@ class AuditingEventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        Event::listen(DispatchAudit::class, ProcessDispatchAudit::class);
+        Event::listen(DispatchAudit::class, Config::get('audit.queue.dispatch_listener', ProcessDispatchAudit::class));
     }
 }

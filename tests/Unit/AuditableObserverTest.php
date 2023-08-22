@@ -2,11 +2,65 @@
 
 namespace OwenIt\Auditing\Tests;
 
+use OwenIt\Auditing\Models\Audit;
+use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\AuditableObserver;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Events\DispatchAudit;
+use OwenIt\Auditing\Events\DispatchingAudit;
 
 class AuditableObserverTest extends AuditingTestCase
 {
+    /**
+     * @test
+     *
+     * @dataProvider auditableObserverDispatchTestProvider
+     */
+    public function itWillCancelTheAuditDispatchingFromAnEventListener($eventMethod)
+    {
+        Event::fake(
+            [
+                DispatchAudit::class,
+            ]
+        );
+
+        Event::listen(DispatchingAudit::class, function () {
+            return false;
+        });
+
+        $observer = new AuditableObserver();
+        $model = factory(Article::class)->create();
+
+        $observer->$eventMethod($model);
+
+        $this->assertNull(Audit::first());
+
+        Event::assertNotDispatched(DispatchAudit::class);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider auditableObserverDispatchTestProvider
+     */
+    public function itDispatchesTheCorrectEvents(string $eventMethod)
+    {
+        Event::fake();
+
+        $observer = new AuditableObserver();
+        $model = factory(Article::class)->create();
+
+        $observer->$eventMethod($model);
+
+        Event::assertDispatched(DispatchingAudit::class, function ($event) use ($model) {
+            return $event->model->is($model);
+        });
+
+        Event::assertDispatched(DispatchAudit::class, function ($event) use ($model) {
+            return $event->model->is($model);
+        });
+    }
+
     /**
      * @group AuditableObserver::retrieved
      * @group AuditableObserver::created
@@ -69,6 +123,30 @@ class AuditableObserverTest extends AuditingTestCase
                 'restored',
                 true,
                 false,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function auditableObserverDispatchTestProvider(): array
+    {
+        return [
+            [
+                'retrieved',
+            ],
+            [
+                'created',
+            ],
+            [
+                'updated',
+            ],
+            [
+                'deleted',
+            ],
+            [
+                'restored',
             ],
         ];
     }

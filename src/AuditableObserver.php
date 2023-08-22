@@ -103,7 +103,8 @@ class AuditableObserver
             return;
         }
 
-        DispatchAudit::dispatch($model);
+        // Unload the relations to prevent large amounts of unnecessary data from being serialized.
+        DispatchAudit::dispatch($model->withoutRelations());
     }
 
     /**

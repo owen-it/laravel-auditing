@@ -9,16 +9,14 @@ class DispatchingAudit
     /**
      * The Auditable model.
      *
-     * @var \OwenIt\Auditing\Contracts\Auditable
+     * @var Auditable
      */
     public $model;
 
     /**
      * Create a new DispatchingAudit event instance.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     * @param array $old
-     * @param array $new
+     * @param Auditable $model
      */
     public function __construct(Auditable $model)
     {
