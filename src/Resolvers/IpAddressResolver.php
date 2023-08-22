@@ -10,6 +10,6 @@ class IpAddressResolver implements Resolver
 {
     public static function resolve(Auditable $auditable): string
     {
-        return Request::ip();
+        return $auditable->preloadedResolverData['ip_address'] ?? Request::ip();
     }
 }
