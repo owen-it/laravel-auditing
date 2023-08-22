@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing\Tests\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -61,5 +62,18 @@ class Article extends Model implements Auditable
     public function getTitleAttribute(string $value): string
     {
         return strtoupper($value);
+    }
+
+    /**
+     * Uppercase Content accessor.
+     *
+     * @return Attribute
+     */
+    public function content(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value) => $value,
+            set: fn ($value) => ucwords($value),
+        );
     }
 }
