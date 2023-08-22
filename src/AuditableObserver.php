@@ -3,7 +3,7 @@
 namespace OwenIt\Auditing;
 
 use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Facades\Auditor;
+use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Events\DispatchingAudit;
 
 class AuditableObserver
@@ -103,7 +103,7 @@ class AuditableObserver
             return;
         }
 
-        Auditor::execute($model);
+        DispatchAudit::dispatch($model);
     }
 
     /**

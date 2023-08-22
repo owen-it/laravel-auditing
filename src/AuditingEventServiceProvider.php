@@ -7,15 +7,19 @@ if (app() instanceof \Illuminate\Foundation\Application) {
 } else {
     class_alias(\Laravel\Lumen\Providers\EventServiceProvider::class, '\OwenIt\Auditing\ServiceProvider');
 }
+
+use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\Events\AuditCustom;
+use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Listeners\RecordCustomAudit;
+use OwenIt\Auditing\Listeners\ProcessDispatchAudit;
 
 class AuditingEventServiceProvider extends ServiceProvider
 {
     protected $listen = [
         AuditCustom::class => [
             RecordCustomAudit::class,
-        ]
+        ],
     ];
 
     /**
@@ -26,5 +30,7 @@ class AuditingEventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
+        Event::listen(DispatchAudit::class, ProcessDispatchAudit::class);
     }
 }
