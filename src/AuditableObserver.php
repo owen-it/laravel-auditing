@@ -99,7 +99,7 @@ class AuditableObserver
 
     protected function dispatchAudit(Auditable $model)
     {
-        if (!$this->fireDispatchingAuditEvent($model)) {
+        if (!$model->readyForAuditing() || !$this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
