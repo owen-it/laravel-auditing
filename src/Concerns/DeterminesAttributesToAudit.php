@@ -30,7 +30,12 @@ trait DeterminesAttributesToAudit
 
             // Exclude Timestamps
             if (! $this->shouldAuditTimestamps()) {
-                array_push($excludedAttributes, $this->getCreatedAtColumn(), $this->getUpdatedAtColumn());
+                if ($this->getCreatedAtColumn()) {
+                    $excludedAttributes[] = $this->getCreatedAtColumn();
+                }
+                if ($this->getUpdatedAtColumn()) {
+                    $excludedAttributes[] = $this->getUpdatedAtColumn();
+                }
                 if (method_exists($this, 'getDeletedAtColumn')) {
                     $excludedAttributes[] = $this->getDeletedAtColumn();
                 }

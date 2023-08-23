@@ -55,7 +55,7 @@ class Auditor extends Manager implements Contracts\Auditor
     /**
      * {@inheritdoc}
      */
-    public function execute(Auditable $model)
+    public function execute(Auditable $model): void
     {
         if (! $model->readyForAuditing()) {
             return;
