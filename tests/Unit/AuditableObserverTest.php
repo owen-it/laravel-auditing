@@ -134,9 +134,6 @@ class AuditableObserverTest extends AuditingTestCase
     {
         return [
             [
-                'retrieved',
-            ],
-            [
                 'created',
             ],
             [
