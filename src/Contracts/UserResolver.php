@@ -9,5 +9,5 @@ interface UserResolver
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public static function resolve();
+    public static function resolve(Auditable $auditable);
 }
