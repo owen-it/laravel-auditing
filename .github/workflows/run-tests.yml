@@ -58,4 +58,6 @@ jobs:
           composer update --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: |
+          vendor/bin/phpunit
+          vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver

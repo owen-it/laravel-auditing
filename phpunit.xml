@@ -18,6 +18,15 @@
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
+    <groups>
+        <exclude>
+            <!--
+                Group tests that are run with specific command line arguments to ensure they're
+                properly tracked in audits. See \OwenIt\Auditing\Resolvers\UrlResolver.
+            -->
+            <group>command-line-url-resolver</group>
+        </exclude>
+    </groups>
     <coverage processUncoveredFiles="true">
         <include>
             <directory suffix=".php">./src</directory>
