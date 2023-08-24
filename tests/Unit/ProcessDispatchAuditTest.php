@@ -63,11 +63,13 @@ class ProcessDispatchAuditTest extends AuditingTestCase
         DispatchAudit::dispatch($model);
 
         Queue::assertPushedOn('audits', CallQueuedListener::class, function ($job) use ($model) {
+            $instantiatedJob = new $job->class;
+
             return $job->class == ProcessDispatchAudit::class
                 && $job->data[0] instanceof DispatchAudit
                 && $job->data[0]->model->is($model)
-                && (new ($job->class))->viaConnection() == 'redis'
-                && (new ($job->class))->withDelay(new DispatchAudit($model)) == 60;
+                && $instantiatedJob->viaConnection() == 'redis'
+                && $instantiatedJob->withDelay(new DispatchAudit($model)) == 60;
         });
     }
 }
