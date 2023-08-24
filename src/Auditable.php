@@ -650,7 +650,7 @@ trait Auditable
      * @return void
      * @throws AuditingException
      */
-    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['name'])
+    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'])
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'attach')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method attach');
@@ -658,11 +658,11 @@ trait Auditable
         $this->auditEvent = 'attach';
         $this->isCustomEvent = true;
         $this->auditCustomOld = [
-            $relationName => $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get($columns)->toArray()
         ];
         $this->{$relationName}()->attach($id, $attributes, $touch);
         $this->auditCustomNew = [
-            $relationName => $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get($columns)->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
         $this->isCustomEvent = false;
