@@ -17,6 +17,10 @@ class ProcessDispatchAuditTest extends AuditingTestCase
      */
     public function itIsListeningToTheCorrectEvent()
     {
+        if (version_compare($this->app->version(), '8.0.0', '<')) {
+            $this->markTestSkipped('This test is only for Laravel 8.0.0+');
+        }
+
         Event::fake();
 
         Event::assertListening(
