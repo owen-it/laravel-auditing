@@ -675,7 +675,7 @@ trait Auditable
      * @return int
      * @throws AuditingException
      */
-    public function auditDetach(string $relationName, $ids = null, $touch = true)
+    public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'])
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'detach')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method detach');
@@ -684,11 +684,11 @@ trait Auditable
         $this->auditEvent = 'detach';
         $this->isCustomEvent = true;
         $this->auditCustomOld = [
-            $relationName => $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get($columns)->toArray()
         ];
         $results = $this->{$relationName}()->detach($ids, $touch);
         $this->auditCustomNew = [
-            $relationName => $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get($columns)->toArray()
         ];
         Event::dispatch(AuditCustom::class, [$this]);
         $this->isCustomEvent = false;
@@ -703,7 +703,7 @@ trait Auditable
      * @return array
      * @throws AuditingException
      */
-    public function auditSync($relationName, $ids, $detaching = true)
+    public function auditSync($relationName, $ids, $detaching = true, $columns = ['*'])
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'sync')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method sync');
@@ -712,7 +712,7 @@ trait Auditable
         $this->auditEvent = 'sync';
 
         $this->auditCustomOld = [
-            $relationName => $this->{$relationName}()->get()->toArray()
+            $relationName => $this->{$relationName}()->get($columns)->toArray()
         ];
 
         $changes = $this->{$relationName}()->sync($ids, $detaching);
@@ -722,7 +722,7 @@ trait Auditable
             $this->auditCustomNew = [];
         } else {
             $this->auditCustomNew = [
-                $relationName => $this->{$relationName}()->get()->toArray()
+                $relationName => $this->{$relationName}()->get($columns)->toArray()
             ];
         }
 
@@ -740,11 +740,11 @@ trait Auditable
      * @return array
      * @throws AuditingException
      */
-    public function auditSyncWithoutDetaching(string $relationName, $ids)
+    public function auditSyncWithoutDetaching(string $relationName, $ids, $columns = ['*'])
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method syncWithoutDetaching');
         }
-        return $this->auditSync($relationName, $ids, false);
+        return $this->auditSync($relationName, $ids, false, $columns);
     }
 }
