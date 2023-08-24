@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Config;
 
 trait DeterminesAttributesToAudit
 {
-    protected array|null $resolvedExcludedAttributes = null;
+    protected ?array $resolvedExcludedAttributes = null;
 
     /**
      * Resolve the Auditable attributes to exclude from the Audit.
