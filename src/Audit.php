@@ -131,7 +131,7 @@ trait Audit
             return $model->mutateAttribute($key, $value);
         }
 
-        if ($model->hasAttributeMutator($key)) {
+        if (method_exists($model, 'hasAttributeMutator') && $model->hasAttributeMutator($key)) {
             return $model->mutateAttributeMarkedAttribute($key, $value);
         }
 

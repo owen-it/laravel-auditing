@@ -12,6 +12,8 @@ class Article extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
 
+    protected $laravel_version;
+
     /**
      * {@inheritdoc}
      */
@@ -72,8 +74,17 @@ class Article extends Model implements Auditable
     public function content(): Attribute
     {
         return new Attribute(
-            get: fn ($value) => $value,
-            set: fn ($value) => ucwords($value),
+            function ($value) { return $value; },
+            function ($value) { return ucwords($value); }
         );
+    }
+
+    public static function contentMutate($value)
+    {
+        if (! method_exists(self::class, 'hasAttributeMutator')) {
+            return $value;
+        }
+
+        return ucwords($value);
     }
 }
