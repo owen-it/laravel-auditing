@@ -5,6 +5,7 @@ namespace OwenIt\Auditing\Tests\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Tests\Casts\Money;
 
 class Article extends Model implements Auditable
 {
@@ -18,6 +19,7 @@ class Article extends Model implements Auditable
         'reviewed' => 'bool',
         'config'   => 'json',
         'published_at' => 'datetime',
+        'price' => Money::class,
     ];
 
     /**

@@ -9,6 +9,7 @@ use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\Money;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditTest extends AuditingTestCase
@@ -147,6 +148,39 @@ class AuditTest extends AuditingTestCase
 
         // Invalid value
         $this->assertNull($audit->getDataValue('invalid_key'));
+    }
+
+    /**
+     * @group Audit::resolveData
+     * @group Audit::getDataValue
+     * @test
+     */
+    public function itReturnsTheAppropriateAuditableDataValuesWithCustomCastValueObject()
+    {
+        $user = factory(User::class)->create([
+            'is_admin'   => 1,
+            'first_name' => 'rick',
+            'last_name'  => 'Sanchez',
+            'email'      => 'rick@wubba-lubba-dub.dub',
+        ]);
+
+        $this->actingAs($user);
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => Carbon::now(),
+            'price'        => '12.45',
+        ]);
+
+        $article->price = '24.68';
+        $article->save();
+
+        $lastAudit = $article->audits()->skip(1)->first();
+
+        $this->assertEquals(new Money('24.68', 'USD'), $lastAudit->getModified()['price']['new']);
+        $this->assertEquals(new Money('12.45', 'USD'), $lastAudit->getModified()['price']['old']);
     }
 
     /**

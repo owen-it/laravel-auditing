@@ -145,6 +145,8 @@ trait Audit
                 $value = $this->castDatetimeUTC($model, $value);
             }
 
+            unset($model->classCastCache[$key]);
+
             return $model->castAttribute($key, $value);
         }
 
