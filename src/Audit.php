@@ -135,7 +135,7 @@ trait Audit
             $key,
             $model->getCasts()
         ) && $model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
-            $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true));
+            $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true) ?: []);
             return $arrayObject;
         }
 
