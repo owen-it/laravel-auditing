@@ -18,7 +18,7 @@ class Money implements CastsAttributes
     /**
      * {@inheritdoc}
      */
-    public function set($model, string $key, $value, array $attributes): mixed
+    public function set($model, string $key, $value, array $attributes)
     {
         return $value;
     }
