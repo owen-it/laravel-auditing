@@ -15,6 +15,7 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
+use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;
@@ -418,7 +419,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => null,
             $morphPrefix . '_type'  => null,
-            'url'                   => 'console',
+            'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
             'tags'                  => null,
@@ -478,7 +479,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => $id,
             $morphPrefix . '_type'  => $type,
-            'url'                   => 'console',
+            'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
             'tags'                  => null,
@@ -559,7 +560,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => null,
             $morphPrefix . '_type'  => null,
-            'url'                   => 'console',
+            'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
             'tags'                  => null,

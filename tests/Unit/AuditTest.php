@@ -7,6 +7,7 @@ use DateTimeInterface;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -35,7 +36,7 @@ class AuditTest extends AuditingTestCase
         self::Assert()::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
-            'audit_url'        => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
@@ -82,7 +83,7 @@ class AuditTest extends AuditingTestCase
         self::Assert()::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
-            'audit_url'        => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
@@ -161,7 +162,7 @@ class AuditTest extends AuditingTestCase
         self::Assert()::assertArraySubset([
             'audit_id'         => 1,
             'audit_event'      => 'created',
-            'audit_url'        => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
@@ -170,6 +171,19 @@ class AuditTest extends AuditingTestCase
             'user_id'          => null,
             'user_type'        => null,
         ], $metadata, true);
+    }
+
+    /**
+     * This test is meant to be run with specific command line "vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver"
+     *
+     * @group command-line-url-resolver
+     * @test
+     */
+    public function itReturnsProperCommandLineInUrlAuditMetadata()
+    {
+        $audit = factory(Article::class)->create()->audits()->first();
+
+        self::Assert()::assertEquals($audit->getMetadata()['audit_url'], 'vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver');
     }
 
     /**
@@ -195,7 +209,7 @@ class AuditTest extends AuditingTestCase
         self::Assert()::assertArraySubset([
             'audit_id'         => 2,
             'audit_event'      => 'created',
-            'audit_url'        => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
@@ -232,7 +246,7 @@ class AuditTest extends AuditingTestCase
             'audit_updated_at' => $updated_at,
             'user_id' => null,
             'user_type' => null,
-            'audit_url' => 'console',
+            'audit_url' => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony'
         ];
@@ -271,7 +285,7 @@ class AuditTest extends AuditingTestCase
             'audit_updated_at' => $updated_at,
             'user_id' => 1,
             'user_type' => 'OwenIt\\Auditing\\Tests\\Models\\User',
-            'audit_url' => 'console',
+            'audit_url' => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'user_is_admin' => true,
