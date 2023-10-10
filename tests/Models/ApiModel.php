@@ -9,9 +9,9 @@ use OwenIt\Auditing\Tests\database\factories\HasTestFactory;
 
 class ApiModel extends Model implements Auditable
 {
+    use HasTestFactory;
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
-    use HasTestFactory;
 
     /**
      * @var string UUID key

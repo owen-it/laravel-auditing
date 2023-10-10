@@ -15,10 +15,10 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait Auditable
 {
+    use AuditsPivotRecords;
+    use CanTransition;
     use DeterminesAttributesToAudit;
     use GathersDataToAudit;
-    use CanTransition;
-    use AuditsPivotRecords;
 
     /**
      * Audit event name.

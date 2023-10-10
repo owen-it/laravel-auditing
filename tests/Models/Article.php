@@ -11,9 +11,9 @@ use OwenIt\Auditing\Tests\database\factories\HasTestFactory;
 
 class Article extends Model implements Auditable
 {
+    use HasTestFactory;
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
-    use HasTestFactory;
 
     protected $laravel_version;
 
@@ -60,10 +60,6 @@ class Article extends Model implements Auditable
 
     /**
      * Uppercase Title accessor.
-     *
-     * @param string $value
-     *
-     * @return string
      */
     public function getTitleAttribute(string $value): string
     {
@@ -72,14 +68,16 @@ class Article extends Model implements Auditable
 
     /**
      * Uppercase Content accessor.
-     *
-     * @return Attribute
      */
     public function content(): Attribute
     {
         return new Attribute(
-            function ($value) { return $value; },
-            function ($value) { return ucwords($value); }
+            function ($value) {
+                return $value;
+            },
+            function ($value) {
+                return ucwords($value);
+            }
         );
     }
 

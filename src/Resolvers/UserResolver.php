@@ -23,7 +23,7 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
                 continue;
             }
 
-            if (true === $authenticated) {
+            if ($authenticated === true) {
                 return Auth::guard($guard)->user();
             }
         }

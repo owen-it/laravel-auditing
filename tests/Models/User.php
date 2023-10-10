@@ -9,9 +9,9 @@ use OwenIt\Auditing\Tests\database\factories\HasTestFactory;
 
 class User extends Model implements Auditable, Authenticatable
 {
+    use HasTestFactory;
     use \Illuminate\Auth\Authenticatable;
     use \OwenIt\Auditing\Auditable;
-    use HasTestFactory;
 
     /**
      * {@inheritdoc}

@@ -31,8 +31,6 @@ class Audited
 
     /**
      * Create a new Audited event instance.
-     *
-     * @param  \OwenIt\Auditing\Contracts\Audit  $audit
      */
     public function __construct(Auditable $model, AuditDriver $driver, Audit $audit = null)
     {

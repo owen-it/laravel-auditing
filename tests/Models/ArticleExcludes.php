@@ -9,9 +9,9 @@ use OwenIt\Auditing\Tests\database\factories\HasTestFactory;
 
 class ArticleExcludes extends Model implements Auditable
 {
+    use HasTestFactory;
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
-    use HasTestFactory;
 
     protected $table = 'articles';
 
