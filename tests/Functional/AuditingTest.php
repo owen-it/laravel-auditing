@@ -191,9 +191,9 @@ class AuditingTest extends AuditingTestCase
         ], $audit->old_values, true);
 
         Assert::assertArraySubset([
-            'content' => 'First step: install the laravel-auditing package.',
+            'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
             'published_at' => $now->toDateTimeString(),
-            'reviewed' => 1,
+            'reviewed'     => 1,
         ], $audit->new_values, true);
     }
 

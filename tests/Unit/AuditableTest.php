@@ -14,6 +14,7 @@ use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
+use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
@@ -423,7 +424,7 @@ class AuditableTest extends AuditingTestCase
             'old_values' => [],
             'new_values' => [
                 'title' => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
                 'reviewed' => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
@@ -432,7 +433,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_type' => Article::class,
             $morphPrefix.'_id' => null,
             $morphPrefix.'_type' => null,
-            'url' => 'console',
+            'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Symfony',
             'tags' => null,
@@ -482,7 +483,7 @@ class AuditableTest extends AuditingTestCase
             'old_values' => [],
             'new_values' => [
                 'title' => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
                 'reviewed' => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
@@ -491,7 +492,7 @@ class AuditableTest extends AuditingTestCase
             'auditable_type' => Article::class,
             $morphPrefix.'_id' => $id,
             $morphPrefix.'_type' => $type,
-            'url' => 'console',
+            'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Symfony',
             'tags' => null,
@@ -563,14 +564,14 @@ class AuditableTest extends AuditingTestCase
             'old_values' => [],
             'new_values' => [
                 'title' => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'content' => Article::contentMutate('First step: install the laravel-auditing package.'),
             ],
             'event' => 'created',
             'auditable_id' => null,
             'auditable_type' => Article::class,
             $morphPrefix.'_id' => null,
             $morphPrefix.'_type' => null,
-            'url' => 'console',
+            'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Symfony',
             'tags' => null,
@@ -1281,7 +1282,7 @@ class AuditableTest extends AuditingTestCase
                 // Expectation when transitioning with new values
                 [
                     'title' => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
-                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                    'content' => Article::contentMutate('Morbi consectetur laoreet sem, eu tempus odio tempor id.'),
                 ],
             ],
 
@@ -1307,13 +1308,13 @@ class AuditableTest extends AuditingTestCase
                 // Expectation when transitioning with old values
                 [
                     'title' => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
-                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                    'content' => Article::contentMutate('Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.'),
                 ],
 
                 // Expectation when transitioning with new values
                 [
                     'title' => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
-                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                    'content' => Article::contentMutate('Morbi consectetur laoreet sem, eu tempus odio tempor id.'),
                 ],
             ],
 
@@ -1336,7 +1337,7 @@ class AuditableTest extends AuditingTestCase
                 // Expectation when transitioning with old values
                 [
                     'title' => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
-                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                    'content' => Article::contentMutate('Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.'),
                 ],
 
                 // Expectation when transitioning with new values

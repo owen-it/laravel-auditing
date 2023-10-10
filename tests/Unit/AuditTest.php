@@ -7,8 +7,10 @@ use DateTimeInterface;
 use Illuminate\Testing\Assert;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\Money;
 use OwenIt\Auditing\Tests\Models\Audit;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -38,7 +40,7 @@ class AuditTest extends AuditingTestCase
         Assert::assertArraySubset([
             'audit_id' => 1,
             'audit_event' => 'created',
-            'audit_url' => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags' => null,
@@ -47,7 +49,7 @@ class AuditTest extends AuditingTestCase
             'user_id' => null,
             'user_type' => null,
             'new_title' => 'How To Audit Eloquent Models',
-            'new_content' => 'First step: install the laravel-auditing package.',
+            'new_content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
             'new_published_at' => $now->toDateTimeString(),
             'new_reviewed' => 1,
             'new_id' => 1,
@@ -86,7 +88,7 @@ class AuditTest extends AuditingTestCase
         Assert::assertArraySubset([
             'audit_id' => 2,
             'audit_event' => 'created',
-            'audit_url' => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags' => null,
@@ -99,7 +101,7 @@ class AuditTest extends AuditingTestCase
             'user_created_at' => $user->created_at->toDateTimeString(),
             'user_updated_at' => $user->updated_at->toDateTimeString(),
             'new_title' => 'How To Audit Eloquent Models',
-            'new_content' => 'First step: install the laravel-auditing package.',
+            'new_content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
             'new_published_at' => $now->toDateTimeString(),
             'new_reviewed' => 1,
             'new_id' => 1,
@@ -146,11 +148,44 @@ class AuditTest extends AuditingTestCase
         $this->assertInstanceOf(DateTimeInterface::class, $audit->getDataValue('new_published_at'));
 
         // Original value
-        $this->assertSame('First step: install the laravel-auditing package.', $audit->getDataValue('new_content'));
+        $this->assertSame(Article::contentMutate('First step: install the laravel-auditing package.'), $audit->getDataValue('new_content'));
         $this->assertSame('Sanchez', $audit->getDataValue('user_last_name'));
 
         // Invalid value
         $this->assertNull($audit->getDataValue('invalid_key'));
+    }
+
+    /**
+     * @group Audit::resolveData
+     * @group Audit::getDataValue
+     * @test
+     */
+    public function itReturnsTheAppropriateAuditableDataValuesWithCustomCastValueObject()
+    {
+        $user = factory(User::class)->create([
+            'is_admin'   => 1,
+            'first_name' => 'rick',
+            'last_name'  => 'Sanchez',
+            'email'      => 'rick@wubba-lubba-dub.dub',
+        ]);
+
+        $this->actingAs($user);
+
+        $article = factory(Article::class)->create([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'published_at' => Carbon::now(),
+            'price'        => '12.45',
+        ]);
+
+        $article->price = '24.68';
+        $article->save();
+
+        $lastAudit = $article->audits()->skip(1)->first();
+
+        $this->assertEquals(new Money('24.68', 'USD'), $lastAudit->getModified()['price']['new']);
+        $this->assertEquals(new Money('12.45', 'USD'), $lastAudit->getModified()['price']['old']);
     }
 
     /**
@@ -167,7 +202,7 @@ class AuditTest extends AuditingTestCase
         Assert::assertArraySubset([
             'audit_id' => 1,
             'audit_event' => 'created',
-            'audit_url' => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags' => null,
@@ -176,6 +211,19 @@ class AuditTest extends AuditingTestCase
             'user_id' => null,
             'user_type' => null,
         ], $metadata, true);
+    }
+
+    /**
+     * This test is meant to be run with specific command line "vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver"
+     *
+     * @group command-line-url-resolver
+     * @test
+     */
+    public function itReturnsProperCommandLineInUrlAuditMetadata()
+    {
+        $audit = factory(Article::class)->create()->audits()->first();
+
+        self::Assert()::assertEquals($audit->getMetadata()['audit_url'], 'vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver');
     }
 
     /**
@@ -202,7 +250,7 @@ class AuditTest extends AuditingTestCase
         Assert::assertArraySubset([
             'audit_id' => 2,
             'audit_event' => 'created',
-            'audit_url' => 'console',
+            'audit_url'        => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags' => null,
@@ -240,7 +288,7 @@ class AuditTest extends AuditingTestCase
             'audit_updated_at' => $updated_at,
             'user_id' => null,
             'user_type' => null,
-            'audit_url' => 'console',
+            'audit_url' => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
         ];
@@ -280,7 +328,7 @@ class AuditTest extends AuditingTestCase
             'audit_updated_at' => $updated_at,
             'user_id' => 1,
             'user_type' => 'OwenIt\\Auditing\\Tests\\Models\\User',
-            'audit_url' => 'console',
+            'audit_url' => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'user_is_admin' => true,
@@ -317,7 +365,7 @@ class AuditTest extends AuditingTestCase
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
             'content' => [
-                'new' => 'First step: install the laravel-auditing package.',
+                'new' => Article::contentMutate('First step: install the laravel-auditing package.'),
             ],
             'published_at' => [
                 'new' => $audit->getSerializedDate($now),
@@ -355,8 +403,8 @@ class AuditTest extends AuditingTestCase
             'title' => [
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
-            'content' => [
-                'new' => 'First step: install the laravel-auditing package.',
+            "content" => [
+                "new" => Article::contentMutate('First step: install the laravel-auditing package.')
             ],
             'published_at' => [
                 'new' => "$serializedDate",
