@@ -46,7 +46,7 @@ class AuditTest extends AuditingTestCase
             'user_id'          => null,
             'user_type'        => null,
             'new_title'        => 'How To Audit Eloquent Models',
-            'new_content'      => 'First step: install the laravel-auditing package.',
+            'new_content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
             'new_published_at' => $now->toDateTimeString(),
             'new_reviewed'     => 1,
             'new_id'           => 1,
@@ -97,7 +97,7 @@ class AuditTest extends AuditingTestCase
             'user_created_at'  => $user->created_at->toDateTimeString(),
             'user_updated_at'  => $user->updated_at->toDateTimeString(),
             'new_title'        => 'How To Audit Eloquent Models',
-            'new_content'      => 'First step: install the laravel-auditing package.',
+            'new_content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
             'new_published_at' => $now->toDateTimeString(),
             'new_reviewed'     => 1,
             'new_id'           => 1,
@@ -143,7 +143,7 @@ class AuditTest extends AuditingTestCase
         $this->assertInstanceOf(DateTimeInterface::class, $audit->getDataValue('new_published_at'));
 
         // Original value
-        $this->assertSame('First step: install the laravel-auditing package.', $audit->getDataValue('new_content'));
+        $this->assertSame(Article::contentMutate('First step: install the laravel-auditing package.'), $audit->getDataValue('new_content'));
         $this->assertSame('Sanchez', $audit->getDataValue('user_last_name'));
 
         // Invalid value
@@ -355,7 +355,7 @@ class AuditTest extends AuditingTestCase
                 'new' => 'HOW TO AUDIT ELOQUENT MODELS',
             ],
             'content'      => [
-                'new' => 'First step: install the laravel-auditing package.',
+                'new' => Article::contentMutate('First step: install the laravel-auditing package.'),
             ],
             'published_at' => [
                 'new' => $audit->getSerializedDate($now),
@@ -393,7 +393,7 @@ class AuditTest extends AuditingTestCase
                 "new" => "HOW TO AUDIT ELOQUENT MODELS"
             ],
             "content" => [
-                "new" => "First step: install the laravel-auditing package."
+                "new" => Article::contentMutate('First step: install the laravel-auditing package.')
             ],
             "published_at" => [
                 "new" => "$serializedDate"

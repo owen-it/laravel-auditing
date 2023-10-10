@@ -410,7 +410,7 @@ class AuditableTest extends AuditingTestCase
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
-                'content'      => 'First step: install the laravel-auditing package.',
+                'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
@@ -470,7 +470,7 @@ class AuditableTest extends AuditingTestCase
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
-                'content'      => 'First step: install the laravel-auditing package.',
+                'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
@@ -553,7 +553,7 @@ class AuditableTest extends AuditingTestCase
             'old_values'     => [],
             'new_values'     => [
                 'title'   => 'How To Audit Eloquent Models',
-                'content' => 'First step: install the laravel-auditing package.',
+                'content' => Article::contentMutate('First step: install the laravel-auditing package.'),
             ],
             'event'                 => 'created',
             'auditable_id'          => null,
@@ -1247,7 +1247,7 @@ class AuditableTest extends AuditingTestCase
                 // Expectation when transitioning with new values
                 [
                     'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
-                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                    'content' => Article::contentMutate('Morbi consectetur laoreet sem, eu tempus odio tempor id.'),
                 ],
             ],
 
@@ -1273,13 +1273,13 @@ class AuditableTest extends AuditingTestCase
                 // Expectation when transitioning with old values
                 [
                     'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
-                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                    'content' => Article::contentMutate('Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.'),
                 ],
 
                 // Expectation when transitioning with new values
                 [
                     'title'   => 'NULLAM EGESTAS INTERDUM ELEIFEND.',
-                    'content' => 'Morbi consectetur laoreet sem, eu tempus odio tempor id.',
+                    'content' => Article::contentMutate('Morbi consectetur laoreet sem, eu tempus odio tempor id.'),
                 ],
             ],
 
@@ -1302,7 +1302,7 @@ class AuditableTest extends AuditingTestCase
                 // Expectation when transitioning with old values
                 [
                     'title'   => 'VIVAMUS A URNA ET LOREM FAUCIBUS MALESUADA NEC NEC MAGNA.',
-                    'content' => 'Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.',
+                    'content' => Article::contentMutate('Mauris ipsum erat, semper non quam vel, sodales tincidunt ligula.'),
                 ],
 
                 // Expectation when transitioning with new values
