@@ -23,7 +23,6 @@ class AuditingTest extends AuditingTestCase
 {
     use WithFaker;
 
-
     /**
      * @test
      */
@@ -586,7 +585,7 @@ class AuditingTest extends AuditingTestCase
      * @test
      * @return void
      */
-    public function itWillAuditCustomEventData()
+    public function itWillAuditAttach()
     {
         $firstCategory = factory(Category::class)->create();
         $secondCategory = factory(Category::class)->create();
@@ -594,10 +593,12 @@ class AuditingTest extends AuditingTestCase
 
         $article->auditAttach('categories', $firstCategory);
         $article->auditAttach('categories', $secondCategory);
-        $lastAttachedArticle = \end($article->audits->last()->getModified()['categories']['new']);
-        
+        $lastArticleAudit = $article->audits->last()->getModified()['categories'];
+
         $this->assertSame($firstCategory->name, $article->categories->first()->name);
-        $this->assertSame($secondCategory->name, $lastAttachedArticle['name']);
+        $this->assertSame(0, count($lastArticleAudit['old']));
+        $this->assertSame(1, count($lastArticleAudit['new']));
+        $this->assertSame($secondCategory->name, $lastArticleAudit['new'][0]['name']);
     }
 
     /**
@@ -723,6 +724,61 @@ class AuditingTest extends AuditingTestCase
         $categoryBefore = $article->categories()->first()->getKey();
 
         $article->auditSync('categories', [$firstCategory->getKey()]);
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($firstCategory->getKey(), $categoryAfter);
+        $this->assertSame($categoryBefore, $categoryAfter);
+        $this->assertSame($no_of_audits_before, $no_of_audits_after);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillNotAuditAttachWhenSkippingEmptyValuesAndNoChangesMade()
+    {
+        $this->app['config']->set('audit.empty_values', false);
+
+        $firstCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditAttach('categories', [$firstCategory->getKey()]);
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($firstCategory->getKey(), $categoryAfter);
+        $this->assertSame($categoryBefore, $categoryAfter);
+        $this->assertSame($no_of_audits_before, $no_of_audits_after);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillNotAuditDetachWhenSkippingEmptyValuesAndNoChangesMade()
+    {
+        $this->app['config']->set('audit.empty_values', false);
+
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditDetach('categories', [$secondCategory->getKey()]);
 
         $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
         $categoryAfter = $article->categories()->first()->getKey();

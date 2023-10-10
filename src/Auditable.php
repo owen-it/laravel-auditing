@@ -736,8 +736,8 @@ trait Auditable
      */
     private function dispatchRelationAuditEvent($relationName, $event, $old, $new)
     {
-        $this->auditCustomOld[$relationName] = $old->toArray();
-        $this->auditCustomNew[$relationName] = $new->toArray();
+        $this->auditCustomOld[$relationName] = $old->diff($new)->toArray();
+        $this->auditCustomNew[$relationName] = $new->diff($old)->toArray();
 
         if (
             empty($this->auditCustomOld[$relationName]) &&
