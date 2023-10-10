@@ -594,11 +594,10 @@ class AuditingTest extends AuditingTestCase
 
         $article->auditAttach('categories', $firstCategory);
         $article->auditAttach('categories', $secondCategory);
+        $lastAttachedArticle = \end($article->audits->last()->getModified()['categories']['new']);
+        
         $this->assertSame($firstCategory->name, $article->categories->first()->name);
-        $this->assertSame(
-            $secondCategory->name,
-            $article->audits->last()->getModified()['categories']['new'][1]['name']
-        );
+        $this->assertSame($secondCategory->name, $lastAttachedArticle['name']);
     }
 
     /**
@@ -617,6 +616,33 @@ class AuditingTest extends AuditingTestCase
         $categoryBefore = $article->categories()->first()->getKey();
 
         $article->auditSync('categories', [$secondCategory->getKey()]);
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($secondCategory->getKey(), $categoryAfter);
+        $this->assertNotSame($categoryBefore, $categoryAfter);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditDetach()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+        $article->categories()->attach($secondCategory);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditDetach('categories', [$firstCategory->getKey()]);
 
         $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
         $categoryAfter = $article->categories()->first()->getKey();
