@@ -10,8 +10,8 @@ use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
-use OwenIt\Auditing\Tests\Models\Money;
 use OwenIt\Auditing\Tests\Models\Audit;
+use OwenIt\Auditing\Tests\Models\Money;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditTest extends AuditingTestCase
@@ -162,7 +162,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTheAppropriateAuditableDataValuesWithCustomCastValueObject()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -171,7 +171,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
