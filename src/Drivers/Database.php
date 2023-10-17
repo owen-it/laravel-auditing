@@ -14,9 +14,7 @@ class Database implements AuditDriver
      */
     public function audit(Auditable $model): ?Audit
     {
-        $implementation = Config::get('audit.implementation', \OwenIt\Auditing\Models\Audit::class);
-
-        return call_user_func([$implementation, 'create'], $model->toAudit());
+        return call_user_func([get_class($model->audits()->getModel()), 'create'], $model->toAudit());
     }
 
     /**
