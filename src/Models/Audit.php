@@ -4,6 +4,14 @@ namespace OwenIt\Auditing\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $tags
+ * @property string $event
+ * @property array $new_values
+ * @property array $old_values
+ * @property mixed $user
+ * @property mixed $auditable.
+ */
 class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
 {
     use \OwenIt\Auditing\Audit;

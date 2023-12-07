@@ -18,9 +18,19 @@ class UrlResolver implements \OwenIt\Auditing\Contracts\Resolver
         }
 
         if (App::runningInConsole()) {
-            return 'console';
+            return self::resolveCommandLine();
         }
 
         return Request::fullUrl();
+    }
+
+    public static function resolveCommandLine(): string
+    {
+        $command = \Request::server('argv', null);
+        if (is_array($command)) {
+            return implode(' ', $command);
+        }
+
+        return 'console';
     }
 }

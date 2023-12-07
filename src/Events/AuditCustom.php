@@ -17,8 +17,6 @@ class AuditCustom
      * Create a new Auditing event instance.
      *
      * @param \OwenIt\Auditing\Contracts\Auditable $model
-     * @param array $old
-     * @param array $new
      */
     public function __construct(Auditable $model)
     {

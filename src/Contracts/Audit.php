@@ -2,6 +2,9 @@
 
 namespace OwenIt\Auditing\Contracts;
 
+/**
+ * @mixin \OwenIt\Auditing\Models\Audit
+ */
 interface Audit
 {
     /**

@@ -131,11 +131,15 @@ trait Audit
             return $model->mutateAttribute($key, $value);
         }
 
+        if (method_exists($model, 'hasAttributeMutator') && $model->hasAttributeMutator($key)) {
+            return $model->mutateAttributeMarkedAttribute($key, $value);
+        }
+
         if (array_key_exists(
             $key,
             $model->getCasts()
         ) && $model->getCasts()[$key] == 'Illuminate\Database\Eloquent\Casts\AsArrayObject') {
-            $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true));
+            $arrayObject = new \Illuminate\Database\Eloquent\Casts\ArrayObject(json_decode($value, true) ?: []);
             return $arrayObject;
         }
 
@@ -144,6 +148,8 @@ trait Audit
             if ($model->getCastType($key) == 'datetime' ) {
                 $value = $this->castDatetimeUTC($model, $value);
             }
+
+            unset($model->classCastCache[$key]);
 
             return $model->castAttribute($key, $value);
         }
@@ -289,6 +295,6 @@ trait Audit
      */
     public function getTags(): array
     {
-        return preg_split('/,/', $this->tags, null, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY);
     }
 }

@@ -3,7 +3,6 @@
 namespace OwenIt\Auditing\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Container\Container;
 use Illuminate\Support\Str;
 
 class InstallCommand extends Command
@@ -41,7 +40,7 @@ class InstallCommand extends Command
      */
     protected function registerAuditingServiceProvider()
     {
-        $namespace = Str::replaceLast('\\', '', Container::getInstance()->getNamespace());
+        $namespace = Str::replaceLast('\\', '', app()->getNamespace());
 
         $appConfig = file_get_contents(config_path('app.php'));
 

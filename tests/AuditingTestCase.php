@@ -69,9 +69,9 @@ class AuditingTestCase extends TestCase
     /**
      * Locate the Illuminate testing class. It changed namespace with v7
      * @see https://readouble.com/laravel/7.x/en/upgrade.html
-     * @return string
+     * @return class-string<\Illuminate\Foundation\Testing\Assert|\Illuminate\Testing\Assert>
      */
-    public static function Assert()
+    public static function Assert(): string
     {
         if (class_exists('Illuminate\Foundation\Testing\Assert')) {
             return '\Illuminate\Foundation\Testing\Assert';
