@@ -415,14 +415,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsDecodedAuditableAttributes()
     {
-        $article = new class () extends Article {
-            protected $table = 'articles';
-
-            protected $attributeModifiers = [
-                'title'   => Base64Encoder::class,
-                'content' => LeftRedactor::class,
-            ];
-        };
+        $article = new itReturnsDecodedAuditableAttributesArticle();
 
         // Audit with redacted/encoded attributes
         $audit = factory(Audit::class)->create([
@@ -488,4 +481,14 @@ class AuditTest extends AuditingTestCase
         $this->assertIsArray($audit->getTags());
         $this->assertEmpty($audit->getTags());
     }
+}
+
+class itReturnsDecodedAuditableAttributesArticle extends Article
+{
+    protected $table = 'articles';
+
+    protected $attributeModifiers = [
+        'title'   => Base64Encoder::class,
+        'content' => LeftRedactor::class,
+    ];
 }

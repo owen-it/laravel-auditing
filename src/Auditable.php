@@ -57,6 +57,11 @@ trait Auditable
     public $isCustomEvent = false;
 
     /**
+     * @var array Preloaded data to be used by resolvers
+     */
+    public $preloadedResolverData = [];
+
+    /**
      * Auditable boot logic.
      *
      * @return void
@@ -372,7 +377,7 @@ trait Auditable
         }
 
         if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\UserResolver::class)) {
-            return call_user_func([$userResolver, 'resolve']);
+            return call_user_func([$userResolver, 'resolve'], $this);
         }
 
         throw new AuditingException('Invalid UserResolver implementation');
@@ -401,6 +406,17 @@ trait Auditable
             $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
         return $resolved;
+    }
+
+    public function preloadResolverData()
+    {
+        $this->preloadedResolverData = $this->runResolvers();
+
+        if (!empty ($this->resolveUser())) {
+            $this->preloadedResolverData['user'] = $this->resolveUser();
+        }
+
+        return $this;
     }
 
     /**
