@@ -5,7 +5,6 @@ namespace OwenIt\Auditing\Concerns;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Resolver as ResolverContract;
-use OwenIt\Auditing\Contracts\UserResolver as UserResolverContract;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait GathersDataToAudit
@@ -15,13 +14,26 @@ trait GathersDataToAudit
      */
     public function toAudit(): array
     {
-        if (! $this->readyForAuditing()) {
+        if (!$this->readyForAuditing()) {
             throw new AuditingException('A valid audit event has not been set');
         }
 
-        [$old, $new] = $this->getAuditAttributes();
+        $attributeGetter = $this->resolveAttributeGetter($this->auditEvent);
 
-        if ($this->getAttributeModifiers() && ! $this->isCustomEvent) {
+        if (!method_exists($this, $attributeGetter)) {
+            throw new AuditingException(sprintf(
+                'Unable to handle "%s" event, %s() method missing',
+                $this->auditEvent,
+                $attributeGetter
+            ));
+        }
+
+        $this->resolveAuditExclusions();
+
+
+        list($old, $new) = $this->$attributeGetter();
+
+        if ($this->getAttributeModifiers() && !$this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
                 $old[$attribute] = $this->modifyAttributeValue($attribute, $value);
             }
@@ -38,14 +50,14 @@ trait GathersDataToAudit
         $user = $this->resolveUser();
 
         return $this->transformAudit(array_merge([
-            'old_values' => $old,
-            'new_values' => $new,
-            'event' => $this->auditEvent,
-            'auditable_id' => $this->getKey(),
-            'auditable_type' => $this->getMorphClass(),
-            $morphPrefix.'_id' => $user ? $user->getAuthIdentifier() : null,
-            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
-            'tags' => empty($tags) ? null : $tags,
+            'old_values'           => $old,
+            'new_values'           => $new,
+            'event'                => $this->auditEvent,
+            'auditable_id'         => $this->getKey(),
+            'auditable_type'       => $this->getMorphClass(),
+            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
+            'tags'                 => empty($tags) ? null : $tags,
         ], $this->runResolvers()));
     }
 
@@ -61,36 +73,61 @@ trait GathersDataToAudit
      * Resolve the User.
      *
      * @return mixed|null
-     *
      * @throws AuditingException
+     *
      */
     protected function resolveUser()
     {
         $userResolver = Config::get('audit.user.resolver');
 
-        if (is_subclass_of($userResolver, UserResolverContract::class)) {
-            return call_user_func([$userResolver, 'resolve']);
+        if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
+            trigger_error(
+                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
+                E_USER_DEPRECATED
+            );
+            $userResolver = Config::get('audit.resolver.user');
+        }
+
+        if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\UserResolver::class)) {
+            return call_user_func([$userResolver, 'resolve'], $this);
         }
 
         throw new AuditingException('Invalid UserResolver implementation');
+    }
+
+    public function preloadResolverData()
+    {
+        $this->preloadedResolverData = $this->runResolvers();
+
+        if (!empty ($this->resolveUser())) {
+            $this->preloadedResolverData['user'] = $this->resolveUser();
+        }
+
+        return $this;
     }
 
     protected function runResolvers(): array
     {
         $resolved = [];
         $resolvers = Config::get('audit.resolvers', []);
+        if (empty($resolvers) && Config::has('audit.resolver')) {
+            trigger_error(
+                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
+                E_USER_DEPRECATED
+            );
+            $resolvers = Config::get('audit.resolver', []);
+        }
 
         foreach ($resolvers as $name => $implementation) {
             if (empty($implementation)) {
                 continue;
             }
 
-            if (! is_subclass_of($implementation, ResolverContract::class)) {
-                throw new AuditingException('Invalid Resolver implementation for: '.$name);
+            if (!is_subclass_of($implementation, ResolverContract::class)) {
+                throw new AuditingException('Invalid Resolver implementation for: ' . $name);
             }
             $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
-
         return $resolved;
     }
 
@@ -122,11 +159,15 @@ trait GathersDataToAudit
 
     /**
      * Determine if an attribute is eligible for auditing.
+     *
+     * @param string $attribute
+     *
+     * @return bool
      */
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->resolveAuditExclusions(), true)) {
+        if (in_array($attribute, $this->excludedAttributes, true)) {
             return false;
         }
 
