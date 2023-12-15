@@ -9,6 +9,15 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait GathersDataToAudit
 {
+
+    /**
+     *
+     * Must return array of attributes that should NOT be audited
+     * @return array
+     * @see DeterminesAttributesToAudit::resolveAuditExclusions()
+     */
+    abstract protected function resolveAuditExclusions(): array;
+
     /**
      * {@inheritdoc}
      */
@@ -28,9 +37,7 @@ trait GathersDataToAudit
             ));
         }
 
-        $this->resolveAuditExclusions();
-
-        [$old, $new] = $this->$attributeGetter();
+        list($old, $new) = $this->$attributeGetter();
 
         if ($this->getAttributeModifiers() && ! $this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
@@ -163,7 +170,7 @@ trait GathersDataToAudit
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->resolvedExcludedAttributes, true)) {
+        if (in_array($attribute, $this->resolveAuditExclusions(), true)) {
             return false;
         }
 
