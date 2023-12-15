@@ -10,10 +10,9 @@ use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait GathersDataToAudit
 {
-
     /**
      * Must return array of attributes that should NOT be audited
-     * @return array
+     *
      * @see DeterminesAttributesToAudit::resolveAuditExclusions()
      */
     abstract protected function resolveAuditExclusions(): array;
@@ -37,7 +36,7 @@ trait GathersDataToAudit
             ));
         }
 
-        list($old, $new) = $this->$attributeGetter();
+        [$old, $new] = $this->$attributeGetter();
 
         if ($this->getAttributeModifiers() && ! $this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
