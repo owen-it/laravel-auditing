@@ -2,13 +2,13 @@
 
 namespace OwenIt\Auditing\Tests\Unit;
 
-use OwenIt\Auditing\Models\Audit;
 use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\AuditableObserver;
-use OwenIt\Auditing\Tests\AuditingTestCase;
-use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Events\DispatchingAudit;
+use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Tests\AuditingTestCase;
+use OwenIt\Auditing\Tests\Models\Article;
 
 class AuditableObserverTest extends AuditingTestCase
 {
@@ -30,7 +30,7 @@ class AuditableObserverTest extends AuditingTestCase
         });
 
         $observer = new AuditableObserver();
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $observer->$eventMethod($model);
 
@@ -49,7 +49,7 @@ class AuditableObserverTest extends AuditingTestCase
         Event::fake();
 
         $observer = new AuditableObserver();
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $observer->$eventMethod($model);
 

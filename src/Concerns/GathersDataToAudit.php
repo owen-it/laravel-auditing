@@ -167,7 +167,7 @@ trait GathersDataToAudit
     protected function isAttributeAuditable(string $attribute): bool
     {
         // The attribute should not be audited
-        if (in_array($attribute, $this->excludedAttributes, true)) {
+        if (in_array($attribute, $this->resolvedExcludedAttributes, true)) {
             return false;
         }
 

@@ -2,13 +2,13 @@
 
 namespace OwenIt\Auditing\Tests\Unit;
 
+use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use OwenIt\Auditing\Events\DispatchAudit;
-use OwenIt\Auditing\Tests\Models\Article;
-use Illuminate\Events\CallQueuedListener;
-use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Listeners\ProcessDispatchAudit;
+use OwenIt\Auditing\Tests\AuditingTestCase;
+use OwenIt\Auditing\Tests\Models\Article;
 
 class ProcessDispatchAuditTest extends AuditingTestCase
 {
@@ -36,7 +36,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
     {
         Queue::fake();
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         DispatchAudit::dispatch($model);
 
@@ -58,7 +58,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
 
         Queue::fake();
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         DispatchAudit::dispatch($model);
 

@@ -642,9 +642,9 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditDetach()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
         $article->categories()->attach($secondCategory);
@@ -754,8 +754,8 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -781,9 +781,9 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
