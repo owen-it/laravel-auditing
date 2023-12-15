@@ -167,8 +167,8 @@ return [
 
     'queue' => [
         'connection' => 'sync',
-        'queue'      => 'default',
-        'delay'      => 0,
+        'queue' => 'default',
+        'delay' => 0,
     ],
 
     /*

@@ -8,12 +8,10 @@ if (app() instanceof \Illuminate\Foundation\Application) {
     class_alias(\Laravel\Lumen\Providers\EventServiceProvider::class, '\OwenIt\Auditing\ServiceProvider');
 }
 
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Events\DispatchAudit;
-use OwenIt\Auditing\Listeners\RecordCustomAudit;
 use OwenIt\Auditing\Listeners\ProcessDispatchAudit;
+use OwenIt\Auditing\Listeners\RecordCustomAudit;
 
 class AuditingEventServiceProvider extends ServiceProvider
 {

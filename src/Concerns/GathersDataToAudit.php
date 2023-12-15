@@ -14,13 +14,13 @@ trait GathersDataToAudit
      */
     public function toAudit(): array
     {
-        if (!$this->readyForAuditing()) {
+        if (! $this->readyForAuditing()) {
             throw new AuditingException('A valid audit event has not been set');
         }
 
         $attributeGetter = $this->resolveAttributeGetter($this->auditEvent);
 
-        if (!method_exists($this, $attributeGetter)) {
+        if (! method_exists($this, $attributeGetter)) {
             throw new AuditingException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
@@ -30,10 +30,9 @@ trait GathersDataToAudit
 
         $this->resolveAuditExclusions();
 
+        [$old, $new] = $this->$attributeGetter();
 
-        list($old, $new) = $this->$attributeGetter();
-
-        if ($this->getAttributeModifiers() && !$this->isCustomEvent) {
+        if ($this->getAttributeModifiers() && ! $this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
                 $old[$attribute] = $this->modifyAttributeValue($attribute, $value);
             }
@@ -50,14 +49,14 @@ trait GathersDataToAudit
         $user = $this->resolveUser();
 
         return $this->transformAudit(array_merge([
-            'old_values'           => $old,
-            'new_values'           => $new,
-            'event'                => $this->auditEvent,
-            'auditable_id'         => $this->getKey(),
-            'auditable_type'       => $this->getMorphClass(),
-            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
-            $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'tags'                 => empty($tags) ? null : $tags,
+            'old_values' => $old,
+            'new_values' => $new,
+            'event' => $this->auditEvent,
+            'auditable_id' => $this->getKey(),
+            'auditable_type' => $this->getMorphClass(),
+            $morphPrefix.'_id' => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
+            'tags' => empty($tags) ? null : $tags,
         ], $this->runResolvers()));
     }
 
@@ -73,14 +72,14 @@ trait GathersDataToAudit
      * Resolve the User.
      *
      * @return mixed|null
-     * @throws AuditingException
      *
+     * @throws AuditingException
      */
     protected function resolveUser()
     {
         $userResolver = Config::get('audit.user.resolver');
 
-        if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
+        if (is_null($userResolver) && Config::has('audit.resolver') && ! Config::has('audit.user.resolver')) {
             trigger_error(
                 'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
                 E_USER_DEPRECATED
@@ -99,7 +98,7 @@ trait GathersDataToAudit
     {
         $this->preloadedResolverData = $this->runResolvers();
 
-        if (!empty ($this->resolveUser())) {
+        if (! empty($this->resolveUser())) {
             $this->preloadedResolverData['user'] = $this->resolveUser();
         }
 
@@ -123,11 +122,12 @@ trait GathersDataToAudit
                 continue;
             }
 
-            if (!is_subclass_of($implementation, ResolverContract::class)) {
-                throw new AuditingException('Invalid Resolver implementation for: ' . $name);
+            if (! is_subclass_of($implementation, ResolverContract::class)) {
+                throw new AuditingException('Invalid Resolver implementation for: '.$name);
             }
             $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
+
         return $resolved;
     }
 
@@ -159,10 +159,6 @@ trait GathersDataToAudit
 
     /**
      * Determine if an attribute is eligible for auditing.
-     *
-     * @param string $attribute
-     *
-     * @return bool
      */
     protected function isAttributeAuditable(string $attribute): bool
     {

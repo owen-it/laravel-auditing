@@ -2,10 +2,10 @@
 
 namespace OwenIt\Auditing\Listeners;
 
-use OwenIt\Auditing\Facades\Auditor;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Events\DispatchAudit;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use OwenIt\Auditing\Facades\Auditor;
 
 class ProcessDispatchAudit implements ShouldQueue
 {

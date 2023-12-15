@@ -122,9 +122,6 @@ class AuditableObserverTest extends AuditingTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     public function auditableObserverDispatchTestProvider(): array
     {
         return [

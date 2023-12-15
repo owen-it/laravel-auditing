@@ -109,7 +109,7 @@ trait Auditable
     /**
      * Modify attribute value.
      *
-     * @param mixed $value
+     * @param  mixed  $value
      * @return mixed
      *
      * @throws AuditingException
@@ -118,7 +118,7 @@ trait Auditable
     {
         $attributeModifiers = $this->getAttributeModifiers();
 
-        if (!array_key_exists($attribute, $attributeModifiers)) {
+        if (! array_key_exists($attribute, $attributeModifiers)) {
             return $value;
         }
 
@@ -135,13 +135,10 @@ trait Auditable
         throw new AuditingException(sprintf('Invalid AttributeModifier implementation: %s', $attributeModifier));
     }
 
-
-
-
     /**
      * Determine whether an event is auditable.
      *
-     * @param string $event
+     * @param  string  $event
      */
     protected function isEventAuditable($event): bool
     {
@@ -250,8 +247,4 @@ trait Auditable
     {
         return [];
     }
-
-
-
-
 }

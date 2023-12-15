@@ -18,18 +18,17 @@ trait AuditsPivotRecords
     */
 
     /**
-     * @param string $relationName
-     * @param mixed $id
-     * @param array $attributes
-     * @param bool $touch
-     * @param array $columns
+     * @param  mixed  $id
+     * @param  bool  $touch
+     * @param  array  $columns
      * @return void
+     *
      * @throws AuditingException
      */
     public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'])
     {
-        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'attach')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method attach');
+        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'attach')) {
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method attach');
         }
 
         $old = $this->{$relationName}()->get($columns);
@@ -39,17 +38,17 @@ trait AuditsPivotRecords
     }
 
     /**
-     * @param string $relationName
-     * @param mixed $ids
-     * @param bool $touch
-     * @param array $columns
+     * @param  mixed  $ids
+     * @param  bool  $touch
+     * @param  array  $columns
      * @return int
+     *
      * @throws AuditingException
      */
     public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'])
     {
-        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'detach')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method detach');
+        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'detach')) {
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method detach');
         }
 
         $old = $this->{$relationName}()->get($columns);
@@ -61,17 +60,17 @@ trait AuditsPivotRecords
     }
 
     /**
-     * @param $relationName
-     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
-     * @param bool $detaching
-     * @param array $columns
+     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $ids
+     * @param  bool  $detaching
+     * @param  array  $columns
      * @return array
+     *
      * @throws AuditingException
      */
     public function auditSync($relationName, $ids, $detaching = true, $columns = ['*'])
     {
-        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'sync')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method sync');
+        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'sync')) {
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method sync');
         }
 
         $old = $this->{$relationName}()->get($columns);
@@ -87,26 +86,26 @@ trait AuditsPivotRecords
     }
 
     /**
-     * @param string $relationName
-     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
-     * @param array $columns
+     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $ids
+     * @param  array  $columns
      * @return array
+     *
      * @throws AuditingException
      */
     public function auditSyncWithoutDetaching(string $relationName, $ids, $columns = ['*'])
     {
-        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
-            throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method syncWithoutDetaching');
+        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
+            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method syncWithoutDetaching');
         }
 
         return $this->auditSync($relationName, $ids, false, $columns);
     }
 
     /**
-     * @param string $relationName
-     * @param string $event
-     * @param \Illuminate\Support\Collection $old
-     * @param \Illuminate\Support\Collection $new
+     * @param  string  $relationName
+     * @param  string  $event
+     * @param  \Illuminate\Support\Collection  $old
+     * @param  \Illuminate\Support\Collection  $new
      * @return void
      */
     private function dispatchRelationAuditEvent($relationName, $event, $old, $new)

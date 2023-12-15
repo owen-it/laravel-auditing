@@ -93,7 +93,7 @@ class AuditableObserver
 
     protected function dispatchAudit(Auditable $model)
     {
-        if (!$model->readyForAuditing() || !$this->fireDispatchingAuditEvent($model)) {
+        if (! $model->readyForAuditing() || ! $this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
@@ -103,14 +103,10 @@ class AuditableObserver
 
     /**
      * Fire the Auditing event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
-     * @return bool
      */
     protected function fireDispatchingAuditEvent(Auditable $model): bool
     {
         return app()->make('events')
-                ->until(new DispatchingAudit($model)) !== false;
+            ->until(new DispatchingAudit($model)) !== false;
     }
 }

@@ -504,7 +504,7 @@ class itReturnsDecodedAuditableAttributesArticle extends Article
     protected $table = 'articles';
 
     protected $attributeModifiers = [
-        'title'   => Base64Encoder::class,
+        'title' => Base64Encoder::class,
         'content' => LeftRedactor::class,
     ];
 }

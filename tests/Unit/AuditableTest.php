@@ -451,8 +451,8 @@ class AuditableTest extends AuditingTestCase
     public function itReturnsTheAuditDataIncludingUserAttributes(
         string $guard,
         string $driver,
-        int $id = null,
-        string $type = null
+        ?int $id = null,
+        ?string $type = null
     ) {
         $this->app['config']->set('audit.user.guards', [
             $guard,

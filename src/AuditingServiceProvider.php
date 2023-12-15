@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;

@@ -665,6 +665,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillAuditSyncWithoutChanges()
@@ -775,6 +776,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function itWillNotAuditDetachWhenSkippingEmptyValuesAndNoChangesMade()
@@ -803,6 +805,7 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function canAuditAnyCustomEvent()

@@ -2,8 +2,8 @@
 
 namespace OwenIt\Auditing\Events;
 
-use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Foundation\Events\Dispatchable;
+use OwenIt\Auditing\Contracts\Auditable;
 
 class DispatchAudit
 {
@@ -18,8 +18,6 @@ class DispatchAudit
 
     /**
      * Create a new DispatchAudit event instance.
-     *
-     * @param Auditable $model
      */
     public function __construct(Auditable $model)
     {
