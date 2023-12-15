@@ -17,7 +17,7 @@
         "revision",
         "tracking"
     ],
-    "homepage": "http://laravel-auditing.com",
+    "homepage": "https://laravel-auditing.com",
     "type": "package",
     "license": "MIT",
     "support": {

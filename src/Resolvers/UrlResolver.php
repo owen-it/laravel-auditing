@@ -10,6 +10,10 @@ class UrlResolver implements \OwenIt\Auditing\Contracts\Resolver
 {
     public static function resolve(Auditable $auditable): string
     {
+        if (! empty($auditable->preloadedResolverData['url'])) {
+            return $auditable->preloadedResolverData['url'];
+        }
+
         if (App::runningInConsole()) {
             return self::resolveCommandLine();
         }

@@ -11,7 +11,7 @@ use OwenIt\Auditing\Console\AuditResolverCommand;
 use OwenIt\Auditing\Console\InstallCommand;
 use OwenIt\Auditing\Contracts\Auditor;
 
-class AuditingServiceProvider extends ServiceProvider implements DeferrableProvider
+class AuditingServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the service provider.

@@ -45,9 +45,14 @@ Please see the [contributing](http://laravel-auditing.com/docs/master/contributi
 
 ## Credits
 - [Antério Vieira](https://github.com/anteriovieira)
-- [Quetzy Garcia](https://github.com/quetzyg)
 - [Raphael França](https://github.com/raphaelfranca)
+- [Quetzy Garcia](https://github.com/quetzyg)
 - [All Contributors](https://github.com/owen-it/laravel-auditing/graphs/contributors)
+
+### Special thanks for keeping this project active.
+- [Morten D. Hansen](https://github.com/MortenDHansen)
+- [erikn69](https://github.com/erikn69)
+- [parallels999](https://github.com/parallels999)
 
 ## License
 The **Laravel Auditing** package is open source software licensed under the [MIT LICENSE](LICENSE.md).
