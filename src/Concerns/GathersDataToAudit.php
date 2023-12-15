@@ -5,13 +5,13 @@ namespace OwenIt\Auditing\Concerns;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Resolver as ResolverContract;
+use OwenIt\Auditing\Contracts\UserResolver;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
 trait GathersDataToAudit
 {
 
     /**
-     *
      * Must return array of attributes that should NOT be audited
      * @return array
      * @see DeterminesAttributesToAudit::resolveAuditExclusions()
@@ -94,7 +94,7 @@ trait GathersDataToAudit
             $userResolver = Config::get('audit.resolver.user');
         }
 
-        if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\UserResolver::class)) {
+        if (is_subclass_of($userResolver, UserResolver::class)) {
             return call_user_func([$userResolver, 'resolve'], $this);
         }
 
