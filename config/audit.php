@@ -166,6 +166,7 @@ return [
     */
 
     'queue' => [
+        'enable'     => true,
         'connection' => 'sync',
         'queue'      => 'default',
         'delay'      => 0,

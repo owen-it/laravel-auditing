@@ -2,9 +2,11 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Events\DispatchingAudit;
+use OwenIt\Auditing\Facades\Auditor;
 
 class AuditableObserver
 {
@@ -99,7 +101,15 @@ class AuditableObserver
 
     protected function dispatchAudit(Auditable $model)
     {
-        if (!$model->readyForAuditing() || !$this->fireDispatchingAuditEvent($model)) {
+        if (!$model->readyForAuditing()) {
+            return;
+        }
+
+        if (!Config::get('audit.queue.enable', true)) {
+            return Auditor::execute($model);
+        }
+
+        if (!$this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
