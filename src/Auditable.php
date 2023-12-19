@@ -365,7 +365,11 @@ trait Auditable
      *
      */
     protected function resolveUser()
-    {
+    {   
+        if (! empty($this->preloadedResolverData['user'] ?? null)) {
+            return $this->preloadedResolverData['user'];
+        }
+
         $userResolver = Config::get('audit.user.resolver');
 
         if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
