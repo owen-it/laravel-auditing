@@ -105,6 +105,7 @@ class AuditableObserver
             return;
         }
 
+        $model->preloadResolverData();
         if (!Config::get('audit.queue.enable', false)) {
             return Auditor::execute($model);
         }
@@ -114,7 +115,7 @@ class AuditableObserver
         }
 
         // Unload the relations to prevent large amounts of unnecessary data from being serialized.
-        DispatchAudit::dispatch($model->preloadResolverData()->withoutRelations());
+        app()->make('events')->dispatch(new DispatchAudit($model->withoutRelations()));
     }
 
     /**
