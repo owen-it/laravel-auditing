@@ -2,17 +2,11 @@
 
 namespace OwenIt\Auditing\Events;
 
-use Illuminate\Queue\SerializesModels;
 use OwenIt\Auditing\Contracts\Auditable;
 use ReflectionClass;
 
 class DispatchAudit
 {
-    use SerializesModels {
-        __serialize as __serialize_model;
-        __unserialize as __unserialize_model;
-    }
-
     /**
      * The Auditable model.
      *
@@ -37,10 +31,14 @@ class DispatchAudit
      */
     public function __serialize()
     {
-        $values = $this->__serialize_model();
+        $values = [
+            'class' => get_class($this->model),
+            'model_data' => [
+                'exists' => true,
+                'connection' => $this->model->getQueueableConnection()
+            ]
+        ];
 
-        $values['model_data'] = ['exists' => true];
-        $reflection = new ReflectionClass($this->model);
         $customProperties = array_merge([
             'attributes',
             'original',
@@ -53,11 +51,11 @@ class DispatchAudit
             'preloadedResolverData',
         ], $this->model->auditEventSerializedProperties ?? []);
 
+        $reflection = new ReflectionClass($this->model);
+
         foreach ($customProperties as $key) {
             try {
-                $values['model_data'][$key] = $this->getSerializedPropertyValue(
-                    $this->getModelPropertyValue($reflection, $key)
-                );
+                $values['model_data'][$key] = $this->getModelPropertyValue($reflection, $key);
             } catch (\Throwable $e){
                 //
             }
@@ -74,7 +72,7 @@ class DispatchAudit
      */
     public function __unserialize(array $values)
     {
-        $this->__unserialize_model($values);
+        $this->model = new $values['class'];
 
         $reflection = new ReflectionClass($this->model);
         foreach ($values['model_data'] as $key => $value) {
@@ -82,17 +80,6 @@ class DispatchAudit
         }
 
         return $values;
-    }
-
-    /**
-     * Restore the model from the model identifier instance.
-     *
-     * @param  \Illuminate\Contracts\Database\ModelIdentifier  $value
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function restoreModel($value)
-    {
-        return (new $value->class)->setConnection($value->connection);
     }
 
     /**
@@ -104,7 +91,7 @@ class DispatchAudit
 
         $property->setAccessible(true);
 
-        $property->setValue($this->model, $this->getRestoredPropertyValue($value));
+        $property->setValue($this->model, $value);
     }
 
     /**
