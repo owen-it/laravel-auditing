@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
@@ -365,11 +366,11 @@ trait Auditable
      *
      */
     protected function resolveUser()
-    {   
+    {
         if (! empty($this->preloadedResolverData['user'] ?? null)) {
             return $this->preloadedResolverData['user'];
         }
-
+        
         $userResolver = Config::get('audit.user.resolver');
 
         if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
@@ -508,11 +509,11 @@ trait Auditable
     public function getAuditEvents(): array
     {
         return $this->auditEvents ?? Config::get('audit.events', [
-                'created',
-                'updated',
-                'deleted',
-                'restored',
-            ]);
+            'created',
+            'updated',
+            'deleted',
+            'restored',
+        ]);
     }
 
     /**
@@ -668,18 +669,20 @@ trait Auditable
      * @param array $attributes
      * @param bool $touch
      * @param array $columns
+     * @param BelongsToMany|null $relationship
      * @return void
      * @throws AuditingException
      */
-    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'])
+    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'], $relationship = null)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'attach')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method attach');
         }
 
-        $old = $this->{$relationName}()->get($columns);
-        $this->{$relationName}()->attach($id, $attributes, $touch);
-        $new = $this->{$relationName}()->get($columns);
+        $relationCall = $relationship ?? $this->{$relationName}();
+        $old = $relationCall->get($columns);
+        $relationCall->attach($id, $attributes, $touch);
+        $new = $relationCall->get($columns);
         $this->dispatchRelationAuditEvent($relationName, 'attach', $old, $new);
     }
 
@@ -688,18 +691,20 @@ trait Auditable
      * @param mixed $ids
      * @param bool $touch
      * @param array $columns
+     * @param BelongsToMany|null $relationship
      * @return int
      * @throws AuditingException
      */
-    public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'])
+    public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'], $relationship = null)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'detach')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method detach');
         }
 
-        $old = $this->{$relationName}()->get($columns);
-        $results = $this->{$relationName}()->detach($ids, $touch);
-        $new = $this->{$relationName}()->get($columns);
+        $relationCall = $relationship ?? $this->{$relationName}();
+        $old = $relationCall->get($columns);
+        $results = $relationCall->detach($ids, $touch);
+        $new = $relationCall->get($columns);
         $this->dispatchRelationAuditEvent($relationName, 'detach', $old, $new);
 
         return empty($results) ? 0 : $results;
@@ -710,21 +715,23 @@ trait Auditable
      * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
      * @param bool $detaching
      * @param array $columns
+     * @param BelongsToMany|null $relationship
      * @return array
      * @throws AuditingException
      */
-    public function auditSync($relationName, $ids, $detaching = true, $columns = ['*'])
+    public function auditSync($relationName, $ids, $detaching = true, $columns = ['*'], $relationship = null)
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), 'sync')) {
             throw new AuditingException('Relationship ' . $relationName . ' was not found or does not support method sync');
         }
 
-        $old = $this->{$relationName}()->get($columns);
-        $changes = $this->{$relationName}()->sync($ids, $detaching);
+        $relationCall = $relationship ?? $this->{$relationName}();
+        $old = $relationCall->get($columns);
+        $changes = $relationCall->sync($ids, $detaching);
         if (collect($changes)->flatten()->isEmpty()) {
             $old = $new = collect([]);
         } else {
-            $new = $this->{$relationName}()->get($columns);
+            $new = $relationCall->get($columns);
         }
         $this->dispatchRelationAuditEvent($relationName, 'sync', $old, $new);
 
