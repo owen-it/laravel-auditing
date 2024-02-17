@@ -664,54 +664,54 @@ trait Auditable
     */
 
     /**
-     * @param string|\Closure<BelongsToMany> $relation
+     * @param string $relationName
      * @param mixed $id
      * @param array $attributes
      * @param bool $touch
      * @param array $columns
+     * @param \Closure|null $callback
      * @return void
      * @throws AuditingException
      */
-    public function auditAttach($relation, $id, array $attributes = [], $touch = true, $columns = ['*'])
+    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'], $callback = null)
     {
-        if (is_string($relation)) {
-            $this->validateRelationshipMethodExistence($relation, 'attach');
-        } else {
-            $this->validateBelongsToManyRelationshipClosure($relation);
+        $this->validateRelationshipMethodExistence($relationName, 'attach');
+
+        $relationCall = $this->{$relationName}();
+
+        if ($callback instanceof \Closure) {
+            $this->applyClosureToRelationship($relationCall, $callback);
         }
 
-        $relationCall = is_string($relation) ? $this->{$relation}() : $relation();
         $old = $relationCall->get($columns);
         $relationCall->attach($id, $attributes, $touch);
         $new = $relationCall->get($columns);
-
-        $relationName = is_string($relation) ? $relation : $relationCall->getRelationName();
 
         $this->dispatchRelationAuditEvent($relationName, 'attach', $old, $new);
     }
 
     /**
-     * @param string|\Closure<BelongsToMany> $relation
+     * @param string $relationName
      * @param mixed $ids
      * @param bool $touch
      * @param array $columns
+     * @param \Closure|null $callback
      * @return int
      * @throws AuditingException
      */
-    public function auditDetach($relation, $ids = null, $touch = true, $columns = ['*'])
+    public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'], $callback = null)
     {
-        if (is_string($relation)) {
-            $this->validateRelationshipMethodExistence($relation, 'detach');
-        } else {
-            $this->validateBelongsToManyRelationshipClosure($relation);
+        $this->validateRelationshipMethodExistence($relationName, 'detach');
+
+        $relationCall = $this->{$relationName}();
+
+        if ($callback instanceof \Closure) {
+            $this->applyClosureToRelationship($relationCall, $callback);
         }
 
-        $relationCall = is_string($relation) ? $this->{$relation}() : $relation();
         $old = $relationCall->get($columns);
         $results = $relationCall->detach($ids, $touch);
         $new = $relationCall->get($columns);
-
-        $relationName = is_string($relation) ? $relation : $relationCall->getRelationName();
 
         $this->dispatchRelationAuditEvent($relationName, 'detach', $old, $new);
 
@@ -719,22 +719,24 @@ trait Auditable
     }
 
     /**
-     * @param string|\Closure<BelongsToMany> $relation
+     * @param string $relationName
      * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
      * @param bool $detaching
      * @param array $columns
+     * @param \Closure|null $callback
      * @return array
      * @throws AuditingException
      */
-    public function auditSync($relation, $ids, $detaching = true, $columns = ['*'])
+    public function auditSync(string $relationName, $ids, $detaching = true, $columns = ['*'], $callback = null)
     {
-        if (is_string($relation)) {
-            $this->validateRelationshipMethodExistence($relation, 'sync');
-        } else {
-            $this->validateBelongsToManyRelationshipClosure($relation);
+        $this->validateRelationshipMethodExistence($relationName, 'sync');
+
+        $relationCall = $this->{$relationName}();
+
+        if ($callback instanceof \Closure) {
+            $this->applyClosureToRelationship($relationCall, $callback);
         }
 
-        $relationCall = is_string($relation) ? $this->{$relation}() : $relation();
         $old = $relationCall->get($columns);
         $changes = $relationCall->sync($ids, $detaching);
 
@@ -744,27 +746,24 @@ trait Auditable
             $new = $relationCall->get($columns);
         }
 
-        $relationName = is_string($relation) ? $relation : $relationCall->getRelationName();
-
         $this->dispatchRelationAuditEvent($relationName, 'sync', $old, $new);
 
         return $changes;
     }
 
     /**
-     * @param string|\Closure<BelongsToMany> $relation
+     * @param string $relationName
      * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
      * @param array $columns
+     * @param \Closure|null $callback
      * @return array
      * @throws AuditingException
      */
-    public function auditSyncWithoutDetaching($relation, $ids, $columns = ['*'])
+    public function auditSyncWithoutDetaching(string $relationName, $ids, $columns = ['*'], $callback = null)
     {
-        if (is_string($relation)) {
-            $this->validateRelationshipMethodExistence($relation, 'syncWithoutDetaching');
-        }
+        $this->validateRelationshipMethodExistence($relationName, 'syncWithoutDetaching');
 
-        return $this->auditSync($relation, $ids, false, $columns);
+        return $this->auditSync($relationName, $ids, false, $columns, $callback);
     }
 
     /**
@@ -799,22 +798,12 @@ trait Auditable
         }
     }
 
-    private function validateBelongsToManyRelationshipClosure(\Closure $closure): void
+    private function applyClosureToRelationship(BelongsToMany $relation, \Closure $closure): void
     {
-        $hasParams = !!(new \ReflectionFunction($closure))->getNumberOfParameters();
-
-        if ($hasParams) {
-            throw new AuditingException("Invalid Closure for BelongsToMany Relationship");
-        }
-
         try {
-            $closure();
-        } catch (\Exception $exception) {
-            throw new AuditingException("Call to undefined or invalid method for BelongsToMany Relationship");
-        }
-
-        if (!($closure() instanceof BelongsToMany)) {
-            throw new AuditingException("Invalid Closure for BelongsToMany Relationship");
+            $closure($relation);
+        } catch (\Throwable $exception) {
+            throw new AuditingException("Invalid Closure for {$relation->getRelationName()} Relationship");
         }
     }
 }
