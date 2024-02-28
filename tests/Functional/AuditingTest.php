@@ -325,7 +325,7 @@ class AuditingTest extends AuditingTestCase
     public function itWillNotAuditDueToClassWithoutDriverInterface()
     {
         // We just pass a FQCN that does not implement the AuditDriver interface
-        $this->app['config']->set('audit.driver', self::class);
+        $this->app['config']->set('audit.driver', Article::class);
 
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('The driver must implement the AuditDriver contract');

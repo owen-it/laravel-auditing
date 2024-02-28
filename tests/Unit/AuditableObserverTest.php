@@ -91,7 +91,7 @@ class AuditableObserverTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableObserverTestProvider(): array
+    public static function auditableObserverTestProvider(): array
     {
         return [
             [
@@ -130,7 +130,7 @@ class AuditableObserverTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableObserverDispatchTestProvider(): array
+    public static function auditableObserverDispatchTestProvider(): array
     {
         return [
             [
