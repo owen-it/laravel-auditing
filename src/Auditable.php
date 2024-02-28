@@ -416,8 +416,9 @@ trait Auditable
     {
         $this->preloadedResolverData = $this->runResolvers();
 
-        if (!empty ($this->resolveUser())) {
-            $this->preloadedResolverData['user'] = $this->resolveUser();
+        $user = $this->resolveUser();
+        if (!empty ($user)) {
+            $this->preloadedResolverData['user'] = $user;
         }
 
         return $this;
