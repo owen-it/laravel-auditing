@@ -275,7 +275,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditCustomAttributeGetterFailTestProvider(): array
+    public static function auditCustomAttributeGetterFailTestProvider(): array
     {
         return [
             [
@@ -489,7 +489,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function userResolverProvider(): array
+    public static function userResolverProvider(): array
     {
         return [
             [
@@ -1202,7 +1202,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableTransitionTestProvider(): array
+    public static function auditableTransitionTestProvider(): array
     {
         return [
             //
