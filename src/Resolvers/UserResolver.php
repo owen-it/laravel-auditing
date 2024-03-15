@@ -13,6 +13,15 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
      */
     public static function resolve()
     {
+        // supports https://github.com/404labfr/laravel-impersonate
+        if (app()->bound('impersonate')) {
+            /** @var \Lab404\Impersonate\Services\ImpersonateManager */
+            $impersonate = app('impersonate');
+            if ($impersonate->isImpersonating()) {
+                return $impersonate->findUserById($impersonate->getImpersonatorId());
+            }
+        }
+
         $guards = Config::get('audit.user.guards', [
             \config('auth.defaults.guard')
         ]);
