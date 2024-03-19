@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
 use OwenIt\Auditing\Events\AuditCustom;
+use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\fixtures\TenantResolver;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\ArticleCustomAuditMorph;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;
 use OwenIt\Auditing\Tests\Models\Category;
 use OwenIt\Auditing\Tests\Models\User;
@@ -813,5 +815,26 @@ class AuditingTest extends AuditingTestCase
             'new_values'     => '{"customExample":"Darth Vader"}',
             'old_values'     => '{"customExample":"Anakin Skywalker"}'
         ]);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function canAuditCustomAuditModelImplementation()
+    {   
+        $audit = null;
+        Event::listen(Audited::class, function ($event) use (&$audit) {
+            $audit = $event->audit;
+        });
+        
+        $article = new ArticleCustomAuditMorph();
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->reviewed = 0;
+        $article->save();
+
+        $this->assertNotEmpty($audit);
+        $this->assertSame(get_class($audit), \OwenIt\Auditing\Tests\Models\CustomAudit::class);
     }
 }
