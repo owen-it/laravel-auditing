@@ -42,11 +42,15 @@ class Article extends Model implements Auditable
         'reviewed',
     ];
 
+    public $customClosure;
+
     public function __construct(array $attributes = [])
     {
         if (class_exists(\Illuminate\Database\Eloquent\Casts\AsArrayObject::class)) {
             $this->casts['config'] = \Illuminate\Database\Eloquent\Casts\AsArrayObject::class;
         }
+
+        $this->customClosure = function () {};
 
         parent::__construct($attributes);
     }
