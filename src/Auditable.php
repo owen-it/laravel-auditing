@@ -125,7 +125,7 @@ trait Auditable
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (
-                is_array($value) ||
+                (is_array($value) && !Config::get('audit.allowed_array_values', false)) ||
                 (is_object($value) &&
                     !method_exists($value, '__toString') &&
                     !($value instanceof \UnitEnum))
@@ -365,8 +365,8 @@ trait Auditable
      *
      */
     protected function resolveUser()
-    {   
-        if (! empty($this->preloadedResolverData['user'] ?? null)) {
+    {
+        if (!empty($this->preloadedResolverData['user'] ?? null)) {
             return $this->preloadedResolverData['user'];
         }
 
@@ -417,7 +417,7 @@ trait Auditable
         $this->preloadedResolverData = $this->runResolvers();
 
         $user = $this->resolveUser();
-        if (!empty ($user)) {
+        if (!empty($user)) {
             $this->preloadedResolverData['user'] = $user;
         }
 
@@ -509,11 +509,11 @@ trait Auditable
     public function getAuditEvents(): array
     {
         return $this->auditEvents ?? Config::get('audit.events', [
-                'created',
-                'updated',
-                'deleted',
-                'restored',
-            ]);
+            'created',
+            'updated',
+            'deleted',
+            'restored',
+        ]);
     }
 
     /**
