@@ -433,6 +433,29 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
+     */
+    public function itDisablesAndEnablesAuditingBackAgainViaWithoutAuditingMethod()
+    {
+        // Auditing is enabled by default
+        $this->assertFalse(Article::$auditingDisabled);
+
+        Article::withoutAuditing(function () {
+            factory(Article::class)->create();
+        });
+
+        $this->assertSame(1, Article::count());
+        $this->assertSame(0, Audit::count());
+
+        $this->assertFalse(Article::$auditingDisabled);
+
+        factory(Article::class)->create();
+
+        $this->assertSame(2, Article::count());
+        $this->assertSame(1, Audit::count());
+    }
+
+    /**
+     * @test
      * @return void
      */
     public function itHandlesJsonColumnsCorrectly()

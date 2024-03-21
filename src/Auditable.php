@@ -537,6 +537,26 @@ trait Auditable
     }
 
     /**
+     * Execute a callback while auditing is disabled.
+     *
+     * @param callable $callback
+     *
+     * @return mixed
+     */
+    public static function withoutAuditing(callable $callback)
+    {
+        $auditingDisabled = static::$auditingDisabled;
+
+        static::disableAuditing();
+
+        try {
+            return $callback();
+        } finally {
+            static::$auditingDisabled = $auditingDisabled;
+        }
+    }
+
+    /**
      * Determine whether auditing is enabled.
      *
      * @return bool
