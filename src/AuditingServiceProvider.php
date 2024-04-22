@@ -2,7 +2,7 @@
 
 namespace OwenIt\Auditing;
 
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditDriverCommand;
 use OwenIt\Auditing\Console\AuditResolverCommand;
@@ -25,10 +25,8 @@ class AuditingServiceProvider extends ServiceProvider
         $this->registerPublishing();
         $this->mergeConfigFrom(__DIR__ . '/../config/audit.php', 'audit');
 
-        /** @var DispatcherContract $events */
-        $events = app('events');
-        $events->listen(AuditCustom::class, RecordCustomAudit::class);
-        $events->listen(DispatchAudit::class, ProcessDispatchAudit::class);
+        Event::listen(AuditCustom::class, RecordCustomAudit::class);
+        Event::listen(DispatchAudit::class, ProcessDispatchAudit::class);
     }
 
     /**
