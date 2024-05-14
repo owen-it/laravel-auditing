@@ -6,7 +6,7 @@ parameters:
         - src/
     databaseMigrationsPath:
         - database/migrations/
-        - vendor/laravel/nova/database/migrations/
+        - vendor/orchestra/testbench-core/laravel/database/migrations/
         - tests/phpstan/
     level: 5
     checkAlwaysTrueCheckTypeFunctionCall: true
