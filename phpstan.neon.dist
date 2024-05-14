@@ -1,0 +1,23 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+parameters:
+    paths:
+        - config/
+        - src/
+    databaseMigrationsPath:
+        - database/migrations/
+        - vendor/laravel/nova/database/migrations/
+        - tests/phpstan/
+    level: 5
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkAlwaysTrueLooseComparison: true
+    checkClassCaseSensitivity: false
+    checkDynamicProperties: true
+    checkExplicitMixed: false
+    checkImplicitMixed: false
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+    ignoreErrors:

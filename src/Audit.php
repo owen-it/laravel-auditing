@@ -4,6 +4,7 @@ namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
@@ -37,7 +38,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function auditable()
+    public function auditable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -45,7 +46,7 @@ trait Audit
     /**
      * {@inheritdoc}
      */
-    public function user()
+    public function user(): MorphTo
     {
         $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 
