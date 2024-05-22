@@ -629,6 +629,36 @@ class AuditingTest extends AuditingTestCase
         $this->assertNotSame($categoryBefore, $categoryAfter);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
         $this->assertCount(1, $audit->old_values['categories']);
+        $this->assertCount(1, $audit->new_values['categories']);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditSyncAddAndRemove()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $thirdCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+
+        $article->auditSync('categories', [$secondCategory->getKey(), $thirdCategory->getKey()]);
+
+        $audit = $article->audits()->where('event', 'sync')->latest()->first();
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+
+        $attachedCategories = $article->categories()->pluck('id')->toArray();
+
+        $this->assertNotContains($firstCategory->getKey(), $attachedCategories);
+        $this->assertContains($secondCategory->getKey(), $attachedCategories);
+        $this->assertContains($thirdCategory->getKey(), $attachedCategories);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+        $this->assertCount(1, $audit->old_values['categories']);
         $this->assertCount(2, $audit->new_values['categories']);
     }
 
