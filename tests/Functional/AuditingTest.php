@@ -620,6 +620,7 @@ class AuditingTest extends AuditingTestCase
 
         $article->auditSync('categories', [$secondCategory->getKey()]);
 
+        $audit = $article->audits()->where('event', 'sync')->latest()->first();
         $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
         $categoryAfter = $article->categories()->first()->getKey();
 
@@ -627,6 +628,8 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($secondCategory->getKey(), $categoryAfter);
         $this->assertNotSame($categoryBefore, $categoryAfter);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+        $this->assertCount(1, $audit->old_values['categories']);
+        $this->assertCount(2, $audit->new_values['categories']);
     }
 
     /**
