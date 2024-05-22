@@ -643,7 +643,7 @@ class AuditingTest extends AuditingTestCase
         $thirdCategory = factory(Category::class)->create();
         $article = factory(Article::class)->create();
 
-        $article->categories()->attach($firstCategory);
+        $article->categories()->attach([$firstCategory->getKey(), $secondCategory->getKey()]);
 
         $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
 
