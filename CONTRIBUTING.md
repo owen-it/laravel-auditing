@@ -2,7 +2,7 @@
 Contributions are always welcome, but to keep things organized, keep in mind the following rules.
 
 # Bug Reports
-When reporting a bug in the Laravel Auditing package, make sure you follow the [rules](http://laravel-auditing.com/docs/master/problems).
+When reporting a bug in the Laravel Auditing package, make sure you follow the [rules](https://laravel-auditing.com/guide/community/problems.html).
 
 Failure to do so, will result in a closed ticket.
 
