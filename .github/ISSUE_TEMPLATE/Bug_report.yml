@@ -16,6 +16,8 @@ body:
       label: Laravel Version
       description: Provide the Laravel version that you are using. [Please ensure it is still supported.](https://github.com/owen-it/laravel-auditing?tab=readme-ov-file#version-information)
       placeholder: "11.x"
+    validations:
+      required: true
   - type: input
     attributes:
       label: Package Version
