@@ -8,19 +8,19 @@ body:
     attributes:
       label: PHP Version
       description: Provide the PHP version that you are using. [Please ensure it is still supported.](https://github.com/owen-it/laravel-auditing?tab=readme-ov-file#version-information)
-      placeholder: 8.3
+      placeholder: "8.3"
     validations:
       required: true
   - type: input
     attributes:
       label: Laravel Version
       description: Provide the Laravel version that you are using. [Please ensure it is still supported.](https://github.com/owen-it/laravel-auditing?tab=readme-ov-file#version-information)
-      placeholder: 11.x
+      placeholder: "11.x"
   - type: input
     attributes:
       label: Package Version
       description: Provide the Laravel Auditing package version that you are using. [Please ensure it is still supported.](https://github.com/owen-it/laravel-auditing?tab=readme-ov-file#version-information)
-      placeholder: 13.6.6
+      placeholder: "13.6.6"
     validations:
       required: true
   - type: textarea
