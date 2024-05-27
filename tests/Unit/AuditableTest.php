@@ -46,7 +46,7 @@ class AuditableTest extends AuditingTestCase
 
         $result = Article::withoutAuditing(function () {
             $this->assertTrue(Article::$auditingDisabled);
-            $this->assertFalse(ArticleExcludes::$auditingDisabled);
+            $this->assertFalse(ApiModel::$auditingDisabled);
 
             return 'result';
         });
