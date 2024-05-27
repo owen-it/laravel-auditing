@@ -35,6 +35,13 @@ trait Audit
     protected $modified = [];
 
     /**
+     * Is globally auditing disabled?
+     *
+     * @var bool
+     */
+    public static $auditingDisabled = false;
+
+    /**
      * {@inheritdoc}
      */
     public function auditable()
@@ -77,7 +84,7 @@ trait Audit
 
         // Metadata
         $this->data = [
-            'audit_id'         => $this->id,
+            'audit_id'         => $this->getKey(),
             'audit_event'      => $this->event,
             'audit_tags'       => $this->tags,
             'audit_created_at' => $this->serializeDate($this->{$this->getCreatedAtColumn()}),

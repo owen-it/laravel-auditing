@@ -126,7 +126,7 @@ trait Auditable
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (
-                is_array($value) ||
+                (is_array($value) && !Config::get('audit.allowed_array_values', false)) ||
                 (is_object($value) &&
                     !method_exists($value, '__toString') &&
                     !($value instanceof \UnitEnum))
@@ -257,7 +257,7 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
-        if (static::$auditingDisabled) {
+        if (static::$auditingDisabled || Audit::$auditingDisabled) {
             return false;
         }
 
@@ -367,10 +367,10 @@ trait Auditable
      */
     protected function resolveUser()
     {
-        if (! empty($this->preloadedResolverData['user'] ?? null)) {
+        if (!empty($this->preloadedResolverData['user'] ?? null)) {
             return $this->preloadedResolverData['user'];
         }
-        
+
         $userResolver = Config::get('audit.user.resolver');
 
         if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
@@ -417,8 +417,9 @@ trait Auditable
     {
         $this->preloadedResolverData = $this->runResolvers();
 
-        if (!empty ($this->resolveUser())) {
-            $this->preloadedResolverData['user'] = $this->resolveUser();
+        $user = $this->resolveUser();
+        if (!empty($user)) {
+            $this->preloadedResolverData['user'] = $user;
         }
 
         return $this;
@@ -517,6 +518,16 @@ trait Auditable
     }
 
     /**
+     * Is Auditing disabled.
+     *
+     * @return bool
+     */
+    public static function isAuditingDisabled(): bool
+    {
+        return static::$auditingDisabled || Audit::$auditingDisabled;
+    }
+
+    /**
      * Disable Auditing.
      *
      * @return void
@@ -534,6 +545,29 @@ trait Auditable
     public static function enableAuditing()
     {
         static::$auditingDisabled = false;
+    }
+
+    /**
+     * Execute a callback while auditing is disabled.
+     *
+     * @param callable $callback
+     * @param bool $globally
+     *
+     * @return mixed
+     */
+    public static function withoutAuditing(callable $callback, bool $globally = false)
+    {
+        $auditingDisabled = static::$auditingDisabled;
+
+        static::disableAuditing();
+        Audit::$auditingDisabled = $globally;
+
+        try {
+            return $callback();
+        } finally {
+            Audit::$auditingDisabled = false;
+            static::$auditingDisabled = $auditingDisabled;
+        }
     }
 
     /**

@@ -37,6 +37,59 @@ class AuditableTest extends AuditingTestCase
     }
 
     /**
+     * @group Auditable::withoutAuditing
+     * @test
+     */
+    public function itWillRunCallbackWithModelAuditingDisabled()
+    {
+        $this->assertFalse(Article::$auditingDisabled);
+
+        $result = Article::withoutAuditing(function () {
+            $this->assertTrue(Article::isAuditingDisabled());
+            $this->assertFalse(ApiModel::isAuditingDisabled());
+
+            return 'result';
+        });
+
+        $this->assertFalse(Article::$auditingDisabled);
+        $this->assertSame('result', $result);
+    }
+
+    /**
+     * @group Auditable::withoutAuditing
+     * @test
+     */
+    public function itWillRunCallbackWithAuditingDisabled()
+    {
+        $this->assertFalse(Article::$auditingDisabled);
+
+        $result = Article::withoutAuditing(function () {
+            $this->assertTrue(Article::isAuditingDisabled());
+            $this->assertTrue(ApiModel::isAuditingDisabled());
+
+            return 'result';
+        }, true);
+
+        $this->assertFalse(Article::$auditingDisabled);
+        $this->assertSame('result', $result);
+    }
+
+    /**
+     * @group Auditable::withoutAuditing
+     * @test
+     */
+    public function itWillRunCallbackThenRestoreAuditingDisabled()
+    {
+        Article::$auditingDisabled = true;
+
+        Article::withoutAuditing(function () {
+            $this->assertTrue(Article::$auditingDisabled);
+        });
+
+        $this->assertTrue(Article::$auditingDisabled);
+    }
+
+    /**
      * @group Auditable::isAuditingEnabled
      * @test
      */
@@ -275,7 +328,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditCustomAttributeGetterFailTestProvider(): array
+    public static function auditCustomAttributeGetterFailTestProvider(): array
     {
         return [
             [
@@ -489,7 +542,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function userResolverProvider(): array
+    public static function userResolverProvider(): array
     {
         return [
             [
@@ -968,12 +1021,11 @@ class AuditableTest extends AuditingTestCase
         ]);
 
         $model = Article::first();
-        
+
         $this->assertEquals($model->published_at, $originalStart);
 
         $model->published_at = new Carbon('2022-01-01 12:30:00');
         $model->save();
-        
         $audit = $model->audits->last();
         $audit->auditable_id = $model->id;
 
@@ -1202,7 +1254,7 @@ class AuditableTest extends AuditingTestCase
     /**
      * @return array
      */
-    public function auditableTransitionTestProvider(): array
+    public static function auditableTransitionTestProvider(): array
     {
         return [
             //
@@ -1309,5 +1361,91 @@ class AuditableTest extends AuditingTestCase
                 [],
             ],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function itWorksWhenConfigAllowedArrayValueIsTrue()
+    {
+        $this->app['config']->set('audit.allowed_array_values', true);
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'images' => [
+                'https://example.com/image1.jpg',
+                'https://example.com/image2.jpg',
+            ]
+        ]);
+
+        $model->setAuditEvent('created');
+
+        $auditData = $model->toAudit();
+
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
+        self::Assert()::assertArraySubset([
+            'old_values'     => [],
+            'new_values'     => [
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
+                'reviewed'     => 1,
+                'images'       => [
+                    'https://example.com/image1.jpg',
+                    'https://example.com/image2.jpg',
+                ],
+            ],
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => null,
+            $morphPrefix . '_type'  => null,
+            'url'                   => UrlResolver::resolveCommandLine(),
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
+        ], $auditData, true);
+    }
+
+    /**
+     * @test
+     */
+    public function itWorksWhenConfigAllowedArrayValueIsFalse()
+    {
+        $this->app['config']->set('audit.allowed_array_values', false);
+
+        $model = factory(Article::class)->make([
+            'title'        => 'How To Audit Eloquent Models',
+            'content'      => 'First step: install the laravel-auditing package.',
+            'reviewed'     => 1,
+            'images' => [
+                'https://example.com/image1.jpg',
+                'https://example.com/image2.jpg',
+            ]
+        ]);
+
+        $model->setAuditEvent('created');
+
+        $auditData = $model->toAudit();
+
+        $morphPrefix = config('audit.user.morph_prefix', 'user');
+        self::Assert()::assertArraySubset([
+            'old_values'     => [],
+            'new_values'     => [
+                'title'        => 'How To Audit Eloquent Models',
+                'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
+                'reviewed'     => 1,
+            ],
+            'event'                 => 'created',
+            'auditable_id'          => null,
+            'auditable_type'        => Article::class,
+            $morphPrefix . '_id'    => null,
+            $morphPrefix . '_type'  => null,
+            'url'                   => UrlResolver::resolveCommandLine(),
+            'ip_address'            => '127.0.0.1',
+            'user_agent'            => 'Symfony',
+            'tags'                  => null,
+        ], $auditData, true);
     }
 }

@@ -21,6 +21,7 @@ class CreateArticlesTestTable extends Migration
             $table->timestamp('published_at')->nullable();
             $table->json('config')->nullable();
             $table->string('price')->nullable();
+            $table->json('images')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
