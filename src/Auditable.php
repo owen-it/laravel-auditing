@@ -256,7 +256,7 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
-        if (static::$auditingDisabled) {
+        if (static::$auditingDisabled || Audit::$auditingDisabled) {
             return false;
         }
 
@@ -517,6 +517,16 @@ trait Auditable
     }
 
     /**
+     * Is Auditing disabled.
+     *
+     * @return bool
+     */
+    public static function isAuditingDisabled(): bool
+    {
+        return static::$auditingDisabled || Audit::$auditingDisabled;
+    }
+
+    /**
      * Disable Auditing.
      *
      * @return void
@@ -540,18 +550,21 @@ trait Auditable
      * Execute a callback while auditing is disabled.
      *
      * @param callable $callback
+     * @param bool $globally
      *
      * @return mixed
      */
-    public static function withoutAuditing(callable $callback)
+    public static function withoutAuditing(callable $callback, bool $globally = false)
     {
         $auditingDisabled = static::$auditingDisabled;
 
         static::disableAuditing();
+        Audit::$auditingDisabled = $globally;
 
         try {
             return $callback();
         } finally {
+            Audit::$auditingDisabled = false;
             static::$auditingDisabled = $auditingDisabled;
         }
     }
