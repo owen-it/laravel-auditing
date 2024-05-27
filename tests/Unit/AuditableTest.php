@@ -37,6 +37,40 @@ class AuditableTest extends AuditingTestCase
     }
 
     /**
+     * @group Auditable::withoutAuditing
+     * @test
+     */
+    public function itWillRunCallbackWithAuditingDisabled()
+    {
+        $this->assertFalse(Article::$auditingDisabled);
+
+        $result = Article::withoutAuditing(function () {
+            $this->assertTrue(Article::$auditingDisabled);
+            $this->assertFalse(ArticleExcludes::$auditingDisabled);
+
+            return 'result';
+        });
+
+        $this->assertFalse(Article::$auditingDisabled);
+        $this->assertSame('result', $result);
+    }
+
+    /**
+     * @group Auditable::withoutAuditing
+     * @test
+     */
+    public function itWillRunCallbackThenRestoreAuditingDisabled()
+    {
+        Article::$auditingDisabled = true;
+
+        Article::withoutAuditing(function () {
+            $this->assertTrue(Article::$auditingDisabled);
+        });
+
+        $this->assertTrue(Article::$auditingDisabled);
+    }
+
+    /**
      * @group Auditable::isAuditingEnabled
      * @test
      */
