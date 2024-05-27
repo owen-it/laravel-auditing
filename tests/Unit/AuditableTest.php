@@ -40,16 +40,35 @@ class AuditableTest extends AuditingTestCase
      * @group Auditable::withoutAuditing
      * @test
      */
+    public function itWillRunCallbackWithModelAuditingDisabled()
+    {
+        $this->assertFalse(Article::$auditingDisabled);
+
+        $result = Article::withoutAuditing(function () {
+            $this->assertTrue(Article::isAuditingDisabled());
+            $this->assertFalse(ApiModel::isAuditingDisabled());
+
+            return 'result';
+        });
+
+        $this->assertFalse(Article::$auditingDisabled);
+        $this->assertSame('result', $result);
+    }
+
+    /**
+     * @group Auditable::withoutAuditing
+     * @test
+     */
     public function itWillRunCallbackWithAuditingDisabled()
     {
         $this->assertFalse(Article::$auditingDisabled);
 
         $result = Article::withoutAuditing(function () {
-            $this->assertTrue(Article::$auditingDisabled);
-            $this->assertFalse(ApiModel::$auditingDisabled);
+            $this->assertTrue(Article::isAuditingDisabled());
+            $this->assertTrue(ApiModel::isAuditingDisabled());
 
             return 'result';
-        });
+        }, true);
 
         $this->assertFalse(Article::$auditingDisabled);
         $this->assertSame('result', $result);
