@@ -671,6 +671,45 @@ class AuditingTest extends AuditingTestCase
      * @test
      * @return void
      */
+    public function itWillAuditSyncWithPivotValues()
+    {   
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
+        
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditSyncWithPivotValues(
+            'categories',
+            $secondCategory,
+            [ 'pivot_type' => 'PIVOT_1' ]
+        );
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($secondCategory->getKey(), $categoryAfter);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+
+        $this->assertSame(
+            "{$secondCategory->getKey()}",
+            $article->categories()->pluck('id')->join(',')
+        );
+
+        $this->assertSame(
+            $secondCategory->getKey(),
+            $article->categories()->wherePivot('pivot_type', 'PIVOT_1')->first()->getKey()
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itWillAuditSyncByClosure()
     {
         $firstCategory = factory(Category::class)->create();
@@ -697,7 +736,6 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertSame($firstCategory->getKey(), $categoryBefore);
         $this->assertSame($secondCategory->getKey(), $categoryAfter);
-        $this->assertNotSame($categoryBefore, $categoryAfter);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
 
         $this->assertSame(
