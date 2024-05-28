@@ -2,10 +2,12 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
@@ -754,7 +756,7 @@ trait Auditable
 
     /**
      * @param string $relationName
-     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
+     * @param Collection|Model|array $ids
      * @param bool $detaching
      * @param array $columns
      * @param \Closure|null $callback
@@ -787,7 +789,7 @@ trait Auditable
 
     /**
      * @param string $relationName
-     * @param \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array $ids
+     * @param Collection|Model|array $ids
      * @param array $columns
      * @param \Closure|null $callback
      * @return array
@@ -802,9 +804,35 @@ trait Auditable
 
     /**
      * @param string $relationName
+     * @param Collection|Model|array  $ids
+     * @param array  $values
+     * @param bool  $detaching
+     * @param array $columns
+     * @param \Closure|null $callback
+     * @return array
+     */
+    public function auditSyncWithPivotValues(string $relationName, $ids, array $values, bool $detaching = true, $columns = ['*'], $callback = null)
+    {
+        $this->validateRelationshipMethodExistence($relationName, 'syncWithPivotValues');
+
+        if ($ids instanceof Model) {
+            $ids = $ids->getKey();
+        } elseif ($ids instanceof \Illuminate\Database\Eloquent\Collection) {
+            $ids = $ids->isEmpty() ? [] : $ids->pluck($ids->first()->getKeyName())->toArray();
+        } elseif ($ids instanceof Collection) {
+            $ids = $ids->toArray();
+        }
+
+        return $this->auditSync($relationName, collect(Arr::wrap($ids))->mapWithKeys(function ($id) use ($values) {
+            return [$id => $values];
+        }), $detaching, $columns, $callback);
+    }
+
+    /**
+     * @param string $relationName
      * @param string $event
-     * @param \Illuminate\Support\Collection $old
-     * @param \Illuminate\Support\Collection $new
+     * @param Collection $old
+     * @param Collection $new
      * @return void
      */
     private function dispatchRelationAuditEvent($relationName, $event, $old, $new)
