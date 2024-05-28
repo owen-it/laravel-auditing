@@ -3,6 +3,7 @@
 namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
@@ -630,6 +631,20 @@ class AuditingTest extends AuditingTestCase
      * @test
      * @return void
      */
+    public function itWillNotAuditAttachByInvalidRelationName()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $this->expectExceptionMessage("Relationship invalidRelation was not found or does not support method attach");
+
+        $article->auditAttach('invalidRelation', $firstCategory);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itWillAuditSync()
     {
         $firstCategory = factory(Category::class)->create();
@@ -650,6 +665,78 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($secondCategory->getKey(), $categoryAfter);
         $this->assertNotSame($categoryBefore, $categoryAfter);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditSyncByClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $thirdCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
+        $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditSync(
+            'categories',
+            [$thirdCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]],
+            true,
+            ['*'],
+            function ($categories) { return $categories->wherePivot('pivot_type', 'PIVOT_1'); }
+        );
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($secondCategory->getKey(), $categoryAfter);
+        $this->assertNotSame($categoryBefore, $categoryAfter);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+
+        $this->assertSame(
+            "{$secondCategory->getKey()},{$thirdCategory->getKey()}",
+            $article->categories()->pluck('id')->join(',')
+        );
+
+        $this->assertSame(
+            $secondCategory->getKey(),
+            $article->categories()->wherePivot('pivot_type', 'PIVOT_2')->first()->getKey()
+        );
+
+        $this->assertSame(
+            $thirdCategory->getKey(),
+            $article->categories()->wherePivot('pivot_type', 'PIVOT_1')->first()->getKey()
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillNotAuditSyncByInvalidClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+
+        $this->expectException(QueryException::class);
+
+        $article->auditSync(
+            'categories',
+            [$secondCategory->getKey()],
+            true,
+            ['*'],
+            function ($categories) { return $categories->wherePivot('invalid_pivot_column', 'PIVOT_1'); }
+        );
     }
 
     /**
@@ -677,6 +764,68 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($secondCategory->getKey(), $categoryAfter);
         $this->assertNotSame($categoryBefore, $categoryAfter);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditDetachByClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $thirdCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
+        $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
+        $article->categories()->attach([$thirdCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditDetach(
+            'categories',
+            [$firstCategory->getKey(), $secondCategory->getKey(), $thirdCategory->getKey()],
+            true,
+            ['*'],
+            function ($categories) { return $categories->wherePivot('pivot_type', 'PIVOT_1'); }
+        );
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($secondCategory->getKey(), $categoryAfter);
+        $this->assertNotSame($categoryBefore, $categoryAfter);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+
+        $this->assertSame(
+            "{$secondCategory->getKey()},{$thirdCategory->getKey()}",
+            $article->categories()->pluck('id')->join(',')
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillNotAuditDetachByInvalidClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+
+        $this->expectExceptionMessage('Invalid Closure for categories Relationship');
+
+        $article->auditDetach(
+            'categories',
+            [$firstCategory->getKey()],
+            true,
+            ['*'],
+            function ($categories) { return $categories->invalid(); }
+        );
     }
 
     /**
