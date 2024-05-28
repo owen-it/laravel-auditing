@@ -672,13 +672,17 @@ class AuditingTest extends AuditingTestCase
      * @return void
      */
     public function itWillAuditSyncWithPivotValues()
-    {   
+    {
+        if (version_compare($this->app->version(), '8.0.0', '<')) {
+            $this->markTestSkipped('This test is only for Laravel 8.0.0+');
+        }
+
         $firstCategory = factory(Category::class)->create();
         $secondCategory = factory(Category::class)->create();
         $article = factory(Article::class)->create();
 
         $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
-        
+
         $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
         $categoryBefore = $article->categories()->first()->getKey();
 
@@ -1032,12 +1036,12 @@ class AuditingTest extends AuditingTestCase
      * @return void
      */
     public function canAuditCustomAuditModelImplementation()
-    {   
+    {
         $audit = null;
         Event::listen(Audited::class, function ($event) use (&$audit) {
             $audit = $event->audit;
         });
-        
+
         $article = new ArticleCustomAuditMorph();
         $article->title = $this->faker->unique()->sentence;
         $article->content = $this->faker->unique()->paragraph(6);
