@@ -21,9 +21,9 @@ class CreateCategoriesTestTable extends Migration
 
         Schema::create('model_has_categories', function (Blueprint $table) {
             $table->string('model_type');
-            $table->string('pivot_type')->nullable();
-            $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('model_id');
+            $table->unsignedBigInteger('category_id');
+            $table->string('pivot_type')->nullable();
             $table->timestamps();
         });
     }
@@ -35,6 +35,7 @@ class CreateCategoriesTestTable extends Migration
      */
     public function down()
     {
+        Schema::drop('model_has_categories');
         Schema::drop('categories');
     }
 }
