@@ -26,7 +26,7 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
      *
      * @var bool
      */
-    public static $auditingDisabled = false;
+    public static $auditingGloballyDisabled = false;
 
     /**
      * {@inheritdoc}

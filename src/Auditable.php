@@ -259,7 +259,7 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
-        if (static::$auditingDisabled || Models\Audit::$auditingDisabled) {
+        if (static::$auditingDisabled || Models\Audit::$auditingGloballyDisabled) {
             return false;
         }
 
@@ -526,7 +526,7 @@ trait Auditable
      */
     public static function isAuditingDisabled(): bool
     {
-        return static::$auditingDisabled || Models\Audit::$auditingDisabled;
+        return static::$auditingDisabled || Models\Audit::$auditingGloballyDisabled;
     }
 
     /**
@@ -562,12 +562,12 @@ trait Auditable
         $auditingDisabled = static::$auditingDisabled;
 
         static::disableAuditing();
-        Models\Audit::$auditingDisabled = $globally;
+        Models\Audit::$auditingGloballyDisabled = $globally;
 
         try {
             return $callback();
         } finally {
-            Models\Audit::$auditingDisabled = false;
+            Models\Audit::$auditingGloballyDisabled = false;
             static::$auditingDisabled = $auditingDisabled;
         }
     }
