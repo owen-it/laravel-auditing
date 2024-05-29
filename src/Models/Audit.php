@@ -22,6 +22,13 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
     protected $guarded = [];
 
     /**
+     * Is globally auditing disabled?
+     *
+     * @var bool
+     */
+    public static $auditingGloballyDisabled = false;
+
+    /**
      * {@inheritdoc}
      */
     protected $casts = [

@@ -35,13 +35,6 @@ trait Audit
     protected $modified = [];
 
     /**
-     * Is globally auditing disabled?
-     *
-     * @var bool
-     */
-    public static $auditingDisabled = false;
-
-    /**
      * {@inheritdoc}
      */
     public function auditable()
