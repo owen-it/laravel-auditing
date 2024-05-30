@@ -55,6 +55,11 @@ class Article extends Model implements Auditable
         parent::__construct($attributes);
     }
 
+    public function users()
+    {
+        return $this->morphToMany(User::class, 'model', 'model_has_users');
+    }
+
     public function categories()
     {
         return $this->morphToMany(Category::class, 'model', 'model_has_categories');

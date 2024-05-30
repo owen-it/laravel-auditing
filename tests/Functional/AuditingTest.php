@@ -671,6 +671,40 @@ class AuditingTest extends AuditingTestCase
      * @test
      * @return void
      */
+    public function itWillAuditSyncIndividually()
+    {
+        Article::disableAuditing();
+        $user = factory(User::class)->create();
+        $category = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+        Article::enableAuditing();
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $article->auditSync('users', [$user->getKey()]);
+        $article->auditSync('categories', [$category->getKey()]);
+        $audits = $article->audits()->get();
+        $auditFirst = $audits->first();
+        $auditLast = $audits->last();
+
+        $this->assertSame($no_of_audits_before + 2, $audits->count());
+        $this->assertSame($user->getKey(), $article->users()->first()->getKey());
+        $this->assertSame($category->getKey(), $article->categories()->first()->getKey());
+
+        $this->assertArrayHasKey('users', $auditFirst->new_values);
+        $this->assertArrayHasKey('users', $auditFirst->old_values);
+        $this->assertArrayNotHasKey('categories', $auditFirst->new_values);
+        $this->assertArrayNotHasKey('categories', $auditFirst->old_values);
+
+        $this->assertArrayHasKey('categories', $auditLast->new_values);
+        $this->assertArrayHasKey('categories', $auditLast->old_values);
+        $this->assertArrayNotHasKey('users', $auditLast->new_values);
+        $this->assertArrayNotHasKey('users', $auditLast->old_values);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itWillAuditSyncWithPivotValues()
     {
         if (version_compare($this->app->version(), '8.0.0', '<')) {
