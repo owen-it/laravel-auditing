@@ -36,9 +36,9 @@ class Database implements AuditDriver
                 $forRemovalChunks = $forRemoval->chunk(Config::get('audit.placeholders_limit', 50000));
                 $answer = false;
                 foreach ($forRemovalChunks as $chunk) {
-                    $answer = $answer || $model->audits()
+                    $answer = $model->audits()
                             ->whereIn($auditKeyName, $chunk)
-                            ->delete() > 0;
+                            ->delete() > 0 || $answer;
                 }
 
                 return $answer;
