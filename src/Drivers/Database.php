@@ -23,14 +23,23 @@ class Database implements AuditDriver
     public function prune(Auditable $model): bool
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
-            $idsToKeep = $model->audits()
+            $forRemoval = $model->audits()
                 ->latest()
-                ->take($threshold)
+                ->get()
+                ->slice($threshold)
                 ->pluck('id');
 
-            return $model->audits()
-                ->whereNotIn('id', $idsToKeep)
-                ->delete() > 0;
+            if (!$forRemoval->isEmpty()) {
+                $forRemovalChunks = $forRemoval->chunk(Config::get('audit.placeholders_limit', 50000));
+                $answer = false;
+                foreach ($forRemovalChunks as $chunk) {
+                    $answer = $answer || $model->audits()
+                            ->whereIn('id', $chunk)
+                            ->delete() > 0;
+                }
+
+                return $answer;
+            }
         }
 
         return false;
