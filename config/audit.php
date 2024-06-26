@@ -195,4 +195,6 @@ return [
     */
 
     'console' => false,
+
+    'placeholders_limit' => 50000,
 ];
