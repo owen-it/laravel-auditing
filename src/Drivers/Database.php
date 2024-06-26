@@ -28,8 +28,8 @@ class Database implements AuditDriver
 
             $forRemoval = $model->audits()
                 ->latest()
-                ->get()
-                ->slice($threshold)
+                ->skip($threshold)
+                ->take(PHP_INT_MAX)
                 ->pluck($auditKeyName);
 
             if (!$forRemoval->isEmpty()) {
