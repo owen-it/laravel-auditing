@@ -23,9 +23,22 @@ class Database implements AuditDriver
     public function prune(Auditable $model): bool
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
+            $auditClass = get_class($model->audits()->getModel());
+            $auditModel = new $auditClass;
+
             return $model->audits()
-                ->latest()
-                ->offset($threshold)->limit(PHP_INT_MAX)
+                ->leftJoinSub(
+                    $model->audits()->select($auditModel->getKeyName())->limit($threshold)->latest(),
+                    'audit_threshold',
+                    function ($join) use ($auditModel) {
+                        $join->on(
+                            $auditModel->gettable().'.'.$auditModel->getKeyName(),
+                            '=',
+                            'audit_threshold.'.$auditModel->getKeyName()
+                        );
+                    }
+                )
+                ->whereNull('audit_threshold.'.$auditModel->getKeyName())
                 ->delete() > 0;
         }
 

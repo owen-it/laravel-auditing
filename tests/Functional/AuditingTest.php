@@ -297,16 +297,23 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $article = factory(Article::class)->create([
-            'reviewed' => 1,
+            'title' => 'Title #0',
         ]);
 
-        foreach (range(0, 99) as $count) {
+        foreach (range(1, 20) as $count) {
+            if ($count === 11) {
+                sleep(1);
+            }
+
             $article->update([
-                'reviewed' => ($count % 2),
+                'title' => 'Title #' . $count,
             ]);
         }
 
-        $this->assertSame(10, $article->audits()->count());
+        $audits = $article->audits()->get();
+        $this->assertSame(10, $audits->count());
+        $this->assertSame('Title #11', $audits->first()->new_values['title']);
+        $this->assertSame('Title #20', $audits->last()->new_values['title']);
     }
 
     /**
