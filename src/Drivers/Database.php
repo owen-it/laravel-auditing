@@ -25,11 +25,15 @@ class Database implements AuditDriver
         if (($threshold = $model->getAuditThreshold()) > 0) {
             $class = get_class($model->audits()->getModel());
             $keyName = (new $class)->getKeyName();
-
+        
+            $idsToKeep = $model->audits()
+                ->select($keyName)
+                ->limit($threshold)
+                ->latest()
+                ->pluck($keyName);
+        
             return $model->audits()
-                ->whereNotIn(
-                    $keyName, $model->audits()->select($keyName)->limit($threshold)->latest()
-                )
+                ->whereNotIn($keyName, $idsToKeep)
                 ->delete() > 0;
         }
 
