@@ -748,12 +748,14 @@ trait Auditable
         }
 
         $old = $relationCall->get($columns);
+        
         $pivotClass = $relationCall->getPivotClass();
-        if($pivotClass !== Pivot::class && is_a($pivotClass,ContractsAuditable::class,true)){
+        
+        if($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
             $results = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $touch) {
                 return $relationCall->detach($ids, $touch);
             });
-        }else{
+        } else {
             $results = $relationCall->detach($ids, $touch);
         }
         $new = $relationCall->get($columns);
@@ -783,12 +785,14 @@ trait Auditable
         }
         
         $old = $relationCall->get($columns);
+        
         $pivotClass = $relationCall->getPivotClass();
-        if($pivotClass !== Pivot::class && is_a($pivotClass,ContractsAuditable::class,true)){
-            $changes =$pivotClass::withoutAuditing(function () use ($relationCall, $ids, $detaching) {
+        
+        if($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
+            $changes = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $detaching) {
                 return $relationCall->sync($ids, $detaching);
             });
-        }else{
+        } else {
             $changes = $relationCall->sync($ids, $detaching);
         }
 
