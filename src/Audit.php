@@ -102,11 +102,11 @@ trait Audit
         $this->metadata = array_keys($this->data);
 
         // Modified Auditable attributes
-        foreach ($this->new_values as $key => $value) {
+        foreach ($this->new_values ?? [] as $key => $value) {
             $this->data['new_' . $key] = $value;
         }
 
-        foreach ($this->old_values as $key => $value) {
+        foreach ($this->old_values ?? [] as $key => $value) {
             $this->data['old_' . $key] = $value;
         }
 
