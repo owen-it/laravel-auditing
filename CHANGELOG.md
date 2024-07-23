@@ -1,4 +1,8 @@
-## v13.0.0
+## Note that changelogs after v13.0.0 are included in the [releases](releases).
+
+---
+
+## v13.0.0 (2022-03-02)
 
 ### Added
 
