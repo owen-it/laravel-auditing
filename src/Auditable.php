@@ -71,7 +71,22 @@ trait Auditable
      */
     public static function bootAuditable()
     {
-        if (static::isAuditingEnabled()) {
+        try {
+            $isAuditingEnabled = static::isAuditingEnabled();
+        } catch (\RuntimeException $e) {
+            if ($e->getMessage() !== 'A facade root has not been set.') {
+                throw $e;
+            }
+
+            /**
+             * Facade root has not been set. The user may be attempting to use
+             * their Auditable outside of the application context. We will
+             * just skip booting for now.
+             */
+            return;
+        }
+
+        if ($isAuditingEnabled) {
             static::observe(new AuditableObserver());
         }
     }
