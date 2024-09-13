@@ -751,7 +751,7 @@ trait Auditable
         
         $pivotClass = $relationCall->getPivotClass();
         
-        if($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
+        if ($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
             $results = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $touch) {
                 return $relationCall->detach($ids, $touch);
             });
@@ -783,12 +783,12 @@ trait Auditable
         if ($callback instanceof \Closure) {
             $this->applyClosureToRelationship($relationCall, $callback);
         }
-        
+
         $old = $relationCall->get($columns);
         
         $pivotClass = $relationCall->getPivotClass();
         
-        if($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
+        if ($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
             $changes = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $detaching) {
                 return $relationCall->sync($ids, $detaching);
             });
