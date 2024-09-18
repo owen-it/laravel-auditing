@@ -143,7 +143,10 @@ trait Auditable
      */
     public function getAuditExclude(): array
     {
-        if ($this->auditExcludeMerge ?? false) {
+        if ( 
+            Config::get('audit.exclude_merge', false) || 
+            ($this->auditExcludeMerge ?? false) 
+        ) {
             return array_merge($this->auditExclude ?? [], Config::get('audit.exclude', []));
         }
 
