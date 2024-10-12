@@ -49,7 +49,16 @@
         "phpunit/phpunit": "^9.6|^10.5|^11.0",
         "mockery/mockery": "^1.0",
         "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0|^9.0",
-        "laravel/legacy-factories": "*"
+        "laravel/legacy-factories": "*",
+        "phpstan/phpstan": "^1.12",
+        "phpstan/phpstan-phpunit": "*",
+        "larastan/larastan": "*",
+        "phpstan/phpstan-mockery": "^1.1",
+        "phpstan/phpstan-strict-rules": "^1.6"
+    },
+    "scripts": {
+        "stan": "vendor/bin/phpstan analyse --memory-limit=1G",
+        "test": "vendor/bin/phpunit"
     },
     "autoload": {
         "psr-4": {

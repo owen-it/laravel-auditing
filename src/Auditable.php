@@ -118,6 +118,7 @@ trait Auditable
                 $this->excludedAttributes[] = $this->getUpdatedAtColumn();
             }
             if (in_array(SoftDeletes::class, class_uses_recursive(get_class($this)))) {
+                assert(method_exists($this, 'getDeletedAtColumn'));
                 $this->excludedAttributes[] = $this->getDeletedAtColumn();
             }
         }
@@ -707,7 +708,6 @@ trait Auditable
      * @param array $columns
      * @param \Closure|null $callback
      * @return void
-     * @throws AuditingException
      */
     public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'], $callback = null)
     {
@@ -733,7 +733,6 @@ trait Auditable
      * @param array $columns
      * @param \Closure|null $callback
      * @return int
-     * @throws AuditingException
      */
     public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'], $callback = null)
     {
@@ -761,7 +760,6 @@ trait Auditable
      * @param array $columns
      * @param \Closure|null $callback
      * @return array
-     * @throws AuditingException
      */
     public function auditSync(string $relationName, $ids, $detaching = true, $columns = ['*'], $callback = null)
     {
@@ -854,6 +852,12 @@ trait Auditable
         $this->isCustomEvent = false;
     }
 
+    /**
+     * @param string $relationName
+     * @param string $methodName
+     * @return void
+     * @throws AuditingException
+     */
     private function validateRelationshipMethodExistence(string $relationName, string $methodName): void
     {
         if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), $methodName)) {
@@ -861,6 +865,12 @@ trait Auditable
         }
     }
 
+    /**
+     * @param BelongsToMany $relation
+     * @param \Closure $closure
+     * @return void
+     * @throws AuditingException
+     */
     private function applyClosureToRelationship(BelongsToMany $relation, \Closure $closure): void
     {
         try {

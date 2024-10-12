@@ -1,0 +1,24 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/phpstan/phpstan-mockery/extension.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+parameters:
+    level: 1
+    paths:
+        - ./config
+        - ./database
+        - ./src
+        - ./tests
+    exceptions:
+        implicitThrows: false
+        check:
+            tooWideThrowType: true
+    stubFiles:
+        - database/migrations/audits.stub
+    excludePaths:
+        - tests/database/migrations
+services:
+    -
+        class: PHPStan\Rules\Classes\RequireParentConstructCallRule
+        tags:
+            - phpstan.rules.rule

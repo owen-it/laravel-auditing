@@ -10,7 +10,9 @@ use Ramsey\Uuid\Uuid;
 |--------------------------------------------------------------------------
 |
 */
-
+if (!isset($factory)) {
+    throw new Exception('Factory is not defined');
+}
 $factory->define(ApiModel::class, function (Faker $faker) {
     return [
         'api_model_id' => Uuid::uuid4(),

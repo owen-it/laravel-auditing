@@ -26,6 +26,9 @@ class UrlResolver implements \OwenIt\Auditing\Contracts\Resolver
 
     public static function resolveCommandLine(): string
     {
+        if (App::runningUnitTests()) {
+            return 'vendor/bin/phpunit';
+        }
         $command = Request::server('argv', null);
         if (is_array($command)) {
             return implode(' ', $command);

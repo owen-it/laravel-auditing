@@ -11,7 +11,9 @@ use OwenIt\Auditing\Tests\Models\User;
 |--------------------------------------------------------------------------
 |
 */
-
+if (!isset($factory)) {
+    throw new Exception('Factory is not defined');
+}
 $factory->define(Audit::class, function (Faker $faker) {
     $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 

@@ -9,7 +9,9 @@ use OwenIt\Auditing\Tests\Models\User;
 |--------------------------------------------------------------------------
 |
 */
-
+if (!isset($factory)) {
+    throw new Exception('Factory is not defined');
+}
 $factory->define(User::class, function (Faker $faker) {
     return [
         'is_admin'   => $faker->randomElement([0, 1]),

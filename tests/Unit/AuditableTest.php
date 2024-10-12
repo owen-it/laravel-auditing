@@ -174,12 +174,12 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'created',
             'updated',
             'deleted',
             'restored',
-        ], $model->getAuditEvents(), true);
+        ], $model->getAuditEvents());
     }
 
     /**
@@ -195,10 +195,10 @@ class AuditableTest extends AuditingTestCase
             'archived',
         ];
 
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'published' => 'getPublishedEventAttributes',
             'archived',
-        ], $model->getAuditEvents(), true);
+        ], $model->getAuditEvents());
     }
 
     /**
@@ -214,10 +214,10 @@ class AuditableTest extends AuditingTestCase
 
         $model = new Article();
 
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'published' => 'getPublishedEventAttributes',
             'archived',
-        ], $model->getAuditEvents(), true);
+        ], $model->getAuditEvents());
     }
 
     /**
@@ -459,24 +459,24 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(11, $auditData = $model->toAudit());
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
-                'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
+                'reviewed'     => 1,
             ],
             'event'                 => 'created',
             'auditable_id'          => null,
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => null,
             $morphPrefix . '_type'  => null,
-            'url'                   => UrlResolver::resolveCommandLine(),
+            'tags'                  => null,
+            'url'                   => 'vendor/bin/phpunit',
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
-        ], $auditData, true);
+        ], $auditData);
     }
 
     /**
@@ -519,24 +519,24 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(11, $auditData = $model->toAudit());
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
-                'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
+                'reviewed'     => 1,
             ],
             'event'                 => 'created',
             'auditable_id'          => null,
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => $id,
             $morphPrefix . '_type'  => $type,
-            'url'                   => UrlResolver::resolveCommandLine(),
+            'tags'                  => null,
+            'url'                   => 'vendor/bin/phpunit',
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
-        ], $auditData, true);
+        ], $auditData);
     }
 
     /**
@@ -602,7 +602,7 @@ class AuditableTest extends AuditingTestCase
         $this->assertCount(11, $auditData = $model->toAudit());
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'old_values'     => [],
             'new_values'     => [
                 'title'   => 'How To Audit Eloquent Models',
@@ -613,11 +613,11 @@ class AuditableTest extends AuditingTestCase
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => null,
             $morphPrefix . '_type'  => null,
-            'url'                   => UrlResolver::resolveCommandLine(),
+            'tags'                  => null,
+            'url'                   => 'vendor/bin/phpunit',
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
-        ], $auditData, true);
+        ], $auditData);
     }
 
     /**
@@ -672,7 +672,7 @@ class AuditableTest extends AuditingTestCase
             'reviewed' => Base64Encoder::class,
         ];
 
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'old_values' => [
                 'title'        => 'Ho#################',
                 'content'      => '##A',
@@ -685,7 +685,16 @@ class AuditableTest extends AuditingTestCase
                 'published_at' => $now->toDateTimeString(),
                 'reviewed'     => 'MQ==',
             ],
-        ], $model->toAudit(), true);
+            'event' => 'updated',
+            'auditable_id' => null,
+            'auditable_type' => 'OwenIt\Auditing\Tests\Models\Article',
+            'prefix_id' => null,
+            'prefix_type' => null,
+            'tags' => null,
+            'url' => 'vendor/bin/phpunit',
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'Symfony',
+        ], $model->toAudit());
     }
 
     /**
@@ -716,15 +725,14 @@ class AuditableTest extends AuditingTestCase
 
         $this->assertCount(11, $auditData = $model->toAudit());
 
-        self::Assert()::assertArraySubset([
-            'new_values' => [
+        self::assertSame([], $auditData['old_values']);
+        self::assertSame([
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => 'First step: install the laravel-auditing package.',
                 'reviewed'     => 1,
                 'published_at' => '2012-06-14 15:03:00',
                 'slug'         => 'how-to-audit-eloquent-models',
-            ],
-        ], $auditData, true);
+            ], $auditData['new_values']);
     }
 
     /**
@@ -735,7 +743,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        self::Assert()::assertArraySubset([], $model->getAuditInclude(), true);
+        self::assertSame([], $model->getAuditInclude());
     }
 
     /**
@@ -751,10 +759,10 @@ class AuditableTest extends AuditingTestCase
             'content',
         ];
 
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'title',
             'content',
-        ], $model->getAuditInclude(), true);
+        ], $model->getAuditInclude());
     }
 
     /**
@@ -765,7 +773,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        self::Assert()::assertArraySubset([], $model->getAuditExclude(), true);
+        self::assertSame([], $model->getAuditExclude());
     }
 
     /**
@@ -780,9 +788,9 @@ class AuditableTest extends AuditingTestCase
             'published_at',
         ];
 
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'published_at',
-        ], $model->getAuditExclude(), true);
+        ], $model->getAuditExclude());
     }
 
     /**
@@ -799,7 +807,7 @@ class AuditableTest extends AuditingTestCase
         $model->save();
 
         /** @var Audit $audit */
-        $audit = Audit::all()->first();
+        $audit = Audit::first();
         $this->assertArrayNotHasKey('title', $audit->getModified());
     }
 
@@ -959,7 +967,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = new Article();
 
-        self::Assert()::assertArraySubset([], $model->generateTags(), true);
+        self::assertSame([], $model->generateTags(), true);
     }
 
     /**
@@ -978,7 +986,7 @@ class AuditableTest extends AuditingTestCase
             }
         };
 
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'foo',
             'bar',
         ], $model->generateTags(), true);
@@ -1176,10 +1184,10 @@ class AuditableTest extends AuditingTestCase
                 $e->getMessage()
             );
 
-            self::Assert()::assertArraySubset([
+            self::assertSame([
                 'subject',
                 'text',
-            ], $e->getIncompatibilities(), true);
+            ], $e->getIncompatibilities());
         }
     }
 
@@ -1385,11 +1393,12 @@ class AuditableTest extends AuditingTestCase
         $auditData = $model->toAudit();
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
+                'published_at' => null,
                 'reviewed'     => 1,
                 'images'       => [
                     'https://example.com/image1.jpg',
@@ -1401,11 +1410,11 @@ class AuditableTest extends AuditingTestCase
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => null,
             $morphPrefix . '_type'  => null,
-            'url'                   => UrlResolver::resolveCommandLine(),
+            'tags'                  => null,
+            'url'                   => 'vendor/bin/phpunit',
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
-        ], $auditData, true);
+        ], $auditData);
     }
 
     /**
@@ -1430,11 +1439,12 @@ class AuditableTest extends AuditingTestCase
         $auditData = $model->toAudit();
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
-        self::Assert()::assertArraySubset([
+        self::assertSame([
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
+                'published_at' => null,
                 'reviewed'     => 1,
             ],
             'event'                 => 'created',
@@ -1442,10 +1452,10 @@ class AuditableTest extends AuditingTestCase
             'auditable_type'        => Article::class,
             $morphPrefix . '_id'    => null,
             $morphPrefix . '_type'  => null,
-            'url'                   => UrlResolver::resolveCommandLine(),
+            'tags'                  => null,
+            'url'                   => 'vendor/bin/phpunit',
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
-        ], $auditData, true);
+        ], $auditData);
     }
 }

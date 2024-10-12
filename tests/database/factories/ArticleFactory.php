@@ -9,7 +9,9 @@ use OwenIt\Auditing\Tests\Models\Article;
 |--------------------------------------------------------------------------
 |
 */
-
+if (!isset($factory)) {
+    throw new Exception('Factory is not defined');
+}
 $factory->define(Article::class, function (Faker $faker) {
     return [
         'title'        => $faker->unique()->sentence,
