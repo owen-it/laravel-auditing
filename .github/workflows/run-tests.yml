@@ -73,3 +73,6 @@ jobs:
         run: |
           vendor/bin/phpunit
           vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver
+
+      - name: Run PHPStan
+        run: composer analyse

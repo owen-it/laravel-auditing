@@ -12,7 +12,7 @@ class CreateAuditsTestTable extends CreateAuditsTable
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         parent::up();
 

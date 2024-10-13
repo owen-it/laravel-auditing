@@ -2,17 +2,19 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          backupGlobals="false"
-         backupStaticAttributes="false"
          bootstrap="vendor/autoload.php"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnError="false"
          stopOnFailure="true"
-         verbose="true"
 >
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+            <directory suffix=".php">config</directory>
+            <directory suffix=".php">database</directory>
+        </include>
+    </source>
     <testsuites>
         <testsuite name="Auditing Test Suite">
             <directory suffix="Test.php">./tests</directory>
@@ -27,7 +29,7 @@
             <group>command-line-url-resolver</group>
         </exclude>
     </groups>
-    <coverage processUncoveredFiles="true">
+    <coverage>
         <include>
             <directory suffix=".php">./src</directory>
         </include>

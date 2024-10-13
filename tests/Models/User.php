@@ -3,13 +3,16 @@
 namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Tests\Database\Factories\UserFactory;
 
 class User extends Model implements Auditable, Authenticatable
 {
     use \Illuminate\Auth\Authenticatable;
     use \OwenIt\Auditing\Auditable;
+    use HasFactory;
 
     /**
      * {@inheritdoc}
@@ -28,5 +31,10 @@ class User extends Model implements Auditable, Authenticatable
     public function getFirstNameAttribute(string $value): string
     {
         return ucfirst($value);
+    }
+
+    public static function newFactory(): UserFactory
+    {
+        return new UserFactory();
     }
 }

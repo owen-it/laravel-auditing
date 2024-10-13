@@ -2,7 +2,9 @@
 
 namespace OwenIt\Auditing\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Database\Factories\AuditFactory;
 
 /**
  * @property string $tags
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
 {
     use \OwenIt\Auditing\Audit;
+    use HasFactory;
 
     /**
      * {@inheritdoc}
@@ -40,5 +43,10 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
     public function getSerializedDate($date)
     {
         return $this->serializeDate($date);
+    }
+
+    public static function newFactory(): AuditFactory
+    {
+        return new AuditFactory();
     }
 }
