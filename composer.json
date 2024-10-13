@@ -57,7 +57,7 @@
         "phpstan/phpstan-strict-rules": "^1.6"
     },
     "scripts": {
-        "stan": "vendor/bin/phpstan analyse --memory-limit=1G",
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
         "test": "vendor/bin/phpunit"
     },
     "autoload": {

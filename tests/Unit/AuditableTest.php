@@ -1245,7 +1245,8 @@ class AuditableTest extends AuditingTestCase
      */
     public function itWorksWithStringKeyModels()
     {
-        $model = factory(ApiModel::class)->create();
+        $model = ApiModel::factory()
+            ->create();
         $model->save();
         $model->refresh();
 
