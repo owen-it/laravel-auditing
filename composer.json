@@ -62,12 +62,14 @@
     },
     "autoload": {
         "psr-4": {
-            "OwenIt\\Auditing\\": "src/"
+            "OwenIt\\Auditing\\": "src/",
+            "OwenIt\\Auditing\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "OwenIt\\Auditing\\Tests\\": "tests/"
+            "OwenIt\\Auditing\\Tests\\": "tests/",
+            "OwenIt\\Auditing\\Tests\\Database\\Factories\\": "tests/database/factories/"
         }
     },
     "suggest": {

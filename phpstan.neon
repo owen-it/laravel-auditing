@@ -13,8 +13,6 @@ parameters:
         implicitThrows: false
         check:
             tooWideThrowType: true
-    stubFiles:
-        - database/migrations/audits.stub
     excludePaths:
         - tests/database/migrations
 services:

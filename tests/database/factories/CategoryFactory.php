@@ -1,18 +1,23 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace OwenIt\Auditing\Tests\Database\Factories;
 
-/*
-|--------------------------------------------------------------------------
-| Article Factories
-|--------------------------------------------------------------------------
-|
-*/
-if (!isset($factory)) {
-    throw new Exception('Factory is not defined');
+use Illuminate\Database\Eloquent\Factories\Factory;
+use OwenIt\Auditing\Tests\Models\Category;
+/**
+ * @extends Factory<Category>
+ */
+class CategoryFactory extends Factory
+{
+    protected $model = Category::class;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->unique()->colorName(),
+        ];
+    }
 }
-$factory->define(\OwenIt\Auditing\Tests\Models\Category::class, function (Faker $faker) {
-    return [
-        'name' => $faker->unique()->colorName(),
-    ];
-});

@@ -20,7 +20,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
         if (version_compare($this->app->version(), '8.0.0', '<')) {
             $this->markTestSkipped('This test is only for Laravel 8.0.0+');
         }
-
+        
         Event::fake();
 
         Event::assertListening(
@@ -36,7 +36,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
     {
         Queue::fake();
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         app()->make('events')->dispatch(new DispatchAudit($model));
 
@@ -55,10 +55,10 @@ class ProcessDispatchAuditTest extends AuditingTestCase
         $this->app['config']->set('audit.queue.connection', 'redis');
         $this->app['config']->set('audit.queue.queue', 'audits');
         $this->app['config']->set('audit.queue.delay', 60);
-
+        
         Queue::fake();
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         app()->make('events')->dispatch(new DispatchAudit($model));
 

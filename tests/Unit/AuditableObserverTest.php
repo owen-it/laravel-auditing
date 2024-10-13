@@ -18,6 +18,7 @@ class AuditableObserverTest extends AuditingTestCase
      */
     public function itWillCancelTheAuditDispatchingFromAnEventListener($eventMethod)
     {
+        
         Event::fake(
             [
                 DispatchAudit::class,
@@ -29,7 +30,7 @@ class AuditableObserverTest extends AuditingTestCase
         });
 
         $observer = new AuditableObserver();
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $observer->$eventMethod($model);
 
@@ -48,7 +49,7 @@ class AuditableObserverTest extends AuditingTestCase
         Event::fake();
 
         $observer = new AuditableObserver();
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $observer->$eventMethod($model);
 
@@ -79,7 +80,7 @@ class AuditableObserverTest extends AuditingTestCase
     public function itExecutesTheAuditorSuccessfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
     {
         $observer = new AuditableObserver();
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $this->assertSame($expectedBefore, $observer::$restoring);
 
