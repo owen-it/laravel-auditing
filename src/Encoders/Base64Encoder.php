@@ -17,6 +17,6 @@ class Base64Encoder implements \OwenIt\Auditing\Contracts\AttributeEncoder
      */
     public static function decode($value)
     {
-        return base64_decode($value);
+        return base64_decode($value, true);
     }
 }

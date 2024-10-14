@@ -24,7 +24,7 @@ class Database implements AuditDriver
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
             $auditClass = get_class($model->audits()->getModel());
-            $auditModel = new $auditClass;
+            $auditModel = new $auditClass();
 
             return $model->audits()
                 ->leftJoinSub(

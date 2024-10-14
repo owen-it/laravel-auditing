@@ -145,7 +145,7 @@ trait Audit
 
         // Cast to native PHP type
         if ($model->hasCast($key)) {
-            if ($model->getCastType($key) == 'datetime' ) {
+            if ($model->getCastType($key) == 'datetime') {
                 $value = $this->castDatetimeUTC($model, $value);
             }
 

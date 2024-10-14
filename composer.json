@@ -49,7 +49,8 @@
         "phpunit/phpunit": "^9.6|^10.5|^11.0",
         "mockery/mockery": "^1.0",
         "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0|^9.0",
-        "laravel/legacy-factories": "*"
+        "laravel/legacy-factories": "*",
+        "friendsofphp/php-cs-fixer": "^3.64"
     },
     "autoload": {
         "psr-4": {
@@ -73,6 +74,10 @@
                 "OwenIt\\Auditing\\AuditingServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "format-ci": "vendor/bin/php-cs-fixer fix --dry-run --diff --ansi  ./"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

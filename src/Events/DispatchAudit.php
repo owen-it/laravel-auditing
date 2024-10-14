@@ -56,7 +56,7 @@ class DispatchAudit
         foreach ($customProperties as $key) {
             try {
                 $values['model_data'][$key] = $this->getModelPropertyValue($reflection, $key);
-            } catch (\Throwable $e){
+            } catch (\Throwable $e) {
                 //
             }
         }
@@ -72,7 +72,7 @@ class DispatchAudit
      */
     public function __unserialize(array $values)
     {
-        $this->model = new $values['class'];
+        $this->model = new $values['class']();
 
         $reflection = new ReflectionClass($this->model);
         foreach ($values['model_data'] as $key => $value) {

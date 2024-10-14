@@ -69,6 +69,8 @@ jobs:
           composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-suggest
 
+      - name: PHP CS Fixer
+        run: composer format-ci
       - name: Execute tests
         run: |
           vendor/bin/phpunit
