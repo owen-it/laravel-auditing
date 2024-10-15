@@ -77,7 +77,7 @@
     },
     "scripts": {
         "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-        "format-ci": "vendor/bin/php-cs-fixer fix --dry-run --diff --ansi  ./"
+        "format-ci": "vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run --diff --ansi  ./"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
