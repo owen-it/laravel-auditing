@@ -1,0 +1,56 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Result of static method OwenIt\\\\Auditing\\\\Facades\\\\Auditor\\:\\:execute\\(\\) \\(void\\) is used\\.$#"
+			count: 1
+			path: src/AuditableObserver.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\ApiModel\\:\\:auditAttach\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/ApiModel.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\ApiModel\\:\\:auditDetach\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/ApiModel.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\ApiModel\\:\\:auditSync\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/ApiModel.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\Article\\:\\:auditAttach\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/Article.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\Article\\:\\:auditDetach\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/Article.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\Article\\:\\:auditSync\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/Article.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\User\\:\\:auditAttach\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/User.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\User\\:\\:auditDetach\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/User.php
+
+		-
+			message: "#^Method OwenIt\\\\Auditing\\\\Tests\\\\Models\\\\User\\:\\:auditSync\\(\\) has OwenIt\\\\Auditing\\\\Exceptions\\\\AuditingException in PHPDoc @throws tag but it's not thrown\\.$#"
+			count: 1
+			path: tests/Models/User.php
+
+		-
+			message: "#^Called 'first' on Laravel collection, but could have been retrieved as a query\\.$#"
+			count: 1
+			path: tests/Unit/AuditableTest.php
