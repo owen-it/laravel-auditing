@@ -25,4 +25,3 @@ final class Money
         $this->formatted = $formatter->formatCurrency($this->amount, $this->currency);
     }
 }
-
