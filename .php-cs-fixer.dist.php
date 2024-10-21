@@ -2,6 +2,9 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . '/')
+    ->exclude([
+        'vendor',
+    ])
     ->name('*.php');
 
 $config = new PhpCsFixer\Config();
