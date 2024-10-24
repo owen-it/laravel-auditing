@@ -758,6 +758,7 @@ trait Auditable
         } else {
             $results = $relationCall->detach($ids, $touch);
         }
+        
         $new = $relationCall->get($columns);
 
         $this->dispatchRelationAuditEvent($relationName, 'detach', $old, $new);
