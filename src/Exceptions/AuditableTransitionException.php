@@ -16,7 +16,7 @@ class AuditableTransitionException extends AuditingException
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = '', array $incompatibilities = [], $code = 0, Throwable $previous = null)
+    public function __construct($message = '', array $incompatibilities = [], $code = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
 
