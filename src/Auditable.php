@@ -117,7 +117,7 @@ trait Auditable
             if ($this->getUpdatedAtColumn()) {
                 $this->excludedAttributes[] = $this->getUpdatedAtColumn();
             }
-            if (in_array(SoftDeletes::class, class_uses_recursive(get_class($this)))) {
+            if (in_array(SoftDeletes::class, class_uses_recursive(get_class($this)), true)) {
                 $this->excludedAttributes[] = $this->getDeletedAtColumn();
             }
         }
