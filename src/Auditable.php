@@ -849,7 +849,7 @@ trait Auditable
 
         $this->auditEvent = $event;
         $this->isCustomEvent = true;
-        Event::dispatch(AuditCustom::class, [$this]);
+        Event::dispatch(new AuditCustom($this));
         $this->auditCustomOld = $this->auditCustomNew = [];
         $this->isCustomEvent = false;
     }
