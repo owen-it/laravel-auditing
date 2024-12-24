@@ -231,7 +231,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsProperCommandLineInUrlAuditMetadata()
     {
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertNotNull($audit);
 

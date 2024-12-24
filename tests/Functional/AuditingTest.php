@@ -306,7 +306,7 @@ class AuditingTest extends AuditingTestCase
             'updated',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title' => 'Title #0',
         ]);
 
@@ -462,7 +462,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertFalse(Article::$auditingDisabled);
 
         Article::withoutAuditing(function () {
-            factory(Article::class)->create();
+            Article::factory()->create();
         });
 
         $this->assertSame(1, Article::count());
@@ -470,7 +470,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Article::count());
         $this->assertSame(1, Audit::count());
@@ -667,8 +667,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillNotAuditAttachByInvalidRelationName()
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $this->expectExceptionMessage("Relationship invalidRelation was not found or does not support method attach");
 
@@ -709,9 +709,9 @@ class AuditingTest extends AuditingTestCase
     public function itWillAuditSyncIndividually()
     {
         Article::disableAuditing();
-        $user = factory(User::class)->create();
-        $category = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        $article = Article::factory()->create();
         Article::enableAuditing();
 
         $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
@@ -746,9 +746,9 @@ class AuditingTest extends AuditingTestCase
             $this->markTestSkipped('This test is only for Laravel 8.0.0+');
         }
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
 
@@ -785,10 +785,10 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditSyncByClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $thirdCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $thirdCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
         $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
@@ -833,9 +833,9 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillNotAuditSyncByInvalidClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -884,10 +884,10 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditDetachByClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $thirdCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $thirdCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
         $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
@@ -924,8 +924,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillNotAuditDetachByInvalidClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 

@@ -1417,7 +1417,7 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.allowed_array_values', true);
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -1462,7 +1462,7 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.allowed_array_values', false);
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,

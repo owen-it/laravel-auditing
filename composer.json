@@ -46,7 +46,6 @@
         "illuminate/filesystem": "^9.0|^10.0|^11.0"
     },
     "require-dev": {
-        "laravel/legacy-factories": "*",
         "larastan/larastan": "^2.0",
         "mockery/mockery": "^1.5.1",
         "orchestra/testbench": "^7.22.1|^8.0|^9.0",
