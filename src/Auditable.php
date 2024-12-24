@@ -409,7 +409,7 @@ trait Auditable
         return $resolved;
     }
 
-    public function preloadResolverData()
+    public function preloadResolverData(): self
     {
         $this->preloadedResolverData = $this->runResolvers();
 
