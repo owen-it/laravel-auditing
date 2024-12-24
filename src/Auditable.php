@@ -2,8 +2,11 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
@@ -120,6 +123,22 @@ trait Auditable
                     $excludedAttributes[] = $this->getDeletedAtColumn();
                 }
             }
+
+            // Valid attributes are all those that made it out of the exclusion array
+            $attributes = Arr::except($this->attributes, $excludedAttributes);
+
+            foreach ($attributes as $attribute => $value) {
+                // Apart from null, non scalar values will be excluded
+                if (
+                    (is_array($value) && !Config::get('audit.allowed_array_values', false)) ||
+                    (is_object($value) &&
+                        !method_exists($value, '__toString') &&
+                        !($value instanceof \UnitEnum))
+                ) {
+                    $excludedAttributes[] = $attribute;
+                }
+            }
+
             $this->resolvedExcludedAttributes = $excludedAttributes;
         }
 
@@ -260,7 +279,7 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
-        if (static::$auditingDisabled) {
+        if (static::$auditingDisabled || Models\Audit::$auditingGloballyDisabled) {
             return false;
         }
 
@@ -366,6 +385,10 @@ trait Auditable
      */
     protected function resolveUser()
     {
+        if (!empty($this->preloadedResolverData['user'] ?? null)) {
+            return $this->preloadedResolverData['user'];
+        }
+
         $userResolver = Config::get('audit.user.resolver');
 
         if (is_null($userResolver) && Config::has('audit.resolver') && ! Config::has('audit.user.resolver')) {
@@ -413,8 +436,9 @@ trait Auditable
     {
         $this->preloadedResolverData = $this->runResolvers();
 
-        if (! empty($this->resolveUser())) {
-            $this->preloadedResolverData['user'] = $this->resolveUser();
+        $user = $this->resolveUser();
+        if (!empty($user)) {
+            $this->preloadedResolverData['user'] = $user;
         }
 
         return $this;
@@ -537,6 +561,16 @@ trait Auditable
     }
 
     /**
+     * Is Auditing disabled.
+     *
+     * @return bool
+     */
+    public static function isAuditingDisabled(): bool
+    {
+        return static::$auditingDisabled || Models\Audit::$auditingGloballyDisabled;
+    }
+
+    /**
      * Disable Auditing.
      *
      * @return void
@@ -554,6 +588,29 @@ trait Auditable
     public static function enableAuditing()
     {
         static::$auditingDisabled = false;
+    }
+
+    /**
+     * Execute a callback while auditing is disabled.
+     *
+     * @param callable $callback
+     * @param bool $globally
+     *
+     * @return mixed
+     */
+    public static function withoutAuditing(callable $callback, bool $globally = false)
+    {
+        $auditingDisabled = static::$auditingDisabled;
+
+        static::disableAuditing();
+        Models\Audit::$auditingGloballyDisabled = $globally;
+
+        try {
+            return $callback();
+        } finally {
+            Models\Audit::$auditingGloballyDisabled = false;
+            static::$auditingDisabled = $auditingDisabled;
+        }
     }
 
     /**
@@ -674,94 +731,143 @@ trait Auditable
     */
 
     /**
-     * @param  mixed  $id
-     * @param  bool  $touch
-     * @param  array  $columns
+     * @param string $relationName
+     * @param mixed $id
+     * @param array $attributes
+     * @param bool $touch
+     * @param array $columns
+     * @param \Closure|null $callback
      * @return void
      *
      * @throws AuditingException
      */
-    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'])
+    public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'], $callback = null)
     {
-        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'attach')) {
-            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method attach');
+        $this->validateRelationshipMethodExistence($relationName, 'attach');
+
+        $relationCall = $this->{$relationName}();
+
+        if ($callback instanceof \Closure) {
+            $this->applyClosureToRelationship($relationCall, $callback);
         }
 
-        $old = $this->{$relationName}()->get($columns);
-        $this->{$relationName}()->attach($id, $attributes, $touch);
-        $new = $this->{$relationName}()->get($columns);
+        $old = $relationCall->get($columns);
+        $relationCall->attach($id, $attributes, $touch);
+        $new = $relationCall->get($columns);
+
         $this->dispatchRelationAuditEvent($relationName, 'attach', $old, $new);
     }
 
     /**
-     * @param  mixed  $ids
-     * @param  bool  $touch
-     * @param  array  $columns
+     * @param string $relationName
+     * @param mixed $ids
+     * @param bool $touch
+     * @param array $columns
+     * @param \Closure|null $callback
      * @return int
      *
      * @throws AuditingException
      */
-    public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'])
+    public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'], $callback = null)
     {
-        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'detach')) {
-            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method detach');
+        $this->validateRelationshipMethodExistence($relationName, 'detach');
+
+        $relationCall = $this->{$relationName}();
+
+        if ($callback instanceof \Closure) {
+            $this->applyClosureToRelationship($relationCall, $callback);
         }
 
-        $old = $this->{$relationName}()->get($columns);
-        $results = $this->{$relationName}()->detach($ids, $touch);
-        $new = $this->{$relationName}()->get($columns);
+        $old = $relationCall->get($columns);
+        $results = $relationCall->detach($ids, $touch);
+        $new = $relationCall->get($columns);
+
         $this->dispatchRelationAuditEvent($relationName, 'detach', $old, $new);
 
         return empty($results) ? 0 : $results;
     }
 
     /**
-     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $ids
-     * @param  bool  $detaching
-     * @param  array  $columns
+     * @param string $relationName
+     * @param Collection|Model|array $ids
+     * @param bool $detaching
+     * @param array $columns
+     * @param \Closure|null $callback
      * @return array
      *
      * @throws AuditingException
      */
-    public function auditSync($relationName, $ids, $detaching = true, $columns = ['*'])
+    public function auditSync(string $relationName, $ids, $detaching = true, $columns = ['*'], $callback = null)
     {
-        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'sync')) {
-            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method sync');
+        $this->validateRelationshipMethodExistence($relationName, 'sync');
+
+        $relationCall = $this->{$relationName}();
+
+        if ($callback instanceof \Closure) {
+            $this->applyClosureToRelationship($relationCall, $callback);
         }
 
-        $old = $this->{$relationName}()->get($columns);
-        $changes = $this->{$relationName}()->sync($ids, $detaching);
+        $old = $relationCall->get($columns);
+        $changes = $relationCall->sync($ids, $detaching);
+
         if (collect($changes)->flatten()->isEmpty()) {
             $old = $new = collect([]);
         } else {
-            $new = $this->{$relationName}()->get($columns);
+            $new = $relationCall->get($columns);
         }
+
         $this->dispatchRelationAuditEvent($relationName, 'sync', $old, $new);
 
         return $changes;
     }
 
     /**
-     * @param  \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model|array  $ids
-     * @param  array  $columns
+     * @param string $relationName
+     * @param Collection|Model|array $ids
+     * @param array $columns
+     * @param \Closure|null $callback
      * @return array
      *
      * @throws AuditingException
      */
-    public function auditSyncWithoutDetaching(string $relationName, $ids, $columns = ['*'])
+    public function auditSyncWithoutDetaching(string $relationName, $ids, $columns = ['*'], $callback = null)
     {
-        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), 'syncWithoutDetaching')) {
-            throw new AuditingException('Relationship '.$relationName.' was not found or does not support method syncWithoutDetaching');
-        }
+        $this->validateRelationshipMethodExistence($relationName, 'syncWithoutDetaching');
 
-        return $this->auditSync($relationName, $ids, false, $columns);
+        return $this->auditSync($relationName, $ids, false, $columns, $callback);
     }
 
     /**
-     * @param  string  $relationName
-     * @param  string  $event
-     * @param  \Illuminate\Support\Collection  $old
-     * @param  \Illuminate\Support\Collection  $new
+     * @param string $relationName
+     * @param Collection|Model|array  $ids
+     * @param array  $values
+     * @param bool  $detaching
+     * @param array $columns
+     * @param \Closure|null $callback
+     * @return array
+     */
+    public function auditSyncWithPivotValues(string $relationName, $ids, array $values, bool $detaching = true, $columns = ['*'], $callback = null)
+    {
+        $this->validateRelationshipMethodExistence($relationName, 'syncWithPivotValues');
+
+        if ($ids instanceof Model) {
+            $ids = $ids->getKey();
+        } elseif ($ids instanceof \Illuminate\Database\Eloquent\Collection) {
+            $ids = $ids->isEmpty() ? [] : $ids->pluck($ids->first()->getKeyName())->toArray();
+        } elseif ($ids instanceof Collection) {
+            $ids = $ids->toArray();
+        }
+
+        return $this->auditSync($relationName, collect(Arr::wrap($ids))->mapWithKeys(function ($id) use ($values) {
+            return [$id => $values];
+        }), $detaching, $columns, $callback);
+    }
+
+    /**
+     * @param string $relationName
+     * @param string $event
+     * @param Collection $old
+     * @param Collection $new
      * @return void
      */
     private function dispatchRelationAuditEvent($relationName, $event, $old, $new)
@@ -779,6 +885,23 @@ trait Auditable
         $this->auditEvent = $event;
         $this->isCustomEvent = true;
         Event::dispatch(Events\AuditCustom::class, [$this]);
+        $this->auditCustomOld = $this->auditCustomNew = [];
         $this->isCustomEvent = false;
+    }
+
+    private function validateRelationshipMethodExistence(string $relationName, string $methodName): void
+    {
+        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), $methodName)) {
+            throw new AuditingException("Relationship $relationName was not found or does not support method $methodName");
+        }
+    }
+
+    private function applyClosureToRelationship(BelongsToMany $relation, \Closure $closure): void
+    {
+        try {
+            $closure($relation);
+        } catch (\Throwable $exception) {
+            throw new AuditingException("Invalid Closure for {$relation->getRelationName()} Relationship");
+        }
     }
 }

@@ -86,7 +86,10 @@ class AuditableObserverTest extends AuditingTestCase
         $this->assertSame($expectedAfter, $observer::$restoring);
     }
 
-    public function auditableObserverTestProvider(): array
+    /**
+     * @return array
+     */
+    public static function auditableObserverTestProvider(): array
     {
         return [
             [
@@ -122,7 +125,10 @@ class AuditableObserverTest extends AuditingTestCase
         ];
     }
 
-    public function auditableObserverDispatchTestProvider(): array
+    /**
+     * @return array
+     */
+    public static function auditableObserverDispatchTestProvider(): array
     {
         return [
             [

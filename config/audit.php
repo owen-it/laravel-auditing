@@ -108,6 +108,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Allowed Array Values
+    |--------------------------------------------------------------------------
+    |
+    | Should the array values be audited?
+    |
+    | By default, array values are not allowed. This is to prevent performance
+    | issues when storing large amounts of data. You can override this by
+    | setting allow_array_values to true.
+    */
+    'allowed_array_values' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Audit Timestamps
     |--------------------------------------------------------------------------
     |
@@ -166,6 +179,7 @@ return [
     */
 
     'queue' => [
+        'enable'     => false,
         'connection' => 'sync',
         'queue' => 'default',
         'delay' => 0,

@@ -77,7 +77,7 @@ trait Audit
 
         // Metadata
         $this->data = [
-            'audit_id' => $this->id,
+            'audit_id' => $this->getKey(),
             'audit_event' => $this->event,
             'audit_tags' => $this->tags,
             'audit_created_at' => $this->serializeDate($this->{$this->getCreatedAtColumn()}),
@@ -102,12 +102,12 @@ trait Audit
         $this->metadata = array_keys($this->data);
 
         // Modified Auditable attributes
-        foreach ($this->new_values as $key => $value) {
-            $this->data['new_'.$key] = $value;
+        foreach ($this->new_values ?? [] as $key => $value) {
+            $this->data['new_' . $key] = $value;
         }
 
-        foreach ($this->old_values as $key => $value) {
-            $this->data['old_'.$key] = $value;
+        foreach ($this->old_values ?? [] as $key => $value) {
+            $this->data['old_' . $key] = $value;
         }
 
         $this->modified = array_diff_key(array_keys($this->data), $this->metadata);

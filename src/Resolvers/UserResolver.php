@@ -11,12 +11,8 @@ class UserResolver implements \OwenIt\Auditing\Contracts\UserResolver
     /**
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public static function resolve(Auditable $auditable)
+    public static function resolve()
     {
-        if (! empty($auditable->preloadedResolverData['user'])) {
-            return $auditable->preloadedResolverData['user'];
-        }
-
         $guards = Config::get('audit.user.guards', [
             \config('auth.defaults.guard'),
         ]);

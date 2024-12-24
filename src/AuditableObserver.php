@@ -2,9 +2,11 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Events\DispatchingAudit;
+use OwenIt\Auditing\Facades\Auditor;
 
 class AuditableObserver
 {
@@ -93,13 +95,21 @@ class AuditableObserver
 
     protected function dispatchAudit(Auditable $model): void
     {
-        if (! $model->readyForAuditing() || ! $this->fireDispatchingAuditEvent($model)) {
+        if (!$model->readyForAuditing()) {
+            return;
+        }
+
+        $model->preloadResolverData();
+        if (!Config::get('audit.queue.enable', false)) {
+            return Auditor::execute($model);
+        }
+
+        if (!$this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
         // Unload the relations to prevent large amounts of unnecessary data from being serialized.
-        // @phpstan-ignore-next-line
-        DispatchAudit::dispatch($model->preloadResolverData()->withoutRelations());
+        app()->make('events')->dispatch(new DispatchAudit($model->withoutRelations()));
     }
 
     /**

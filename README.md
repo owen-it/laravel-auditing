@@ -12,33 +12,33 @@
     <a href="https://discord.gg/csD9ysg"><img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Chat"></a>
 </p>
 
-This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities. 
+This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities.
 
 Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
 
 ## Official Documentation
 
-For more information on how to use the package, please refer to our official documentation available on [laravel-auditing.com](https://laravel-auditing.com) or in the [repository](https://github.com/owen-it/laravel-auditing-doc/blob/main/documentation.md) documentation file. Our documentation provides detailed instructions on how to install and use the package, as well as examples and best practices for auditing in Laravel applications.
+For more information on how to use the package, please refer to our official documentation available on [laravel-auditing.com](https://laravel-auditing.com) or in the [repository](https://github.com/owen-it/laravel-auditing.com/blob/main/docs/guide/documentation.md) documentation file. Our documentation provides detailed instructions on how to install and use the package, as well as examples and best practices for auditing in Laravel applications.
 
 Thank you for choosing OwenIt\LaravelAuditing!
 
 ## Version Information
 
- Version | Illuminate     | Status                  | PHP Version 
+Version  | Illuminate     | Status                  | PHP Version
 :--------|:---------------|:------------------------|:------------
- 14.x    | 9.x.x - 10.x.x | Active support :rocket: | > = 8.0     
- 13.x    | 7.x.x - 10.x.x | Active support :rocket: | > = 7.3 \   | 8.0
- 12.x    | 6.x.x - 9.x.x  | End of life             | > = 7.3 \   | 8.0
- 11.x    | 5.8.x - 8.x.x  | End of life             | > = 7.3     
- 10.x    | 5.8.x - 7.x.x  | End of life             | > = 7.2.5   
- 9.x     | 5.8.x - 6.x.x  | End of life             | > = 7.1.3   
- 8.x     | 5.2.x - 5.7.x  | End of life             | > = 7.0.13  
- 7.x     | 5.2.x - 5.6.x  | End of life             | > = 7.0.13  
- 6.x     | 5.2.x - 5.6.x  | End of life             | > = 7.0.13  
- 5.x     | 5.2.x - 5.5.x  | End of life             | > = 7.0.13  
- 4.x     | 5.2.x - 5.5.x  | End of life             | > = 5.5.9   
- 3.x     | 5.2.x - 5.4.x  | End of life             | > = 5.5.9   
- 2.x     | 5.1.x - 5.3.x  | End of life             | > = 5.5.9   
+14.x     | 9.x.x - 11.x.x | Active support :rocket: | > = 8.0
+13.x     | 7.x.x - 11.x.x | Active support :rocket: | > = 7.3 \| 8.0
+12.x     | 6.x.x - 9.x.x  | End of life             | > = 7.3 \| 8.0
+11.x     | 5.8.x - 8.x.x  | End of life             | > = 7.3
+10.x     | 5.8.x - 7.x.x  | End of life             | > = 7.2.5
+9.x      | 5.8.x - 6.x.x  | End of life             | > = 7.1.3
+8.x      | 5.2.x - 5.7.x  | End of life             | > = 7.0.13
+7.x      | 5.2.x - 5.6.x  | End of life             | > = 7.0.13
+6.x      | 5.2.x - 5.6.x  | End of life             | > = 7.0.13
+5.x      | 5.2.x - 5.5.x  | End of life             | > = 7.0.13
+4.x      | 5.2.x - 5.5.x  | End of life             | > = 5.5.9
+3.x      | 5.2.x - 5.4.x  | End of life             | > = 5.5.9
+2.x      | 5.1.x - 5.3.x  | End of life             | > = 5.5.9
 
 ## Contributing
 Please see the [contributing](http://laravel-auditing.com/docs/master/contributing) entry for more details.

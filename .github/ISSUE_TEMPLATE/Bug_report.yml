@@ -1,0 +1,43 @@
+name: Bug Report
+description: "Report something that's broken."
+body:
+  - type: markdown
+    attributes:
+      value: "Please read [our full contribution guide](https://github.com/owen-it/laravel-auditing/blob/master/CONTRIBUTING.md) before submitting bug reports. If you notice improper DocBlock, PHPStan, or IDE warnings while using Laravel Auditing, do not create a GitHub issue. Instead, please submit a pull request to fix the problem."
+  - type: input
+    attributes:
+      label: PHP Version
+      description: Provide the PHP version that you are using. [Please ensure it is still supported.](https://github.com/owen-it/laravel-auditing?tab=readme-ov-file#version-information)
+      placeholder: "8.3"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Laravel Version
+      description: Provide the Laravel version that you are using. [Please ensure it is still supported.](https://github.com/owen-it/laravel-auditing?tab=readme-ov-file#version-information)
+      placeholder: "11.x"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Package Version
+      description: Provide the Laravel Auditing package version that you are using. [Please ensure it is still supported.](https://github.com/owen-it/laravel-auditing?tab=readme-ov-file#version-information)
+      placeholder: "13.6.6"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Description
+      description: Provide a detailed description of the issue you are facing. Describe the behaviour you're experiencing and what behaviour you're expecting. Please, do not just copy and paste a random error message and expect help.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Provide detailed steps to reproduce your issue. Make sure to include code (affected models, configuration, ...). Pastebins, screenshots and/or other resources that may help us understand what's going on, will also be appreciated. If necessary, please provide a GitHub repository to demonstrate your issue using. 
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Possible Solutions
+      description: If you have any ideas on how to solve the issue, add them here, otherwise you can omit this part.

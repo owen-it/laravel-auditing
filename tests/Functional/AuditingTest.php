@@ -3,18 +3,22 @@
 namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Assert;
 use InvalidArgumentException;
 use OwenIt\Auditing\Events\AuditCustom;
+use OwenIt\Auditing\Events\Audited;
 use OwenIt\Auditing\Events\Auditing;
 use OwenIt\Auditing\Exceptions\AuditingException;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\fixtures\TenantResolver;
 use OwenIt\Auditing\Tests\Models\Article;
+use OwenIt\Auditing\Tests\Models\ArticleCustomAuditMorph;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;
 use OwenIt\Auditing\Tests\Models\Category;
 use OwenIt\Auditing\Tests\Models\User;
@@ -303,17 +307,24 @@ class AuditingTest extends AuditingTestCase
             'updated',
         ]);
 
-        $article = Article::factory()->create([
-            'reviewed' => 1,
+        $article = factory(Article::class)->create([
+            'title' => 'Title #0',
         ]);
 
-        foreach (range(0, 99) as $count) {
+        foreach (range(1, 20) as $count) {
+            if ($count === 11) {
+                sleep(1);
+            }
+
             $article->update([
-                'reviewed' => ($count % 2),
+                'title' => 'Title #' . $count,
             ]);
         }
 
-        $this->assertSame(10, $article->audits()->count());
+        $audits = $article->audits()->get();
+        $this->assertSame(10, $audits->count());
+        $this->assertSame('Title #11', $audits->first()->new_values['title']);
+        $this->assertSame('Title #20', $audits->last()->new_values['title']);
     }
 
     /**
@@ -335,7 +346,7 @@ class AuditingTest extends AuditingTestCase
     public function itWillNotAuditDueToClassWithoutDriverInterface()
     {
         // We just pass a FQCN that does not implement the AuditDriver interface
-        $this->app['config']->set('audit.driver', self::class);
+        $this->app['config']->set('audit.driver', Article::class);
 
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('The driver must implement the AuditDriver contract');
@@ -445,7 +456,29 @@ class AuditingTest extends AuditingTestCase
 
     /**
      * @test
-     *
+     */
+    public function itDisablesAndEnablesAuditingBackAgainViaWithoutAuditingMethod()
+    {
+        // Auditing is enabled by default
+        $this->assertFalse(Article::$auditingDisabled);
+
+        Article::withoutAuditing(function () {
+            factory(Article::class)->create();
+        });
+
+        $this->assertSame(1, Article::count());
+        $this->assertSame(0, Audit::count());
+
+        $this->assertFalse(Article::$auditingDisabled);
+
+        factory(Article::class)->create();
+
+        $this->assertSame(2, Article::count());
+        $this->assertSame(1, Audit::count());
+    }
+
+    /**
+     * @test
      * @return void
      */
     public function itHandlesJsonColumnsCorrectly()
@@ -633,6 +666,20 @@ class AuditingTest extends AuditingTestCase
      *
      * @return void
      */
+    public function itWillNotAuditAttachByInvalidRelationName()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $this->expectExceptionMessage("Relationship invalidRelation was not found or does not support method attach");
+
+        $article->auditAttach('invalidRelation', $firstCategory);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function itWillAuditSync()
     {
         $firstCategory = Category::factory()->create();
@@ -658,6 +705,154 @@ class AuditingTest extends AuditingTestCase
     /**
      * @test
      *
+     * @return void
+     */
+    public function itWillAuditSyncIndividually()
+    {
+        Article::disableAuditing();
+        $user = factory(User::class)->create();
+        $category = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+        Article::enableAuditing();
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $article->auditSync('users', [$user->getKey()]);
+        $article->auditSync('categories', [$category->getKey()]);
+        $audits = $article->audits()->get();
+        $auditFirst = $audits->first();
+        $auditLast = $audits->last();
+
+        $this->assertSame($no_of_audits_before + 2, $audits->count());
+        $this->assertSame($user->getKey(), $article->users()->first()->getKey());
+        $this->assertSame($category->getKey(), $article->categories()->first()->getKey());
+
+        $this->assertArrayHasKey('users', $auditFirst->new_values);
+        $this->assertArrayHasKey('users', $auditFirst->old_values);
+        $this->assertArrayNotHasKey('categories', $auditFirst->new_values);
+        $this->assertArrayNotHasKey('categories', $auditFirst->old_values);
+
+        $this->assertArrayHasKey('categories', $auditLast->new_values);
+        $this->assertArrayHasKey('categories', $auditLast->old_values);
+        $this->assertArrayNotHasKey('users', $auditLast->new_values);
+        $this->assertArrayNotHasKey('users', $auditLast->old_values);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditSyncWithPivotValues()
+    {
+        if (version_compare($this->app->version(), '8.0.0', '<')) {
+            $this->markTestSkipped('This test is only for Laravel 8.0.0+');
+        }
+
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditSyncWithPivotValues(
+            'categories',
+            $secondCategory,
+            [ 'pivot_type' => 'PIVOT_1' ]
+        );
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($secondCategory->getKey(), $categoryAfter);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+
+        $this->assertSame(
+            "{$secondCategory->getKey()}",
+            $article->categories()->pluck('id')->join(',')
+        );
+
+        $this->assertSame(
+            $secondCategory->getKey(),
+            $article->categories()->wherePivot('pivot_type', 'PIVOT_1')->first()->getKey()
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditSyncByClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $thirdCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
+        $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditSync(
+            'categories',
+            [$thirdCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]],
+            true,
+            ['*'],
+            function ($categories) { return $categories->wherePivot('pivot_type', 'PIVOT_1'); }
+        );
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($secondCategory->getKey(), $categoryAfter);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+
+        $this->assertSame(
+            "{$secondCategory->getKey()},{$thirdCategory->getKey()}",
+            $article->categories()->pluck('id')->join(',')
+        );
+
+        $this->assertSame(
+            $secondCategory->getKey(),
+            $article->categories()->wherePivot('pivot_type', 'PIVOT_2')->first()->getKey()
+        );
+
+        $this->assertSame(
+            $thirdCategory->getKey(),
+            $article->categories()->wherePivot('pivot_type', 'PIVOT_1')->first()->getKey()
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillNotAuditSyncByInvalidClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+
+        $this->expectException(QueryException::class);
+
+        $article->auditSync(
+            'categories',
+            [$secondCategory->getKey()],
+            true,
+            ['*'],
+            function ($categories) { return $categories->wherePivot('invalid_pivot_column', 'PIVOT_1'); }
+        );
+    }
+
+    /**
+     * @test
      * @return void
      */
     public function itWillAuditDetach()
@@ -686,6 +881,68 @@ class AuditingTest extends AuditingTestCase
     /**
      * @test
      *
+     * @return void
+     */
+    public function itWillAuditDetachByClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $secondCategory = factory(Category::class)->create();
+        $thirdCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
+        $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
+        $article->categories()->attach([$thirdCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
+
+        $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
+        $categoryBefore = $article->categories()->first()->getKey();
+
+        $article->auditDetach(
+            'categories',
+            [$firstCategory->getKey(), $secondCategory->getKey(), $thirdCategory->getKey()],
+            true,
+            ['*'],
+            function ($categories) { return $categories->wherePivot('pivot_type', 'PIVOT_1'); }
+        );
+
+        $no_of_audits_after = Audit::where('auditable_type', Article::class)->count();
+        $categoryAfter = $article->categories()->first()->getKey();
+
+        $this->assertSame($firstCategory->getKey(), $categoryBefore);
+        $this->assertSame($secondCategory->getKey(), $categoryAfter);
+        $this->assertNotSame($categoryBefore, $categoryAfter);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+
+        $this->assertSame(
+            "{$secondCategory->getKey()},{$thirdCategory->getKey()}",
+            $article->categories()->pluck('id')->join(',')
+        );
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillNotAuditDetachByInvalidClosure()
+    {
+        $firstCategory = factory(Category::class)->create();
+        $article = factory(Article::class)->create();
+
+        $article->categories()->attach($firstCategory);
+
+        $this->expectExceptionMessage('Invalid Closure for categories Relationship');
+
+        $article->auditDetach(
+            'categories',
+            [$firstCategory->getKey()],
+            true,
+            ['*'],
+            function ($categories) { return $categories->invalid(); }
+        );
+    }
+
+    /**
+     * @test
      * @return void
      */
     public function itWillAuditSyncWithoutChanges()
@@ -848,5 +1105,26 @@ class AuditingTest extends AuditingTestCase
             'new_values' => '{"customExample":"Darth Vader"}',
             'old_values' => '{"customExample":"Anakin Skywalker"}',
         ]);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function canAuditCustomAuditModelImplementation()
+    {
+        $audit = null;
+        Event::listen(Audited::class, function ($event) use (&$audit) {
+            $audit = $event->audit;
+        });
+
+        $article = new ArticleCustomAuditMorph();
+        $article->title = $this->faker->unique()->sentence;
+        $article->content = $this->faker->unique()->paragraph(6);
+        $article->reviewed = 0;
+        $article->save();
+
+        $this->assertNotEmpty($audit);
+        $this->assertSame(get_class($audit), \OwenIt\Auditing\Tests\Models\CustomAudit::class);
     }
 }

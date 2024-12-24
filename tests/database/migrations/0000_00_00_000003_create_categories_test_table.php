@@ -19,8 +19,9 @@ return new class extends Migration
 
         Schema::create('model_has_categories', function (Blueprint $table) {
             $table->string('model_type');
-            $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('model_id');
+            $table->unsignedBigInteger('category_id');
+            $table->string('pivot_type')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::drop('model_has_categories');
         Schema::drop('categories');
     }
 };

@@ -38,7 +38,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
 
         $model = Article::factory()->create();
 
-        DispatchAudit::dispatch($model);
+        app()->make('events')->dispatch(new DispatchAudit($model));
 
         Queue::assertPushed(CallQueuedListener::class, function ($job) use ($model) {
             return $job->class == ProcessDispatchAudit::class
@@ -60,7 +60,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
 
         $model = Article::factory()->create();
 
-        DispatchAudit::dispatch($model);
+        app()->make('events')->dispatch(new DispatchAudit($model));
 
         Queue::assertPushedOn('audits', CallQueuedListener::class, function ($job) use ($model) {
             $instantiatedJob = new $job->class;

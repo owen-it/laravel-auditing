@@ -19,6 +19,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamps();
         });
+
+        Schema::create('model_has_users', function (Blueprint $table) {
+            $table->string('model_type');
+            $table->unsignedBigInteger('model_id');
+            $table->unsignedBigInteger('user_id');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -26,6 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::drop('model_has_users');
         Schema::drop('users');
     }
 };
