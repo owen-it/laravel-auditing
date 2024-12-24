@@ -435,14 +435,18 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsDecodedAuditableAttributes()
     {
-        $article = new itReturnsDecodedAuditableAttributesArticle();
+        $model = factory(Article::class)->create();
+
+        $this->assertTrue(itReturnsDecodedAuditableAttributesArticle::first()->is($model));
 
         // Audit with redacted/encoded attributes
-        $audit = factory(Audit::class)->create([
-            'auditable_type' => get_class($article),
-            'old_values'     => [
-                'title'    => 'SG93IFRvIEF1ZGl0IE1vZGVscw==',
-                'content'  => '##A',
+        $audit = Audit::create([
+            'event' => 'updated',
+            'auditable_id' => $model->getKey(),
+            'auditable_type' => itReturnsDecodedAuditableAttributesArticle::class,
+            'old_values' => [
+                'title' => 'SG93IFRvIEF1ZGl0IE1vZGVscw==',
+                'content' => '##A',
                 'reviewed' => 0,
             ],
             'new_values'     => [
@@ -476,7 +480,12 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTags()
     {
-        $audit = factory(Audit::class)->create([
+        $model = factory(Article::class)->create();
+
+        $audit = Audit::create([
+            'event' => 'updated',
+            'auditable_id' => $model->getKey(),
+            'auditable_type' => Article::class,
             'tags' => 'foo,bar,baz',
         ]);
 
@@ -494,7 +503,12 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsEmptyTags()
     {
-        $audit = factory(Audit::class)->create([
+        $model = factory(Article::class)->create();
+
+        $audit = Audit::create([
+            'event' => 'updated',
+            'auditable_id' => $model->getKey(),
+            'auditable_type' => Article::class,
             'tags' => null,
         ]);
 
