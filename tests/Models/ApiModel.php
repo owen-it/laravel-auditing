@@ -5,9 +5,11 @@ namespace OwenIt\Auditing\Tests\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Tests\database\factories\HasTestFactory;
 
 class ApiModel extends Model implements Auditable
 {
+    use HasTestFactory;
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
 

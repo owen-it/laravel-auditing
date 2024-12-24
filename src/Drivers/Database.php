@@ -14,7 +14,14 @@ class Database implements AuditDriver
      */
     public function audit(Auditable $model): ?Audit
     {
-        return call_user_func([get_class($model->audits()->getModel()), 'create'], $model->toAudit());
+        $implementation = get_class($model->audits()->getModel());
+        $callback = [$implementation, 'create'];
+
+        if (! is_callable($callback)) {
+            throw new \UnexpectedValueException("Method config('audit.implementation')::create() does not exist.");
+        }
+
+        return call_user_func($callback, $model->toAudit());
     }
 
     /**

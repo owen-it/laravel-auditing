@@ -26,7 +26,7 @@ class AuditResolverCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/../../stubs/resolver.stub';
+        return __DIR__.'/../../stubs/resolver.stub';
     }
 
     /**
@@ -34,12 +34,13 @@ class AuditResolverCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\AuditResolvers';
+        return $rootNamespace.'\AuditResolvers';
     }
 
     public function handle()
     {
         $this->info('Add your new resolver to the resolvers array in audit.php config file.');
+
         return parent::handle();
     }
 }

@@ -15,6 +15,6 @@ class RightRedactor implements \OwenIt\Auditing\Contracts\AttributeRedactor
         // Make sure single character strings get redacted
         $length = ($total > $tenth) ? ($total - $tenth) : 1;
 
-        return str_pad(substr($value, 0, -$length), $total, '#', STR_PAD_RIGHT);
+        return str_pad(substr($value, 0, (int) -$length), $total, '#', STR_PAD_RIGHT);
     }
 }

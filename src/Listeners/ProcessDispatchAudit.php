@@ -2,10 +2,10 @@
 
 namespace OwenIt\Auditing\Listeners;
 
-use OwenIt\Auditing\Facades\Auditor;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Events\DispatchAudit;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use OwenIt\Auditing\Facades\Auditor;
 
 class ProcessDispatchAudit implements ShouldQueue
 {
@@ -24,7 +24,7 @@ class ProcessDispatchAudit implements ShouldQueue
         return Config::get('audit.queue.delay', 0);
     }
 
-    public function handle(DispatchAudit $event)
+    public function handle(DispatchAudit $event): void
     {
         Auditor::execute($event->model);
     }

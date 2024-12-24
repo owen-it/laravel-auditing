@@ -15,8 +15,6 @@ class DispatchingAudit
 
     /**
      * Create a new DispatchingAudit event instance.
-     *
-     * @param Auditable $model
      */
     public function __construct(Auditable $model)
     {
