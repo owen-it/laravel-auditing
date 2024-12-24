@@ -762,8 +762,10 @@ class AuditableTest extends AuditingTestCase
         $model->reviewed = 1;
         $model->save();
 
-        /** @var Audit $audit */
         $audit = Audit::all()->first();
+
+        $this->assertNotNull($audit);
+
         $this->assertArrayNotHasKey('title', $audit->getModified());
     }
 
@@ -1051,6 +1053,9 @@ class AuditableTest extends AuditingTestCase
 
         $firstModel = Article::factory()->create();
         $firstAudit = $firstModel->audits()->first();
+
+        $this->assertNotNull($firstAudit);
+
         $firstAudit->auditable_id = $firstModel->id;
 
         $secondModel = Article::factory()->create();

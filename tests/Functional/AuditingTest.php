@@ -124,6 +124,8 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->old_values);
 
         $this->assertEmpty($audit->new_values);
@@ -146,6 +148,8 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         $audit = Audit::first();
+
+        $this->assertNotNull($audit);
 
         $this->assertEmpty($audit->old_values);
 
@@ -184,6 +188,8 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         Assert::assertArraySubset([
             'content' => 'N/A',
             'published_at' => null,
@@ -217,6 +223,8 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         Assert::assertArraySubset([
             'title' => 'How To Audit Eloquent Models',
             'content' => 'N/A',
@@ -248,6 +256,8 @@ class AuditingTest extends AuditingTestCase
         $article->restore();
 
         $audit = Audit::first();
+
+        $this->assertNotNull($audit);
 
         $this->assertEmpty($audit->old_values);
 
@@ -349,6 +359,8 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->old_values);
 
         Assert::assertArraySubset([
@@ -444,8 +456,10 @@ class AuditingTest extends AuditingTestCase
         $article->config = ['articleIsGood' => false, 'authorsJob' => 'vampire'];
         $article->save();
 
-        /** @var Audit $audit */
         $audit = $article->audits()->skip(1)->first();
+
+        $this->assertNotNull($audit);
+
         $this->assertSame(false, $audit->getModified()['config']['new']['articleIsGood']);
         $this->assertSame(true, $audit->getModified()['config']['old']['articleIsGood']);
     }
@@ -464,6 +478,9 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertTrue(true);
         $audit = $article->audits()->first();
+
+        $this->assertNotNull($audit);
+
         $this->assertSame(1, (int) $audit->tenant_id);
     }
 
@@ -480,6 +497,9 @@ class AuditingTest extends AuditingTestCase
         $article = Article::factory()->create();
 
         $audit = $article->audits()->first();
+
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->ip_address);
     }
 

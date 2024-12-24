@@ -32,8 +32,10 @@ class AuditTest extends AuditingTestCase
             'published_at' => $now,
         ]);
 
-        /** @var Audit $audit */
         $audit = $article->audits()->first();
+
+        $this->assertNotNull($audit);
+
         $resolvedData = $audit->resolveData();
         $this->assertCount(15, $resolvedData);
 
@@ -83,6 +85,8 @@ class AuditTest extends AuditingTestCase
 
         $audit = $article->audits()->first();
 
+        $this->assertNotNull($audit);
+
         $this->assertCount(21, $resolvedData = $audit->resolveData());
 
         Assert::assertArraySubset([
@@ -131,6 +135,8 @@ class AuditTest extends AuditingTestCase
             'reviewed' => 1,
             'published_at' => Carbon::now(),
         ])->audits()->first();
+
+        $this->assertNotNull($audit);
 
         // Resolve data, making it available to the getDataValue() method
         $this->assertCount(21, $audit->resolveData());
@@ -198,6 +204,8 @@ class AuditTest extends AuditingTestCase
     {
         $audit = Article::factory()->create()->audits()->first();
 
+        $this->assertNotNull($audit);
+
         $this->assertCount(10, $metadata = $audit->getMetadata());
 
         Assert::assertArraySubset([
@@ -225,6 +233,8 @@ class AuditTest extends AuditingTestCase
     {
         $audit = factory(Article::class)->create()->audits()->first();
 
+        $this->assertNotNull($audit);
+
         self::Assert()::assertEquals($audit->getMetadata()['audit_url'], 'vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver');
     }
 
@@ -244,8 +254,9 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        /** @var Audit $audit */
         $audit = Article::factory()->create()->audits()->first();
+
+        $this->assertNotNull($audit);
 
         $this->assertCount(16, $metadata = $audit->getMetadata());
 
@@ -277,6 +288,8 @@ class AuditTest extends AuditingTestCase
     public function itReturnsAuditMetadataAsJsonString()
     {
         $audit = Article::factory()->create()->audits()->first();
+
+        $this->assertNotNull($audit);
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
@@ -315,6 +328,8 @@ class AuditTest extends AuditingTestCase
         $this->actingAs($user);
 
         $audit = Article::factory()->create()->audits()->first();
+
+        $this->assertNotNull($audit);
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
@@ -360,6 +375,8 @@ class AuditTest extends AuditingTestCase
             'published_at' => $now,
         ])->audits()->first();
 
+        $this->assertNotNull($audit);
+
         $this->assertCount(5, $modified = $audit->getModified());
 
         Assert::assertArraySubset([
@@ -390,13 +407,14 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now()->second(0)->microsecond(0);
 
-        /** @var Audit $audit */
         $audit = Article::factory()->create([
             'title' => 'How To Audit Eloquent Models',
             'content' => 'First step: install the laravel-auditing package.',
             'reviewed' => 1,
             'published_at' => $now,
         ])->audits()->first();
+
+        $this->assertNotNull($audit);
 
         $modified = $audit->getModified(true, JSON_PRETTY_PRINT);
 
