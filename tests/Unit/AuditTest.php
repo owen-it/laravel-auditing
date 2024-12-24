@@ -1,6 +1,6 @@
 <?php
 
-namespace OwenIt\Auditing\Tests;
+namespace OwenIt\Auditing\Tests\Unit;
 
 use Carbon\Carbon;
 use DateTimeInterface;
@@ -8,6 +8,7 @@ use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Resolvers\UrlResolver;
+use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\Money;
 use OwenIt\Auditing\Tests\Models\User;
