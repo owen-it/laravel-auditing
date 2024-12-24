@@ -91,13 +91,14 @@ class AuditableObserver
         static::$restoring = false;
     }
 
-    protected function dispatchAudit(Auditable $model)
+    protected function dispatchAudit(Auditable $model): void
     {
         if (! $model->readyForAuditing() || ! $this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
         // Unload the relations to prevent large amounts of unnecessary data from being serialized.
+        // @phpstan-ignore-next-line
         DispatchAudit::dispatch($model->preloadResolverData()->withoutRelations());
     }
 

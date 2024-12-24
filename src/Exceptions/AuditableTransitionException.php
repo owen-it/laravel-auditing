@@ -9,12 +9,12 @@ class AuditableTransitionException extends AuditingException
     /**
      * Attribute incompatibilities.
      *
-     * @var array
+     * @var array<string>
      */
     protected $incompatibilities = [];
 
     /**
-     * {@inheritdoc}
+     * @param array<string> $incompatibilities
      */
     public function __construct(string $message = '', array $incompatibilities = [], int $code = 0, ?Throwable $previous = null)
     {
@@ -24,7 +24,7 @@ class AuditableTransitionException extends AuditingException
     }
 
     /**
-     * Get the attribute incompatibilities.
+     * @return array<string>
      */
     public function getIncompatibilities(): array
     {

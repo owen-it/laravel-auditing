@@ -27,9 +27,6 @@ jobs:
     name: PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
     steps:
-      - name: Update apt
-        run: sudo apt-get update --fix-missing
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -42,7 +39,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" "nesbot/carbon:^2.62.1" --no-interaction --no-update
+          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" --no-interaction --no-update
           composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-suggest
 

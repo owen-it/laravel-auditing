@@ -9,5 +9,8 @@ return $config->setRules([
     '@PSR12'       => true,
     'strict_param' => true,
     'array_syntax' => ['syntax' => 'short'],
+    'binary_operator_spaces' => [
+        'default' => 'single_space',
+    ],
 ])
     ->setFinder($finder);

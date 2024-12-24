@@ -4,7 +4,7 @@ on:
     push:
         paths:
             - '**.php'
-            - 'phpstan.neon.dist'
+            - 'phpstan.neon'
 
 jobs:
     phpstan:
@@ -21,11 +21,6 @@ jobs:
 
             - name: Install composer dependencies
               uses: ramsey/composer-install@v2
-
-            - name: Install larastan
-              run: |
-                  composer require "nunomaduro/larastan" --no-interaction --no-update
-                  composer update --prefer-dist --no-interaction
 
             - name: Run PHPStan
               run: ./vendor/bin/phpstan --error-format=github

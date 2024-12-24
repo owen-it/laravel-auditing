@@ -1,0 +1,10 @@
+parameters:
+    bootstrapFiles:
+        - tests/ClassAliases.php
+    level: 8
+    paths:
+        - src
+        - config
+        - database/migrations/audits.stub
+        - stubs
+    tmpDir: build/phpstan

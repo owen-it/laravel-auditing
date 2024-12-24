@@ -40,7 +40,7 @@ class AuditingServiceProvider extends ServiceProvider
             return new \OwenIt\Auditing\Auditor($app);
         });
 
-        $this->app->register(AuditingEventServiceProvider::class);
+        // $this->app->register(AuditingEventServiceProvider::class);
     }
 
     /**
@@ -65,7 +65,7 @@ class AuditingServiceProvider extends ServiceProvider
     }
 
     /**
-     * {@inheritdoc}
+     * @return array<class-string>
      */
     public function provides()
     {

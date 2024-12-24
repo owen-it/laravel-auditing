@@ -16,21 +16,21 @@ trait Audit
     /**
      * Audit data.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $data = [];
 
     /**
      * The Audit attributes that belong to the metadata.
      *
-     * @var array
+     * @var array<int,string>
      */
     protected $metadata = [];
 
     /**
      * The Auditable attributes that were modified.
      *
-     * @var array
+     * @var array<int,string>
      */
     protected $modified = [];
 
@@ -292,8 +292,10 @@ trait Audit
 
     /**
      * Get the Audit tags as an array.
+     *
+     * @return array<int,string>|false
      */
-    public function getTags(): array
+    public function getTags(): array|false
     {
         return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY);
     }

@@ -27,6 +27,8 @@ interface Auditable
 
     /**
      * Get the events that trigger an Audit.
+     *
+     * @return array<string>
      */
     public function getAuditEvents(): array;
 
@@ -39,16 +41,22 @@ interface Auditable
      * Return data for an Audit.
      *
      * @throws \OwenIt\Auditing\Exceptions\AuditingException
+     *
+     * @return array<string,mixed>
      */
     public function toAudit(): array;
 
     /**
      * Get the (Auditable) attributes included in audit.
+     *
+     * @return array<string>
      */
     public function getAuditInclude(): array;
 
     /**
      * Get the (Auditable) attributes excluded from audit.
+     *
+     * @return array<string>
      */
     public function getAuditExclude(): array;
 
@@ -76,16 +84,23 @@ interface Auditable
 
     /**
      * Get the Attribute modifiers.
+     *
+     * @return array<string,string>
      */
     public function getAttributeModifiers(): array;
 
     /**
      * Transform the data before performing an audit.
+     *
+     * @param array<string,mixed> $data
+     * @return array<string,mixed>
      */
     public function transformAudit(array $data): array;
 
     /**
      * Generate an array with the model tags.
+     *
+     * @return array<string>
      */
     public function generateTags(): array;
 
@@ -96,4 +111,6 @@ interface Auditable
      * @throws \OwenIt\Auditing\Exceptions\AuditableTransitionException
      */
     public function transitionTo(Audit $audit, bool $old = false): Auditable;
+
+    public function preloadResolverData(): Auditable;
 }
