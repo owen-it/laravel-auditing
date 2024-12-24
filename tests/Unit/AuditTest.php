@@ -6,11 +6,11 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Testing\Assert;
 use OwenIt\Auditing\Encoders\Base64Encoder;
+use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
-use OwenIt\Auditing\Tests\Models\Audit;
 use OwenIt\Auditing\Tests\Models\Money;
 use OwenIt\Auditing\Tests\Models\User;
 
@@ -447,11 +447,15 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsDecodedAuditableAttributes()
     {
-        $article = new itReturnsDecodedAuditableAttributesArticle();
+        $model = Article::factory()->create();
+
+        $this->assertTrue(itReturnsDecodedAuditableAttributesArticle::first()->is($model));
 
         // Audit with redacted/encoded attributes
-        $audit = Audit::factory()->create([
-            'auditable_type' => get_class($article),
+        $audit = Audit::create([
+            'event' => 'updated',
+            'auditable_id' => $model->getKey(),
+            'auditable_type' => itReturnsDecodedAuditableAttributesArticle::class,
             'old_values' => [
                 'title' => 'SG93IFRvIEF1ZGl0IE1vZGVscw==',
                 'content' => '##A',
@@ -489,7 +493,12 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTags()
     {
-        $audit = Audit::factory()->create([
+        $model = Article::factory()->create();
+
+        $audit = Audit::create([
+            'event' => 'updated',
+            'auditable_id' => $model->getKey(),
+            'auditable_type' => Article::class,
             'tags' => 'foo,bar,baz',
         ]);
 
@@ -508,7 +517,12 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsEmptyTags()
     {
-        $audit = Audit::factory()->create([
+        $model = Article::factory()->create();
+
+        $audit = Audit::create([
+            'event' => 'updated',
+            'auditable_id' => $model->getKey(),
+            'auditable_type' => Article::class,
             'tags' => null,
         ]);
 

@@ -12,6 +12,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
+use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
 use OwenIt\Auditing\Redactors\RightRedactor;
 use OwenIt\Auditing\Resolvers\UrlResolver;
@@ -19,7 +20,6 @@ use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;
-use OwenIt\Auditing\Tests\Models\Audit;
 use OwenIt\Auditing\Tests\Models\User;
 use ReflectionClass;
 
@@ -1034,7 +1034,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable type OwenIt\Auditing\Tests\Models\Article, got OwenIt\Auditing\Tests\Models\User instead');
 
-        $audit = Audit::factory()->make([
+        $audit = new Audit([
             'auditable_type' => User::class,
         ]);
 
@@ -1091,7 +1091,7 @@ class AuditableTest extends AuditingTestCase
             'articles' => Article::class,
         ]);
 
-        $audit = Audit::factory()->make([
+        $audit = new Audit([
             'auditable_type' => 'users',
         ]);
 
@@ -1134,7 +1134,8 @@ class AuditableTest extends AuditingTestCase
 
         $model = Article::factory()->create();
 
-        $audit = Audit::factory()->create([
+        $audit = Audit::create([
+            'event' => 'updated',
             'auditable_type' => Article::class,
             'auditable_id' => (string) $model->id,
         ]);
@@ -1168,7 +1169,8 @@ class AuditableTest extends AuditingTestCase
             $key = (int) $model->id;
         }
 
-        $audit = Audit::factory()->create([
+        $audit = Audit::create([
+            'event' => 'updated',
             'auditable_type' => Article::class,
             'auditable_id' => $key,
         ]);
@@ -1192,7 +1194,8 @@ class AuditableTest extends AuditingTestCase
             'title' => RightRedactor::class,
         ];
 
-        $audit = Audit::factory()->create([
+        $audit = Audit::create([
+            'event' => 'created',
             'auditable_id' => $model->getKey(),
             'auditable_type' => Article::class,
         ]);
@@ -1209,7 +1212,7 @@ class AuditableTest extends AuditingTestCase
     {
         $model = Article::factory()->create();
 
-        $incompatibleAudit = Audit::factory()->create([
+        $incompatibleAudit = Audit::create([
             'event' => 'created',
             'auditable_id' => $model->getKey(),
             'auditable_type' => Article::class,
@@ -1220,11 +1223,13 @@ class AuditableTest extends AuditingTestCase
             ],
         ]);
 
+        $exceptionWasThrown = false;
+
         try {
             $model->transitionTo($incompatibleAudit);
         } catch (AuditableTransitionException $e) {
             $this->assertSame(
-                'Incompatibility between [OwenIt\Auditing\Tests\Models\Article:1] and [OwenIt\Auditing\Tests\Models\Audit:3]',
+                'Incompatibility between [OwenIt\Auditing\Tests\Models\Article:1] and [OwenIt\Auditing\Models\Audit:2]',
                 $e->getMessage()
             );
 
@@ -1232,7 +1237,11 @@ class AuditableTest extends AuditingTestCase
                 'subject',
                 'text',
             ], $e->getIncompatibilities(), true);
+
+            $exceptionWasThrown = true;
         }
+
+        $this->assertTrue($exceptionWasThrown);
     }
 
     /**
@@ -1263,7 +1272,8 @@ class AuditableTest extends AuditingTestCase
         $auditableType = $morphMap ? 'articles' : Article::class;
 
         $audits = $models->map(function (Article $model) use ($auditableType, $oldValues, $newValues) {
-            return Audit::factory()->create([
+            return Audit::create([
+                'event' => 'updated',
                 'auditable_id' => $model->getKey(),
                 'auditable_type' => $auditableType,
                 'old_values' => $oldValues,
