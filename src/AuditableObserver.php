@@ -107,7 +107,8 @@ class AuditableObserver
 
         $model->preloadResolverData();
         if (!Config::get('audit.queue.enable', false)) {
-            return Auditor::execute($model);
+            Auditor::execute($model);
+            return;
         }
 
         if (!$this->fireDispatchingAuditEvent($model)) {
