@@ -1,11 +1,9 @@
 name: run-tests
 
 on:
-  workflow_dispatch: # allows you to run the tests manually without having a PR to master
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    branches:
+      - '*'
 
 jobs:
   run-tests:
