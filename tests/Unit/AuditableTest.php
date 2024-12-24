@@ -993,7 +993,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable type OwenIt\Auditing\Tests\Models\Article, got OwenIt\Auditing\Tests\Models\User instead');
 
-        $audit = factory(Audit::class)->make([
+        $audit = new Audit([
             'auditable_type' => User::class,
         ]);
 
@@ -1047,7 +1047,7 @@ class AuditableTest extends AuditingTestCase
             'articles' => Article::class,
         ]);
 
-        $audit = factory(Audit::class)->make([
+        $audit = new Audit([
             'auditable_type' => 'users',
         ]);
 
@@ -1085,7 +1085,8 @@ class AuditableTest extends AuditingTestCase
 
         $model = factory(Article::class)->create();
 
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::create([
+            'event' => 'updated',
             'auditable_type' => Article::class,
             'auditable_id'   => (string)$model->id,
         ]);
@@ -1118,7 +1119,8 @@ class AuditableTest extends AuditingTestCase
             $key = (int)$model->id;
         }
 
-        $audit = factory(Audit::class)->create([
+        $audit = Audit::create([
+            'event' => 'updated',
             'auditable_type' => Article::class,
             'auditable_id'   => $key,
         ]);
@@ -1141,8 +1143,9 @@ class AuditableTest extends AuditingTestCase
             'title' => RightRedactor::class,
         ];
 
-        $audit = factory(Audit::class)->create([
-            'auditable_id'   => $model->getKey(),
+        $audit = Audit::create([
+            'event' => 'created',
+            'auditable_id' => $model->getKey(),
             'auditable_type' => Article::class,
         ]);
 
@@ -1157,9 +1160,9 @@ class AuditableTest extends AuditingTestCase
     {
         $model = factory(Article::class)->create();
 
-        $incompatibleAudit = factory(Audit::class)->create([
-            'event'          => 'created',
-            'auditable_id'   => $model->getKey(),
+        $incompatibleAudit = Audit::create([
+            'event' => 'created',
+            'auditable_id' => $model->getKey(),
             'auditable_type' => Article::class,
             'old_values'     => [],
             'new_values'     => [
@@ -1168,11 +1171,13 @@ class AuditableTest extends AuditingTestCase
             ],
         ]);
 
+        $exceptionWasThrown = false;
+
         try {
             $model->transitionTo($incompatibleAudit);
         } catch (AuditableTransitionException $e) {
             $this->assertSame(
-                'Incompatibility between [OwenIt\Auditing\Tests\Models\Article:1] and [OwenIt\Auditing\Models\Audit:3]',
+                'Incompatibility between [OwenIt\Auditing\Tests\Models\Article:1] and [OwenIt\Auditing\Models\Audit:2]',
                 $e->getMessage()
             );
 
@@ -1180,7 +1185,11 @@ class AuditableTest extends AuditingTestCase
                 'subject',
                 'text',
             ], $e->getIncompatibilities(), true);
+
+            $exceptionWasThrown = true;
         }
+
+        $this->assertTrue($exceptionWasThrown);
     }
 
     /**
@@ -1216,8 +1225,9 @@ class AuditableTest extends AuditingTestCase
         $auditableType = $morphMap ? 'articles' : Article::class;
 
         $audits = $models->map(function (Article $model) use ($auditableType, $oldValues, $newValues) {
-            return factory(Audit::class)->create([
-                'auditable_id'   => $model->getKey(),
+            return Audit::create([
+                'event' => 'updated',
+                'auditable_id' => $model->getKey(),
                 'auditable_type' => $auditableType,
                 'old_values'     => $oldValues,
                 'new_values'     => $newValues,
