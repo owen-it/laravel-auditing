@@ -1432,7 +1432,7 @@ class AuditableTest extends AuditingTestCase
         $auditData = $model->toAudit();
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',
@@ -1477,7 +1477,7 @@ class AuditableTest extends AuditingTestCase
         $auditData = $model->toAudit();
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'old_values'     => [],
             'new_values'     => [
                 'title'        => 'How To Audit Eloquent Models',

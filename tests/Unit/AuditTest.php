@@ -235,7 +235,7 @@ class AuditTest extends AuditingTestCase
 
         $this->assertNotNull($audit);
 
-        self::Assert()::assertEquals($audit->getMetadata()['audit_url'], 'vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver');
+        Assert::assertEquals($audit->getMetadata()['audit_url'], 'vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver');
     }
 
     /**
