@@ -798,8 +798,10 @@ class AuditableTest extends AuditingTestCase
         $model->reviewed = 1;
         $model->save();
 
-        /** @var Audit $audit */
-        $audit = Audit::all()->first();
+        $audit = Audit::first();
+
+        $this->assertNotNull($audit);
+
         $this->assertArrayNotHasKey('title', $audit->getModified());
     }
 
@@ -1022,6 +1024,8 @@ class AuditableTest extends AuditingTestCase
 
         $model = Article::first();
 
+        $this->assertNotNull($model);
+
         $this->assertEquals($model->published_at, $originalStart);
 
         $model->published_at = new Carbon('2022-01-01 12:30:00');
@@ -1067,6 +1071,8 @@ class AuditableTest extends AuditingTestCase
 
         $firstModel = factory(Article::class)->create();
         $firstAudit = $firstModel->audits()->first();
+        $this->assertNotNull($firstAudit);
+
         $firstAudit->auditable_id = $firstModel->id;
 
         $secondModel = factory(Article::class)->create();
