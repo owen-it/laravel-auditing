@@ -4,7 +4,6 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
