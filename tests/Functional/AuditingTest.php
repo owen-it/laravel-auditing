@@ -4,10 +4,10 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Testing\Assert;
 use InvalidArgumentException;
 use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Events\Audited;
@@ -156,7 +156,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertEmpty($audit->old_values);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -193,13 +193,13 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertNotNull($audit);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'content'      => 'N/A',
             'published_at' => null,
             'reviewed'     => 0,
         ], $audit->old_values, true);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
             'published_at' => $now->toDateTimeString(),
             'reviewed'     => 1,
@@ -228,7 +228,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertNotNull($audit);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -264,7 +264,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertEmpty($audit->old_values);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -373,7 +373,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertEmpty($audit->old_values);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Using The Fallback Driver',
             'content'      => 'N/A',
             'published_at' => null,
