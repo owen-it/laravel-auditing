@@ -6,5 +6,4 @@ use OwenIt\Auditing\Models\Audit;
 
 class CustomAudit extends Audit
 {
-
 }

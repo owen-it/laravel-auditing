@@ -63,7 +63,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
         app()->make('events')->dispatch(new DispatchAudit($model));
 
         Queue::assertPushedOn('audits', CallQueuedListener::class, function ($job) use ($model) {
-            $instantiatedJob = new $job->class;
+            $instantiatedJob = new $job->class();
 
             return $job->class == ProcessDispatchAudit::class
                 && $job->data[0] instanceof DispatchAudit
