@@ -169,7 +169,13 @@ trait Audit
         }
 
         if (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $value)) {
-            return Date::instance(Carbon::createFromFormat('Y-m-d', $value, Date::now('UTC')->getTimezone())->startOfDay());
+            $date = Carbon::createFromFormat('Y-m-d', $value, Date::now('UTC')->getTimezone());
+
+            if ($date === null) {
+                return $value;
+            }
+
+            return Date::instance($date->startOfDay());
         }
 
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/', $value)) {
@@ -259,7 +265,15 @@ trait Audit
             }
         }
 
-        return $json ? json_encode($metadata, $options, $depth) : $metadata;
+        if ($json === true) {
+            $metadata = json_encode($metadata, $options, $depth);
+
+            if ($metadata === false) {
+                return [];
+            }
+        }
+
+        return $metadata;
     }
 
     /**
@@ -285,7 +299,15 @@ trait Audit
             }
         }
 
-        return $json ? json_encode($modified, $options, $depth) : $modified;
+        if ($json === true) {
+            $modified = json_encode($modified, $options, $depth);
+
+            if ($modified === false) {
+                return [];
+            }
+        }
+
+        return $modified;
     }
 
     /**
