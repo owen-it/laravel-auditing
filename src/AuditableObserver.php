@@ -20,8 +20,6 @@ class AuditableObserver
     /**
      * Handle the retrieved event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
      * @return void
      */
     public function retrieved(Auditable $model)
@@ -32,8 +30,6 @@ class AuditableObserver
     /**
      * Handle the created event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
      * @return void
      */
     public function created(Auditable $model)
@@ -43,8 +39,6 @@ class AuditableObserver
 
     /**
      * Handle the updated event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -59,8 +53,6 @@ class AuditableObserver
     /**
      * Handle the deleted event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
      * @return void
      */
     public function deleted(Auditable $model)
@@ -70,8 +62,6 @@ class AuditableObserver
 
     /**
      * Handle the restoring event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -86,8 +76,6 @@ class AuditableObserver
     /**
      * Handle the restored event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
      * @return void
      */
     public function restored(Auditable $model)
@@ -99,7 +87,7 @@ class AuditableObserver
         static::$restoring = false;
     }
 
-    protected function dispatchAudit(Auditable $model)
+    protected function dispatchAudit(Auditable $model): void
     {
         if (!$model->readyForAuditing()) {
             return;
@@ -121,10 +109,6 @@ class AuditableObserver
 
     /**
      * Fire the Auditing event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
-     * @return bool
      */
     protected function fireDispatchingAuditEvent(Auditable $model): bool
     {

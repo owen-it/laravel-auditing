@@ -16,21 +16,21 @@ trait Audit
     /**
      * Audit data.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected $data = [];
 
     /**
      * The Audit attributes that belong to the metadata.
      *
-     * @var array
+     * @var array<int,string>
      */
     protected $metadata = [];
 
     /**
      * The Auditable attributes that were modified.
      *
-     * @var array
+     * @var array<int,string>
      */
     protected $modified = [];
 
@@ -118,8 +118,6 @@ trait Audit
     /**
      * Get the formatted value of an Eloquent model.
      *
-     * @param Model $model
-     * @param string $key
      * @param mixed $value
      *
      * @return mixed
@@ -162,6 +160,11 @@ trait Audit
         return $value;
     }
 
+    /**
+     * @param  Model  $model
+     * @param  mixed  $value
+     * @return mixed
+     */
     private function castDatetimeUTC($model, $value)
     {
         if (!is_string($value)) {
@@ -222,8 +225,6 @@ trait Audit
     /**
      * Decode attribute value.
      *
-     * @param Contracts\Auditable $auditable
-     * @param string $attribute
      * @param mixed $value
      *
      * @return mixed
@@ -306,9 +307,9 @@ trait Audit
     /**
      * Get the Audit tags as an array.
      *
-     * @return array
+     * @return array<string>|false
      */
-    public function getTags(): array
+    public function getTags()
     {
         return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY);
     }

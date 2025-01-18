@@ -37,7 +37,7 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
         // Note: Please do not add 'auditable_id' in here, as it will break non-integer PK models
     ];
 
-    public function getSerializedDate($date)
+    public function getSerializedDate(\DateTimeInterface $date): string
     {
         return $this->serializeDate($date);
     }
