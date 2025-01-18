@@ -10,7 +10,7 @@ class RightRedactor implements \OwenIt\Auditing\Contracts\AttributeRedactor
     public static function redact($value): string
     {
         $total = strlen($value);
-        $tenth = ceil($total / 10);
+        $tenth = (int) ceil($total / 10);
 
         // Make sure single character strings get redacted
         $length = ($total > $tenth) ? ($total - $tenth) : 1;
