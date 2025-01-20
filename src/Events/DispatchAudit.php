@@ -56,7 +56,7 @@ class DispatchAudit
         foreach ($customProperties as $key) {
             try {
                 $values['model_data'][$key] = $this->getModelPropertyValue($reflection, $key);
-            } catch (\Throwable $e){
+            } catch (\Throwable $e) {
                 //
             }
         }
@@ -67,10 +67,9 @@ class DispatchAudit
     /**
      * Restore the model after serialization.
      *
-     * @param  array  $values
-     * @return array
+     * @param array<string,mixed> $values
      */
-    public function __unserialize(array $values)
+    public function __unserialize(array $values): void
     {
         $this->model = new $values['class'];
 
@@ -78,8 +77,6 @@ class DispatchAudit
         foreach ($values['model_data'] as $key => $value) {
             $this->setModelPropertyValue($reflection, $key, $value);
         }
-
-        return $values;
     }
 
     /**
