@@ -307,10 +307,10 @@ trait Audit
     /**
      * Get the Audit tags as an array.
      *
-     * @return array<string>|false
+     * @return array<string>
      */
-    public function getTags()
+    public function getTags(): array
     {
-        return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY)?: [];
     }
 }
