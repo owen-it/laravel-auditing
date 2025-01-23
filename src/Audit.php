@@ -171,7 +171,7 @@ trait Audit
         if (preg_match('/^(\d{4})-(\d{1,2})-(\d{1,2})$/', $value)) {
             $date = Carbon::createFromFormat('Y-m-d', $value, Date::now('UTC')->getTimezone());
 
-            if ($date === null) {
+            if (! $date) {
                 return $value;
             }
 
@@ -265,15 +265,11 @@ trait Audit
             }
         }
 
-        if ($json === true) {
-            $metadata = json_encode($metadata, $options, $depth);
-
-            if ($metadata === false) {
-                return [];
-            }
+        if (! $json) {
+            return $metadata;
         }
 
-        return $metadata;
+        return json_encode($metadata, $options, $depth) ?: '{}';
     }
 
     /**
@@ -299,15 +295,12 @@ trait Audit
             }
         }
 
-        if ($json === true) {
-            $modified = json_encode($modified, $options, $depth);
-
-            if ($modified === false) {
-                return [];
-            }
+        
+        if (! $json) {
+            return $modified;
         }
 
-        return $modified;
+        return json_encode($modified, $options, $depth) ?: '{}';
     }
 
     /**
