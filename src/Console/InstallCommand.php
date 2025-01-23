@@ -44,7 +44,7 @@ class InstallCommand extends Command
 
         $appConfig = file_get_contents(config_path('app.php'));
 
-        if (Str::contains($appConfig, 'OwenIt\\Auditing\\AuditingServiceProvider::class')) {
+        if (! $appConfig || Str::contains($appConfig, 'OwenIt\\Auditing\\AuditingServiceProvider::class')) {
             return;
         }
 
