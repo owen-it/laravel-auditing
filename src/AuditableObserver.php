@@ -93,6 +93,7 @@ class AuditableObserver
             return;
         }
 
+        // @phpstan-ignore method.notFound
         $model->preloadResolverData();
         if (!Config::get('audit.queue.enable', false)) {
             Auditor::execute($model);
@@ -104,7 +105,8 @@ class AuditableObserver
         }
 
         // Unload the relations to prevent large amounts of unnecessary data from being serialized.
-        app()->make('events')->dispatch(new DispatchAudit($model->withoutRelations()));
+        $model->withoutRelations();
+        app()->make('events')->dispatch(new DispatchAudit($model));
     }
 
     /**

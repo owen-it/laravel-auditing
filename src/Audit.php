@@ -128,7 +128,8 @@ trait Audit
         if ($model->hasGetMutator($key)) {
             return $model->mutateAttribute($key, $value);
         }
-
+        // hasAttributeMutator since 8.x
+        // @phpstan-ignore function.alreadyNarrowedType
         if (method_exists($model, 'hasAttributeMutator') && $model->hasAttributeMutator($key)) {
             return $model->mutateAttributeMarkedAttribute($key, $value);
         }
