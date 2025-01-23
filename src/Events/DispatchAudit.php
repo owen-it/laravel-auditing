@@ -27,7 +27,7 @@ class DispatchAudit
     /**
      * Prepare the instance values for serialization.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function __serialize()
     {
@@ -81,8 +81,10 @@ class DispatchAudit
 
     /**
      * Set the property value for the given property.
+     *
+     * @param mixed $value
      */
-    protected function setModelPropertyValue(ReflectionClass $reflection, string $name, $value)
+    protected function setModelPropertyValue(ReflectionClass $reflection, string $name, $value): void
     {
         $property = $reflection->getProperty($name);
 

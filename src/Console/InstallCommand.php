@@ -20,7 +20,7 @@ class InstallCommand extends Command
     /**
      * {@inheritdoc}
      */
-    public function handle()
+    public function handle(): void
     {
         $this->comment('Publishing Auditing Configuration...');
         $this->callSilent('vendor:publish', ['--tag' => 'config']);

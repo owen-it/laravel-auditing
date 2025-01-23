@@ -38,7 +38,7 @@ interface Audit
     /**
      * Audit data resolver.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function resolveData(): array;
 
@@ -55,10 +55,10 @@ interface Audit
      * Get the Audit metadata.
      *
      * @param bool $json
-     * @param int  $options
-     * @param int  $depth
+     * @param int $options
+     * @param int<1, max> $depth
      *
-     * @return array|string
+     * @return array<string,mixed>|string
      */
     public function getMetadata(bool $json = false, int $options = 0, int $depth = 512);
 
@@ -66,10 +66,10 @@ interface Audit
      * Get the Auditable modified attributes.
      *
      * @param bool $json
-     * @param int  $options
-     * @param int  $depth
+     * @param int $options
+     * @param int<1, max> $depth
      *
-     * @return array|string
+     * @return array<string,mixed>|string
      */
     public function getModified(bool $json = false, int $options = 0, int $depth = 512);
 }
