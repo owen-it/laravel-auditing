@@ -73,7 +73,7 @@ class DispatchAudit
     {
         $model = new $values['class'];
 
-        if(! $model instanceof Auditable) {
+        if (! $model instanceof Auditable) {
             return;
         }
 
