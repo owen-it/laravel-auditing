@@ -1,0 +1,16 @@
+includes:
+    - phpstan-baseline.neon
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src/
+        - config/
+        - database/migrations/audits.stub
+        - stubs/
+    tmpDir: build/phpstan
+    ignoreErrors:
+        -
+            identifier: larastan.noEnvCallsOutsideOfConfig
+            path: config/audit.php
