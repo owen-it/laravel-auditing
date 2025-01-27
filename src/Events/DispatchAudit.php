@@ -71,8 +71,13 @@ class DispatchAudit
      */
     public function __unserialize(array $values): void
     {
-        $this->model = new $values['class'];
+        $model = new $values['class'];
 
+        if (! $model instanceof Auditable) {
+            return;
+        }
+
+        $this->model = $model;
         $reflection = new ReflectionClass($this->model);
         foreach ($values['model_data'] as $key => $value) {
             $this->setModelPropertyValue($reflection, $key, $value);
@@ -82,6 +87,7 @@ class DispatchAudit
     /**
      * Set the property value for the given property.
      *
+     * @param ReflectionClass<Auditable> $reflection
      * @param mixed $value
      */
     protected function setModelPropertyValue(ReflectionClass $reflection, string $name, $value): void
@@ -96,6 +102,7 @@ class DispatchAudit
     /**
      * Get the property value for the given property.
      *
+     * @param ReflectionClass<Auditable> $reflection
      * @return mixed
      */
     protected function getModelPropertyValue(ReflectionClass $reflection, string $name)

@@ -18,6 +18,7 @@ use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
+// @phpstan-ignore trait.unused
 trait Auditable
 {
     /**

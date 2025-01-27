@@ -4,12 +4,15 @@ namespace OwenIt\Auditing\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
+ */
 interface Auditable
 {
     /**
      * Auditable Model audits.
      *
-     * @return MorphMany<\OwenIt\Auditing\Models\Audit>
+     * @return MorphMany<\OwenIt\Auditing\Models\Audit, \Illuminate\Database\Eloquent\Model>
      */
     public function audits(): MorphMany;
 
