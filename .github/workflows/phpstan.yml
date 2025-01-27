@@ -16,7 +16,7 @@ jobs:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: 8.3
+                  php-version: 8.4
                   coverage: none
 
             - name: Install composer dependencies
@@ -24,7 +24,7 @@ jobs:
 
             - name: Install larastan
               run: |
-                  composer require "nunomaduro/larastan" --no-interaction --no-update
+                  composer require "larastan/larastan" --no-interaction --no-update
                   composer update --prefer-dist --no-interaction
 
             - name: Run PHPStan

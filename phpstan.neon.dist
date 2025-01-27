@@ -1,13 +1,12 @@
 includes:
-    - phpstan-baseline.neon
-    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/larastan/larastan/extension.neon
 
 parameters:
     level: 8
     paths:
         - src/
         - config/
-        - database/migrations/audits.stub
+        - database/
         - stubs/
     tmpDir: build/phpstan
     ignoreErrors:
