@@ -1,4 +1,4 @@
-## Note that changelogs after v13.0.0 are included in the [releases](releases).
+## Note that changelogs not listed here are included in the [releases](https://github.com/owen-it/laravel-auditing/releases).
 
 ---
 
