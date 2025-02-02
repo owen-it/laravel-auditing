@@ -94,8 +94,6 @@ class Auditor extends Manager implements Contracts\Auditor
 
     /**
      * Create an instance of the Database audit driver.
-     *
-     * @return \OwenIt\Auditing\Drivers\Database
      */
     protected function createDatabaseDriver(): Database
     {
@@ -104,11 +102,6 @@ class Auditor extends Manager implements Contracts\Auditor
 
     /**
      * Fire the Auditing event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     * @param \OwenIt\Auditing\Contracts\AuditDriver $driver
-     *
-     * @return bool
      */
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {

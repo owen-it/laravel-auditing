@@ -28,7 +28,8 @@ class Database implements AuditDriver
 
             return $model->audits()
                 ->leftJoinSub(
-                    $model->audits()->select($auditModel->getKeyName())->limit($threshold)->latest(),
+                    $model->audits()->getQuery()
+                        ->select($auditModel->getKeyName())->limit($threshold)->latest(),
                     'audit_threshold',
                     function ($join) use ($auditModel) {
                         $join->on(

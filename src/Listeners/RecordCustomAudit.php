@@ -7,7 +7,7 @@ use OwenIt\Auditing\Facades\Auditor;
 
 class RecordCustomAudit
 {
-    public function handle(AuditCustom $event)
+    public function handle(AuditCustom $event): void
     {
         Auditor::execute($event->model);
     }

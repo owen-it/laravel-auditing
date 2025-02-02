@@ -24,7 +24,7 @@ class ProcessDispatchAudit implements ShouldQueue
         return Config::get('audit.queue.delay', 0);
     }
 
-    public function handle(DispatchAudit $event)
+    public function handle(DispatchAudit $event): void
     {
         Auditor::execute($event->model);
     }

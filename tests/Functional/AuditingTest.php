@@ -4,10 +4,10 @@ namespace OwenIt\Auditing\Tests\Functional;
 
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Testing\Assert;
 use InvalidArgumentException;
 use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Events\Audited;
@@ -127,6 +127,8 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->old_values);
 
         $this->assertEmpty($audit->new_values);
@@ -150,9 +152,11 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->old_values);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -187,13 +191,15 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
-        self::Assert()::assertArraySubset([
+        $this->assertNotNull($audit);
+
+        Assert::assertArraySubset([
             'content'      => 'N/A',
             'published_at' => null,
             'reviewed'     => 0,
         ], $audit->old_values, true);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
             'published_at' => $now->toDateTimeString(),
             'reviewed'     => 1,
@@ -220,7 +226,9 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
-        self::Assert()::assertArraySubset([
+        $this->assertNotNull($audit);
+
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -252,9 +260,11 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->old_values);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -359,9 +369,11 @@ class AuditingTest extends AuditingTestCase
 
         $audit = Audit::first();
 
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->old_values);
 
-        self::Assert()::assertArraySubset([
+        Assert::assertArraySubset([
             'title'        => 'How To Audit Using The Fallback Driver',
             'content'      => 'N/A',
             'published_at' => null,
@@ -476,10 +488,12 @@ class AuditingTest extends AuditingTestCase
         $article->config = ['articleIsGood' => false, 'authorsJob' => 'vampire'];
         $article->save();
 
-        /** @var Audit $audit */
         $audit = $article->audits()->skip(1)->first();
-        $this->assertSame(false, $audit->getModified()['config']['new']['articleIsGood']);
-        $this->assertSame(true, $audit->getModified()['config']['old']['articleIsGood']);
+
+        $this->assertNotNull($audit);
+
+        $this->assertFalse($audit->getModified()['config']['new']['articleIsGood']);
+        $this->assertTrue($audit->getModified()['config']['old']['articleIsGood']);
     }
 
     /**
@@ -493,8 +507,10 @@ class AuditingTest extends AuditingTestCase
 
         $article = factory(Article::class)->create();
 
-        $this->assertTrue(true);
         $audit = $article->audits()->first();
+
+        $this->assertNotNull($audit);
+
         $this->assertSame(1, (int)$audit->tenant_id);
     }
 
@@ -510,6 +526,9 @@ class AuditingTest extends AuditingTestCase
         $article = factory(Article::class)->create();
 
         $audit = $article->audits()->first();
+
+        $this->assertNotNull($audit);
+
         $this->assertEmpty($audit->ip_address);
     }
 
