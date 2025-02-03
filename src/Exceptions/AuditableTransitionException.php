@@ -14,7 +14,7 @@ class AuditableTransitionException extends AuditingException
     protected $incompatibilities = [];
 
     /**
-     * @param array<string> $incompatibilities
+     * @param  array<string>  $incompatibilities
      */
     public function __construct(string $message = '', array $incompatibilities = [], int $code = 0, ?Throwable $previous = null)
     {

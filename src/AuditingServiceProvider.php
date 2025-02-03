@@ -23,7 +23,7 @@ class AuditingServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPublishing();
-        $this->mergeConfigFrom(__DIR__ . '/../config/audit.php', 'audit');
+        $this->mergeConfigFrom(__DIR__.'/../config/audit.php', 'audit');
 
         Event::listen(AuditCustom::class, RecordCustomAudit::class);
         Event::listen(DispatchAudit::class, ProcessDispatchAudit::class);
@@ -57,12 +57,12 @@ class AuditingServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             // Lumen lacks a config_path() helper, so we use base_path()
             $this->publishes([
-                __DIR__ . '/../config/audit.php' => base_path('config/audit.php'),
+                __DIR__.'/../config/audit.php' => base_path('config/audit.php'),
             ], 'config');
 
-            if (!class_exists('CreateAuditsTable')) {
+            if (! class_exists('CreateAuditsTable')) {
                 $this->publishes([
-                    __DIR__ . '/../database/migrations/audits.stub' => database_path(
+                    __DIR__.'/../database/migrations/audits.stub' => database_path(
                         sprintf('migrations/%s_create_audits_table.php', date('Y_m_d_His'))
                     ),
                 ], 'migrations');

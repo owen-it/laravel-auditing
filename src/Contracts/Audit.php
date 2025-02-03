@@ -45,7 +45,6 @@ interface Audit
     /**
      * Get an Audit data value.
      *
-     * @param string $key
      *
      * @return mixed
      */
@@ -54,10 +53,7 @@ interface Audit
     /**
      * Get the Audit metadata.
      *
-     * @param bool $json
-     * @param int $options
-     * @param int<1, max> $depth
-     *
+     * @param  int<1, max>  $depth
      * @return array<string,mixed>|string
      */
     public function getMetadata(bool $json = false, int $options = 0, int $depth = 512);
@@ -65,10 +61,7 @@ interface Audit
     /**
      * Get the Auditable modified attributes.
      *
-     * @param bool $json
-     * @param int $options
-     * @param int<1, max> $depth
-     *
+     * @param  int<1, max>  $depth
      * @return array<string,mixed>|string
      */
     public function getModified(bool $json = false, int $options = 0, int $depth = 512);
