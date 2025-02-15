@@ -448,7 +448,7 @@ class AuditableTest extends AuditingTestCase
     {
         $now = Carbon::now();
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -502,13 +502,13 @@ class AuditableTest extends AuditingTestCase
             $guard,
         ]);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->actingAs($user, $driver);
 
         $now = Carbon::now();
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -582,7 +582,7 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.strict', true);
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -631,7 +631,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid AttributeModifier implementation: invalidAttributeRedactorOrEncoder');
 
-        $model = factory(Article::class)->make();
+        $model = Article::factory()->make();
 
         $model->attributeModifiers = [
             'title' => 'invalidAttributeRedactorOrEncoder',
@@ -649,7 +649,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itModifiesTheAuditAttributesSuccessfully()
     {
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Models',
             'content'      => 'N/A',
             'reviewed'     => 0,
@@ -1016,7 +1016,7 @@ class AuditableTest extends AuditingTestCase
 
         $originalStart = new Carbon('2022-01-01 12:00:00');
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -1070,13 +1070,13 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id (integer)2, got (integer)1 instead');
 
-        $firstModel = factory(Article::class)->create();
+        $firstModel = Article::factory()->create();
         $firstAudit = $firstModel->audits()->first();
         $this->assertNotNull($firstAudit);
 
         $firstAudit->auditable_id = $firstModel->id;
 
-        $secondModel = factory(Article::class)->create();
+        $secondModel = Article::factory()->create();
 
         $secondModel->transitionTo($firstAudit);
     }
@@ -1090,7 +1090,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id (integer)1, got (string)1 instead');
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $audit = Audit::create([
             'event' => 'updated',
@@ -1117,7 +1117,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itTransitionsWhenTheAuditAuditableIdTypeDoesNotMatchTheModelIdType()
     {
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         // Key depends on type
         if ($model->getKeyType() == 'string') {
@@ -1144,7 +1144,7 @@ class AuditableTest extends AuditingTestCase
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Cannot transition states when an AttributeRedactor is set');
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $model->attributeModifiers = [
             'title' => RightRedactor::class,
@@ -1165,7 +1165,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itFailsToTransitionWhenTheAuditableAttributeCompatibilityIsNotMet()
     {
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $incompatibleAudit = Audit::create([
             'event' => 'created',
@@ -1218,7 +1218,7 @@ class AuditableTest extends AuditingTestCase
         array $oldExpectation,
         array $newExpectation
     ) {
-        $models = factory(Article::class, 2)->create([
+        $models = Article::factory()->count(2)->create([
             'title'   => 'Facilis voluptas qui impedit deserunt vitae quidem.',
             'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
         ]);
@@ -1255,7 +1255,7 @@ class AuditableTest extends AuditingTestCase
      */
     public function itWorksWithStringKeyModels()
     {
-        $model = factory(ApiModel::class)->create();
+        $model = ApiModel::factory()->create();
         $model->save();
         $model->refresh();
 
@@ -1387,7 +1387,7 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.allowed_array_values', true);
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -1432,7 +1432,7 @@ class AuditableTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.allowed_array_values', false);
 
-        $model = factory(Article::class)->make([
+        $model = Article::factory()->make([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,

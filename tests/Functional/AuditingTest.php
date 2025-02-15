@@ -33,7 +33,7 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.console', false);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(0, Audit::query()->count());
@@ -46,7 +46,7 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.console', true);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
@@ -62,7 +62,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->app['config']->set('audit.console', false);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
@@ -75,7 +75,7 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.console', true);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
@@ -97,7 +97,7 @@ class AuditingTest extends AuditingTestCase
             'retrieved',
         ]);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
@@ -116,7 +116,7 @@ class AuditingTest extends AuditingTestCase
             'retrieved',
         ]);
 
-        factory(Article::class)->create([
+        Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -143,7 +143,7 @@ class AuditingTest extends AuditingTestCase
             'created',
         ]);
 
-        factory(Article::class)->create([
+        Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -174,7 +174,7 @@ class AuditingTest extends AuditingTestCase
             'updated',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -215,7 +215,7 @@ class AuditingTest extends AuditingTestCase
             'deleted',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -248,7 +248,7 @@ class AuditingTest extends AuditingTestCase
             'restored',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'N/A',
             'published_at' => null,
@@ -283,7 +283,7 @@ class AuditingTest extends AuditingTestCase
             'updated',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'reviewed' => 1,
         ]);
 
@@ -306,7 +306,7 @@ class AuditingTest extends AuditingTestCase
             'updated',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title' => 'Title #0',
         ]);
 
@@ -336,7 +336,7 @@ class AuditingTest extends AuditingTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Driver [foo] not supported.');
 
-        factory(Article::class)->create();
+        Article::factory()->create();
     }
 
     /**
@@ -350,7 +350,7 @@ class AuditingTest extends AuditingTestCase
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('The driver must implement the AuditDriver contract');
 
-        factory(Article::class)->create();
+        Article::factory()->create();
     }
 
     /**
@@ -360,7 +360,7 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.driver', null);
 
-        factory(Article::class)->create([
+        Article::factory()->create([
             'title'        => 'How To Audit Using The Fallback Driver',
             'content'      => 'N/A',
             'published_at' => null,
@@ -391,7 +391,7 @@ class AuditingTest extends AuditingTestCase
             return false;
         });
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertNull(Audit::first());
     }
@@ -404,7 +404,7 @@ class AuditingTest extends AuditingTestCase
         // Auditing is enabled by default
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(1, Article::count());
         $this->assertSame(1, Audit::count());
@@ -413,7 +413,7 @@ class AuditingTest extends AuditingTestCase
         Article::disableAuditing();
         $this->assertTrue(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Article::count());
         $this->assertSame(1, Audit::count());
@@ -422,7 +422,7 @@ class AuditingTest extends AuditingTestCase
         Article::enableAuditing();
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Audit::count());
         $this->assertSame(3, Article::count());
@@ -438,7 +438,7 @@ class AuditingTest extends AuditingTestCase
 
         Article::disableAuditing();
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(1, Article::count());
         $this->assertSame(0, Audit::count());
@@ -447,7 +447,7 @@ class AuditingTest extends AuditingTestCase
         Article::enableAuditing();
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Article::count());
         $this->assertSame(1, Audit::count());
@@ -462,7 +462,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertFalse(Article::$auditingDisabled);
 
         Article::withoutAuditing(function () {
-            factory(Article::class)->create();
+            Article::factory()->create();
         });
 
         $this->assertSame(1, Article::count());
@@ -470,7 +470,7 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Article::count());
         $this->assertSame(1, Audit::count());
@@ -482,7 +482,7 @@ class AuditingTest extends AuditingTestCase
      */
     public function itHandlesJsonColumnsCorrectly()
     {
-        $article = factory(Article::class)->create(['config' => ['articleIsGood' => true, 'authorsJob' => 'vampire']]);
+        $article = Article::factory()->create(['config' => ['articleIsGood' => true, 'authorsJob' => 'vampire']]);
         $article->refresh();
 
         $article->config = ['articleIsGood' => false, 'authorsJob' => 'vampire'];
@@ -505,7 +505,7 @@ class AuditingTest extends AuditingTestCase
         // added new resolver
         $this->app['config']->set('audit.resolvers.tenant_id', TenantResolver::class);
 
-        $article = factory(Article::class)->create();
+        $article = Article::factory()->create();
 
         $audit = $article->audits()->first();
 
@@ -523,7 +523,7 @@ class AuditingTest extends AuditingTestCase
         // added new resolver
         $this->app['config']->set('audit.resolvers.ip_address', null);
 
-        $article = factory(Article::class)->create();
+        $article = Article::factory()->create();
 
         $audit = $article->audits()->first();
 
@@ -610,7 +610,7 @@ class AuditingTest extends AuditingTestCase
         $this->app['config']->set('audit.empty_values', false);
 
         /** @var Article $model */
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         Article::find(1);
 
@@ -622,7 +622,7 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditModelsWhenValuesAreEmpty()
     {
-        $model = factory(Article::class)->create([
+        $model = Article::factory()->create([
             'reviewed' => 0,
         ]);
 
@@ -639,9 +639,9 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditAttach()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->auditAttach('categories', $firstCategory);
         $article->auditAttach('categories', $secondCategory);
@@ -659,8 +659,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillNotAuditAttachByInvalidRelationName()
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $this->expectExceptionMessage("Relationship invalidRelation was not found or does not support method attach");
 
@@ -673,9 +673,9 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditSync()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -700,9 +700,9 @@ class AuditingTest extends AuditingTestCase
     public function itWillAuditSyncIndividually()
     {
         Article::disableAuditing();
-        $user = factory(User::class)->create();
-        $category = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        $article = Article::factory()->create();
         Article::enableAuditing();
 
         $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
@@ -737,9 +737,9 @@ class AuditingTest extends AuditingTestCase
             $this->markTestSkipped('This test is only for Laravel 8.0.0+');
         }
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
 
@@ -776,10 +776,10 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditSyncByClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $thirdCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $thirdCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
         $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
@@ -824,9 +824,9 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillNotAuditSyncByInvalidClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -847,9 +847,9 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditDetach()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
         $article->categories()->attach($secondCategory);
@@ -874,10 +874,10 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditDetachByClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $thirdCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $thirdCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => [ 'pivot_type' => 'PIVOT_1' ]]);
         $article->categories()->attach([$secondCategory->getKey() => [ 'pivot_type' => 'PIVOT_2' ]]);
@@ -914,8 +914,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillNotAuditDetachByInvalidClosure()
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -936,8 +936,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditSyncWithoutChanges()
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -963,9 +963,9 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -991,8 +991,8 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -1018,8 +1018,8 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -1045,9 +1045,9 @@ class AuditingTest extends AuditingTestCase
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -1071,7 +1071,7 @@ class AuditingTest extends AuditingTestCase
      */
     public function canAuditAnyCustomEvent()
     {
-        $article = factory(Article::class)->create();
+        $article = Article::factory()->create();
         $article->auditEvent = 'whateverYouWant';
         $article->isCustomEvent = true;
         $article->auditCustomOld = [

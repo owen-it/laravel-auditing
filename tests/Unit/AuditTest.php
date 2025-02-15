@@ -24,7 +24,7 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now();
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -64,7 +64,7 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now();
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -73,7 +73,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -116,7 +116,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTheAppropriateAuditableDataValues()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -125,7 +125,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $audit = factory(Article::class)->create([
+        $audit = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -164,7 +164,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTheAppropriateAuditableDataValuesWithCustomCastValueObject()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -173,7 +173,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -198,7 +198,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataAsArray()
     {
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertNotNull($audit);
 
@@ -226,7 +226,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsProperCommandLineInUrlAuditMetadata()
     {
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertNotNull($audit);
 
@@ -239,7 +239,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsArray()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -248,7 +248,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertNotNull($audit);
 
@@ -280,7 +280,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataAsJsonString()
     {
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertNotNull($audit);
 
@@ -310,7 +310,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsAuditMetadataIncludingUserAttributesAsJsonString()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'is_admin'   => 1,
             'first_name' => 'rick',
             'last_name'  => 'Sanchez',
@@ -319,7 +319,7 @@ class AuditTest extends AuditingTestCase
 
         $this->actingAs($user);
 
-        $audit = factory(Article::class)->create()->audits()->first();
+        $audit = Article::factory()->create()->audits()->first();
 
         $this->assertNotNull($audit);
 
@@ -359,7 +359,7 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now()->second(0)->microsecond(0);
 
-        $audit = factory(Article::class)->create([
+        $audit = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -397,7 +397,7 @@ class AuditTest extends AuditingTestCase
     {
         $now = Carbon::now()->second(0)->microsecond(0);
 
-        $audit = factory(Article::class)->create([
+        $audit = Article::factory()->create([
             'title'        => 'How To Audit Eloquent Models',
             'content'      => 'First step: install the laravel-auditing package.',
             'reviewed'     => 1,
@@ -436,7 +436,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsDecodedAuditableAttributes()
     {
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $this->assertTrue(itReturnsDecodedAuditableAttributesArticle::first()->is($model));
 
@@ -481,7 +481,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsTags()
     {
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $audit = Audit::create([
             'event' => 'updated',
@@ -504,7 +504,7 @@ class AuditTest extends AuditingTestCase
      */
     public function itReturnsEmptyTags()
     {
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $audit = Audit::create([
             'event' => 'updated',

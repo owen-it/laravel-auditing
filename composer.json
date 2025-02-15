@@ -1,6 +1,6 @@
 {
     "name": "owen-it/laravel-auditing",
-    "description": "Audit changes of your Eloquent models in Laravel/Lumen",
+    "description": "Audit changes of your Eloquent models in Laravel",
     "keywords": [
         "accountability",
         "audit",
@@ -39,17 +39,16 @@
         }
     ],
     "require": {
-        "php": "^7.3|^8.0",
-        "illuminate/console": "^7.0|^8.0|^9.0|^10.0|^11.0",
-        "illuminate/database": "^7.0|^8.0|^9.0|^10.0|^11.0",
-        "illuminate/filesystem": "^7.0|^8.0|^9.0|^10.0|^11.0",
-        "ext-json": "*"
+        "php": "^8.2",
+        "ext-json": "*",
+        "illuminate/console": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/filesystem": "^11.0|^12.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.6|^10.5|^11.0",
-        "mockery/mockery": "^1.0",
-        "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0|^9.0",
-        "laravel/legacy-factories": "*"
+        "mockery/mockery": "^1.5.1",
+        "orchestra/testbench": "^9.0|^10.0",
+        "phpunit/phpunit": "^11.0"
     },
     "autoload": {
         "psr-4": {
@@ -58,16 +57,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "OwenIt\\Auditing\\Tests\\": "tests/"
+            "OwenIt\\Auditing\\Tests\\": "tests/",
+            "Database\\Factories\\OwenIt\\Auditing\\Tests\\Models\\": "tests/database/factories"
         }
     },
-    "suggest": {
-        "irazasyed/larasupport": "Needed to publish the package configuration in Lumen"
-    },
     "extra": {
-        "branch-alias": {
-            "dev-master": "v13-dev"
-        },
         "laravel": {
             "providers": [
                 "OwenIt\\Auditing\\AuditingServiceProvider"

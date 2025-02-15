@@ -1,16 +1,18 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories\OwenIt\Auditing\Tests\Models;
 
-/*
-|--------------------------------------------------------------------------
-| Article Factories
-|--------------------------------------------------------------------------
-|
-*/
+use Illuminate\Database\Eloquent\Factories\Factory;
+use OwenIt\Auditing\Tests\Models\Category;
 
-$factory->define(\OwenIt\Auditing\Tests\Models\Category::class, function (Faker $faker) {
-    return [
-        'name' => $faker->unique()->colorName(),
-    ];
-});
+class CategoryFactory extends Factory
+{
+    protected $model = Category::class;
+
+    public function definition()
+    {
+        return [
+            'name' => fake()->unique()->colorName(),
+        ];
+    }
+}

@@ -36,7 +36,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
     {
         Queue::fake();
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         app()->make('events')->dispatch(new DispatchAudit($model));
 
@@ -58,7 +58,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
 
         Queue::fake();
 
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         app()->make('events')->dispatch(new DispatchAudit($model));
 

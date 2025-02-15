@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('api_models', function (Blueprint $table) {
-            $table->uuid('api_model_id');
-            $table->text('content');
-            $table->timestamp('published_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table(config('audit.drivers.database.table', 'audits'), function (Blueprint $table) {
+            $table->unsignedInteger('tenant_id')->nullable();
         });
     }
 
@@ -25,6 +21,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::drop('api_models');
     }
 };

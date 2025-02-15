@@ -12,7 +12,7 @@
     <a href="https://discord.gg/csD9ysg"><img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Chat"></a>
 </p>
 
-This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities. 
+This package will help you understand changes in your Eloquent models, by providing information about possible discrepancies and anomalies that could indicate business concerns or suspect activities.
 
 Laravel Auditing allows you to keep a history of model changes by simply using a trait. Retrieving the audited data is straightforward, making it possible to display it in various ways.
 
@@ -26,7 +26,8 @@ Thank you for choosing OwenIt\LaravelAuditing!
 
 Version   | Illuminate     | Status                  | PHP Version
 :----------|:---------------|:------------------------|:------------
-13.x      | 7.x.x - 11.x.x | Active support :rocket: | > = 7.3 \| 8.0
+14.x      | 11.x.x - 12.x.x | Active support :rocket: | > = 8.2
+13.x      | 7.x.x - 11.x.x | End of life             | > = 7.3 \| 8.0
 12.x      | 6.x.x - 9.x.x | End of life             | > = 7.3 \| 8.0
 11.x      | 5.8.x - 8.x.x | End of life             | > = 7.3
 10.x      | 5.8.x - 7.x.x | End of life             | > = 7.2.5
