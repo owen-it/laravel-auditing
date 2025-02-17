@@ -45,7 +45,7 @@ class AuditableObserver
     public function updated(Auditable $model)
     {
         // Ignore the updated event when restoring
-        if (!static::$restoring) {
+        if (! static::$restoring) {
             $this->dispatchAudit($model->setAuditEvent('updated'));
         }
     }
@@ -89,18 +89,19 @@ class AuditableObserver
 
     protected function dispatchAudit(Auditable $model): void
     {
-        if (!$model->readyForAuditing()) {
+        if (! $model->readyForAuditing()) {
             return;
         }
 
         // @phpstan-ignore method.notFound
         $model->preloadResolverData();
-        if (!Config::get('audit.queue.enable', false)) {
+        if (! Config::get('audit.queue.enable', false)) {
             Auditor::execute($model);
+
             return;
         }
 
-        if (!$this->fireDispatchingAuditEvent($model)) {
+        if (! $this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
@@ -115,6 +116,6 @@ class AuditableObserver
     protected function fireDispatchingAuditEvent(Auditable $model): bool
     {
         return app()->make('events')
-                ->until(new DispatchingAudit($model)) !== false;
+            ->until(new DispatchingAudit($model)) !== false;
     }
 }

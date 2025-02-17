@@ -1,9 +1,11 @@
 name: Fix PHP code style issues
 
 on:
-  push:
+  pull_request:
     paths:
       - '**.php'
+      - '.github/workflows/fix-php-code-style-issues.yml'
+      - '.pint.json'
 
 jobs:
   php-code-styling:
@@ -12,8 +14,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Fix PHP code style issues
         uses: aglipanci/laravel-pint-action@v2

@@ -2,13 +2,13 @@
 
 namespace OwenIt\Auditing\Tests\Unit;
 
-use OwenIt\Auditing\Models\Audit;
 use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\AuditableObserver;
-use OwenIt\Auditing\Tests\AuditingTestCase;
-use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Events\DispatchAudit;
 use OwenIt\Auditing\Events\DispatchingAudit;
+use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Tests\AuditingTestCase;
+use OwenIt\Auditing\Tests\Models\Article;
 
 class AuditableObserverTest extends AuditingTestCase
 {
@@ -17,7 +17,7 @@ class AuditableObserverTest extends AuditingTestCase
      *
      * @dataProvider auditableObserverDispatchTestProvider
      */
-    public function itWillCancelTheAuditDispatchingFromAnEventListener($eventMethod)
+    public function it_will_cancel_the_audit_dispatching_from_an_event_listener($eventMethod)
     {
         Event::fake(
             [
@@ -29,7 +29,7 @@ class AuditableObserverTest extends AuditingTestCase
             return false;
         });
 
-        $observer = new AuditableObserver();
+        $observer = new AuditableObserver;
         $model = factory(Article::class)->create();
 
         $observer->$eventMethod($model);
@@ -44,11 +44,11 @@ class AuditableObserverTest extends AuditingTestCase
      *
      * @dataProvider auditableObserverDispatchTestProvider
      */
-    public function itDispatchesTheCorrectEvents(string $eventMethod)
+    public function it_dispatches_the_correct_events(string $eventMethod)
     {
         Event::fake();
 
-        $observer = new AuditableObserver();
+        $observer = new AuditableObserver;
         $model = factory(Article::class)->create();
 
         $observer->$eventMethod($model);
@@ -69,17 +69,14 @@ class AuditableObserverTest extends AuditingTestCase
      * @group AuditableObserver::deleted
      * @group AuditableObserver::restoring
      * @group AuditableObserver::restored
+     *
      * @test
      *
      * @dataProvider auditableObserverTestProvider
-     *
-     * @param string $eventMethod
-     * @param bool   $expectedBefore
-     * @param bool   $expectedAfter
      */
-    public function itExecutesTheAuditorSuccessfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
+    public function it_executes_the_auditor_successfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
     {
-        $observer = new AuditableObserver();
+        $observer = new AuditableObserver;
         $model = factory(Article::class)->create();
 
         $this->assertSame($expectedBefore, $observer::$restoring);
@@ -89,9 +86,6 @@ class AuditableObserverTest extends AuditingTestCase
         $this->assertSame($expectedAfter, $observer::$restoring);
     }
 
-    /**
-     * @return array
-     */
     public static function auditableObserverTestProvider(): array
     {
         return [
@@ -128,9 +122,6 @@ class AuditableObserverTest extends AuditingTestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     public static function auditableObserverDispatchTestProvider(): array
     {
         return [

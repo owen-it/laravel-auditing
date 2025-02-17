@@ -2,6 +2,4 @@
 
 namespace OwenIt\Auditing\Tests\Models;
 
-class Category extends \Illuminate\Database\Eloquent\Model
-{
-}
+class Category extends \Illuminate\Database\Eloquent\Model {}

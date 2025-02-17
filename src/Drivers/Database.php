@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing\Drivers;
 
-use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;

@@ -20,7 +20,7 @@ class Article extends Model implements Auditable
      */
     protected $casts = [
         'reviewed' => 'bool',
-        'config'   => 'json',
+        'config' => 'json',
         'published_at' => 'datetime',
         'price' => Money::class,
     ];
@@ -67,10 +67,6 @@ class Article extends Model implements Auditable
 
     /**
      * Uppercase Title accessor.
-     *
-     * @param string $value
-     *
-     * @return string
      */
     public function getTitleAttribute(string $value): string
     {
@@ -79,14 +75,16 @@ class Article extends Model implements Auditable
 
     /**
      * Uppercase Content accessor.
-     *
-     * @return Attribute
      */
     public function content(): Attribute
     {
         return new Attribute(
-            function ($value) { return $value; },
-            function ($value) { return ucwords($value); }
+            function ($value) {
+                return $value;
+            },
+            function ($value) {
+                return ucwords($value);
+            }
         );
     }
 
