@@ -361,14 +361,6 @@ trait Auditable
 
         $userResolver = Config::get('audit.user.resolver');
 
-        if (is_null($userResolver) && Config::has('audit.resolver') && ! Config::has('audit.user.resolver')) {
-            trigger_error(
-                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
-                E_USER_DEPRECATED
-            );
-            $userResolver = Config::get('audit.resolver.user');
-        }
-
         if (is_subclass_of($userResolver, \OwenIt\Auditing\Contracts\UserResolver::class)) {
             return call_user_func([$userResolver, 'resolve'], $this);
         }
@@ -381,11 +373,9 @@ trait Auditable
         $resolved = [];
         $resolvers = Config::get('audit.resolvers', []);
         if (empty($resolvers) && Config::has('audit.resolver')) {
-            trigger_error(
-                'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
-                E_USER_DEPRECATED
+            throw new AuditingException(
+                'The config file audit.php is not updated. Please see https://laravel-auditing.com/guide/upgrading.html'
             );
-            $resolvers = Config::get('audit.resolver', []);
         }
 
         foreach ($resolvers as $name => $implementation) {
