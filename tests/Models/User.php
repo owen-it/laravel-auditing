@@ -3,13 +3,18 @@
 namespace OwenIt\Auditing\Tests\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Tests\database\factories\UserFactory;
 
 class User extends Model implements Auditable, Authenticatable
 {
+    use HasFactory;
     use \Illuminate\Auth\Authenticatable;
     use \OwenIt\Auditing\Auditable;
+
+    protected static string $factory = UserFactory::class;
 
     /**
      * {@inheritdoc}

@@ -9,15 +9,13 @@ use OwenIt\Auditing\Events\DispatchingAudit;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 class AuditableObserverTest extends AuditingTestCase
 {
-    /**
-     * @test
-     *
-     * @dataProvider auditableObserverDispatchTestProvider
-     */
-    public function it_will_cancel_the_audit_dispatching_from_an_event_listener($eventMethod)
+    #[DataProvider('auditableObserverDispatchTestProvider')]
+    public function test_it_will_cancel_the_audit_dispatching_from_an_event_listener($eventMethod): void
     {
         Event::fake(
             [
@@ -30,7 +28,7 @@ class AuditableObserverTest extends AuditingTestCase
         });
 
         $observer = new AuditableObserver;
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $observer->$eventMethod($model);
 
@@ -39,17 +37,13 @@ class AuditableObserverTest extends AuditingTestCase
         Event::assertNotDispatched(DispatchAudit::class);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider auditableObserverDispatchTestProvider
-     */
-    public function it_dispatches_the_correct_events(string $eventMethod)
+    #[DataProvider('auditableObserverDispatchTestProvider')]
+    public function test_it_dispatches_the_correct_events(string $eventMethod): void
     {
         Event::fake();
 
         $observer = new AuditableObserver;
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $observer->$eventMethod($model);
 
@@ -62,22 +56,17 @@ class AuditableObserverTest extends AuditingTestCase
         });
     }
 
-    /**
-     * @group AuditableObserver::retrieved
-     * @group AuditableObserver::created
-     * @group AuditableObserver::updated
-     * @group AuditableObserver::deleted
-     * @group AuditableObserver::restoring
-     * @group AuditableObserver::restored
-     *
-     * @test
-     *
-     * @dataProvider auditableObserverTestProvider
-     */
-    public function it_executes_the_auditor_successfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
+    #[Group('AuditableObserver::retrieved')]
+    #[Group('AuditableObserver::created')]
+    #[Group('AuditableObserver::updated')]
+    #[Group('AuditableObserver::deleted')]
+    #[Group('AuditableObserver::restoring')]
+    #[Group('AuditableObserver::restored')]
+    #[DataProvider('auditableObserverTestProvider')]
+    public function test_it_executes_the_auditor_successfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter): void
     {
         $observer = new AuditableObserver;
-        $model = factory(Article::class)->create();
+        $model = Article::factory()->create();
 
         $this->assertSame($expectedBefore, $observer::$restoring);
 

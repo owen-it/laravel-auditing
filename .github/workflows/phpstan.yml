@@ -1,7 +1,7 @@
 name: PHPStan
 
 on:
-    push:
+    pull_request:
         paths:
             - '**.php'
             - 'phpstan.neon.dist'
@@ -10,6 +10,9 @@ jobs:
     phpstan:
         name: phpstan
         runs-on: ubuntu-latest
+        timeout-minutes: 15
+        env:
+          COMPOSER_NO_INTERACTION: 1
         steps:
             - uses: actions/checkout@v4
 
@@ -24,8 +27,8 @@ jobs:
 
             - name: Install larastan
               run: |
-                  composer require "larastan/larastan" --no-interaction --no-update
-                  composer update --prefer-dist --no-interaction
+                  composer require "larastan/larastan" --no-update
+                  composer update --prefer-dist --no-suggest
 
             - name: Run PHPStan
               run: ./vendor/bin/phpstan --error-format=github

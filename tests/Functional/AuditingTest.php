@@ -26,56 +26,44 @@ class AuditingTest extends AuditingTestCase
 {
     use WithFaker;
 
-    /**
-     * @test
-     */
-    public function it_will_not_audit_models_when_running_from_the_console()
+    public function test_it_will_not_audit_models_when_running_from_the_console(): void
     {
         $this->app['config']->set('audit.console', false);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(0, Audit::query()->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_models_when_running_from_the_console()
+    public function test_it_will_audit_models_when_running_from_the_console(): void
     {
         $this->app['config']->set('audit.console', true);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_always_audit_models_when_not_running_from_the_console()
+    public function test_it_will_always_audit_models_when_not_running_from_the_console(): void
     {
         App::shouldReceive('runningInConsole')
             ->andReturn(false);
 
         $this->app['config']->set('audit.console', false);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_not_audit_the_retrieving_event()
+    public function test_it_will_not_audit_the_retrieving_event(): void
     {
         $this->app['config']->set('audit.console', true);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
@@ -86,10 +74,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(1, User::query()->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_the_retrieving_event()
+    public function test_it_will_audit_the_retrieving_event(): void
     {
         $this->app['config']->set('audit.console', true);
         $this->app['config']->set('audit.events', [
@@ -97,7 +82,7 @@ class AuditingTest extends AuditingTestCase
             'retrieved',
         ]);
 
-        factory(User::class)->create();
+        User::factory()->create();
 
         $this->assertSame(1, User::query()->count());
         $this->assertSame(1, Audit::query()->count());
@@ -107,16 +92,13 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(2, Audit::query()->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_the_retrieved_event()
+    public function test_it_will_audit_the_retrieved_event(): void
     {
         $this->app['config']->set('audit.events', [
             'retrieved',
         ]);
 
-        factory(Article::class)->create([
+        Article::factory()->create([
             'title' => 'How To Audit Eloquent Models',
             'content' => 'N/A',
             'published_at' => null,
@@ -134,16 +116,13 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->new_values);
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_the_created_event()
+    public function test_it_will_audit_the_created_event(): void
     {
         $this->app['config']->set('audit.events', [
             'created',
         ]);
 
-        factory(Article::class)->create([
+        Article::factory()->create([
             'title' => 'How To Audit Eloquent Models',
             'content' => 'N/A',
             'published_at' => null,
@@ -165,16 +144,13 @@ class AuditingTest extends AuditingTestCase
         ], $audit->new_values, true);
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_the_updated_event()
+    public function test_it_will_audit_the_updated_event(): void
     {
         $this->app['config']->set('audit.events', [
             'updated',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title' => 'How To Audit Eloquent Models',
             'content' => 'N/A',
             'published_at' => null,
@@ -206,16 +182,13 @@ class AuditingTest extends AuditingTestCase
         ], $audit->new_values, true);
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_the_deleted_event()
+    public function test_it_will_audit_the_deleted_event(): void
     {
         $this->app['config']->set('audit.events', [
             'deleted',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title' => 'How To Audit Eloquent Models',
             'content' => 'N/A',
             'published_at' => null,
@@ -239,16 +212,13 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->new_values);
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_the_restored_event()
+    public function test_it_will_audit_the_restored_event(): void
     {
         $this->app['config']->set('audit.events', [
             'restored',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title' => 'How To Audit Eloquent Models',
             'content' => 'N/A',
             'published_at' => null,
@@ -273,17 +243,14 @@ class AuditingTest extends AuditingTestCase
         ], $audit->new_values, true);
     }
 
-    /**
-     * @test
-     */
-    public function it_will_keep_all_audits()
+    public function test_it_will_keep_all_audits(): void
     {
         $this->app['config']->set('audit.threshold', 0);
         $this->app['config']->set('audit.events', [
             'updated',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'reviewed' => 1,
         ]);
 
@@ -296,17 +263,14 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(100, $article->audits()->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_remove_older_audits_above_the_threshold()
+    public function test_it_will_remove_older_audits_above_the_threshold(): void
     {
         $this->app['config']->set('audit.threshold', 10);
         $this->app['config']->set('audit.events', [
             'updated',
         ]);
 
-        $article = factory(Article::class)->create([
+        $article = Article::factory()->create([
             'title' => 'Title #0',
         ]);
 
@@ -326,23 +290,17 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame('Title #20', $audits->last()->new_values['title']);
     }
 
-    /**
-     * @test
-     */
-    public function it_will_not_audit_due_to_unsupported_driver()
+    public function test_it_will_not_audit_due_to_unsupported_driver(): void
     {
         $this->app['config']->set('audit.driver', 'foo');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Driver [foo] not supported.');
 
-        factory(Article::class)->create();
+        Article::factory()->create();
     }
 
-    /**
-     * @test
-     */
-    public function it_will_not_audit_due_to_class_without_driver_interface()
+    public function test_it_will_not_audit_due_to_class_without_driver_interface(): void
     {
         // We just pass a FQCN that does not implement the AuditDriver interface
         $this->app['config']->set('audit.driver', Article::class);
@@ -350,17 +308,14 @@ class AuditingTest extends AuditingTestCase
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('The driver must implement the AuditDriver contract');
 
-        factory(Article::class)->create();
+        Article::factory()->create();
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_using_the_default_driver()
+    public function test_it_will_audit_using_the_default_driver(): void
     {
         $this->app['config']->set('audit.driver', null);
 
-        factory(Article::class)->create([
+        Article::factory()->create([
             'title' => 'How To Audit Using The Fallback Driver',
             'content' => 'N/A',
             'published_at' => null,
@@ -382,29 +337,23 @@ class AuditingTest extends AuditingTestCase
         ], $audit->new_values, true);
     }
 
-    /**
-     * @test
-     */
-    public function it_will_cancel_the_audit_from_an_event_listener()
+    public function test_it_will_cancel_the_audit_from_an_event_listener(): void
     {
         Event::listen(Auditing::class, function () {
             return false;
         });
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertNull(Audit::first());
     }
 
-    /**
-     * @test
-     */
-    public function it_disables_and_enables_auditing_back_again()
+    public function test_it_disables_and_enables_auditing_back_again(): void
     {
         // Auditing is enabled by default
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(1, Article::count());
         $this->assertSame(1, Audit::count());
@@ -413,7 +362,7 @@ class AuditingTest extends AuditingTestCase
         Article::disableAuditing();
         $this->assertTrue(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Article::count());
         $this->assertSame(1, Audit::count());
@@ -422,23 +371,20 @@ class AuditingTest extends AuditingTestCase
         Article::enableAuditing();
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Audit::count());
         $this->assertSame(3, Article::count());
     }
 
-    /**
-     * @test
-     */
-    public function it_disables_and_enables_auditing_back_again_via_facade()
+    public function test_it_disables_and_enables_auditing_back_again_via_facade(): void
     {
         // Auditing is enabled by default
         $this->assertFalse(Article::$auditingDisabled);
 
         Article::disableAuditing();
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(1, Article::count());
         $this->assertSame(0, Audit::count());
@@ -447,22 +393,19 @@ class AuditingTest extends AuditingTestCase
         Article::enableAuditing();
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Article::count());
         $this->assertSame(1, Audit::count());
     }
 
-    /**
-     * @test
-     */
-    public function it_disables_and_enables_auditing_back_again_via_without_auditing_method()
+    public function test_it_disables_and_enables_auditing_back_again_via_without_auditing_method(): void
     {
         // Auditing is enabled by default
         $this->assertFalse(Article::$auditingDisabled);
 
         Article::withoutAuditing(function () {
-            factory(Article::class)->create();
+            Article::factory()->create();
         });
 
         $this->assertSame(1, Article::count());
@@ -470,20 +413,15 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertFalse(Article::$auditingDisabled);
 
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         $this->assertSame(2, Article::count());
         $this->assertSame(1, Audit::count());
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_handles_json_columns_correctly()
+    public function test_it_handles_json_columns_correctly(): void
     {
-        $article = factory(Article::class)->create(['config' => ['articleIsGood' => true, 'authorsJob' => 'vampire']]);
+        $article = Article::factory()->create(['config' => ['articleIsGood' => true, 'authorsJob' => 'vampire']]);
         $article->refresh();
 
         $article->config = ['articleIsGood' => false, 'authorsJob' => 'vampire'];
@@ -497,17 +435,12 @@ class AuditingTest extends AuditingTestCase
         $this->assertTrue($audit->getModified()['config']['old']['articleIsGood']);
     }
 
-    /**
-     * @return void
-     *
-     * @test
-     */
-    public function can_add_additional_resolver()
+    public function test_can_add_additional_resolver(): void
     {
         // added new resolver
         $this->app['config']->set('audit.resolvers.tenant_id', TenantResolver::class);
 
-        $article = factory(Article::class)->create();
+        $article = Article::factory()->create();
 
         $audit = $article->audits()->first();
 
@@ -516,17 +449,12 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(1, (int) $audit->tenant_id);
     }
 
-    /**
-     * @return void
-     *
-     * @test
-     */
-    public function can_disable_resolver()
+    public function test_can_disable_resolver(): void
     {
         // added new resolver
         $this->app['config']->set('audit.resolvers.ip_address', null);
 
-        $article = factory(Article::class)->create();
+        $article = Article::factory()->create();
 
         $audit = $article->audits()->first();
 
@@ -535,12 +463,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertEmpty($audit->ip_address);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_exclude_if_global_exclude_is_set()
+    public function test_it_will_exclude_if_global_exclude_is_set(): void
     {
         $this->app['config']->set('audit.exclude', ['content']);
 
@@ -553,12 +476,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertArrayNotHasKey('content', $article->audits()->first()->getModified());
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function local_exclude_overrides_global_exclude()
+    public function test_local_exclude_overrides_global_exclude(): void
     {
         $this->app['config']->set('audit.exclude', ['content']);
 
@@ -572,10 +490,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertArrayNotHasKey('title', $article->audits()->first()->getModified());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_not_audit_models_when_values_are_empty()
+    public function test_it_will_not_audit_models_when_values_are_empty(): void
     {
         $this->app['config']->set('audit.empty_values', false);
 
@@ -598,12 +513,7 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(1, Audit::query()->count());
     }
 
-    /**
-     * @return void
-     *
-     * @test
-     */
-    public function it_will_audit_retrieved_event_even_if_audit_empty_is_disabled()
+    public function test_it_will_audit_retrieved_event_even_if_audit_empty_is_disabled(): void
     {
         $this->app['config']->set('audit.empty_values', false);
         $this->app['config']->set('audit.allowed_empty_values', ['retrieved']);
@@ -615,19 +525,16 @@ class AuditingTest extends AuditingTestCase
         $this->app['config']->set('audit.empty_values', false);
 
         /** @var Article $model */
-        factory(Article::class)->create();
+        Article::factory()->create();
 
         Article::find(1);
 
         $this->assertSame(2, Audit::query()->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_will_audit_models_when_values_are_empty()
+    public function test_it_will_audit_models_when_values_are_empty(): void
     {
-        $model = factory(Article::class)->create([
+        $model = Article::factory()->create([
             'reviewed' => 0,
         ]);
 
@@ -638,16 +545,11 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame(2, Audit::query()->count());
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_attach()
+    public function test_it_will_audit_attach(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->auditAttach('categories', $firstCategory);
         $article->auditAttach('categories', $secondCategory);
@@ -659,31 +561,21 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($secondCategory->name, $lastArticleAudit['new'][0]['name']);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_not_audit_attach_by_invalid_relation_name()
+    public function test_it_will_not_audit_attach_by_invalid_relation_name(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $this->expectExceptionMessage('Relationship invalidRelation was not found or does not support method attach');
 
         $article->auditAttach('invalidRelation', $firstCategory);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_sync()
+    public function test_it_will_audit_sync(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -701,17 +593,12 @@ class AuditingTest extends AuditingTestCase
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_sync_individually()
+    public function test_it_will_audit_sync_individually(): void
     {
         Article::disableAuditing();
-        $user = factory(User::class)->create();
-        $category = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        $article = Article::factory()->create();
         Article::enableAuditing();
 
         $no_of_audits_before = Audit::where('auditable_type', Article::class)->count();
@@ -736,20 +623,15 @@ class AuditingTest extends AuditingTestCase
         $this->assertArrayNotHasKey('users', $auditLast->old_values);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_sync_with_pivot_values()
+    public function test_it_will_audit_sync_with_pivot_values(): void
     {
         if (version_compare($this->app->version(), '8.0.0', '<')) {
             $this->markTestSkipped('This test is only for Laravel 8.0.0+');
         }
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => ['pivot_type' => 'PIVOT_1']]);
 
@@ -780,17 +662,12 @@ class AuditingTest extends AuditingTestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_sync_by_closure()
+    public function test_it_will_audit_sync_by_closure(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $thirdCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $thirdCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => ['pivot_type' => 'PIVOT_1']]);
         $article->categories()->attach([$secondCategory->getKey() => ['pivot_type' => 'PIVOT_2']]);
@@ -831,16 +708,11 @@ class AuditingTest extends AuditingTestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_not_audit_sync_by_invalid_closure()
+    public function test_it_will_not_audit_sync_by_invalid_closure(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -857,16 +729,11 @@ class AuditingTest extends AuditingTestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_detach()
+    public function test_it_will_audit_detach(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
         $article->categories()->attach($secondCategory);
@@ -885,17 +752,12 @@ class AuditingTest extends AuditingTestCase
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_detach_by_closure()
+    public function test_it_will_audit_detach_by_closure(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $thirdCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $thirdCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach([$firstCategory->getKey() => ['pivot_type' => 'PIVOT_1']]);
         $article->categories()->attach([$secondCategory->getKey() => ['pivot_type' => 'PIVOT_2']]);
@@ -928,15 +790,10 @@ class AuditingTest extends AuditingTestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_not_audit_detach_by_invalid_closure()
+    public function test_it_will_not_audit_detach_by_invalid_closure(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -953,15 +810,10 @@ class AuditingTest extends AuditingTestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_sync_without_changes()
+    public function test_it_will_audit_sync_without_changes(): void
     {
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -979,18 +831,13 @@ class AuditingTest extends AuditingTestCase
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_audit_sync_when_skipping_empty_values()
+    public function test_it_will_audit_sync_when_skipping_empty_values(): void
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -1008,17 +855,12 @@ class AuditingTest extends AuditingTestCase
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_not_audit_sync_when_skipping_empty_values_and_no_changes_made()
+    public function test_it_will_not_audit_sync_when_skipping_empty_values_and_no_changes_made(): void
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -1036,17 +878,12 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($no_of_audits_before, $no_of_audits_after);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_not_audit_attach_when_skipping_empty_values_and_no_changes_made()
+    public function test_it_will_not_audit_attach_when_skipping_empty_values_and_no_changes_made(): void
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -1064,18 +901,13 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($no_of_audits_before, $no_of_audits_after);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_will_not_audit_detach_when_skipping_empty_values_and_no_changes_made()
+    public function test_it_will_not_audit_detach_when_skipping_empty_values_and_no_changes_made(): void
     {
         $this->app['config']->set('audit.empty_values', false);
 
-        $firstCategory = factory(Category::class)->create();
-        $secondCategory = factory(Category::class)->create();
-        $article = factory(Article::class)->create();
+        $firstCategory = Category::factory()->create();
+        $secondCategory = Category::factory()->create();
+        $article = Article::factory()->create();
 
         $article->categories()->attach($firstCategory);
 
@@ -1093,14 +925,9 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($no_of_audits_before, $no_of_audits_after);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function can_audit_any_custom_event()
+    public function test_can_audit_any_custom_event(): void
     {
-        $article = factory(Article::class)->create();
+        $article = Article::factory()->create();
         $article->auditEvent = 'whateverYouWant';
         $article->isCustomEvent = true;
         $article->auditCustomOld = [
@@ -1120,12 +947,7 @@ class AuditingTest extends AuditingTestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function can_audit_custom_audit_model_implementation()
+    public function test_can_audit_custom_audit_model_implementation(): void
     {
         $audit = null;
         Event::listen(Audited::class, function ($event) use (&$audit) {
