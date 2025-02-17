@@ -8,8 +8,10 @@ final class Money
 {
     /** Formatted value. */
     public string $formatted;
+
     /** Value */
     public string $amount;
+
     /** Format */
     public string $currency;
 
@@ -25,4 +27,3 @@ final class Money
         $this->formatted = $formatter->formatCurrency($this->amount, $this->currency);
     }
 }
-

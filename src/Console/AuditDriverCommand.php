@@ -26,7 +26,7 @@ class AuditDriverCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/../../stubs/driver.stub';
+        return __DIR__.'/../../stubs/driver.stub';
     }
 
     /**
@@ -34,6 +34,6 @@ class AuditDriverCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\AuditDrivers';
+        return $rootNamespace.'\AuditDrivers';
     }
 }

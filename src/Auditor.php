@@ -45,7 +45,7 @@ class Auditor extends Manager implements Contracts\Auditor
     {
         $driver = $this->driver($model->getAuditDriver());
 
-        if (!$driver instanceof AuditDriver) {
+        if (! $driver instanceof AuditDriver) {
             throw new AuditingException('The driver must implement the AuditDriver contract');
         }
 
@@ -57,13 +57,13 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     public function execute(Auditable $model): void
     {
-        if (!$model->readyForAuditing()) {
+        if (! $model->readyForAuditing()) {
             return;
         }
 
         $driver = $this->auditDriver($model);
 
-        if (!$this->fireAuditingEvent($model, $driver)) {
+        if (! $this->fireAuditingEvent($model, $driver)) {
             return;
         }
 
@@ -71,7 +71,7 @@ class Auditor extends Manager implements Contracts\Auditor
         $allowEmpty = Config::get('audit.empty_values');
         $explicitAllowEmpty = in_array($model->getAuditEvent(), Config::get('audit.allowed_empty_values', []));
 
-        if (!$allowEmpty && !$explicitAllowEmpty) {
+        if (! $allowEmpty && ! $explicitAllowEmpty) {
             if (
                 empty($model->toAudit()['new_values']) &&
                 empty($model->toAudit()['old_values'])
@@ -81,7 +81,7 @@ class Auditor extends Manager implements Contracts\Auditor
         }
 
         $audit = $driver->audit($model);
-        if (!$audit) {
+        if (! $audit) {
             return;
         }
 
@@ -106,8 +106,8 @@ class Auditor extends Manager implements Contracts\Auditor
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
         return $this
-                ->container
-                ->make('events')
-                ->until(new Auditing($model, $driver)) !== false;
+            ->container
+            ->make('events')
+            ->until(new Auditing($model, $driver)) !== false;
     }
 }

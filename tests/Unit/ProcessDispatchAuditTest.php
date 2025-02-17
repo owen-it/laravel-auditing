@@ -2,20 +2,20 @@
 
 namespace OwenIt\Auditing\Tests\Unit;
 
+use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use OwenIt\Auditing\Events\DispatchAudit;
-use OwenIt\Auditing\Tests\Models\Article;
-use Illuminate\Events\CallQueuedListener;
-use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Listeners\ProcessDispatchAudit;
+use OwenIt\Auditing\Tests\AuditingTestCase;
+use OwenIt\Auditing\Tests\Models\Article;
 
 class ProcessDispatchAuditTest extends AuditingTestCase
 {
     /**
      * @test
      */
-    public function itIsListeningToTheCorrectEvent()
+    public function it_is_listening_to_the_correct_event()
     {
         if (version_compare($this->app->version(), '8.0.0', '<')) {
             $this->markTestSkipped('This test is only for Laravel 8.0.0+');
@@ -32,7 +32,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
     /**
      * @test
      */
-    public function itGetsProperlyQueued()
+    public function it_gets_properly_queued()
     {
         Queue::fake();
 
@@ -50,7 +50,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
     /**
      * @test
      */
-    public function itCanHaveConnectionAndQueueSet()
+    public function it_can_have_connection_and_queue_set()
     {
         $this->app['config']->set('audit.queue.connection', 'redis');
         $this->app['config']->set('audit.queue.queue', 'audits');

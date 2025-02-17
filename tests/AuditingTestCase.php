@@ -19,9 +19,9 @@ class AuditingTestCase extends TestCase
         // Database
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         // Audit
@@ -34,7 +34,7 @@ class AuditingTestCase extends TestCase
             'api',
         ]);
         $app['config']->set('auth.guards.api', [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'users',
         ]);
 
@@ -49,11 +49,11 @@ class AuditingTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/database/migrations');
     }
 
     /**
