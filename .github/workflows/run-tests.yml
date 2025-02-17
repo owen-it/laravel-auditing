@@ -8,6 +8,9 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      COMPOSER_NO_INTERACTION: 1
     strategy:
       fail-fast: false
       matrix:
@@ -34,9 +37,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" "nesbot/carbon:^2.62.1" --no-interaction --no-update
-          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
-          composer update --prefer-dist --no-interaction --no-suggest
+          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" --no-update
+          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-update
+          composer update --prefer-dist --no-suggest
 
       - name: Execute tests
         run: |
