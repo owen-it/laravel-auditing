@@ -12,6 +12,6 @@ class DispatchingAudit
     public function __construct(
         public Auditable $model
     ) {
-        $this->model = $model;
+        //
     }
 }
