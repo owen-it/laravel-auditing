@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories\OwenIt\Auditing\Tests\Models;
+namespace OwenIt\Auditing\Tests\database\factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use OwenIt\Auditing\Tests\Models\Category;

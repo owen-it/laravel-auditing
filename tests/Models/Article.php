@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Tests\Casts\Money;
+use OwenIt\Auditing\Tests\database\factories\ArticleFactory;
 
 class Article extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
+
+    protected static string $factory = ArticleFactory::class;
 
     protected $laravel_version;
 

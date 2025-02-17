@@ -57,16 +57,23 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "OwenIt\\Auditing\\Tests\\": "tests/",
-            "Database\\Factories\\OwenIt\\Auditing\\Tests\\Models\\": "tests/database/factories"
+            "OwenIt\\Auditing\\Tests\\": "tests/"
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "v14-dev"
+        },
         "laravel": {
             "providers": [
                 "OwenIt\\Auditing\\AuditingServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "format": "composer require --dev laravel/pint --quiet && pint --config .pint.json && composer remove --dev laravel/pint --no-update",
+        "analyse": "composer require --dev larastan/larastan --quiet && phpstan analyse && composer remove --dev larastan/larastan --no-update"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

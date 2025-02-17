@@ -28,7 +28,7 @@ jobs:
             - name: Install larastan
               run: |
                   composer require "larastan/larastan" --no-update
-                  composer update --prefer-dist  --no-suggest
+                  composer update --prefer-dist --no-suggest
 
             - name: Run PHPStan
               run: ./vendor/bin/phpstan --error-format=github
