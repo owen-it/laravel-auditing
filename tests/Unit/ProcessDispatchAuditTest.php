@@ -12,10 +12,7 @@ use OwenIt\Auditing\Tests\Models\Article;
 
 class ProcessDispatchAuditTest extends AuditingTestCase
 {
-    /**
-     * @test
-     */
-    public function it_is_listening_to_the_correct_event()
+    public function test_it_is_listening_to_the_correct_event(): void
     {
         if (version_compare($this->app->version(), '8.0.0', '<')) {
             $this->markTestSkipped('This test is only for Laravel 8.0.0+');
@@ -29,10 +26,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_gets_properly_queued()
+    public function test_it_gets_properly_queued(): void
     {
         Queue::fake();
 
@@ -47,10 +41,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
         });
     }
 
-    /**
-     * @test
-     */
-    public function it_can_have_connection_and_queue_set()
+    public function test_it_can_have_connection_and_queue_set(): void
     {
         $this->app['config']->set('audit.queue.connection', 'redis');
         $this->app['config']->set('audit.queue.queue', 'audits');

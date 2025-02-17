@@ -13,15 +13,12 @@ use OwenIt\Auditing\Tests\AuditingTestCase;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\Money;
 use OwenIt\Auditing\Tests\Models\User;
+use PHPUnit\Framework\Attributes\Group;
 
 class AuditTest extends AuditingTestCase
 {
-    /**
-     * @group Audit::resolveData
-     *
-     * @test
-     */
-    public function it_resolves_audit_data()
+    #[Group('Audit::resolveData')]
+    public function test_it_resolves_audit_data(): void
     {
         $now = Carbon::now();
 
@@ -57,12 +54,8 @@ class AuditTest extends AuditingTestCase
         ], $resolvedData, true);
     }
 
-    /**
-     * @group Audit::resolveData
-     *
-     * @test
-     */
-    public function it_resolves_audit_data_including_user_attributes()
+    #[Group('Audit::resolveData')]
+    public function test_it_resolves_audit_data_including_user_attributes(): void
     {
         $now = Carbon::now();
 
@@ -111,13 +104,9 @@ class AuditTest extends AuditingTestCase
         ], $resolvedData, true);
     }
 
-    /**
-     * @group Audit::resolveData
-     * @group Audit::getDataValue
-     *
-     * @test
-     */
-    public function it_returns_the_appropriate_auditable_data_values()
+    #[Group('Audit::resolveData')]
+    #[Group('Audit::getDataValue')]
+    public function test_it_returns_the_appropriate_auditable_data_values(): void
     {
         $user = User::factory()->create([
             'is_admin' => 1,
@@ -160,13 +149,9 @@ class AuditTest extends AuditingTestCase
         $this->assertNull($audit->getDataValue('invalid_key'));
     }
 
-    /**
-     * @group Audit::resolveData
-     * @group Audit::getDataValue
-     *
-     * @test
-     */
-    public function it_returns_the_appropriate_auditable_data_values_with_custom_cast_value_object()
+    #[Group('Audit::resolveData')]
+    #[Group('Audit::getDataValue')]
+    public function test_it_returns_the_appropriate_auditable_data_values_with_custom_cast_value_object(): void
     {
         $user = User::factory()->create([
             'is_admin' => 1,
@@ -196,12 +181,8 @@ class AuditTest extends AuditingTestCase
         $this->assertEquals(new Money('12.45', 'USD'), $lastAudit->getModified()['price']['old']);
     }
 
-    /**
-     * @group Audit::getMetadata
-     *
-     * @test
-     */
-    public function it_returns_audit_metadata_as_array()
+    #[Group('Audit::getMetadata')]
+    public function test_it_returns_audit_metadata_as_array(): void
     {
         $audit = Article::factory()->create()->audits()->first();
 
@@ -223,14 +204,11 @@ class AuditTest extends AuditingTestCase
         ], $metadata, true);
     }
 
+    #[Group('command-line-url-resolver')]
     /**
      * This test is meant to be run with specific command line "vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver"
-     *
-     * @group command-line-url-resolver
-     *
-     * @test
      */
-    public function it_returns_proper_command_line_in_url_audit_metadata()
+    public function test_it_returns_proper_command_line_in_url_audit_metadata(): void
     {
         $audit = Article::factory()->create()->audits()->first();
 
@@ -239,12 +217,8 @@ class AuditTest extends AuditingTestCase
         Assert::assertEquals($audit->getMetadata()['audit_url'], 'vendor/bin/phpunit tests/Unit/AuditTest.php --group command-line-url-resolver');
     }
 
-    /**
-     * @group Audit::getMetadata
-     *
-     * @test
-     */
-    public function it_returns_audit_metadata_including_user_attributes_as_array()
+    #[Group('Audit::getMetadata')]
+    public function test_it_returns_audit_metadata_including_user_attributes_as_array(): void
     {
         $user = User::factory()->create([
             'is_admin' => 1,
@@ -281,12 +255,8 @@ class AuditTest extends AuditingTestCase
         ], $metadata, true);
     }
 
-    /**
-     * @group Audit::getMetadata
-     *
-     * @test
-     */
-    public function it_returns_audit_metadata_as_json_string()
+    #[Group('Audit::getMetadata')]
+    public function test_it_returns_audit_metadata_as_json_string(): void
     {
         $audit = Article::factory()->create()->audits()->first();
 
@@ -312,12 +282,8 @@ class AuditTest extends AuditingTestCase
         $this->assertSame($expected, json_decode($metadata, true));
     }
 
-    /**
-     * @group Audit::getMetadata
-     *
-     * @test
-     */
-    public function it_returns_audit_metadata_including_user_attributes_as_json_string()
+    #[Group('Audit::getMetadata')]
+    public function test_it_returns_audit_metadata_including_user_attributes_as_json_string(): void
     {
         $user = User::factory()->create([
             'is_admin' => 1,
@@ -360,12 +326,8 @@ class AuditTest extends AuditingTestCase
         $this->assertSame($expected, json_decode($metadata, true));
     }
 
-    /**
-     * @group Audit::getModified
-     *
-     * @test
-     */
-    public function it_returns_auditable_modified_attributes_as_array()
+    #[Group('Audit::getModified')]
+    public function test_it_returns_auditable_modified_attributes_as_array(): void
     {
         $now = Carbon::now()->second(0)->microsecond(0);
 
@@ -399,12 +361,8 @@ class AuditTest extends AuditingTestCase
         ], $modified, true);
     }
 
-    /**
-     * @group Audit::getModified
-     *
-     * @test
-     */
-    public function it_returns_auditable_modified_attributes_as_json_string()
+    #[Group('Audit::getModified')]
+    public function test_it_returns_auditable_modified_attributes_as_json_string(): void
     {
         $now = Carbon::now()->second(0)->microsecond(0);
 
@@ -441,12 +399,8 @@ class AuditTest extends AuditingTestCase
         $this->assertSame($expected, json_decode($modified, true));
     }
 
-    /**
-     * @group Audit::getModified
-     *
-     * @test
-     */
-    public function it_returns_decoded_auditable_attributes()
+    #[Group('Audit::getModified')]
+    public function test_it_returns_decoded_auditable_attributes(): void
     {
         $model = Article::factory()->create();
 
@@ -487,12 +441,8 @@ class AuditTest extends AuditingTestCase
         ], $modified, true);
     }
 
-    /**
-     * @group Audit::getTags
-     *
-     * @test
-     */
-    public function it_returns_tags()
+    #[Group('Audit::getTags')]
+    public function test_it_returns_tags(): void
     {
         $model = Article::factory()->create();
 
@@ -511,12 +461,8 @@ class AuditTest extends AuditingTestCase
         ], $audit->getTags(), true);
     }
 
-    /**
-     * @group Audit::getTags
-     *
-     * @test
-     */
-    public function it_returns_empty_tags()
+    #[Group('Audit::getTags')]
+    public function test_it_returns_empty_tags(): void
     {
         $model = Article::factory()->create();
 

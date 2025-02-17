@@ -21,6 +21,8 @@ use OwenIt\Auditing\Tests\Models\ApiModel;
 use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;
 use OwenIt\Auditing\Tests\Models\User;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
 
 class AuditableTest extends AuditingTestCase
@@ -38,12 +40,8 @@ class AuditableTest extends AuditingTestCase
         Relation::morphMap([], false);
     }
 
-    /**
-     * @group Auditable::withoutAuditing
-     *
-     * @test
-     */
-    public function it_will_run_callback_with_model_auditing_disabled()
+    #[Group('Auditable::withoutAuditing')]
+    public function test_it_will_run_callback_with_model_auditing_disabled(): void
     {
         $this->assertFalse(Article::$auditingDisabled);
 
@@ -58,12 +56,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame('result', $result);
     }
 
-    /**
-     * @group Auditable::withoutAuditing
-     *
-     * @test
-     */
-    public function it_will_run_callback_with_auditing_disabled()
+    #[Group('Auditable::withoutAuditing')]
+    public function test_it_will_run_callback_with_auditing_disabled(): void
     {
         $this->assertFalse(Article::$auditingDisabled);
 
@@ -78,12 +72,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame('result', $result);
     }
 
-    /**
-     * @group Auditable::withoutAuditing
-     *
-     * @test
-     */
-    public function it_will_run_callback_then_restore_auditing_disabled()
+    #[Group('Auditable::withoutAuditing')]
+    public function test_it_will_run_callback_then_restore_auditing_disabled(): void
     {
         Article::$auditingDisabled = true;
 
@@ -94,36 +84,24 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue(Article::$auditingDisabled);
     }
 
-    /**
-     * @group Auditable::isAuditingEnabled
-     *
-     * @test
-     */
-    public function it_will_not_audit_models_when_running_from_the_console()
+    #[Group('Auditable::isAuditingEnabled')]
+    public function test_it_will_not_audit_models_when_running_from_the_console(): void
     {
         $this->app['config']->set('audit.console', false);
 
         $this->assertFalse(Article::isAuditingEnabled());
     }
 
-    /**
-     * @group Auditable::isAuditingEnabled
-     *
-     * @test
-     */
-    public function it_will_audit_models_when_running_from_the_console()
+    #[Group('Auditable::isAuditingEnabled')]
+    public function test_it_will_audit_models_when_running_from_the_console(): void
     {
         $this->app['config']->set('audit.console', true);
 
         $this->assertTrue(Article::isAuditingEnabled());
     }
 
-    /**
-     * @group Auditable::isAuditingEnabled
-     *
-     * @test
-     */
-    public function it_will_always_audit_models_when_not_running_from_the_console()
+    #[Group('Auditable::isAuditingEnabled')]
+    public function test_it_will_always_audit_models_when_not_running_from_the_console(): void
     {
         App::shouldReceive('runningInConsole')
             ->andReturn(false);
@@ -133,12 +111,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue(Article::isAuditingEnabled());
     }
 
-    /**
-     * @group Auditable::bootAuditable
-     *
-     * @test
-     */
-    public function it_will_boot_trait_when_static_flag_is_set()
+    #[Group('Auditable::bootAuditable')]
+    public function test_it_will_boot_trait_when_static_flag_is_set(): void
     {
         App::spy();
 
@@ -152,24 +126,16 @@ class AuditableTest extends AuditingTestCase
         Article::$auditingDisabled = false;
     }
 
-    /**
-     * @group Auditable::getAuditEvent
-     *
-     * @test
-     */
-    public function it_returns_null_when_the_audit_event_is_not_set()
+    #[Group('Auditable::getAuditEvent')]
+    public function test_it_returns_null_when_the_audit_event_is_not_set(): void
     {
         $model = new Article;
 
         $this->assertNull($model->getAuditEvent());
     }
 
-    /**
-     * @group Auditable::getAuditEvent
-     *
-     * @test
-     */
-    public function it_returns_the_audit_event_that_has_been_set()
+    #[Group('Auditable::getAuditEvent')]
+    public function test_it_returns_the_audit_event_that_has_been_set(): void
     {
         $model = new Article;
         $model->setAuditEvent('created');
@@ -177,12 +143,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame('created', $model->getAuditEvent());
     }
 
-    /**
-     * @group Auditable::getAuditEvents
-     *
-     * @test
-     */
-    public function it_returns_the_default_audit_events()
+    #[Group('Auditable::getAuditEvents')]
+    public function test_it_returns_the_default_audit_events(): void
     {
         $model = new Article;
 
@@ -194,12 +156,8 @@ class AuditableTest extends AuditingTestCase
         ], $model->getAuditEvents(), true);
     }
 
-    /**
-     * @group Auditable::getAuditEvents
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_events_from_attribute()
+    #[Group('Auditable::getAuditEvents')]
+    public function test_it_returns_the_custom_audit_events_from_attribute(): void
     {
         $model = new Article;
 
@@ -214,12 +172,8 @@ class AuditableTest extends AuditingTestCase
         ], $model->getAuditEvents(), true);
     }
 
-    /**
-     * @group Auditable::getAuditEvents
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_events_from_config()
+    #[Group('Auditable::getAuditEvents')]
+    public function test_it_returns_the_custom_audit_events_from_config(): void
     {
         $this->app['config']->set('audit.events', [
             'published' => 'getPublishedEventAttributes',
@@ -234,13 +188,9 @@ class AuditableTest extends AuditingTestCase
         ], $model->getAuditEvents(), true);
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::readyForAuditing
-     *
-     * @test
-     */
-    public function it_is_not_ready_for_auditing_with_custom_event()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::readyForAuditing')]
+    public function test_it_is_not_ready_for_auditing_with_custom_event(): void
     {
         $model = new Article;
 
@@ -248,13 +198,9 @@ class AuditableTest extends AuditingTestCase
         $this->assertFalse($model->readyForAuditing());
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::readyForAuditing
-     *
-     * @test
-     */
-    public function it_is_ready_for_auditing_with_custom_events()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::readyForAuditing')]
+    public function test_it_is_ready_for_auditing_with_custom_events(): void
     {
         $model = new Article;
 
@@ -274,13 +220,9 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue($model->readyForAuditing());
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::readyForAuditing
-     *
-     * @test
-     */
-    public function it_is_ready_for_auditing_with_regular_events()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::readyForAuditing')]
+    public function test_it_is_ready_for_auditing_with_regular_events(): void
     {
         $model = new Article;
 
@@ -297,13 +239,9 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue($model->readyForAuditing());
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_fails_when_an_invalid_audit_event_is_set()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_fails_when_an_invalid_audit_event_is_set(): void
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('A valid audit event has not been set');
@@ -315,19 +253,14 @@ class AuditableTest extends AuditingTestCase
         $model->toAudit();
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     *
-     * @dataProvider auditCustomAttributeGetterFailTestProvider
-     */
-    public function it_fails_when_the_custom_attribute_getters_are_missing(
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    #[DataProvider('auditCustomAttributeGetterFailTestProvider')]
+    public function test_it_fails_when_the_custom_attribute_getters_are_missing(
         string $event,
         array $auditEvents,
         string $exceptionMessage
-    ) {
+    ): void {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage($exceptionMessage);
 
@@ -374,13 +307,9 @@ class AuditableTest extends AuditingTestCase
         ];
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_fails_when_the_ip_address_resolver_implementation_is_invalid()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_fails_when_the_ip_address_resolver_implementation_is_invalid(): void
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid Resolver implementation for: ip_address');
@@ -394,13 +323,9 @@ class AuditableTest extends AuditingTestCase
         $model->toAudit();
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_fails_when_the_url_resolver_implementation_is_invalid()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_fails_when_the_url_resolver_implementation_is_invalid(): void
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid Resolver implementation for: url');
@@ -414,13 +339,9 @@ class AuditableTest extends AuditingTestCase
         $model->toAudit();
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_fails_when_the_user_agent_resolver_implementation_is_invalid()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_fails_when_the_user_agent_resolver_implementation_is_invalid(): void
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid Resolver implementation for: user_agent');
@@ -434,13 +355,9 @@ class AuditableTest extends AuditingTestCase
         $model->toAudit();
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_fails_when_the_user_resolver_implementation_is_invalid()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_fails_when_the_user_resolver_implementation_is_invalid(): void
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid UserResolver implementation');
@@ -454,13 +371,9 @@ class AuditableTest extends AuditingTestCase
         $model->toAudit();
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_returns_the_audit_data()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_returns_the_audit_data(): void
     {
         $now = Carbon::now();
 
@@ -496,20 +409,15 @@ class AuditableTest extends AuditingTestCase
         ], $auditData, true);
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     *
-     * @dataProvider userResolverProvider
-     */
-    public function it_returns_the_audit_data_including_user_attributes(
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    #[DataProvider('userResolverProvider')]
+    public function test_it_returns_the_audit_data_including_user_attributes(
         string $guard,
         string $driver,
         ?int $id = null,
         ?string $type = null
-    ) {
+    ): void {
         $this->app['config']->set('audit.user.guards', [
             $guard,
         ]);
@@ -582,13 +490,9 @@ class AuditableTest extends AuditingTestCase
         ];
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_excludes_attributes_from_the_audit_data_when_in_strict_mode()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_excludes_attributes_from_the_audit_data_when_in_strict_mode(): void
     {
         $this->app['config']->set('audit.strict', true);
 
@@ -631,13 +535,9 @@ class AuditableTest extends AuditingTestCase
         ], $auditData, true);
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_fails_when_the_attribute_modifier_implementation_is_invalid()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_fails_when_the_attribute_modifier_implementation_is_invalid(): void
     {
         $this->expectException(AuditingException::class);
         $this->expectExceptionMessage('Invalid AttributeModifier implementation: invalidAttributeRedactorOrEncoder');
@@ -653,13 +553,9 @@ class AuditableTest extends AuditingTestCase
         $model->toAudit();
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_modifies_the_audit_attributes_successfully()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_modifies_the_audit_attributes_successfully(): void
     {
         $model = Article::factory()->make([
             'title' => 'How To Audit Models',
@@ -701,14 +597,10 @@ class AuditableTest extends AuditingTestCase
         ], $model->toAudit(), true);
     }
 
-    /**
-     * @group Auditable::setAuditEvent
-     * @group Auditable::transformAudit
-     * @group Auditable::toAudit
-     *
-     * @test
-     */
-    public function it_transforms_the_audit_data()
+    #[Group('Auditable::setAuditEvent')]
+    #[Group('Auditable::transformAudit')]
+    #[Group('Auditable::toAudit')]
+    public function test_it_transforms_the_audit_data(): void
     {
         $model = new class extends Article
         {
@@ -742,24 +634,16 @@ class AuditableTest extends AuditingTestCase
         ], $auditData, true);
     }
 
-    /**
-     * @group Auditable::getAuditInclude
-     *
-     * @test
-     */
-    public function it_returns_the_default_attributes_to_be_included_in_the_audit()
+    #[Group('Auditable::getAuditInclude')]
+    public function test_it_returns_the_default_attributes_to_be_included_in_the_audit(): void
     {
         $model = new Article;
 
         Assert::assertArraySubset([], $model->getAuditInclude(), true);
     }
 
-    /**
-     * @group Auditable::getAuditInclude
-     *
-     * @test
-     */
-    public function it_returns_the_custom_attributes_to_be_included_in_the_audit()
+    #[Group('Auditable::getAuditInclude')]
+    public function test_it_returns_the_custom_attributes_to_be_included_in_the_audit(): void
     {
         $model = new Article;
 
@@ -774,24 +658,16 @@ class AuditableTest extends AuditingTestCase
         ], $model->getAuditInclude(), true);
     }
 
-    /**
-     * @group Auditable::getAuditExclude
-     *
-     * @test
-     */
-    public function it_returns_the_default_attributes_to_be_excluded_from_the_audit()
+    #[Group('Auditable::getAuditExclude')]
+    public function test_it_returns_the_default_attributes_to_be_excluded_from_the_audit(): void
     {
         $model = new Article;
 
         Assert::assertArraySubset([], $model->getAuditExclude(), true);
     }
 
-    /**
-     * @group Auditable::getAuditExclude
-     *
-     * @test
-     */
-    public function it_returns_the_custom_attributes_to_be_excluded_from_the_audit()
+    #[Group('Auditable::getAuditExclude')]
+    public function test_it_returns_the_custom_attributes_to_be_excluded_from_the_audit(): void
     {
         $model = new Article;
 
@@ -804,12 +680,7 @@ class AuditableTest extends AuditingTestCase
         ], $model->getAuditExclude(), true);
     }
 
-    /**
-     * @test
-     *
-     * @return void
-     */
-    public function it_excludes_attributes_from_exclude()
+    public function test_it_excludes_attributes_from_exclude(): void
     {
         $model = new ArticleExcludes;
 
@@ -825,24 +696,16 @@ class AuditableTest extends AuditingTestCase
         $this->assertArrayNotHasKey('title', $audit->getModified());
     }
 
-    /**
-     * @group Auditable::getAuditStrict
-     *
-     * @test
-     */
-    public function it_returns_the_default_audit_strict_value()
+    #[Group('Auditable::getAuditStrict')]
+    public function test_it_returns_the_default_audit_strict_value(): void
     {
         $model = new Article;
 
         $this->assertFalse($model->getAuditStrict());
     }
 
-    /**
-     * @group Auditable::getAuditStrict
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_strict_value_from_attribute()
+    #[Group('Auditable::getAuditStrict')]
+    public function test_it_returns_the_custom_audit_strict_value_from_attribute(): void
     {
         $model = new Article;
 
@@ -851,12 +714,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue($model->getAuditStrict());
     }
 
-    /**
-     * @group Auditable::getAuditStrict
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_strict_value_from_config()
+    #[Group('Auditable::getAuditStrict')]
+    public function test_it_returns_the_custom_audit_strict_value_from_config(): void
     {
         $this->app['config']->set('audit.strict', true);
 
@@ -865,24 +724,16 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue($model->getAuditStrict());
     }
 
-    /**
-     * @group Auditable::getAuditTimestamps
-     *
-     * @test
-     */
-    public function it_returns_the_default_audit_timestamps_value()
+    #[Group('Auditable::getAuditTimestamps')]
+    public function test_it_returns_the_default_audit_timestamps_value(): void
     {
         $model = new Article;
 
         $this->assertFalse($model->getAuditTimestamps());
     }
 
-    /**
-     * @group Auditable::getAuditTimestamps
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_timestamps_value_from_attribute()
+    #[Group('Auditable::getAuditTimestamps')]
+    public function test_it_returns_the_custom_audit_timestamps_value_from_attribute(): void
     {
         $model = new Article;
 
@@ -891,12 +742,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue($model->getAuditTimestamps());
     }
 
-    /**
-     * @group Auditable::getAuditTimestamps
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_timestamps_value_from_config()
+    #[Group('Auditable::getAuditTimestamps')]
+    public function test_it_returns_the_custom_audit_timestamps_value_from_config(): void
     {
         $this->app['config']->set('audit.timestamps', true);
 
@@ -905,24 +752,16 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue($model->getAuditTimestamps());
     }
 
-    /**
-     * @group Auditable::getAuditDriver
-     *
-     * @test
-     */
-    public function it_returns_the_default_audit_driver_value()
+    #[Group('Auditable::getAuditDriver')]
+    public function test_it_returns_the_default_audit_driver_value(): void
     {
         $model = new Article;
 
         $this->assertSame('database', $model->getAuditDriver());
     }
 
-    /**
-     * @group Auditable::getAuditDriver
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_driver_value_from_attribute()
+    #[Group('Auditable::getAuditDriver')]
+    public function test_it_returns_the_custom_audit_driver_value_from_attribute(): void
     {
         $model = new Article;
 
@@ -931,12 +770,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame('RedisDriver', $model->getAuditDriver());
     }
 
-    /**
-     * @group Auditable::getAuditDriver
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_driver_value_from_config()
+    #[Group('Auditable::getAuditDriver')]
+    public function test_it_returns_the_custom_audit_driver_value_from_config(): void
     {
         $this->app['config']->set('audit.driver', 'RedisDriver');
 
@@ -945,24 +780,16 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame('RedisDriver', $model->getAuditDriver());
     }
 
-    /**
-     * @group Auditable::getAuditThreshold
-     *
-     * @test
-     */
-    public function it_returns_the_default_audit_threshold_value()
+    #[Group('Auditable::getAuditThreshold')]
+    public function test_it_returns_the_default_audit_threshold_value(): void
     {
         $model = new Article;
 
         $this->assertSame(0, $model->getAuditThreshold());
     }
 
-    /**
-     * @group Auditable::getAuditThreshold
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_threshold_value_from_attribute()
+    #[Group('Auditable::getAuditThreshold')]
+    public function test_it_returns_the_custom_audit_threshold_value_from_attribute(): void
     {
         $model = new Article;
 
@@ -971,12 +798,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame(10, $model->getAuditThreshold());
     }
 
-    /**
-     * @group Auditable::getAuditThreshold
-     *
-     * @test
-     */
-    public function it_returns_the_custom_audit_threshold_value_from_config()
+    #[Group('Auditable::getAuditThreshold')]
+    public function test_it_returns_the_custom_audit_threshold_value_from_config(): void
     {
         $this->app['config']->set('audit.threshold', 200);
 
@@ -985,24 +808,16 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame(200, $model->getAuditThreshold());
     }
 
-    /**
-     * @group Auditable::generateTags
-     *
-     * @test
-     */
-    public function it_returns_the_default_generated_audit_tags()
+    #[Group('Auditable::generateTags')]
+    public function test_it_returns_the_default_generated_audit_tags(): void
     {
         $model = new Article;
 
         Assert::assertArraySubset([], $model->generateTags(), true);
     }
 
-    /**
-     * @group Auditable::generateTags
-     *
-     * @test
-     */
-    public function it_returns_the_custom_generated_audit_tags()
+    #[Group('Auditable::generateTags')]
+    public function test_it_returns_the_custom_generated_audit_tags(): void
     {
         $model = new class extends Article
         {
@@ -1021,12 +836,8 @@ class AuditableTest extends AuditingTestCase
         ], $model->generateTags(), true);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_fails_to_transition_when_the_audit_auditable_type_does_not_match_the_model_type()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_fails_to_transition_when_the_audit_auditable_type_does_not_match_the_model_type(): void
     {
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable type OwenIt\Auditing\Tests\Models\Article, got OwenIt\Auditing\Tests\Models\User instead');
@@ -1040,12 +851,8 @@ class AuditableTest extends AuditingTestCase
         $model->transitionTo($audit);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_works_on_times_restored_correctly()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_works_on_times_restored_correctly(): void
     {
         config(['app.timezone' => 'America/New_York']);
         date_default_timezone_set('America/New_York');
@@ -1075,12 +882,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertEquals($model->published_at, $originalStart);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_fails_to_transition_when_the_audit_auditable_type_does_not_match_the_morph_map_value()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_fails_to_transition_when_the_audit_auditable_type_does_not_match_the_morph_map_value(): void
     {
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable type articles, got users instead');
@@ -1098,12 +901,8 @@ class AuditableTest extends AuditingTestCase
         $model->transitionTo($audit);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_fails_to_transition_when_the_audit_auditable_id_does_not_match_the_model_id()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_fails_to_transition_when_the_audit_auditable_id_does_not_match_the_model_id(): void
     {
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id (integer)2, got (integer)1 instead');
@@ -1119,12 +918,8 @@ class AuditableTest extends AuditingTestCase
         $secondModel->transitionTo($firstAudit);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_fails_to_transition_when_the_audit_auditable_id_type_does_not_match_the_model_id_type()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_fails_to_transition_when_the_audit_auditable_id_type_does_not_match_the_model_id_type(): void
     {
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Expected Auditable id (integer)1, got (string)1 instead');
@@ -1150,12 +945,8 @@ class AuditableTest extends AuditingTestCase
         $model->transitionTo($audit);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_transitions_when_the_audit_auditable_id_type_does_not_match_the_model_id_type()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_transitions_when_the_audit_auditable_id_type_does_not_match_the_model_id_type(): void
     {
         $model = Article::factory()->create();
 
@@ -1175,12 +966,8 @@ class AuditableTest extends AuditingTestCase
         $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit));
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_fails_to_transition_when_an_attribute_redactor_is_set()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_fails_to_transition_when_an_attribute_redactor_is_set(): void
     {
         $this->expectException(AuditableTransitionException::class);
         $this->expectExceptionMessage('Cannot transition states when an AttributeRedactor is set');
@@ -1200,12 +987,8 @@ class AuditableTest extends AuditingTestCase
         $model->transitionTo($audit);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     */
-    public function it_fails_to_transition_when_the_auditable_attribute_compatibility_is_not_met()
+    #[Group('Auditable::transitionTo')]
+    public function test_it_fails_to_transition_when_the_auditable_attribute_compatibility_is_not_met(): void
     {
         $model = Article::factory()->create();
 
@@ -1241,20 +1024,15 @@ class AuditableTest extends AuditingTestCase
         $this->assertTrue($exceptionWasThrown);
     }
 
-    /**
-     * @group Auditable::transitionTo
-     *
-     * @test
-     *
-     * @dataProvider auditableTransitionTestProvider
-     */
-    public function it_transitions_to_another_model_state(
+    #[Group('Auditable::transitionTo')]
+    #[DataProvider('auditableTransitionTestProvider')]
+    public function test_it_transitions_to_another_model_state(
         bool $morphMap,
         array $oldValues,
         array $newValues,
         array $oldExpectation,
         array $newExpectation
-    ) {
+    ): void {
         $models = Article::factory()->count(2)->create([
             'title' => 'Facilis voluptas qui impedit deserunt vitae quidem.',
             'content' => 'Consectetur distinctio nihil eveniet cum. Expedita dolores animi dolorum eos repellat rerum.',
@@ -1287,10 +1065,7 @@ class AuditableTest extends AuditingTestCase
         $this->assertSame($newExpectation, $models[1]->getDirty());
     }
 
-    /**
-     * @test
-     */
-    public function it_works_with_string_key_models()
+    public function test_it_works_with_string_key_models(): void
     {
         $model = ApiModel::factory()->create();
         $model->save();
@@ -1414,10 +1189,7 @@ class AuditableTest extends AuditingTestCase
         ];
     }
 
-    /**
-     * @test
-     */
-    public function it_works_when_config_allowed_array_value_is_true()
+    public function test_it_works_when_config_allowed_array_value_is_true(): void
     {
         $this->app['config']->set('audit.allowed_array_values', true);
 
@@ -1459,10 +1231,7 @@ class AuditableTest extends AuditingTestCase
         ], $auditData, true);
     }
 
-    /**
-     * @test
-     */
-    public function it_works_when_config_allowed_array_value_is_false()
+    public function test_it_works_when_config_allowed_array_value_is_false(): void
     {
         $this->app['config']->set('audit.allowed_array_values', false);
 
