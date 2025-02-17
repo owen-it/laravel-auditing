@@ -14,7 +14,6 @@ class Auditing
         public Auditable $model,
         public AuditDriver $driver
     ) {
-        $this->model = $model;
-        $this->driver = $driver;
+        //
     }
 }
