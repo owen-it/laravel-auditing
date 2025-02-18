@@ -1109,7 +1109,7 @@ class AuditingTest extends AuditingTestCase
         $article->auditCustomNew = [
             'customExample' => 'Darth Vader',
         ];
-        Event::dispatch(new AuditCustom($article));
+        Event::dispatch(AuditCustom::class, [$article]);
 
         $this->assertDatabaseHas(config('audit.drivers.database.table', 'audits'), [
             'auditable_id' => $article->id,

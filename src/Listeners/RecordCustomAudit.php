@@ -2,13 +2,12 @@
 
 namespace OwenIt\Auditing\Listeners;
 
-use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Facades\Auditor;
 
 class RecordCustomAudit
 {
-    public function handle(AuditCustom $event): void
+    public function handle(\OwenIt\Auditing\Contracts\Auditable $model): void
     {
-        Auditor::execute($event->model);
+        Auditor::execute($model);
     }
 }
