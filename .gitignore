@@ -2,4 +2,6 @@
 /vendor
 composer.lock
 .vscode
+.phpunit.cache
 .phpunit.result.cache
+/build/phpstan

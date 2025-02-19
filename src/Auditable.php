@@ -18,6 +18,7 @@ use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
 use OwenIt\Auditing\Exceptions\AuditingException;
 
+// @phpstan-ignore trait.unused
 trait Auditable
 {
     /**
@@ -43,18 +44,21 @@ trait Auditable
 
     /**
      * Property may set custom event data to register
+     *
      * @var null|array
      */
     public $auditCustomOld = null;
 
     /**
      * Property may set custom event data to register
+     *
      * @var null|array
      */
     public $auditCustomNew = null;
 
     /**
      * If this is a custom event (as opposed to an eloquent event
+     *
      * @var bool
      */
     public $isCustomEvent = false;
@@ -72,7 +76,7 @@ trait Auditable
     public static function bootAuditable()
     {
         if (App::getFacadeRoot() && static::isAuditingEnabled()) {
-            static::observe(new AuditableObserver());
+            static::observe(new AuditableObserver);
         }
     }
 
@@ -110,7 +114,7 @@ trait Auditable
         }
 
         // Exclude Timestamps
-        if (!$this->getAuditTimestamps()) {
+        if (! $this->getAuditTimestamps()) {
             if ($this->getCreatedAtColumn()) {
                 $this->excludedAttributes[] = $this->getCreatedAtColumn();
             }
@@ -128,27 +132,21 @@ trait Auditable
         foreach ($attributes as $attribute => $value) {
             // Apart from null, non scalar values will be excluded
             if (
-                (is_array($value) && !Config::get('audit.allowed_array_values', false)) ||
+                (is_array($value) && ! Config::get('audit.allowed_array_values', false)) ||
                 (is_object($value) &&
-                    !method_exists($value, '__toString') &&
-                    !($value instanceof \UnitEnum))
+                    ! method_exists($value, '__toString') &&
+                    ! ($value instanceof \UnitEnum))
             ) {
                 $this->excludedAttributes[] = $attribute;
             }
         }
     }
 
-    /**
-     * @return array
-     */
     public function getAuditExclude(): array
     {
         return $this->auditExclude ?? Config::get('audit.exclude', []);
     }
 
-    /**
-     * @return array
-     */
     public function getAuditInclude(): array
     {
         return $this->auditInclude ?? [];
@@ -156,8 +154,6 @@ trait Auditable
 
     /**
      * Get the old/new attributes of a retrieved event.
-     *
-     * @return array
      */
     protected function getRetrievedEventAttributes(): array
     {
@@ -172,8 +168,6 @@ trait Auditable
 
     /**
      * Get the old/new attributes of a created event.
-     *
-     * @return array
      */
     protected function getCreatedEventAttributes(): array
     {
@@ -195,14 +189,12 @@ trait Auditable
     {
         return [
             $this->auditCustomOld,
-            $this->auditCustomNew
+            $this->auditCustomNew,
         ];
     }
 
     /**
      * Get the old/new attributes of an updated event.
-     *
-     * @return array
      */
     protected function getUpdatedEventAttributes(): array
     {
@@ -224,8 +216,6 @@ trait Auditable
 
     /**
      * Get the old/new attributes of a deleted event.
-     *
-     * @return array
      */
     protected function getDeletedEventAttributes(): array
     {
@@ -245,8 +235,6 @@ trait Auditable
 
     /**
      * Get the old/new attributes of a restored event.
-     *
-     * @return array
      */
     protected function getRestoredEventAttributes(): array
     {
@@ -273,18 +261,16 @@ trait Auditable
     /**
      * Modify attribute value.
      *
-     * @param string $attribute
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return mixed
-     * @throws AuditingException
      *
+     * @throws AuditingException
      */
     protected function modifyAttributeValue(string $attribute, $value)
     {
         $attributeModifiers = $this->getAttributeModifiers();
 
-        if (!array_key_exists($attribute, $attributeModifiers)) {
+        if (! array_key_exists($attribute, $attributeModifiers)) {
             return $value;
         }
 
@@ -306,13 +292,13 @@ trait Auditable
      */
     public function toAudit(): array
     {
-        if (!$this->readyForAuditing()) {
+        if (! $this->readyForAuditing()) {
             throw new AuditingException('A valid audit event has not been set');
         }
 
         $attributeGetter = $this->resolveAttributeGetter($this->auditEvent);
 
-        if (!method_exists($this, $attributeGetter)) {
+        if (! method_exists($this, $attributeGetter)) {
             throw new AuditingException(sprintf(
                 'Unable to handle "%s" event, %s() method missing',
                 $this->auditEvent,
@@ -322,9 +308,9 @@ trait Auditable
 
         $this->resolveAuditExclusions();
 
-        list($old, $new) = $this->$attributeGetter();
+        [$old, $new] = $this->$attributeGetter();
 
-        if ($this->getAttributeModifiers() && !$this->isCustomEvent) {
+        if ($this->getAttributeModifiers() && ! $this->isCustomEvent) {
             foreach ($old as $attribute => $value) {
                 $old[$attribute] = $this->modifyAttributeValue($attribute, $value);
             }
@@ -341,14 +327,14 @@ trait Auditable
         $user = $this->resolveUser();
 
         return $this->transformAudit(array_merge([
-            'old_values'           => $old,
-            'new_values'           => $new,
-            'event'                => $this->auditEvent,
-            'auditable_id'         => $this->getKey(),
-            'auditable_type'       => $this->getMorphClass(),
-            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
-            $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'tags'                 => empty($tags) ? null : $tags,
+            'old_values' => $old,
+            'new_values' => $new,
+            'event' => $this->auditEvent,
+            'auditable_id' => $this->getKey(),
+            'auditable_type' => $this->getMorphClass(),
+            $morphPrefix.'_id' => $user ? $user->getAuthIdentifier() : null,
+            $morphPrefix.'_type' => $user ? $user->getMorphClass() : null,
+            'tags' => empty($tags) ? null : $tags,
         ], $this->runResolvers()));
     }
 
@@ -364,18 +350,18 @@ trait Auditable
      * Resolve the User.
      *
      * @return mixed|null
-     * @throws AuditingException
      *
+     * @throws AuditingException
      */
     protected function resolveUser()
     {
-        if (!empty($this->preloadedResolverData['user'] ?? null)) {
+        if (! empty($this->preloadedResolverData['user'] ?? null)) {
             return $this->preloadedResolverData['user'];
         }
 
         $userResolver = Config::get('audit.user.resolver');
 
-        if (is_null($userResolver) && Config::has('audit.resolver') && !Config::has('audit.user.resolver')) {
+        if (is_null($userResolver) && Config::has('audit.resolver') && ! Config::has('audit.user.resolver')) {
             trigger_error(
                 'The config file audit.php is not updated to the new version 13.0. Please see https://laravel-auditing.com/guide/upgrading.html',
                 E_USER_DEPRECATED
@@ -407,11 +393,12 @@ trait Auditable
                 continue;
             }
 
-            if (!is_subclass_of($implementation, Resolver::class)) {
-                throw new AuditingException('Invalid Resolver implementation for: ' . $name);
+            if (! is_subclass_of($implementation, Resolver::class)) {
+                throw new AuditingException('Invalid Resolver implementation for: '.$name);
             }
             $resolved[$name] = call_user_func([$implementation, 'resolve'], $this);
         }
+
         return $resolved;
     }
 
@@ -420,7 +407,7 @@ trait Auditable
         $this->preloadedResolverData = $this->runResolvers();
 
         $user = $this->resolveUser();
-        if (!empty($user)) {
+        if (! empty($user)) {
             $this->preloadedResolverData['user'] = $user;
         }
 
@@ -429,10 +416,6 @@ trait Auditable
 
     /**
      * Determine if an attribute is eligible for auditing.
-     *
-     * @param string $attribute
-     *
-     * @return bool
      */
     protected function isAttributeAuditable(string $attribute): bool
     {
@@ -451,9 +434,7 @@ trait Auditable
     /**
      * Determine whether an event is auditable.
      *
-     * @param string $event
-     *
-     * @return bool
+     * @param  string  $event
      */
     protected function isEventAuditable($event): bool
     {
@@ -463,8 +444,7 @@ trait Auditable
     /**
      * Attribute getter method resolver.
      *
-     * @param string $event
-     *
+     * @param  string  $event
      * @return string|null
      */
     protected function resolveAttributeGetter($event)
@@ -521,8 +501,6 @@ trait Auditable
 
     /**
      * Is Auditing disabled.
-     *
-     * @return bool
      */
     public static function isAuditingDisabled(): bool
     {
@@ -552,8 +530,6 @@ trait Auditable
     /**
      * Execute a callback while auditing is disabled.
      *
-     * @param callable $callback
-     * @param bool $globally
      *
      * @return mixed
      */
@@ -574,8 +550,6 @@ trait Auditable
 
     /**
      * Determine whether auditing is enabled.
-     *
-     * @return bool
      */
     public static function isAuditingEnabled(): bool
     {
@@ -700,13 +674,12 @@ trait Auditable
     */
 
     /**
-     * @param string $relationName
-     * @param mixed $id
-     * @param array $attributes
-     * @param bool $touch
-     * @param array $columns
-     * @param \Closure|null $callback
+     * @param  mixed  $id
+     * @param  bool  $touch
+     * @param  array  $columns
+     * @param  \Closure|null  $callback
      * @return void
+     *
      * @throws AuditingException
      */
     public function auditAttach(string $relationName, $id, array $attributes = [], $touch = true, $columns = ['*'], $callback = null)
@@ -727,12 +700,12 @@ trait Auditable
     }
 
     /**
-     * @param string $relationName
-     * @param mixed $ids
-     * @param bool $touch
-     * @param array $columns
-     * @param \Closure|null $callback
+     * @param  mixed  $ids
+     * @param  bool  $touch
+     * @param  array  $columns
+     * @param  \Closure|null  $callback
      * @return int
+     *
      * @throws AuditingException
      */
     public function auditDetach(string $relationName, $ids = null, $touch = true, $columns = ['*'], $callback = null)
@@ -755,12 +728,12 @@ trait Auditable
     }
 
     /**
-     * @param string $relationName
-     * @param Collection|Model|array $ids
-     * @param bool $detaching
-     * @param array $columns
-     * @param \Closure|null $callback
+     * @param  Collection|Model|array  $ids
+     * @param  bool  $detaching
+     * @param  array  $columns
+     * @param  \Closure|null  $callback
      * @return array
+     *
      * @throws AuditingException
      */
     public function auditSync(string $relationName, $ids, $detaching = true, $columns = ['*'], $callback = null)
@@ -788,11 +761,11 @@ trait Auditable
     }
 
     /**
-     * @param string $relationName
-     * @param Collection|Model|array $ids
-     * @param array $columns
-     * @param \Closure|null $callback
+     * @param  Collection|Model|array  $ids
+     * @param  array  $columns
+     * @param  \Closure|null  $callback
      * @return array
+     *
      * @throws AuditingException
      */
     public function auditSyncWithoutDetaching(string $relationName, $ids, $columns = ['*'], $callback = null)
@@ -803,12 +776,9 @@ trait Auditable
     }
 
     /**
-     * @param string $relationName
-     * @param Collection|Model|array  $ids
-     * @param array  $values
-     * @param bool  $detaching
-     * @param array $columns
-     * @param \Closure|null $callback
+     * @param  Collection|Model|array  $ids
+     * @param  array  $columns
+     * @param  \Closure|null  $callback
      * @return array
      */
     public function auditSyncWithPivotValues(string $relationName, $ids, array $values, bool $detaching = true, $columns = ['*'], $callback = null)
@@ -829,10 +799,10 @@ trait Auditable
     }
 
     /**
-     * @param string $relationName
-     * @param string $event
-     * @param Collection $old
-     * @param Collection $new
+     * @param  string  $relationName
+     * @param  string  $event
+     * @param  Collection  $old
+     * @param  Collection  $new
      * @return void
      */
     private function dispatchRelationAuditEvent($relationName, $event, $old, $new)
@@ -849,14 +819,14 @@ trait Auditable
 
         $this->auditEvent = $event;
         $this->isCustomEvent = true;
-        Event::dispatch(AuditCustom::class, [$this]);
+        Event::dispatch(new AuditCustom($this));
         $this->auditCustomOld = $this->auditCustomNew = [];
         $this->isCustomEvent = false;
     }
 
     private function validateRelationshipMethodExistence(string $relationName, string $methodName): void
     {
-        if (!method_exists($this, $relationName) || !method_exists($this->{$relationName}(), $methodName)) {
+        if (! method_exists($this, $relationName) || ! method_exists($this->{$relationName}(), $methodName)) {
             throw new AuditingException("Relationship $relationName was not found or does not support method $methodName");
         }
     }

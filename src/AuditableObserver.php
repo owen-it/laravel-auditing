@@ -20,8 +20,6 @@ class AuditableObserver
     /**
      * Handle the retrieved event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
      * @return void
      */
     public function retrieved(Auditable $model)
@@ -31,8 +29,6 @@ class AuditableObserver
 
     /**
      * Handle the created event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -44,22 +40,18 @@ class AuditableObserver
     /**
      * Handle the updated event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
      * @return void
      */
     public function updated(Auditable $model)
     {
         // Ignore the updated event when restoring
-        if (!static::$restoring) {
+        if (! static::$restoring) {
             $this->dispatchAudit($model->setAuditEvent('updated'));
         }
     }
 
     /**
      * Handle the deleted event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -70,8 +62,6 @@ class AuditableObserver
 
     /**
      * Handle the restoring event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -86,8 +76,6 @@ class AuditableObserver
     /**
      * Handle the restored event.
      *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
      * @return void
      */
     public function restored(Auditable $model)
@@ -99,35 +87,35 @@ class AuditableObserver
         static::$restoring = false;
     }
 
-    protected function dispatchAudit(Auditable $model)
+    protected function dispatchAudit(Auditable $model): void
     {
-        if (!$model->readyForAuditing()) {
+        if (! $model->readyForAuditing()) {
             return;
         }
 
+        // @phpstan-ignore method.notFound
         $model->preloadResolverData();
-        if (!Config::get('audit.queue.enable', false)) {
-            return Auditor::execute($model);
+        if (! Config::get('audit.queue.enable', false)) {
+            Auditor::execute($model);
+
+            return;
         }
 
-        if (!$this->fireDispatchingAuditEvent($model)) {
+        if (! $this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
         // Unload the relations to prevent large amounts of unnecessary data from being serialized.
-        app()->make('events')->dispatch(new DispatchAudit($model->withoutRelations()));
+        $model->withoutRelations();
+        app()->make('events')->dispatch(new DispatchAudit($model));
     }
 
     /**
      * Fire the Auditing event.
-     *
-     * @param \OwenIt\Auditing\Contracts\Auditable $model
-     *
-     * @return bool
      */
     protected function fireDispatchingAuditEvent(Auditable $model): bool
     {
         return app()->make('events')
-                ->until(new DispatchingAudit($model)) !== false;
+            ->until(new DispatchingAudit($model)) !== false;
     }
 }

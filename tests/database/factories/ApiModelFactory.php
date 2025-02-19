@@ -1,20 +1,20 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace OwenIt\Auditing\Tests\database\factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
 use OwenIt\Auditing\Tests\Models\ApiModel;
-use Ramsey\Uuid\Uuid;
 
-/*
-|--------------------------------------------------------------------------
-| APIModel Factories
-|--------------------------------------------------------------------------
-|
-*/
+class ApiModelFactory extends Factory
+{
+    protected $model = ApiModel::class;
 
-$factory->define(ApiModel::class, function (Faker $faker) {
-    return [
-        'api_model_id' => Uuid::uuid4(),
-        'content'      => $faker->unique()->paragraph(6),
-        'published_at' => null,
-    ];
-});
+    public function definition()
+    {
+        return [
+            'api_model_id' => fake()->uuid(),
+            'content' => fake()->unique()->paragraph(6),
+            'published_at' => null,
+        ];
+    }
+}

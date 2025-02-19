@@ -1,4 +1,8 @@
-## v13.0.0
+## Note that changelogs not listed here are included in the [releases](https://github.com/owen-it/laravel-auditing/releases).
+
+---
+
+## v13.0.0 (2022-03-02)
 
 ### Added
 

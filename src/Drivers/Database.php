@@ -2,7 +2,6 @@
 
 namespace OwenIt\Auditing\Drivers;
 
-use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Contracts\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Contracts\AuditDriver;
@@ -28,7 +27,8 @@ class Database implements AuditDriver
 
             return $model->audits()
                 ->leftJoinSub(
-                    $model->audits()->select($auditModel->getKeyName())->limit($threshold)->latest(),
+                    $model->audits()->getQuery()
+                        ->select($auditModel->getKeyName())->limit($threshold)->latest(),
                     'audit_threshold',
                     function ($join) use ($auditModel) {
                         $join->on(

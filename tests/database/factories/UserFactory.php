@@ -1,20 +1,21 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace OwenIt\Auditing\Tests\database\factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
 use OwenIt\Auditing\Tests\Models\User;
 
-/*
-|--------------------------------------------------------------------------
-| User Factories
-|--------------------------------------------------------------------------
-|
-*/
+class UserFactory extends Factory
+{
+    protected $model = User::class;
 
-$factory->define(User::class, function (Faker $faker) {
-    return [
-        'is_admin'   => $faker->randomElement([0, 1]),
-        'first_name' => $faker->firstName,
-        'last_name'  => $faker->lastName,
-        'email'      => $faker->unique()->safeEmail,
-    ];
-});
+    public function definition()
+    {
+        return [
+            'is_admin' => fake()->randomElement([0, 1]),
+            'first_name' => fake()->firstName,
+            'last_name' => fake()->lastName,
+            'email' => fake()->unique()->safeEmail,
+        ];
+    }
+}

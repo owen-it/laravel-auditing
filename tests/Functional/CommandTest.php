@@ -6,10 +6,7 @@ use OwenIt\Auditing\Tests\AuditingTestCase;
 
 class CommandTest extends AuditingTestCase
 {
-    /**
-     * @test
-     */
-    public function itWillGenerateTheAuditDriver()
+    public function test_it_will_generate_the_audit_driver(): void
     {
         $driverFilePath = sprintf(
             '%s/AuditDrivers/TestDriver.php',
