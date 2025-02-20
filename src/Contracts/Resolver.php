@@ -4,6 +4,6 @@ namespace OwenIt\Auditing\Contracts;
 
 interface Resolver
 {
-    /** @return string */
+    /** @return mixed */
     public static function resolve(Auditable $auditable);
 }
