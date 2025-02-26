@@ -4,21 +4,20 @@ namespace OwenIt\Auditing\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @phpstan-require-extends \Illuminate\Database\Eloquent\Model
+ */
 interface Auditable
 {
     /**
      * Auditable Model audits.
      *
-     * @return MorphMany<\OwenIt\Auditing\Models\Audit>
+     * @return MorphMany<\OwenIt\Auditing\Models\Audit, \Illuminate\Database\Eloquent\Model>
      */
     public function audits(): MorphMany;
 
     /**
      * Set the Audit event.
-     *
-     * @param string $event
-     *
-     * @return Auditable
      */
     public function setAuditEvent(string $event): Auditable;
 
@@ -32,51 +31,45 @@ interface Auditable
     /**
      * Get the events that trigger an Audit.
      *
-     * @return array
+     * @return array<string>
      */
     public function getAuditEvents(): array;
 
     /**
      * Is the model ready for auditing?
-     *
-     * @return bool
      */
     public function readyForAuditing(): bool;
 
     /**
      * Return data for an Audit.
      *
-     * @throws \OwenIt\Auditing\Exceptions\AuditingException
+     * @return array<string,mixed>
      *
-     * @return array
+     * @throws \OwenIt\Auditing\Exceptions\AuditingException
      */
     public function toAudit(): array;
 
     /**
      * Get the (Auditable) attributes included in audit.
      *
-     * @return array
+     * @return array<string>
      */
     public function getAuditInclude(): array;
 
     /**
      * Get the (Auditable) attributes excluded from audit.
      *
-     * @return array
+     * @return array<string>
      */
     public function getAuditExclude(): array;
 
     /**
      * Get the strict audit status.
-     *
-     * @return bool
      */
     public function getAuditStrict(): bool;
 
     /**
      * Get the audit (Auditable) timestamps status.
-     *
-     * @return bool
      */
     public function getAuditTimestamps(): bool;
 
@@ -89,43 +82,35 @@ interface Auditable
 
     /**
      * Get the Audit threshold.
-     *
-     * @return int
      */
     public function getAuditThreshold(): int;
 
     /**
      * Get the Attribute modifiers.
      *
-     * @return array
+     * @return array<string,string>
      */
     public function getAttributeModifiers(): array;
 
     /**
      * Transform the data before performing an audit.
      *
-     * @param array $data
-     *
-     * @return array
+     * @param  array<string,mixed>  $data
+     * @return array<string,mixed>
      */
     public function transformAudit(array $data): array;
 
     /**
      * Generate an array with the model tags.
      *
-     * @return array
+     * @return array<string>
      */
     public function generateTags(): array;
 
     /**
      * Transition to another model state from an Audit.
      *
-     * @param Audit $audit
-     * @param bool  $old
-     *
      * @throws \OwenIt\Auditing\Exceptions\AuditableTransitionException
-     *
-     * @return Auditable
      */
     public function transitionTo(Audit $audit, bool $old = false): Auditable;
 }

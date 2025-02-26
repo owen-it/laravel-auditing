@@ -2,57 +2,29 @@ name: run-tests
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    branches:
+      - '*'
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      COMPOSER_NO_INTERACTION: 1
     strategy:
       fail-fast: false
       matrix:
-        php: [7.4, 8.0, 8.1, 8.2, 8.3]
-        laravel: [ 11.*, 10.*, 9.*, 8.*, 7.* ]
+        php: [ 8.2, 8.3, 8.4 ]
+        laravel: [ 11.*, 12.* ]
         include:
+          - laravel: 12.*
+            testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
-          - laravel: 10.*
-            testbench: 8.*
-          - laravel: 9.*
-            testbench: 7.*
-          - laravel: 8.*
-            testbench: 6.*
-          - laravel: 7.*
-            testbench: 5.*
-        exclude:
-          - laravel: 11.*
-            php: 8.1
-          - laravel: 11.*
-            php: 8.0
-          - laravel: 11.*
-            php: 7.4
-          - laravel: 10.*
-            php: 7.4
-          - laravel: 10.*
-            php: 8.0
-          - laravel: 9.*
-            php: 7.4
-          - laravel: 8.*
-            php: 8.3
-          - laravel: 7.*
-            php: 8.1
-          - laravel: 7.*
-            php: 8.2
-          - laravel: 7.*
-            php: 8.3
 
     name: PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
     steps:
-      - name: Update apt
-        run: sudo apt-get update --fix-missing
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -65,9 +37,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" "nesbot/carbon:^2.62.1" --no-interaction --no-update
-          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
-          composer update --prefer-dist --no-interaction --no-suggest
+          composer require "illuminate/console:${{ matrix.laravel }}" "illuminate/database:${{ matrix.laravel }}" "illuminate/filesystem:${{ matrix.laravel }}" --no-update
+          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-update
+          composer update --prefer-dist --no-suggest
 
       - name: Execute tests
         run: |

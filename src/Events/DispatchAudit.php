@@ -8,26 +8,18 @@ use ReflectionClass;
 class DispatchAudit
 {
     /**
-     * The Auditable model.
-     *
-     * @var Auditable
-     */
-    public $model;
-
-    /**
      * Create a new DispatchAudit event instance.
-     *
-     * @param Auditable $model
      */
-    public function __construct(Auditable $model)
-    {
-        $this->model = $model;
+    public function __construct(
+        public Auditable $model
+    ) {
+        //
     }
 
     /**
      * Prepare the instance values for serialization.
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function __serialize()
     {
@@ -35,8 +27,8 @@ class DispatchAudit
             'class' => get_class($this->model),
             'model_data' => [
                 'exists' => true,
-                'connection' => $this->model->getQueueableConnection()
-            ]
+                'connection' => $this->model->getQueueableConnection(),
+            ],
         ];
 
         $customProperties = array_merge([
@@ -56,7 +48,7 @@ class DispatchAudit
         foreach ($customProperties as $key) {
             try {
                 $values['model_data'][$key] = $this->getModelPropertyValue($reflection, $key);
-            } catch (\Throwable $e){
+            } catch (\Throwable $e) {
                 //
             }
         }
@@ -67,25 +59,30 @@ class DispatchAudit
     /**
      * Restore the model after serialization.
      *
-     * @param  array  $values
-     * @return array
+     * @param  array<string,mixed>  $values
      */
-    public function __unserialize(array $values)
+    public function __unserialize(array $values): void
     {
-        $this->model = new $values['class'];
+        $model = new $values['class'];
 
+        if (! $model instanceof Auditable) {
+            return;
+        }
+
+        $this->model = $model;
         $reflection = new ReflectionClass($this->model);
         foreach ($values['model_data'] as $key => $value) {
             $this->setModelPropertyValue($reflection, $key, $value);
         }
-
-        return $values;
     }
 
     /**
      * Set the property value for the given property.
+     *
+     * @param  ReflectionClass<Auditable>  $reflection
+     * @param  mixed  $value
      */
-    protected function setModelPropertyValue(ReflectionClass $reflection, string $name, $value)
+    protected function setModelPropertyValue(ReflectionClass $reflection, string $name, $value): void
     {
         $property = $reflection->getProperty($name);
 
@@ -97,6 +94,7 @@ class DispatchAudit
     /**
      * Get the property value for the given property.
      *
+     * @param  ReflectionClass<Auditable>  $reflection
      * @return mixed
      */
     protected function getModelPropertyValue(ReflectionClass $reflection, string $name)

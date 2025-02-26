@@ -1,0 +1,15 @@
+{
+    "preset": "laravel",
+    "verbose": false,
+    "test": false,
+    "dry": false,
+    "ignore": [
+        "vendor"
+    ],
+    "remove": [],
+    "config": {
+        "braces": {
+            "allow_single_line_closure": true
+        }
+    }
+}
