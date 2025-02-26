@@ -30,4 +30,9 @@ class User extends Model implements Auditable, Authenticatable
     {
         return ucfirst($value);
     }
+    
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_members', 'user_id', 'group_id')->using(GroupMember::class)->withPivot('id','role');
+    }
 }

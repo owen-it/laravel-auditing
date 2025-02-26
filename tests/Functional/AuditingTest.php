@@ -20,6 +20,7 @@ use OwenIt\Auditing\Tests\Models\Article;
 use OwenIt\Auditing\Tests\Models\ArticleCustomAuditMorph;
 use OwenIt\Auditing\Tests\Models\ArticleExcludes;
 use OwenIt\Auditing\Tests\Models\Category;
+use OwenIt\Auditing\Tests\Models\Group;
 use OwenIt\Auditing\Tests\Models\User;
 
 class AuditingTest extends AuditingTestCase
@@ -962,5 +963,73 @@ class AuditingTest extends AuditingTestCase
 
         $this->assertNotEmpty($audit);
         $this->assertSame(get_class($audit), \OwenIt\Auditing\Tests\Models\CustomAudit::class);
+    }
+    
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditSyncWithAuditablePivotClass()
+    {
+        $group = Group::factory()->create();
+        $user = User::factory()->create();
+        
+        $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
+
+        $user->auditSync('groups', [$group->getKey() => ["role" => "admin"]]);
+
+        $no_of_audits_mid = Audit::where('auditable_type', User::class)->count();
+        $memberRole = $user->groups()->first()->pivot->role;
+        
+        $user->auditSync('groups', []);
+        
+        $no_of_audits_after = Audit::where('auditable_type', User::class)->count();
+        
+        $this->assertSame("admin", $memberRole);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_mid);
+        $this->assertGreaterThan($no_of_audits_mid, $no_of_audits_after);
+    }
+    
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditAttachWithAuditablePivotClass()
+    {
+        $group = Group::factory()->create();
+        $user = User::factory()->create();
+        
+        $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
+
+        $user->auditAttach('groups', $group);
+        
+        $attachedGroup = $user->groups()->first()->getKey();
+        $no_of_audits_after = Audit::where('auditable_type', User::class)->count();
+        
+        $this->assertSame($group->getKey(), $attachedGroup);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
+    }
+    
+    /**
+     * @test
+     * @return void
+     */
+    public function itWillAuditDetachWithAuditablePivotClass()
+    {
+        $group = Group::factory()->create();
+        $user = User::factory()->create();
+        
+        $user->groups()->attach($group);
+        
+        $attachedGroup = $user->groups()->first()->getKey();
+        $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
+
+        $detachedGroups = $user->auditDetach('groups', $group);
+
+        $no_of_audits_after = Audit::where('auditable_type', User::class)->count();
+        
+        $this->assertSame($group->getKey(), $attachedGroup);
+        $this->assertSame(1, $detachedGroups);
+        $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
     }
 }

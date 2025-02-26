@@ -5,6 +5,7 @@ namespace OwenIt\Auditing;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\Contracts\AttributeEncoder;
 use OwenIt\Auditing\Contracts\AttributeRedactor;
+use OwenIt\Auditing\Contracts\Auditable as ContractsAuditable;
 use OwenIt\Auditing\Contracts\Resolver;
 use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Exceptions\AuditableTransitionException;
@@ -709,7 +711,17 @@ trait Auditable
         }
 
         $old = $relationCall->get($columns);
-        $results = $relationCall->detach($ids, $touch);
+        
+        $pivotClass = $relationCall->getPivotClass();
+        
+        if ($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
+            $results = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $touch) {
+                return $relationCall->detach($ids, $touch);
+            });
+        } else {
+            $results = $relationCall->detach($ids, $touch);
+        }
+        
         $new = $relationCall->get($columns);
 
         $this->dispatchRelationAuditEvent($relationName, 'detach', $old, $new);
@@ -737,7 +749,16 @@ trait Auditable
         }
 
         $old = $relationCall->get($columns);
-        $changes = $relationCall->sync($ids, $detaching);
+        
+        $pivotClass = $relationCall->getPivotClass();
+        
+        if ($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
+            $changes = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $detaching) {
+                return $relationCall->sync($ids, $detaching);
+            });
+        } else {
+            $changes = $relationCall->sync($ids, $detaching);
+        }
 
         if (collect($changes)->flatten()->isEmpty()) {
             $old = $new = collect([]);
