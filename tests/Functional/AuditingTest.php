@@ -971,8 +971,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditSyncWithAuditablePivotClass()
     {
-        $group = factory(Group::class)->create();
-        $user = factory(User::class)->create();
+        $group = Group::factory()->create();
+        $user = User::factory()->create();
         
         $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
 
@@ -996,8 +996,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditAttachWithAuditablePivotClass()
     {
-        $group = factory(Group::class)->create();
-        $user = factory(User::class)->create();
+        $group = Group::factory()->create();
+        $user = User::factory()->create();
         
         $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
 
@@ -1016,8 +1016,8 @@ class AuditingTest extends AuditingTestCase
      */
     public function itWillAuditDetachWithAuditablePivotClass()
     {
-        $group = factory(Group::class)->create();
-        $user = factory(User::class)->create();
+        $group = Group::factory()->create();
+        $user = User::factory()->create();
         
         $user->groups()->attach($group);
         
