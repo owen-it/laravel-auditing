@@ -13,19 +13,26 @@ class UserResolver implements Resolver
      */
     public static function resolve()
     {
+        $guardsConfig = Config::get('auth.guards');
         $guards = Config::get('audit.user.guards', [
             Config::get('auth.defaults.guard'),
         ]);
 
         foreach ($guards as $guard) {
-            try {
-                $authenticated = Auth::guard($guard)->check();
-            } catch (\Exception $exception) {
+            if (($guardsConfig[$guard]['driver'] ?? null) === 'sanctum') {
+                if ($user = Auth::user()) {
+                    return $user;
+                }
+
                 continue;
             }
 
-            if ($authenticated === true) {
-                return Auth::guard($guard)->user();
+            try {
+                if ($user = Auth::guard($guard)->user()) {
+                    return $user;
+                }
+            } catch (\Exception $exception) {
+                continue;
             }
         }
 
