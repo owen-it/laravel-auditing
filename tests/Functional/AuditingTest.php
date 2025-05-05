@@ -276,9 +276,7 @@ class AuditingTest extends AuditingTestCase
         ]);
 
         foreach (range(1, 20) as $count) {
-            if ($count === 11) {
-                sleep(1);
-            }
+            Carbon::setTestNow(now()->addSeconds($count));
 
             $article->update([
                 'title' => 'Title #'.$count,

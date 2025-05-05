@@ -24,21 +24,17 @@ class Database implements AuditDriver
         if (($threshold = $model->getAuditThreshold()) > 0) {
             $auditClass = get_class($model->audits()->getModel());
             $auditModel = new $auditClass;
+            $keyName = $auditModel->getKeyName();
 
             return $model->audits()
                 ->leftJoinSub(
-                    $model->audits()->getQuery()
-                        ->select($auditModel->getKeyName())->limit($threshold)->latest(),
+                    $model->audits()->getQuery()->select($keyName)->limit($threshold)->latest(),
                     'audit_threshold',
-                    function ($join) use ($auditModel) {
-                        $join->on(
-                            $auditModel->gettable().'.'.$auditModel->getKeyName(),
-                            '=',
-                            'audit_threshold.'.$auditModel->getKeyName()
-                        );
-                    }
+                    fn ($join) => $join->on(
+                        $auditModel->getTable().".$keyName", '=', "audit_threshold.$keyName"
+                    )
                 )
-                ->whereNull('audit_threshold.'.$auditModel->getKeyName())
+                ->whereNull("audit_threshold.$keyName")
                 ->delete() > 0;
         }
 

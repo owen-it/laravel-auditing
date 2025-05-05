@@ -183,7 +183,13 @@ trait Audit
         }
 
         if (preg_match('/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/', $value)) {
-            return Date::instance(Carbon::createFromFormat('Y-m-d H:i:s', $value, Date::now('UTC')->getTimezone()));
+            $date = Carbon::createFromFormat('Y-m-d H:i:s', $value, Date::now('UTC')->getTimezone());
+
+            if (! $date) {
+                return $value;
+            }
+
+            return Date::instance($date);
         }
 
         try {
