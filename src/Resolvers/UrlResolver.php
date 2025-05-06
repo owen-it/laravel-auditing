@@ -25,7 +25,7 @@ class UrlResolver implements Resolver
     public static function resolveCommandLine(): string
     {
         $command = Request::server('argv', null);
-        if (is_array($command)) {
+        if (is_array($command)) { // @phpstan-ignore function.impossibleType
             return implode(' ', $command);
         }
 
