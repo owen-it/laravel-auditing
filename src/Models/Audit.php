@@ -3,6 +3,7 @@
 namespace OwenIt\Auditing\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $tags
