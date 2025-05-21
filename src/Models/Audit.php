@@ -3,6 +3,7 @@
 namespace OwenIt\Auditing\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property string $tags
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $updated_at
  * @property mixed $user
  * @property mixed $auditable.
+ * @property string|null $auditable_type
+ * @property string|int|null $auditable_id
  */
 class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
 {
