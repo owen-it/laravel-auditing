@@ -711,9 +711,9 @@ trait Auditable
         }
 
         $old = $relationCall->get($columns);
-        
+
         $pivotClass = $relationCall->getPivotClass();
-        
+
         if ($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
             $results = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $touch) {
                 return $relationCall->detach($ids, $touch);
@@ -721,7 +721,7 @@ trait Auditable
         } else {
             $results = $relationCall->detach($ids, $touch);
         }
-        
+
         $new = $relationCall->get($columns);
 
         $this->dispatchRelationAuditEvent($relationName, 'detach', $old, $new);
@@ -742,6 +742,7 @@ trait Auditable
     {
         $this->validateRelationshipMethodExistence($relationName, 'sync');
 
+        /** @var BelongsToMany<Model, $this>|\Illuminate\Database\Eloquent\Relations\MorphToMany<Model, $this> $relationCall */
         $relationCall = $this->{$relationName}();
 
         if ($callback instanceof \Closure) {
@@ -749,9 +750,9 @@ trait Auditable
         }
 
         $old = $relationCall->get($columns);
-        
+
         $pivotClass = $relationCall->getPivotClass();
-        
+
         if ($pivotClass !== Pivot::class && is_a($pivotClass, ContractsAuditable::class, true)) {
             $changes = $pivotClass::withoutAuditing(function () use ($relationCall, $ids, $detaching) {
                 return $relationCall->sync($ids, $detaching);
