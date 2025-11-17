@@ -9,10 +9,10 @@ use OwenIt\Auditing\Contracts\Resolver;
 
 class UrlResolver implements Resolver
 {
-    public static function resolve(Auditable $auditable): string
+    public static function resolve(?Auditable $auditable = null): string
     {
-        if (! empty($auditable->preloadedResolverData['url'] ?? null)) {
-            return $auditable->preloadedResolverData['url'] ?? '';
+        if (! empty($auditable?->preloadedResolverData['url'] ?? null)) {
+            return $auditable?->preloadedResolverData['url'] ?? '';
         }
 
         if (App::runningInConsole()) {

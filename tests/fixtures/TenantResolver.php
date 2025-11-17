@@ -7,7 +7,7 @@ use OwenIt\Auditing\Contracts\Resolver;
 
 class TenantResolver implements Resolver
 {
-    public static function resolve(Auditable $auditable)
+    public static function resolve(?Auditable $auditable = null)
     {
         return 1;
     }

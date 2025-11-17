@@ -8,8 +8,8 @@ use OwenIt\Auditing\Contracts\Resolver;
 
 class IpAddressResolver implements Resolver
 {
-    public static function resolve(Auditable $auditable): string
+    public static function resolve(?Auditable $auditable = null): string
     {
-        return $auditable->preloadedResolverData['ip_address'] ?? Request::ip();
+        return $auditable?->preloadedResolverData['ip_address'] ?? Request::ip();
     }
 }

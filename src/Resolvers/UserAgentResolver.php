@@ -8,8 +8,8 @@ use OwenIt\Auditing\Contracts\Resolver;
 
 class UserAgentResolver implements Resolver
 {
-    public static function resolve(Auditable $auditable): string
+    public static function resolve(?Auditable $auditable = null): string
     {
-        return $auditable->preloadedResolverData['user_agent'] ?? Request::header('User-Agent', '');
+        return $auditable?->preloadedResolverData['user_agent'] ?? Request::header('User-Agent', '');
     }
 }
