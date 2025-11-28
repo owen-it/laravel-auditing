@@ -1268,4 +1268,37 @@ class AuditableTest extends AuditingTestCase
             'tags' => null,
         ], $auditData, true);
     }
+
+    public function test_it_works_when_enabling_after_model_boot(): void
+    {
+        $this->app['config']->set('audit.enabled', true);
+
+        $this->app['config']->set('audit.console', false);
+        Article::clearBootedModels(); // Make sure the model is booted again
+        Article::disableAuditing();
+
+        $model = tap(new Article([
+            'title' => 'How To Audit Eloquent Models',
+            'content' => fake()->text(),
+            'reviewed' => fake()->boolean(),
+        ]), fn (Article $article) => $article->save()); // constructor will boot trait
+        $this->assertFalse(Article::isAuditingEnabled(), 'Because console audit is disabled, the model is not auditing');
+        $this->assertTrue(Article::getEventDispatcher()->hasListeners(\sprintf('eloquent.created: %s', Article::class)));
+
+        $this->assertCount(0, $model->audits, 'If auditing is enabled, the model should have an audit after creating');
+
+        $this->app['config']->set('audit.console', true);
+        Article::enableAuditing();
+
+        $model = tap(new Article([
+            'title' => 'How To Audit Eloquent Models',
+            'content' => fake()->text(),
+            'reviewed' => fake()->boolean(),
+        ]), fn (Article $article) => $article->save()); // will not boot again, because booting only happens once
+
+        $this->assertCount(1, $model->audits, 'If auditing is enabled, the model should have an audit after creating');
+
+        $this->assertTrue(Article::isAuditingEnabled(), 'Because console audit is enabled, the model is auditing');
+        $this->assertTrue(Article::getEventDispatcher()->hasListeners(\sprintf('eloquent.created: %s', Article::class)), 'The model should have a listener for created');
+    }
 }
