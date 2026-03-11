@@ -78,7 +78,9 @@ trait Auditable
     public static function bootAuditable()
     {
         if (App::getFacadeRoot() && static::isAuditingEnabled()) {
-            static::observe(AuditableObserver::class);
+            static::whenBooted(function () {
+                static::observe(AuditableObserver::class);
+            });
         }
     }
 
