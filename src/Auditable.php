@@ -86,7 +86,6 @@ trait Auditable
                 $registerObserver(); // fallback for Laravel 11
             }
         }
-        }
     }
 
     /**
