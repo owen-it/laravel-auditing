@@ -115,6 +115,7 @@ class AuditableObserver
      */
     protected function fireDispatchingAuditEvent(Auditable $model): bool
     {
+        // @phpstan-ignore-next-line
         return app()->make('events')
             ->until(new DispatchingAudit($model)) !== false;
     }
