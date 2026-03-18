@@ -1141,6 +1141,9 @@ class AuditableTest extends AuditingTestCase
         $auditReflection = new ReflectionClass($audit);
 
         $auditCastsProperty = $auditReflection->getProperty('casts');
+        if (PHP_VERSION_ID < 80100) {
+            $auditCastsProperty->setAccessible(true);
+        }
         $auditCastsProperty->setAccessible(true);
         $auditCastsProperty->setValue($audit, [
             'old_values' => 'json',

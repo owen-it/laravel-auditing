@@ -92,7 +92,9 @@ class DispatchAudit
     {
         $property = $reflection->getProperty($name);
 
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
 
         $property->setValue($this->model, $value);
     }
@@ -107,7 +109,9 @@ class DispatchAudit
     {
         $property = $reflection->getProperty($name);
 
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
 
         return $property->getValue($this->model);
     }
