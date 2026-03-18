@@ -84,11 +84,7 @@ class DispatchAudit
      */
     protected function setModelPropertyValue(ReflectionClass $reflection, string $name, $value): void
     {
-        $property = $reflection->getProperty($name);
-
-        $property->setAccessible(true);
-
-        $property->setValue($this->model, $value);
+        $reflection->getProperty($name)->setValue($this->model, $value);
     }
 
     /**
@@ -99,10 +95,6 @@ class DispatchAudit
      */
     protected function getModelPropertyValue(ReflectionClass $reflection, string $name)
     {
-        $property = $reflection->getProperty($name);
-
-        $property->setAccessible(true);
-
-        return $property->getValue($this->model);
+        return $reflection->getProperty($name)->getValue($this->model);
     }
 }
