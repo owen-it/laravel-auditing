@@ -9,6 +9,12 @@
          stopOnFailure="true"
          cacheDirectory=".phpunit.cache"
          backupStaticProperties="false"
+         failOnDeprecation="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnPhpunitDeprecations="true"
 >
     <testsuites>
         <testsuite name="Auditing Test Suite">

@@ -962,12 +962,8 @@ class AuditingTest extends AuditingTestCase
         $this->assertNotEmpty($audit);
         $this->assertSame(get_class($audit), \OwenIt\Auditing\Tests\Models\CustomAudit::class);
     }
-    
-    /**
-     * @test
-     * @return void
-     */
-    public function itWillAuditSyncWithAuditablePivotClass()
+
+    public function test_it_will_audit_sync_with_auditable_pivot_class()
     {
         $group = Group::factory()->create();
         $user = User::factory()->create();
@@ -987,12 +983,8 @@ class AuditingTest extends AuditingTestCase
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_mid);
         $this->assertGreaterThan($no_of_audits_mid, $no_of_audits_after);
     }
-    
-    /**
-     * @test
-     * @return void
-     */
-    public function itWillAuditAttachWithAuditablePivotClass()
+
+    public function test_it_will_audit_attach_with_auditable_pivot_class()
     {
         $group = Group::factory()->create();
         $user = User::factory()->create();
@@ -1007,12 +999,8 @@ class AuditingTest extends AuditingTestCase
         $this->assertSame($group->getKey(), $attachedGroup);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
     }
-    
-    /**
-     * @test
-     * @return void
-     */
-    public function itWillAuditDetachWithAuditablePivotClass()
+
+    public function test_it_will_audit_detach_with_auditable_pivot_class()
     {
         $group = Group::factory()->create();
         $user = User::factory()->create();
