@@ -30,6 +30,8 @@ jobs:
           - laravel: 13.*
             testbench: 11.*
         exclude:
+          - laravel: 11.*
+            php: 8.5
           - laravel: 13.*
             php: 8.2
 
