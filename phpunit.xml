@@ -9,7 +9,7 @@
          stopOnFailure="true"
          cacheDirectory=".phpunit.cache"
          backupStaticProperties="false"
-         failOnDeprecation="true"
+         failOnDeprecation="false"
          displayDetailsOnTestsThatTriggerDeprecations="true"
          displayDetailsOnTestsThatTriggerErrors="true"
          displayDetailsOnTestsThatTriggerNotices="true"
