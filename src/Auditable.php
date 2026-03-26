@@ -259,6 +259,10 @@ trait Auditable
             return false;
         }
 
+        if (! static::isAuditingEnabled()) {
+            return false;
+        }
+
         if ($this->isCustomEvent) {
             return true;
         }

@@ -9,10 +9,6 @@ class RecordCustomAudit
 {
     public function handle(AuditCustom $event): void
     {
-        if (method_exists($event->model, 'isAuditingEnabled') && ! $event->model::isAuditingEnabled()) {
-            return;
-        }
-
         Auditor::execute($event->model);
     }
 }
