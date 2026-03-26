@@ -25,6 +25,10 @@ class AuditingServiceProvider extends ServiceProvider
         $this->registerPublishing();
         $this->mergeConfigFrom(__DIR__.'/../config/audit.php', 'audit');
 
+        if (!$this->app['config']->get('audit.enabled', true)) {
+            return;
+        }
+
         Event::listen(AuditCustom::class, RecordCustomAudit::class);
         Event::listen(DispatchAudit::class, ProcessDispatchAudit::class);
     }
