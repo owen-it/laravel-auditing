@@ -946,6 +946,41 @@ class AuditingTest extends AuditingTestCase
         ]);
     }
 
+    public function test_custom_event_does_not_audit_when_auditing_is_disabled(): void
+    {
+        config(['audit.enabled' => false]);
+
+        $article = Article::factory()->create();
+        $article->auditEvent = 'whateverYouWant';
+        $article->isCustomEvent = true;
+        $article->auditCustomOld = ['customExample' => 'Anakin Skywalker'];
+        $article->auditCustomNew = ['customExample' => 'Darth Vader'];
+
+        $auditCountBefore = Audit::where('auditable_type', Article::class)->count();
+
+        Event::dispatch(new AuditCustom($article));
+
+        $this->assertSame($auditCountBefore, Audit::where('auditable_type', Article::class)->count());
+    }
+
+    public function test_custom_event_does_not_audit_when_running_in_console_without_console_flag(): void
+    {
+        App::shouldReceive('runningInConsole')->andReturn(true);
+        config(['audit.enabled' => true, 'audit.console' => false]);
+
+        $article = Article::factory()->create();
+        $article->auditEvent = 'whateverYouWant';
+        $article->isCustomEvent = true;
+        $article->auditCustomOld = ['customExample' => 'Anakin Skywalker'];
+        $article->auditCustomNew = ['customExample' => 'Darth Vader'];
+
+        $auditCountBefore = Audit::where('auditable_type', Article::class)->count();
+
+        Event::dispatch(new AuditCustom($article));
+
+        $this->assertSame($auditCountBefore, Audit::where('auditable_type', Article::class)->count());
+    }
+
     public function test_can_audit_custom_audit_model_implementation(): void
     {
         $audit = null;

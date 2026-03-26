@@ -36,6 +36,11 @@ interface Auditable
     public function getAuditEvents(): array;
 
     /**
+     * Determine whether auditing is enabled.
+     */
+    public static function isAuditingEnabled(): bool;
+
+    /**
      * Is the model ready for auditing?
      */
     public function readyForAuditing(): bool;
