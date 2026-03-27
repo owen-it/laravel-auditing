@@ -11,6 +11,8 @@ use OwenIt\Auditing\Resolvers\UserResolver;
 
 class AuditingTestCase extends TestCase
 {
+    protected bool $auditingEnabled = true;
+
     /**
      * {@inheritdoc}
      */
@@ -44,6 +46,8 @@ class AuditingTestCase extends TestCase
         $app['config']->set('audit.console', true);
         $app['config']->set('audit.empty_values', true);
         $app['config']->set('audit.queue.enable', true);
+
+        $app['config']->set('audit.enabled', $this->auditingEnabled);
     }
 
     /**
