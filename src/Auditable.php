@@ -255,7 +255,7 @@ trait Auditable
      */
     public function readyForAuditing(): bool
     {
-        if (static::$auditingDisabled || Models\Audit::$auditingGloballyDisabled) {
+        if ($this->isAuditingDisabled()) {
             return false;
         }
 
