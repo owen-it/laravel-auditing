@@ -47,9 +47,7 @@ class AuditingTestCase extends TestCase
         $app['config']->set('audit.empty_values', true);
         $app['config']->set('audit.queue.enable', true);
 
-        if (!$this->auditingEnabled) {
-            $app['config']->set('audit.enabled', false);
-        }
+        $app['config']->set('audit.enabled', $this->auditingEnabled);
     }
 
     /**
