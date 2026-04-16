@@ -53,7 +53,7 @@ class DispatchAudit
             }
         }
 
-        return $values;
+        return ['model_data' => base64_encode(serialize($values['model_data']))] + $values;
     }
 
     /**
@@ -71,7 +71,7 @@ class DispatchAudit
 
         $this->model = $model;
         $reflection = new ReflectionClass($this->model);
-        foreach ($values['model_data'] as $key => $value) {
+        foreach (unserialize(base64_decode($values['model_data'])) as $key => $value) {
             $this->setModelPropertyValue($reflection, $key, $value);
         }
     }
