@@ -13,7 +13,7 @@ class AuditableObserver
     /**
      * Is the model being restored?
      *
-     * @var array
+     * @var array<string,bool>
      */
     public static $restoring = [];
 
