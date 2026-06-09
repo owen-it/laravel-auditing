@@ -41,6 +41,7 @@ class Article extends Model implements Auditable
      * {@inheritdoc}
      */
     protected $fillable = [
+        'id',
         'title',
         'content',
         'published_at',
