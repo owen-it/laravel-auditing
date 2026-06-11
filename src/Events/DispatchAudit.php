@@ -47,7 +47,7 @@ class DispatchAudit
 
         foreach ($customProperties as $key) {
             try {
-                $values['model_data'][$key] = $this->getModelPropertyValue($reflection, $key);
+                $values['model_data'][$key] = $reflection->getProperty($key)->getValue($this->model);
             } catch (\Throwable $e) {
                 //
             }
@@ -72,13 +72,14 @@ class DispatchAudit
         $this->model = $model;
         $reflection = new ReflectionClass($this->model);
         foreach ($values['model_data'] as $key => $value) {
-            $this->setModelPropertyValue($reflection, $key, $value);
+            $reflection->getProperty($key)->setValue($this->model, $value);
         }
     }
 
     /**
      * Set the property value for the given property.
      *
+     * @deprecated
      * @param  ReflectionClass<Auditable>  $reflection
      * @param  mixed  $value
      */
@@ -90,6 +91,7 @@ class DispatchAudit
     /**
      * Get the property value for the given property.
      *
+     * @deprecated
      * @param  ReflectionClass<Auditable>  $reflection
      * @return mixed
      */
