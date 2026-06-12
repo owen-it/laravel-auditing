@@ -13,9 +13,9 @@ class AuditableObserver
     /**
      * Is the model being restored?
      *
-     * @var bool
+     * @var array<string,bool>
      */
-    public static $restoring = false;
+    public static $restoring = [];
 
     /**
      * Handle the retrieved event.
@@ -45,9 +45,11 @@ class AuditableObserver
     public function updated(Auditable $model)
     {
         // Ignore the updated event when restoring
-        if (! static::$restoring) {
-            $this->dispatchAudit($model->setAuditEvent('updated'));
+        if (static::$restoring[get_class($model) . '_' . $model->getKey()] ?? false) {
+            return;
         }
+
+        $this->dispatchAudit($model->setAuditEvent('updated'));
     }
 
     /**
@@ -70,7 +72,7 @@ class AuditableObserver
         // When restoring a model, an updated event is also fired.
         // By keeping track of the main event that took place,
         // we avoid creating a second audit with wrong values
-        static::$restoring = true;
+        static::$restoring[get_class($model) . '_' . $model->getKey()] = true;
     }
 
     /**
@@ -84,7 +86,7 @@ class AuditableObserver
 
         // Once the model is restored, we need to put everything back
         // as before, in case a legitimate update event is fired
-        static::$restoring = false;
+        unset(static::$restoring[get_class($model) . '_' . $model->getKey()]);
     }
 
     protected function dispatchAudit(Auditable $model): void
