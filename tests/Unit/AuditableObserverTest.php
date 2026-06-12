@@ -74,10 +74,10 @@ class AuditableObserverTest extends AuditingTestCase
      *
      * @dataProvider auditableObserverTestProvider
      */
-    public function it_executes_the_auditor_successfully(string $eventMethod, bool $expectedBefore, bool $expectedAfter)
+    public function it_executes_the_auditor_successfully(string $eventMethod, array $expectedBefore, array $expectedAfter)
     {
         $observer = new AuditableObserver;
-        $model = factory(Article::class)->create();
+        $model = factory(Article::class)->create(['id' => 1]);
 
         $this->assertSame($expectedBefore, $observer::$restoring);
 
@@ -91,33 +91,33 @@ class AuditableObserverTest extends AuditingTestCase
         return [
             [
                 'retrieved',
-                false,
-                false,
+                [],
+                [],
             ],
             [
                 'created',
-                false,
-                false,
+                [],
+                [],
             ],
             [
                 'updated',
-                false,
-                false,
+                [],
+                [],
             ],
             [
                 'deleted',
-                false,
-                false,
+                [],
+                [],
             ],
             [
                 'restoring',
-                false,
-                true,
+                [],
+                [Article::class . '_1' => true],
             ],
             [
                 'restored',
-                true,
-                false,
+                [Article::class . '_1' => true],
+                [],
             ],
         ];
     }
