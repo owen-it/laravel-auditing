@@ -13,7 +13,9 @@ class Database implements AuditDriver
      */
     public function audit(Auditable $model): ?Audit
     {
-        return call_user_func([get_class($model->audits()->getModel()), 'create'], $model->toAudit());
+        return $model->withSavepointIfNeeded(
+            fn () => $model->audits()->getModel()::create($model->toAudit())
+        );
     }
 
     /**
