@@ -244,6 +244,33 @@ class AuditingTest extends AuditingTestCase
         ], $audit->new_values, true);
     }
 
+    public function test_it_will_audit_the_restored_event_without_stopping_other_events(): void
+    {
+        $this->app['config']->set('audit.events', [
+            'updated',
+            'restored',
+        ]);
+
+        $data = [
+            'title' => 'How To Audit Eloquent Models',
+            'content' => 'N/A',
+            'published_at' => null,
+            'reviewed' => 0,
+        ];
+        $article1 = Article::factory()->create($data);
+        $article2 = Article::factory()->create($data);
+
+        Article::restoring(function () use($article2) {
+            $article2->update(['content' => 'Content test']);
+        });
+        $article1->delete();
+        $article1->restore();
+        Article::flushEventListeners();
+
+        $audit = Audit::count();
+        $this->assertSame($audit, 2);
+    }
+
     public function test_it_will_keep_all_audits(): void
     {
         $this->app['config']->set('audit.threshold', 0);
@@ -962,70 +989,58 @@ class AuditingTest extends AuditingTestCase
         $this->assertNotEmpty($audit);
         $this->assertSame(get_class($audit), \OwenIt\Auditing\Tests\Models\CustomAudit::class);
     }
-    
-    /**
-     * @test
-     * @return void
-     */
-    public function itWillAuditSyncWithAuditablePivotClass()
+
+    public function test_it_will_audit_sync_with_auditable_pivot_class()
     {
         $group = Group::factory()->create();
         $user = User::factory()->create();
-        
+
         $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
 
         $user->auditSync('groups', [$group->getKey() => ["role" => "admin"]]);
 
         $no_of_audits_mid = Audit::where('auditable_type', User::class)->count();
         $memberRole = $user->groups()->first()->pivot->role;
-        
+
         $user->auditSync('groups', []);
-        
+
         $no_of_audits_after = Audit::where('auditable_type', User::class)->count();
-        
+
         $this->assertSame("admin", $memberRole);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_mid);
         $this->assertGreaterThan($no_of_audits_mid, $no_of_audits_after);
     }
-    
-    /**
-     * @test
-     * @return void
-     */
-    public function itWillAuditAttachWithAuditablePivotClass()
+
+    public function test_it_will_audit_attach_with_auditable_pivot_class()
     {
         $group = Group::factory()->create();
         $user = User::factory()->create();
-        
+
         $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
 
         $user->auditAttach('groups', $group);
-        
+
         $attachedGroup = $user->groups()->first()->getKey();
         $no_of_audits_after = Audit::where('auditable_type', User::class)->count();
-        
+
         $this->assertSame($group->getKey(), $attachedGroup);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);
     }
-    
-    /**
-     * @test
-     * @return void
-     */
-    public function itWillAuditDetachWithAuditablePivotClass()
+
+    public function test_it_will_audit_detach_with_auditable_pivot_class()
     {
         $group = Group::factory()->create();
         $user = User::factory()->create();
-        
+
         $user->groups()->attach($group);
-        
+
         $attachedGroup = $user->groups()->first()->getKey();
         $no_of_audits_before = Audit::where('auditable_type', User::class)->count();
 
         $detachedGroups = $user->auditDetach('groups', $group);
 
         $no_of_audits_after = Audit::where('auditable_type', User::class)->count();
-        
+
         $this->assertSame($group->getKey(), $attachedGroup);
         $this->assertSame(1, $detachedGroups);
         $this->assertGreaterThan($no_of_audits_before, $no_of_audits_after);

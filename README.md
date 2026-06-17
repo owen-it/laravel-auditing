@@ -26,7 +26,7 @@ Thank you for choosing OwenIt\LaravelAuditing!
 
 Version   | Illuminate     | Status                  | PHP Version
 :----------|:---------------|:------------------------|:------------
-14.x      | 11.x.x - 12.x.x | Active support :rocket: | > = 8.2
+14.x      | 11.x.x - 13.x.x | Active support :rocket: | > = 8.2
 13.x      | 7.x.x - 11.x.x | End of life             | > = 7.3 \| 8.0
 12.x      | 6.x.x - 9.x.x | End of life             | > = 7.3 \| 8.0
 11.x      | 5.8.x - 8.x.x | End of life             | > = 7.3

@@ -47,7 +47,7 @@ class DispatchAudit
 
         foreach ($customProperties as $key) {
             try {
-                $values['model_data'][$key] = $this->getModelPropertyValue($reflection, $key);
+                $values['model_data'][$key] = $reflection->getProperty($key)->getValue($this->model);
             } catch (\Throwable $e) {
                 //
             }
@@ -72,37 +72,31 @@ class DispatchAudit
         $this->model = $model;
         $reflection = new ReflectionClass($this->model);
         foreach ($values['model_data'] as $key => $value) {
-            $this->setModelPropertyValue($reflection, $key, $value);
+            $reflection->getProperty($key)->setValue($this->model, $value);
         }
     }
 
     /**
      * Set the property value for the given property.
      *
+     * @deprecated
      * @param  ReflectionClass<Auditable>  $reflection
      * @param  mixed  $value
      */
     protected function setModelPropertyValue(ReflectionClass $reflection, string $name, $value): void
     {
-        $property = $reflection->getProperty($name);
-
-        $property->setAccessible(true);
-
-        $property->setValue($this->model, $value);
+        $reflection->getProperty($name)->setValue($this->model, $value);
     }
 
     /**
      * Get the property value for the given property.
      *
+     * @deprecated
      * @param  ReflectionClass<Auditable>  $reflection
      * @return mixed
      */
     protected function getModelPropertyValue(ReflectionClass $reflection, string $name)
     {
-        $property = $reflection->getProperty($name);
-
-        $property->setAccessible(true);
-
-        return $property->getValue($this->model);
+        return $reflection->getProperty($name)->getValue($this->model);
     }
 }

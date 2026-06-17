@@ -936,7 +936,6 @@ class AuditableTest extends AuditingTestCase
         $auditReflection = new ReflectionClass($audit);
 
         $auditCastsProperty = $auditReflection->getProperty('casts');
-        $auditCastsProperty->setAccessible(true);
         $auditCastsProperty->setValue($audit, [
             'old_values' => 'json',
             'new_values' => 'json',

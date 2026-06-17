@@ -14,7 +14,7 @@ jobs:
         env:
           COMPOSER_NO_INTERACTION: 1
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v6
 
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
@@ -27,8 +27,8 @@ jobs:
 
             - name: Install larastan
               run: |
-                  composer require "larastan/larastan" --no-update
+                  composer require --dev "larastan/larastan" --no-update
                   composer update --prefer-dist --no-suggest
 
             - name: Run PHPStan
-              run: ./vendor/bin/phpstan --error-format=github
+              run: ./vendor/bin/phpstan analyse --error-format=github --no-progress

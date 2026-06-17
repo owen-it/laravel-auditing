@@ -105,6 +105,7 @@ class Auditor extends Manager implements Contracts\Auditor
      */
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
+        // @phpstan-ignore-next-line
         return $this
             ->container
             ->make('events')
