@@ -1267,4 +1267,27 @@ class AuditableTest extends AuditingTestCase
             'tags' => null,
         ], $auditData, true);
     }
+
+    public function test_it_works_when_enabling_after_model_boot(): void
+    {
+        $this->app['config']->set('audit.console', false);
+        Article::clearBootedModels(); // Make sure the model is booted again
+
+        $this->assertFalse(Article::getEventDispatcher()->hasListeners(\sprintf('eloquent.created: %s', Article::class)));
+
+        $model = Article::factory()->create();// will boot trait
+
+        $this->assertCount(0, $model->audits, 'No audits when audit.console false');
+        $this->assertTrue(Article::getEventDispatcher()->hasListeners(\sprintf('eloquent.created: %s', Article::class)));
+
+        $this->app['config']->set('audit.console', true);
+        $model = Article::factory()->create(); // will not boot again, because booting only happens once
+
+        $this->assertCount(1, $model->audits);
+
+        Article::disableAuditing();
+        $model = Article::factory()->create();
+
+        $this->assertCount(0, $model->audits);
+    }
 }

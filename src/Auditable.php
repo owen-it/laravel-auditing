@@ -77,7 +77,7 @@ trait Auditable
      */
     public static function bootAuditable()
     {
-        if (App::getFacadeRoot() && static::isAuditingEnabled()) {
+        if (App::getFacadeRoot() && Config::get('audit.enabled', true)) {
             $registerObserver = fn() => static::observe(AuditableObserver::class);
 
             if (method_exists(static::class, 'whenBooted')) {

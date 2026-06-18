@@ -94,6 +94,10 @@ class AuditableObserver
         if (! $model->readyForAuditing()) {
             return;
         }
+        $modelClass = $model::class;
+        if (method_exists($modelClass, 'isAuditingEnabled') && ! $modelClass::isAuditingEnabled()) {
+            return;
+        }
 
         // @phpstan-ignore method.notFound
         $model->preloadResolverData();
