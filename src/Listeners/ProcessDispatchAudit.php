@@ -26,10 +26,6 @@ class ProcessDispatchAudit implements ShouldQueue
 
     public function handle(DispatchAudit $event): void
     {
-        $modelClass = $event->model::class;
-        if (method_exists($modelClass, 'isAuditingEnabled') && ! $modelClass::isAuditingEnabled()) {
-            return;
-        }
         Auditor::execute($event->model);
     }
 }
