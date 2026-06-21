@@ -26,7 +26,7 @@ interface Auditable
      *
      * @return string|null
      */
-    public function getAuditEvent();
+    public function getAuditEvent(): ?string;
 
     /**
      * Get the events that trigger an Audit.
@@ -75,10 +75,8 @@ interface Auditable
 
     /**
      * Get the Audit Driver.
-     *
-     * @return string|null
      */
-    public function getAuditDriver();
+    public function getAuditDriver(): string;
 
     /**
      * Get the Audit threshold.

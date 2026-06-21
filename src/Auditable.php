@@ -479,7 +479,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getAuditEvent()
+    public function getAuditEvent(): ?string
     {
         return $this->auditEvent;
     }
@@ -577,7 +577,7 @@ trait Auditable
     /**
      * {@inheritdoc}
      */
-    public function getAuditDriver()
+    public function getAuditDriver(): string
     {
         return $this->auditDriver ?? Config::get('audit.driver', 'database');
     }
