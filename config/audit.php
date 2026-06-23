@@ -183,6 +183,7 @@ return [
         'connection' => 'sync',
         'queue' => 'default',
         'delay' => 0,
+        'listener' => OwenIt\Auditing\Listeners\ProcessDispatchAudit::class,
     ],
 
     /*
