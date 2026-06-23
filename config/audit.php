@@ -88,6 +88,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Global exclusion merge
+    |--------------------------------------------------------------------------
+    |
+    | If set to true, the local model auditExclude array values will be
+    | merged with the config exclude array values instead of replacing 
+    | them.
+    |
+    */
+
+    'exclude_merge' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Empty Values
     |--------------------------------------------------------------------------
     |
