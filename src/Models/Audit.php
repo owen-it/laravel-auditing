@@ -2,8 +2,10 @@
 
 namespace OwenIt\Auditing\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property string $tags
@@ -12,8 +14,8 @@ use Illuminate\Support\Carbon;
  * @property array<string,mixed> $old_values
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property mixed $user
- * @property mixed $auditable.
+ * @property (Model&Authenticatable)|null $user
+ * @property (Model&Auditable)|null $auditable
  * @property string|null $auditable_type
  * @property string|int|null $auditable_id
  */

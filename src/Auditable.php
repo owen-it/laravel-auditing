@@ -89,7 +89,7 @@ trait Auditable
     }
 
     /**
-     * {@inheritdoc}
+     * @return MorphMany<Models\Audit, $this>
      */
     public function audits(): MorphMany
     {

@@ -4,6 +4,7 @@ namespace OwenIt\Auditing;
 
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
@@ -35,7 +36,7 @@ trait Audit
     protected $modified = [];
 
     /**
-     * {@inheritdoc}
+     * @return MorphTo<Model, $this>
      */
     public function auditable()
     {
@@ -43,7 +44,7 @@ trait Audit
     }
 
     /**
-     * {@inheritdoc}
+     * @return MorphTo<Model, $this>
      */
     public function user()
     {
