@@ -14,5 +14,5 @@ interface Auditor
      *
      * @return void
      */
-    public function execute(Auditable $model);
+    public function execute(Auditable $model): void;
 }
