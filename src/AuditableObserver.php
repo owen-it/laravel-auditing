@@ -89,7 +89,7 @@ class AuditableObserver
         unset(static::$restoring[$this->getModelIdentifier($model)]);
     }
 
-    private function getModelIdentifier(Auditable $model)
+    private function getModelIdentifier(Auditable $model): string
     {
         return get_class($model) . '_' . ($model->getRawOriginal($model->getKeyName()) ?? $model->getKey());
     }
