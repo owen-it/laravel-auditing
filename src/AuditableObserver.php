@@ -45,7 +45,7 @@ class AuditableObserver
     public function updated(Auditable $model)
     {
         // Ignore the updated event when restoring
-        if (static::$restoring[get_class($model) . '_' . $model->getKey()] ?? false) {
+        if (static::$restoring[$this->getModelIdentifier($model)] ?? false) {
             return;
         }
 
@@ -72,7 +72,7 @@ class AuditableObserver
         // When restoring a model, an updated event is also fired.
         // By keeping track of the main event that took place,
         // we avoid creating a second audit with wrong values
-        static::$restoring[get_class($model) . '_' . $model->getKey()] = true;
+        static::$restoring[$this->getModelIdentifier($model)] = true;
     }
 
     /**
@@ -86,7 +86,12 @@ class AuditableObserver
 
         // Once the model is restored, we need to put everything back
         // as before, in case a legitimate update event is fired
-        unset(static::$restoring[get_class($model) . '_' . $model->getKey()]);
+        unset(static::$restoring[$this->getModelIdentifier($model)]);
+    }
+
+    private function getModelIdentifier(Auditable $model)
+    {
+        return get_class($model) . '_' . ($model->getRawOriginal($model->getKeyName()) ?? $model->getKey());
     }
 
     protected function dispatchAudit(Auditable $model): void
