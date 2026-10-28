@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3, 8.4, 8.5]
+        php: [8.2, 8.3, 8.4, 8.5, 8.6]
         laravel: [11.*, 12.*, 13.*]
         include:
           - laravel: 12.*
@@ -31,6 +31,8 @@ jobs:
             testbench: 11.*
         exclude:
           - laravel: 11.*
+            php: 8.6
+          - laravel: 11.*
             php: 8.5
           - laravel: 13.*
             php: 8.2
@@ -39,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
