@@ -91,7 +91,7 @@ class AuditableObserver
 
     private function getModelIdentifier(Auditable $model): string
     {
-        return get_class($model) . '_' . ($model->getRawOriginal($model->getKeyName()) ?? $model->getKey());
+        return get_class($model) . '_' . ($model->getAttributes()[$model->getKeyName()] ?? $model->getKey());
     }
 
     protected function dispatchAudit(Auditable $model): void
