@@ -2,6 +2,7 @@
 
 namespace OwenIt\Auditing;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use OwenIt\Auditing\Console\AuditDriverCommand;
@@ -30,7 +31,7 @@ class AuditingServiceProvider extends ServiceProvider
         }
 
         Event::listen(AuditCustom::class, RecordCustomAudit::class);
-        Event::listen(DispatchAudit::class, ProcessDispatchAudit::class);
+        Event::listen(DispatchAudit::class, Config::string('audit.queue.listener', ProcessDispatchAudit::class));
     }
 
     /**
